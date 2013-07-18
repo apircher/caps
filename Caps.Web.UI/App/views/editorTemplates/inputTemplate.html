@@ -1,0 +1,7 @@
+﻿<div class="control-group" data-bind="css: { error: !field.isValid() }, uniqueId: { value: field, prefix: 'ctrls' }">
+    <label class="control-label" data-bind="text: title, uniqueFor: field"></label>
+    <div class="controls">
+        <input type="text"
+            data-bind="value: field, valueUpdate: valueUpdate, uniqueId: true, popover: { content: field.error, trigger: popoverTrigger, placement: popoverPlacement, container: popoverContainer || field.uniqueIds.getSelector('ctrls') }, css: css" />
+    </div>
+</div>

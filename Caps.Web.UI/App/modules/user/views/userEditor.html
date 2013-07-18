@@ -1,0 +1,49 @@
+﻿
+<div id="user-editor" class="app-page">
+    
+    <div class="container-fluid">
+        <!-- ko if: isNewUser() -->
+        <h2>Neuer Benutzer</h2>
+        <!-- /ko -->
+        <!-- ko if: !isNewUser() && user() -->
+        <h2>Benutzer <span data-bind="text: user().userName"></span></h2>
+        <!-- /ko -->
+    </div>
+
+    <form id="theform" data-bind="submit: save">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span6">
+                    <!-- ko if: isNewUser() -->
+                    <!-- ko composeEditor: { field: user().userName, title: 'Benutzer', popoverPlacement: 'bottom', css: 'span12' } --><!-- /ko -->
+                    <!-- ko composeEditor: { field: user().password, title: 'Passwort', valueUpdate: 'afterkeydown', popoverPlacement: 'bottom', css: 'span12' } --><!-- /ko -->
+                    <!-- /ko -->
+                
+                    <!-- ko if: user() -->        
+                    <!-- ko composeEditor: { field: user().email, title: 'Email', valueUpdate: 'afterkeydown', popoverPlacement: 'bottom', css: 'span12' } --><!-- /ko -->
+                    <!-- ko composeEditor: { type: 'textarea', field: user().comment, title: 'Notizen', valueUpdate: 'afterkeydown', popoverPlacement: 'bottom', css: 'span12' } --><!-- /ko -->
+                    <!-- /ko -->     
+                </div>
+
+                <div class="span6">
+                    <div>
+                        <!-- ko if: roles() && roles().length -->  
+                        <label>Rollen</label>
+                        <div data-bind="foreach: roles">
+                            <label class="checkbox">
+                                <input type="checkbox" data-bind="checked: isChecked, enable: isEnabled" /> <!-- ko text: role --><!-- /ko -->
+                            </label>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                </div> 
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" data-bind="enable: user.isDirty()">Speichern</button> 
+            <a href="#" data-bind="click: cancel" class="btn">Abbrechen</a>            
+        </div>
+    </form>
+
+</div>

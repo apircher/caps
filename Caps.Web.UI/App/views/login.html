@@ -1,0 +1,15 @@
+﻿<div id="login-form" class="app-page">        
+    <form class="form-horizontal" data-bind="submit: logon, enable: !isBusy()">
+        <fieldset>
+            <legend class="legend-horizontal">Anmelden</legend>
+                                    
+            <!-- ko composeEditor: { field: userName, title: 'Benutzername', valueUpdate: 'afterkeydown' } --><!-- /ko -->
+            <!-- ko composeEditor: { field: password, title: 'Passwort', valueUpdate: 'afterkeydown', type: 'password' } --><!-- /ko -->            
+            <!-- ko composeEditor: { field: rememberMe, title: 'Angemeldet bleiben', type: 'checkbox' } --><!-- /ko -->
+
+        </fieldset>
+        <div class="form-actions">
+            <button class="btn btn-primary" data-bind="click: logon">Weiter <i class="icon-fixed-width icon-refresh icon-spin" data-bind="visible: isBusy()"></i></button>                
+        </div>
+    </form>
+</div>

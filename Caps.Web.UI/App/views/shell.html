@@ -1,0 +1,46 @@
+﻿<div>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div>
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse" data-bind="visible: authentication.isAuthenticated">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </a>
+
+                <a class="brand" href="" data-bind="attr: { href: router.routes[0].hash }">
+                    <span>CAPS</span>
+                </a>
+
+                <div class="loader pull-right" data-bind="css: { active: router.isNavigating }">
+                    <i class="icon-cog icon-2x icon-spin"></i>
+                </div>
+
+                <div class="navbar-panel navbar-text pull-right">
+                    <!-- ko if: authentication.isAuthenticated --> 
+                    <strong><a data-bind="text: authentication.user().userName()" href="/#profile"></a></strong>
+                    <a href="#" data-bind="click: logOff, clickBubble: false" title="Abmelden"><i class="icon-fixed-width icon-off"></i></a>
+                    <!-- /ko -->
+                </div>
+
+                <div class="nav-collapse collapse">
+                    <ul class="nav pull-right" data-bind="foreach: navigationItems">
+                        <li data-bind="css: { active: isActive }, template: { name: $parent.navigationItemTemplate }"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container-fluid page-host">
+        <!--ko router: { transition:'entrance', cacheViews:true }--><!--/ko-->
+    </div>
+</div>
+
+<script type="text/html" id="default-tile">
+    <a data-bind="attr: { href: hash }, html: title"></a>
+</script>
+
+<script type="text/html" id="module-tile">
+    <a href="#" data-bind="click: $parent.showModule"><!-- ko text: title --><!-- /ko --> <i class="icon-fixed-width icon-save" data-bind="visible: hasUnsavedChanges"></i></a>    
+</script>

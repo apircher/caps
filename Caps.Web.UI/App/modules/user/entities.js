@@ -1,0 +1,116 @@
+﻿define(function (require) {
+
+    var ko = require('knockout'),
+        moment = require('moment');
+
+    //
+    // Class "User".
+    //
+    function User(data) {
+
+        var self = this;
+        data = data || {};
+
+        this.userName = ko.observable(data.UserName || '').extend({ required: true });
+        this.password = ko.observable(data.Password || '');
+        this.comment = ko.observable(data.Comment || '');
+        this.creationDate = ko.observable(data.CreationDate || new Date());
+        this.email = ko.observable(data.Email || '').extend({ required: true, email: true });
+        this.isApproved = ko.observable(data.IsApproved || false);
+        this.isLockedOut = ko.observable(data.IsLockedOut || false);
+        this.isOnline = ko.observable(data.IsOnline || false);
+        this.lastActivityDate = ko.observable(data.LastActivityDate);
+        this.lastLockoutDate = ko.observable(data.LastLockoutDate);
+        this.lastLoginDate = ko.observable(data.LastLoginDate);
+        this.lastPasswordChangedDate = ko.observable(data.LastPasswordChangedDate);
+
+        this.roles = ko.observableArray(data.Roles || []);
+        
+        this.hasEverLoggedIn = ko.computed(function () {
+            return self.lastLoginDate() > self.creationDate();
+        });
+        this.lastLoginDateFormatted = ko.computed(function () {
+            if (!self.hasEverLoggedIn()) return 'Noch nie';
+            return moment.utc(self.lastLoginDate()).fromNow();
+        });
+        this.lastActivityDateFormatted = ko.computed(function () {
+            if (!self.hasEverLoggedIn()) return 'Noch nie';
+            return moment.utc(self.lastActivityDate()).fromNow();
+        });
+
+        this.hasEverBeenLockedOut = ko.computed(function () {
+            return self.lastLockoutDate() > self.creationDate();
+        });
+        this.lastLockoutDateFormatted = ko.computed(function () {
+            if (!self.hasEverBeenLockedOut()) return 'Noch nie';
+            return moment.utc(self.lastLockoutDate()).fromNow();
+        });
+
+        this.hasEverChangedPassword = ko.computed(function () {
+            return self.lastPasswordChangedDate() > self.creationDate();
+        });
+        this.lastPasswordChangedDateFormatted = ko.computed(function () {
+            if (!self.hasEverChangedPassword()) return 'Noch nie';
+            return moment.utc(self.lastPasswordChangedDate()).fromNow();
+        });
+
+        ko.validation.group(this);
+    }
+
+    User.prototype.refresh = function (data) {
+        data = data || {};
+
+        this.comment(data.Comment || '');
+        this.creationDate(data.CreationDate || new Date());
+        this.email(data.Email || '');
+        this.isApproved(data.IsApproved || false);
+        this.isLockedOut(data.IsLockedOut || false);
+        this.isOnline(data.IsOnline || false);
+        this.lastActivityDate(data.LastActivityDate);
+        this.lastLockoutDate(data.LastLockoutDate);
+        this.lastLoginDate(data.LastLoginDate);
+        this.lastPasswordChangedDate(data.LastPasswordChangedDate);
+    };
+
+    User.prototype.toDto = function () {
+        var dto = {
+            UserName: this.userName(),
+            Password: this.password(),
+            Comment: this.comment(),
+            Email: this.email(),
+            Roles: this.roles()
+        };
+        return dto;
+    };
+
+    User.prototype.isInRole = function (role) {
+        if (!role || !role.length)
+            throw Error('The role parameter must not be null or empty');
+
+        if (this.roles() && this.roles().length) {
+            for (var i = 0; i < this.roles().length; i++) {
+                if (role == this.roles()[i]) return true;
+            }
+        }
+
+        return false;
+    };
+
+    User.prototype.addToRole = function (role) {
+        if (!this.isInRole(role)) this.roles.push(role);
+    };
+
+    User.prototype.removeFromRole = function (role) {
+        if (this.isInRole(role)) this.roles.remove(role);
+    };
+
+    User.prototype.toggleRole = function (role) {
+        if (this.isInRole(role)) this.removeFromRole(role);
+        else this.addToRole(role);
+    };
+
+    return {
+        User: User
+    };
+
+});

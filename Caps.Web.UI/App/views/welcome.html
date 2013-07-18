@@ -1,0 +1,13 @@
+﻿<section>
+    <h2 data-bind="html: displayName"></h2>
+    <blockquote data-bind="html: description"></blockquote>
+
+    <h3 data-bind="text: websites().length"></h3>
+    <ul data-bind="foreach: websites()">
+        <li>
+            <span data-bind="text: Name"></span> - 
+            <span data-bind="text: Url"></span>
+        </li>
+    </ul>
+
+</section>

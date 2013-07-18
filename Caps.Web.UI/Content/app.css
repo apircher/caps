@@ -1,0 +1,141 @@
+﻿.splash {
+    text-align: center;
+    background:#ffd800;
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+}
+
+.splash-message {
+    margin: 12% 10% 2%;
+    font-size: 3em;
+    line-height: 1.5em;
+    -webkit-text-shadow: rgba(0, 0, 0, 0.3) 0px 0px 10px;
+    text-shadow: rgba(0, 0, 0, 0.3) 0px 0px 10px;
+    text-transform: uppercase;
+    max-width:none;
+}
+
+.splash .icon-spinner {
+    text-align: center;
+    display: inline-block;
+    font-size: 7em;
+    margin-top: 50px;
+}
+
+.page-host {
+    position: relative;
+    top: 40px;
+}
+
+.app-page {
+    position:relative;    
+    padding-top:10px;
+}
+
+.bottom-fixed-navbar-container {
+    padding-bottom:50px;
+}
+
+.navbar-fixed-top .navbar-inner {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.navbar-fixed-top .icon-home {
+    font-size: 18px
+}
+
+.navbar-panel {
+    margin: 0 10px 0 20px;
+}
+.navbar-panel.pull-right {
+    margin: 0 20px 0 10px;
+}
+
+    .navbar-inverse .navbar-panel.navbar-text a,
+    .navbar-inverse .navbar-panel.navbar-text a:active,
+    .navbar-inverse .navbar-panel.navbar-text a:visited {
+        color:#999;
+        text-decoration:none;
+    }
+    .navbar-inverse .navbar-panel.navbar-text a:hover {
+        color:#fff;
+    }
+
+.subnav {
+    padding-top: 10px;
+}
+
+.loader {
+    margin: 6px 8px 4px 8px;
+    visibility: hidden;
+}
+
+.loader.active {
+    visibility: visible;
+}
+
+.legend-horizontal {
+    margin:40px 0 20px 180px;
+    width:220px;
+}
+
+a.no-underline,
+a.no-underline:active,
+a.no-underline:visited,
+a.no-underline:hover {
+    text-decoration:none;
+}
+
+.user-online {
+    color:#3a7921;
+}
+
+.user-offline {
+    color:#ccc;
+}
+
+.cursor-default {
+    cursor:default;
+}
+
+.messageBox {
+    width: 460px;
+}
+
+.title-with-back-link {
+    margin-left:-.75em;
+}
+
+@media (max-width: 979px) {
+    .page-host {
+        top: 0;
+    }
+
+    .navbar-fixed-top {
+        margin-bottom: 0;
+    }
+
+    .app-page {
+        padding-top:0;
+    } 
+
+    .title-with-back-link {
+        margin-left:0;
+    }
+
+    .bottom-fixed-navbar-container {
+        padding-bottom:0;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .legend-horizontal {
+        margin:20px 0 20px;
+        width:100%;
+    }   
+}

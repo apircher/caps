@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caps.Data", "Caps.Data\Caps.Data.csproj", "{156683F3-9173-47BC-928F-1D31B7FCD45F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caps.Web.UI", "Caps.Web.UI\Caps.Web.UI.csproj", "{701B98CF-FEEC-4A4E-B2CD-949F865E7DFF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{156683F3-9173-47BC-928F-1D31B7FCD45F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{156683F3-9173-47BC-928F-1D31B7FCD45F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{156683F3-9173-47BC-928F-1D31B7FCD45F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{156683F3-9173-47BC-928F-1D31B7FCD45F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{701B98CF-FEEC-4A4E-B2CD-949F865E7DFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{701B98CF-FEEC-4A4E-B2CD-949F865E7DFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{701B98CF-FEEC-4A4E-B2CD-949F865E7DFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{701B98CF-FEEC-4A4E-B2CD-949F865E7DFF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
