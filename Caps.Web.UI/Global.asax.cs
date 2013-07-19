@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Web.Security;
 
 namespace Caps.Web.UI
 {
@@ -27,6 +28,7 @@ namespace Caps.Web.UI
             CapsBundleConfig.RegisterBundles(BundleTable.Bundles);
 
             RolesConfig.EnsureDefaultRoles();
+            RolesConfig.EnsureUserInRole("Administrator");
         }
     }
 }

@@ -31,17 +31,19 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
                 if (options.css.length > 0) css[options.css] = true;
             }
 
-            options.view = 'views/editorTemplates/' + type + 'Template';
-            options.model = {
-                field: options.field,
-                title: options.title || '',
-                valueUpdate: options.valueUpdate || '',
-                popoverContainer: options.popoverContainer || '',
-                popoverPlacement: options.popoverPlacement || 'right',
-                popoverTrigger: options.popoverTrigger || 'focus',
-                css: css
+            return {
+                view: 'views/editorTemplates/' + type + 'Template',
+                model: $.extend({
+                    field: null,
+                    title: '',
+                    valueUpdate: '',
+                    popoverContainer: '',
+                    popoverPlacement: 'right',
+                    popoverTrigger: 'focus',
+                    css: css,
+                    placeholder: ''
+                }, options)
             };
-            return options;
         },
         init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             ko.bindingHandlers.compose.init(elem, function () { return ko.bindingHandlers.composeEditor.prepareOptions(valueAccessor); }, allBindingsAccessor, viewModel, bindingContext);

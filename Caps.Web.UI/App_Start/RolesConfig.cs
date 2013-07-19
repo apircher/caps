@@ -18,5 +18,16 @@ namespace Caps.Web.UI.App_Start
             foreach (var roleName in roleNames.Distinct())
                 if (!Roles.RoleExists(roleName)) Roles.CreateRole(roleName);
         }
+
+        public static void EnsureUserInRole(String roleName, String defaultUserName = "admin", String defaultPassword = "caps234")
+        {
+            EnsureRoleExists(roleName);
+
+            if (!Roles.GetUsersInRole(roleName).Any())
+            {
+                var user = Membership.CreateUser(defaultUserName, defaultPassword);
+                Roles.AddUserToRole(user.UserName, roleName);
+            }
+        }
     }
 }

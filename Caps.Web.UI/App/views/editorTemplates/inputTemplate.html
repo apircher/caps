@@ -2,6 +2,6 @@
     <label class="control-label" data-bind="text: title, uniqueFor: field"></label>
     <div class="controls">
         <input type="text"
-            data-bind="value: field, valueUpdate: valueUpdate, uniqueId: true, popover: { content: field.error, trigger: popoverTrigger, placement: popoverPlacement, container: popoverContainer || field.uniqueIds.getSelector('ctrls') }, css: css" />
+            data-bind="value: field, valueUpdate: valueUpdate, uniqueId: true, popover: { content: field.error, trigger: popoverTrigger, placement: popoverPlacement, container: popoverContainer || field.uniqueIds.getSelector('ctrls') }, css: css, attr: { placeholder: placeholder }" />
     </div>
 </div>
