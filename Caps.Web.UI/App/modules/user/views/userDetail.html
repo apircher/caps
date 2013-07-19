@@ -1,7 +1,7 @@
 ﻿<div id="user-detail" class="app-page bottom-fixed-navbar-container">
     
     <div class="container-fluid">
-        <h2>Benutzer <span data-bind="text: user().userName"></span></h2>         
+        <h3>Benutzer <span data-bind="text: user().userName"></span></h3>         
         <div class="alert" data-bind="visible: user().isLockedOut">
             <strong>Gesperrt </strong> Der Benutzer wurde <span data-bind="text: moment(user().lastLockoutDate()).fromNow(), attr: { title: moment(user().lastLockoutDate()).format('LLLL') }"></span> aufgrund zu vieler ungültiger Anmelde-Versuche gesperrt.
             <a href="#" data-bind="click: unlockUser"><i class="icon-fixed-width icon-unlock"></i> Sperrung aufheben</a>
@@ -9,35 +9,41 @@
     </div>
 
     <div class="container-fluid">
-        <div class="row-fluid" data-bind="visible: user().comment().length">
-            <h6>Notizen</h6>
-            <p data-bind="text: user().comment"></p>
-        </div>
-
-        <h6>Benutzerdaten</h6>
-        <div class="row-fluid">
-            <div class="span6">
-                <p>Erstellt: <em data-bind="attr: { title: moment(user().creationDate()).format('LLLL') }, text: moment(user().creationDate()).fromNow()"></em></p>      
-                <p>Letzte Anmeldung: <em data-bind="attr: { title: moment(user().lastLoginDate()).format('LLLL') }, text: user().lastLoginDateFormatted()"></em></p>  
-                <p>Zuletzt aktiv: <em data-bind="attr: { title: moment(user().lastActivityDate()).format('LLLL') }, text: user().lastActivityDateFormatted"></em></p>  
-                <p>Passwort-Änderung: <em data-bind="attr: { title: moment(user().lastPasswordChangedDate()).format('LLLL') }, text: user().lastPasswordChangedDateFormatted"></em></p>
-            </div>
-
-            <div class="span6">
-                <p>Email: <a data-bind="text: user().email, attr: { href: 'mailto:' + user().email() }"></a></p>
-                <p data-bind="visible: user().roles().length">Rollen: <em><!-- ko foreach: user().roles --><span data-bind="text: $data + (($index < $parent.user().roles().length) ? ', ' : '')"></span><!-- /ko --></em></p>                
-                <p>Derzeit online: <em data-bind="text: user().isOnline() ? 'Ja' : 'Nein'"></em></p>
-                <p>Derzeit gesperrt: <em data-bind="text: user().isLockedOut() ? 'Ja' : 'Nein'"></em></p>
+        
+        <!-- ko if: user().comment().length -->
+        <h5>Notizen</h5>        
+        <div class="well well-small">
+            <div class="row-fluid">
+                <p data-bind="text: user().comment"></p>
             </div>
         </div>
+        <!-- /ko -->
 
+        <h5>Benutzerdaten</h5>
+        <div class="well well-small">
+            <div class="row-fluid">
+                <div class="span6">
+                    <p>Email: <a data-bind="text: user().email, attr: { href: 'mailto:' + user().email() }"></a></p>
+                    <p data-bind="visible: user().roles().length">Rollen: <em><!-- ko foreach: user().roles --><span data-bind="text: $data + (($index < $parent.user().roles().length) ? ', ' : '')"></span><!-- /ko --></em></p>                
+                    <p data-bind="visible: user().isOnline"><strong>Derzeit online</strong></p>
+                    <p data-bind="visible: user().isLockedOut"><strong>Derzeit gesperrt</strong></p>
+                </div>
+                <div class="span6">
+                    <p>Erstellt: <span data-bind="attr: { title: moment(user().creationDate()).format('LLLL') }, text: moment(user().creationDate()).fromNow()"></span></p>      
+                    <p data-bind="visible: user().hasEverLoggedIn">Letzte Anmeldung: <em data-bind="attr: { title: moment(user().lastLoginDate()).format('LLLL') }, text: user().lastLoginDateFormatted()"></em></p>  
+                    <p data-bind="visible: user().hasEverLoggedIn">Zuletzt aktiv: <em data-bind="attr: { title: moment(user().lastActivityDate()).format('LLLL') }, text: user().lastActivityDateFormatted"></em></p>  
+                    <p data-bind="visible: user().hasEverChangedPassword">Passwort-Änderung: <em data-bind="attr: { title: moment(user().lastPasswordChangedDate()).format('LLLL') }, text: user().lastPasswordChangedDateFormatted"></em></p>
+                    <p data-bind="visible: !user().hasEverLoggedIn()">Noch nie angemeldet</p>
+                </div>
+
+            </div>
+        </div>
+
+        <h5>Optionen</h5>
         <div class="row-fluid">
             <div class="span6">
-                <h6>Optionen</h6>
-                <ul class="unstyled">
-                    <li>
-                        <a href="#" data-bind="click: changePassword">Passwort festlegen</a>
-                    </li>
+                <ul class="icons-ul">
+                    <li><i class="icon-li icon-wrench"></i> <a href="#" data-bind="click: changePassword">Passwort festlegen</a> </li>
                 </ul>
             </div>
         </div>
@@ -54,15 +60,15 @@
             <ul class="nav">
                 <li>
                     <a href="#" data-bind="click: navigateBack">
-                        <i class="icon-fixed-width icon-arrow-left"></i> Zurück zur Liste</a>
+                        <i class="icon-fixed-width icon-arrow-left"></i> Zurück</a>
                 </li>
                 <li>
                     <a href="#" data-bind="click: editUser">
-                        <i class="icon-fixed-width icon-edit"></i> Benutzer bearbeiten</a>
+                        <i class="icon-fixed-width icon-edit"></i> Bearbeiten</a>
                 </li>
                 <li>
                     <a href="#" data-bind="click: deleteUser">
-                        <i class="icon-fixed-width icon-remove"></i> Benutzer löschen</a>
+                        <i class="icon-fixed-width icon-remove"></i> Löschen</a>
                 </li>
             </ul>
         </div> 
