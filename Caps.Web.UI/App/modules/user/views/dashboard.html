@@ -1,34 +1,45 @@
 ﻿<div class="app-page bottom-fixed-navbar-container">
-    <table class="table table-striped">
-        <thead>
+    
+    <div class="full-width-on-phone">
+    <div class="row-fluid">
+        <table class="table table-striped">
+        <thead class="hidden-phone">
             <tr>
                 <th></th>
                 <th>Benutzer</th>
                 <th class="hidden-phone">Email</th>
-                <th>Zuletzt aktiv</th>
+                <th class="hidden-phone">Zuletzt aktiv</th>
                 <th></th>
                 <th></th>
             </tr>
         </thead>
         <tbody data-bind="foreach: users">
             <tr>
-                <td>
+                <td class="vertical-centered">
                     <a data-bind="attr: { href: '#/users/detail/' + userName() }" class="no-underline">
                         <i class="icon-user icon-2x" data-bind="css: { 'user-online': isOnline(), 'user-offline': !isOnline() }, attr: { title: isOnline() ? 'Online' : 'Offline' }"></i>
                     </a>
                 </td>
-                <td><a data-bind="text: userName, attr: { href: '#/users/detail/' + userName() }"></a></td>
-                <td class="hidden-phone"><span data-bind="text: email"></span></td>
-                <td><span data-bind="text: lastActivityDateFormatted"></span></td>
                 <td>
+                    <a data-bind="text: userName, attr: { href: '#/users/detail/' + userName() }"></a>
+                    <div class="visible-phone">
+                        <span data-bind="text: email"></span>
+                    </div>
+                </td>
+                <td class="hidden-phone"><span data-bind="text: email"></span></td>
+                <td class="hidden-phone"><span data-bind="text: lastActivityDateFormatted"></span></td>
+                <td class="vertical-centered">
                     <a data-bind="attr: { href: '#/users/edit/' + userName() }" title="Bearbeiten" class="no-underline"><i class="icon-edit icon-2x"></i></a>                     
                 </td>
-                <td>
+                <td class="vertical-centered">
                     <a href="#" data-bind="click: $parent.deleteUser" title="Löschen" class="no-underline"><i class="icon-remove icon-2x"></i></a>
                 </td>
             </tr>
         </tbody>
     </table>
+    </div>
+    </div>
+
     <div class="navbar navbar-fixed-bottom">
         <div class="navbar-inner">
             <div class="navbar-panel navbar-text pull-right">

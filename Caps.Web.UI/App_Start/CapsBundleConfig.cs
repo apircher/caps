@@ -22,16 +22,16 @@ namespace Caps.Web.UI.App_Start
                 //.Include("~/Scripts/knockout.custom-bindings.js")
                 //.Include("~/Scripts/bootstrap.min.js")
                 .Include("~/Scripts/q.min.js")
-                .Include("~/Scripts/breeze.debug.js")
+                .Include("~/Scripts/breeze.js")
               );
 
             bundles.Add(
               new StyleBundle("~/Content/css")
                 .Include("~/Content/bootstrap.min.css")
                 .Include("~/Content/font-awesome.min.css")
+                .Include("~/Content/bootstrap-responsive.min.css")
                 .Include("~/Content/durandal.css")
                 .Include("~/Content/app.css")
-                .Include("~/Content/bootstrap-responsive.min.css")
                 .Include("~/Content/ie10mobile.css")
               );
         }

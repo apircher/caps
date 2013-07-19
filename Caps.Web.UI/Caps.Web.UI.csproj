@@ -278,9 +278,9 @@
     <Content Include="Scripts\durandal\viewLocator.js" />
     <Content Include="Scripts\durandal\viewModelBinder.js" />
     <Content Include="Scripts\durandal\widget.js" />
-    <None Include="Scripts\jquery-2.0.2.intellisense.js" />
-    <Content Include="Scripts\jquery-2.0.2.js" />
-    <Content Include="Scripts\jquery-2.0.2.min.js" />
+    <None Include="Scripts\jquery-2.0.3.intellisense.js" />
+    <Content Include="Scripts\jquery-2.0.3.js" />
+    <Content Include="Scripts\jquery-2.0.3.min.js" />
     <Content Include="Scripts\knockout-2.3.0.debug.js" />
     <Content Include="Scripts\knockout-2.3.0.js" />
     <Content Include="Scripts\knockout.custom-bindings.js" />
@@ -305,7 +305,7 @@
     <Content Include="Views\Caps\Index.cshtml" />
     <Content Include="Views\Caps\_splash.cshtml" />
     <Content Include="App\infrastructure\validation.js" />
-    <Content Include="Scripts\jquery-2.0.2.min.map" />
+    <Content Include="Scripts\jquery-2.0.3.min.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

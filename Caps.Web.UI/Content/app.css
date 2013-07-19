@@ -39,7 +39,9 @@
     display: inline-block;
     font-size: 5em;
     color:#fff;
-    margin:25px 0 35px;
+    padding:25px 0 35px;
+    min-height:1em;
+    box-sizing:border-box;
 }
 
 .splash-footer {
@@ -67,19 +69,13 @@
     padding-top:10px;
 }
 
-.bottom-fixed-navbar-container {
-    padding-bottom:50px;
-}
-
 .navbar-fixed-top .navbar-inner {
-    padding-left: 1.5em;
+    padding-left: 15px;
     padding-right: 15px;
 }
 
-.navbar-fixed-top .icon-home {
-    font-size: 18px
-}
-.navbar-fixed-top .loader {
+.navbar-fixed-bottom .navbar-inner {
+    padding-right: 15px;
 }
 
 .navbar-panel {
@@ -103,6 +99,10 @@
     padding-top: 10px;
 }
 
+.bottom-fixed-navbar-container {
+    padding-bottom:50px;
+}
+
 .loader {
     margin: 6px 8px 4px 8px;
     visibility: hidden;
@@ -110,11 +110,6 @@
 
 .loader.active {
     visibility: visible;
-}
-
-.legend-horizontal {
-    margin:40px 0 20px 180px;
-    width:220px;
 }
 
 a.no-underline,
@@ -144,6 +139,10 @@ a.no-underline:hover {
     margin-left:-.75em;
 }
 
+.table .vertical-centered {
+    vertical-align:middle;
+}
+
 @media (max-width: 979px) {
     .page-host {
         top: 0;
@@ -167,9 +166,27 @@ a.no-underline:hover {
 }
 
 
-@media (max-width: 480px) {
-    .legend-horizontal {
-        margin:20px 0 20px;
-        width:100%;
-    }   
+@media (max-width: 767px) {
+    .full-width-on-phone {
+        position:relative;
+        margin-left:-20px;
+        margin-right:-20px;
+    }
+        .full-width-on-phone .table tr td:first-child {
+            padding-left:20px;
+        }
+        .full-width-on-phone .table tr td:last-child {
+            padding-right:20px;
+        }
+
+
+    .navbar-panel {
+        margin: 0 8px 0 0;
+    }
+    .navbar-panel.pull-right {
+        margin: 0 0 0 8px;
+    }
+    .navbar-fixed-bottom .navbar-inner {
+        padding-right: 15px;
+    }
 }
