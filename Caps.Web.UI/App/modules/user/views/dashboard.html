@@ -2,7 +2,7 @@
     
     <div class="full-width-on-phone">
     <div class="row-fluid">
-        <table class="table table-striped">
+        <table class="table table-striped table-fullheight">
         <thead class="hidden-phone">
             <tr>
                 <th></th>
@@ -17,13 +17,16 @@
             <tr>
                 <td class="vertical-centered">
                     <a data-bind="attr: { href: '#/users/detail/' + userName() }" class="no-underline">
-                        <i class="icon-user icon-2x" data-bind="css: { 'user-online': isOnline(), 'user-offline': !isOnline() }, attr: { title: isOnline() ? 'Online' : 'Offline' }"></i>
+                    <i class="icon-user icon-2x" data-bind="css: { 'user-online': isOnline(), 'user-offline': !isOnline() }, attr: { title: isOnline() ? 'Online' : 'Offline' }"></i>
                     </a>
                 </td>
                 <td>
                     <a data-bind="text: userName, attr: { href: '#/users/detail/' + userName() }"></a>
                     <div class="visible-phone">
                         <span data-bind="text: email"></span>
+                    </div>
+                    <div data-bind="visible: isLockedOut" class="cell-warning">
+                        <i class="icon-warning-sign"></i> <!-- ko text: lastLockoutDateFormatted --><!-- /ko --> gesperrt.
                     </div>
                 </td>
                 <td class="hidden-phone"><span data-bind="text: email"></span></td>

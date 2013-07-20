@@ -110,7 +110,7 @@
 #nav-user a.nav-btn:visited,
 #nav-user a.nav-btn:hover {
     padding:9px 0 0px;
-    font-size:90%;
+    font-size:85%;
 }
 
 .bottom-fixed-navbar-container {
@@ -154,8 +154,29 @@ a.no-underline:hover {
     margin-left:-.75em;
 }
 
+.table.table-fullheight {
+    margin-bottom:0;
+}
+
 .table .vertical-centered {
     vertical-align:middle;
+}
+
+.table td .cell-warning {
+    color:red;
+    display:inline-block;
+}
+
+.icon-stack2 {
+    display:inline-block;
+    position:relative;
+}
+
+.icon-overlay {
+    position:absolute;
+    right:-3px;
+    bottom:-1px;
+    color:red;
 }
 
 .error-summary {
@@ -173,6 +194,10 @@ a.no-underline:hover {
     line-height:20px;
     padding:5px 0;
     margin:0;
+}
+
+p.message > strong {
+    font-weight:bold;
 }
 
 @media (max-width: 979px) {
@@ -237,6 +262,10 @@ a.no-underline:hover {
     .messageBox {
         min-width: 300px;
         max-width: 100%;
+    }
+
+    .table td .cell-warning {
+        display:block;
     }
 }
 
