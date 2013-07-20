@@ -37,21 +37,17 @@
 
 .splash-spinner {
     text-align: center;
-    display: inline-block;
+    display: block;
     color:#fff;
-    padding:20px 0 20px;
-    box-sizing:border-box;
+    margin:20px 0 20px;
 }
 
 .splash-footer {
-    font-size:1.75em;
+    font-size:1.5em;
     line-height: 1.5em;
     -webkit-text-shadow: rgba(0, 0, 0, 0.3) 0px 0px 5px;
     text-shadow: rgba(0, 0, 0, 0.3) 0px 0px 5px;
     max-width:none;
-}
-
-.brand {  
 }
 
 #login-form {
@@ -98,6 +94,25 @@
     padding-top: 10px;
 }
 
+#nav-user li {
+    float:left;
+}
+    #nav-user li a {
+        max-width: 120px;
+        overflow:hidden;
+        -ms-text-overflow: ellipsis;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+    }
+
+#nav-user a.nav-btn,
+#nav-user a.nav-btn:active,
+#nav-user a.nav-btn:visited,
+#nav-user a.nav-btn:hover {
+    padding:9px 0 0px;
+    font-size:90%;
+}
+
 .bottom-fixed-navbar-container {
     padding-bottom:50px;
 }
@@ -141,6 +156,23 @@ a.no-underline:hover {
 
 .table .vertical-centered {
     vertical-align:middle;
+}
+
+.error-summary {
+    display:inline-block;
+    vertical-align:middle;
+    background:red;
+    color:#fff;
+    font-weight:bold;
+    padding:5px 12px;
+    cursor:default;
+    line-height:20px;
+}
+
+.form-status p {
+    line-height:20px;
+    padding:5px 0;
+    margin:0;
 }
 
 @media (max-width: 979px) {
@@ -196,9 +228,21 @@ a.no-underline:hover {
     .navbar .nav {
         margin-right:0px;
     }
+    
+    .loader {
+        margin-left:0;
+        margin-right:0;
+    }
 
     .messageBox {
         min-width: 300px;
         max-width: 100%;
+    }
+}
+
+@media (max-width: 320px) {
+
+    #nav-user li a {
+        max-width: 80px;
     }
 }

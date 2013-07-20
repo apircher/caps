@@ -36,7 +36,8 @@ requirejs.config({
 });
 
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authentication', 'infrastructure/antiForgeryToken',
-    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'knockout.custom-bindings', 'knockout.extenders', 'infrastructure/validation'],
+    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'knockout.custom-bindings', 'knockout.extenders', 'infrastructure/validation',
+    '../Scripts/safari.cancelZoom'],
     function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $) {
 
         //>>excludeStart("build", true);

@@ -18,6 +18,45 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     };
 
     //
+    // Bootstrap Tooltip Binding.
+    //
+    ko.bindingHandlers.tooltip = {
+        update: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var options = valueAccessor() || {},
+                $elem = $(elem),
+                initialized = $elem.data('tooltip:initialized');
+
+            if (initialized) {
+                destroyTooltip();
+                ko.utils.domNodeDisposal.removeDisposeCallback(elem, destroyTooltip);
+            }
+
+            if (options.title) {
+                var title = ko.unwrap(options.title);
+                if (title && title.length) {
+                    $elem.tooltip(options);
+                    $elem.data('tooltip:initialized', true);
+                    ko.utils.domNodeDisposal.addDisposeCallback(elem, destroyTooltip);
+                }
+            }
+
+            function destroyTooltip() {
+                $elem.tooltip('destroy');
+            }
+        }
+    };
+
+    //
+    // CancelZoom Binding. (Cancel Mobile Safari zoom in on input fields)
+    //
+    ko.bindingHandlers.cancelZoom = {
+        init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var options = valueAccessor(), $elem = $(elem);
+            $elem.cancelZoom();
+        }
+    };
+
+    //
     // Editor Templates
     //
     ko.bindingHandlers.composeEditor = {

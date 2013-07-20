@@ -16,12 +16,10 @@
                     <i class="icon-cog icon-2x icon-spin"></i>
                 </div>
 
-                <div class="navbar-panel navbar-text pull-right">
-                    <!-- ko if: authentication.isAuthenticated --> 
-                    <strong><a data-bind="text: authentication.user().userName()" href="/#profile"></a></strong>
-                    <a href="#" data-bind="click: logOff, clickBubble: false" title="Abmelden"><i class="icon-fixed-width icon-off"></i></a>
-                    <!-- /ko -->
-                </div>
+                <ul id="nav-user" class="nav pull-right" data-bind="visible: authentication.isAuthenticated">
+                    <li><a href="/#profile"><strong data-bind="text: authentication.user().userName()"></strong></a></li>
+                    <li><a href="#" class="nav-btn" data-bind="click: logOff, clickBubble: false" title="Abmelden"><i class="icon-fixed-width icon-off icon-2x"></i></a></li>                    
+                </ul>
 
                 <div class="nav-collapse collapse">
                     <ul class="nav pull-right" data-bind="foreach: navigationItems">
