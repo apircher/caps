@@ -1,8 +1,10 @@
-﻿define(['plugins/dialog', 'knockout'], function (dialog, ko) {
+﻿define(['plugins/dialog', 'knockout', 'authentication'], function (dialog, ko, authentication) {
 
     var SetPasswordDialog = function () {
         this.newPassword = ko.observable('').extend({ required: true, minLength: 6 });
         ko.validation.group(this);
+
+        this.minRequiredPasswordLength = authentication.metadata.minRequiredPasswordLength;
     };
 
     SetPasswordDialog.prototype.ok = function () {

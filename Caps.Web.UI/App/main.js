@@ -16,6 +16,7 @@ requirejs.config({
 
         'breeze': '../Scripts/breeze.debug',
         'Q': '../Scripts/q',
+        'toastr': '../Scripts/toastr',
 
         'entityManagerProvider': 'infrastructure/entityManagerProvider',
         'authentication': 'infrastructure/authentication',

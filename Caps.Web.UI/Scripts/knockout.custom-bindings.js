@@ -62,13 +62,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     ko.bindingHandlers.composeEditor = {
         prepareOptions: function (valueAccessor) {
             var options = valueAccessor() || {},
-                type = options.type || 'input',
-                css = {};
-
-            css.autofocus = options.autofocus || false;
-            if (options.css != undefined && typeof options.css === 'string') {
-                if (options.css.length > 0) css[options.css] = true;
-            }
+                type = options.type || 'input';
 
             return {
                 view: 'views/editorTemplates/' + type + 'Template',
@@ -79,7 +73,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
                     popoverContainer: '',
                     popoverPlacement: 'right',
                     popoverTrigger: 'focus',
-                    css: css,
+                    css: {},
                     placeholder: ''
                 }, options)
             };

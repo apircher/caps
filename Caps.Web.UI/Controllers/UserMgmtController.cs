@@ -52,6 +52,8 @@ namespace Caps.Web.UI.Controllers
             if (user == null)
                 return Request.CreateResponse(HttpStatusCode.NotFound);
 
+            if (user.IsLockedOut)  user.UnlockUser();
+
             var randomPassword = user.ResetPassword();
             user.ChangePassword(randomPassword, model.NewPassword);
             return Request.CreateResponse(HttpStatusCode.OK);

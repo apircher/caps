@@ -1,6 +1,6 @@
 ﻿define([
-    '../datacontext', '../entities', 'knockout', 'Q', 'plugins/dialog', 'modules/user/module', '../commands/deleteUser', 'durandal/app', 'moment', './setPasswordDialog', 'authentication'
-], function (datacontext, model, ko, Q, dialog, module, deleteUserCommand, app, moment, SetPasswordDialog, authentication) {
+    '../datacontext', '../entities', 'knockout', 'Q', 'plugins/dialog', 'modules/user/module', '../commands/deleteUser', 'durandal/app', 'moment', './setPasswordDialog', 'authentication', 'toastr', 'jquery'
+], function (datacontext, model, ko, Q, dialog, module, deleteUserCommand, app, moment, SetPasswordDialog, authentication, toastr, $) {
 
     var vm = {
         user: ko.observable(),
@@ -62,10 +62,6 @@
             });
     }
     function changePassword() {
-        if (vm.user().isLockedOut()) {
-            dialog.showMessage('Das Passwort kann erst festgelegt werden, nachdem die Sperrung des Benutzers aufgehoben wurde.', 'Benutzer gesperrt');
-            return;
-        }
         SetPasswordDialog.show()
             .then(function (newPassword) {
                 if (newPassword) setPassword(newPassword);
@@ -74,6 +70,17 @@
     function setPassword(newPassword) {
         datacontext.setPassword(vm.userName(), newPassword)
             .then(refreshUser)
+            .then(function () {
+                var width = $(window).width();
+                var onPhone = width <= 480;
+                toastr.success('Das Passwort wurde erfolgreich geändert.', 'Passwort geändert', {
+                    positionClass: onPhone ? 'toast-bottom-full-width' : 'toast-bottom-right',
+                    fadeIn: 300,
+                    fadeOut: 1000,
+                    timeOut: 5000,
+                    extendedTimeOut: 1000
+                });
+            })
             .fail(function (err) {
                 dialog.showMessage('Das Passwort konnte nicht festgelegt werden. Versuche es in einigen Minuten nochmal. Melde das Problem, wenn es weiterhin auftritt.', 'Nicht erfolgreich');
             });
