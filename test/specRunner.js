@@ -13,7 +13,7 @@ require.config({
         'knockout.custom-bindings': '../Scripts/knockout.custom-bindings',
         'knockout.extenders': '../Scripts/knockout.extenders',
         'bootstrap': '../Scripts/bootstrap',
-        'jquery': '../Scripts/jquery-2.0.2',
+        'jquery': '../Scripts/jquery-2.0.3',
         'Q': '../Scripts/q',
         'moment': '../Scripts/moment'
     },
