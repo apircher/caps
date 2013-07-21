@@ -22,10 +22,10 @@
                     <p data-bind="visible: user().roles().length">Rollen: <em><!-- ko foreach: user().roles --><span data-bind="text: $data + (($index < $parent.user().roles().length) ? ', ' : '')"></span><!-- /ko --></em></p>                                    
                 </div>
                 <div class="span6">
-                    <p>Erstellt: <span data-bind="attr: { title: moment(user().creationDate()).format('LLLL') }, text: moment(user().creationDate()).fromNow()"></span></p>      
-                    <p data-bind="visible: user().hasEverLoggedIn">Letzte Anmeldung: <em data-bind="attr: { title: moment(user().lastLoginDate()).format('LLLL') }, text: user().lastLoginDateFormatted()"></em></p>  
-                    <p data-bind="visible: user().hasEverLoggedIn">Zuletzt aktiv: <em data-bind="attr: { title: moment(user().lastActivityDate()).format('LLLL') }, text: user().lastActivityDateFormatted"></em></p>  
-                    <p data-bind="visible: user().hasEverChangedPassword">Passwort-Änderung: <em data-bind="attr: { title: moment(user().lastPasswordChangedDate()).format('LLLL') }, text: user().lastPasswordChangedDateFormatted"></em></p>
+                    <p>Erstellt: <span data-bind="attr: { title: moment(user().creationDate()).format('LLLL') }, text: moment(user().creationDate()).fromNow(), textTimeout: { interval: 30000, observable: user().creationDate }"></span></p>      
+                    <p data-bind="visible: user().hasEverLoggedIn">Letzte Anmeldung: <em data-bind="    attr: { title: moment(user().lastLoginDate()).format('LLLL') }, text: user().lastLoginDateFormatted(), textTimeout: { interval: 30000, observable: user().lastLoginDate }"></em></p>  
+                    <p data-bind="visible: user().hasEverLoggedIn">Zuletzt aktiv: <em data-bind="    attr: { title: moment(user().lastActivityDate()).format('LLLL') }, text: user().lastActivityDateFormatted, textTimeout: { interval: 30000, observable: user().lastActivityDate }"></em></p>  
+                    <p data-bind="visible: user().hasEverChangedPassword">Passwort-Änderung: <em data-bind="    attr: { title: moment(user().lastPasswordChangedDate()).format('LLLL') }, text: user().lastPasswordChangedDateFormatted, textTimeout: { interval: 30000, observable: user().lastPasswordChangedDate }"></em></p>
                     <p data-bind="visible: !user().hasEverLoggedIn()">Noch nie angemeldet</p>
                 </div>
 

@@ -4,7 +4,8 @@
         app = require('durandal/app'),
         system = require('durandal/system'),
         router = require('plugins/router'),
-        ko = require('knockout');
+        ko = require('knockout'),
+        $ = require('jquery');
 
     var userName = ko.observable().extend({ required: true }),
         password = ko.observable().extend({ required: true }),
@@ -31,6 +32,13 @@
         password(null);
         rememberMe(false);
     }
+
+    function setFocus() {
+        var loginForm = $('#login-form');
+        $('.autofocus', loginForm).each(function () {
+            $(this).focus();
+        });
+    }
     
     var vm = {
         userName: userName,
@@ -43,10 +51,10 @@
         userNameFocused: userNameFocused,
         activate: function () {
             reset();
-            userNameFocused(true);
+            setFocus();
         },
         compositionComplete: function (view) {
-            userNameFocused(true);
+            setFocus();
         }
     };
 

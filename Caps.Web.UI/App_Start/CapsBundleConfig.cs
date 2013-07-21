@@ -12,19 +12,7 @@ namespace Caps.Web.UI.App_Start
         {
             bundles.IgnoreList.Clear();
             AddDefaultIgnorePatterns(bundles.IgnoreList);
-
-            bundles.Add(
-              new ScriptBundle("~/scripts/vendor")
-                .Include("~/Scripts/jquery-{version}.js")
-                //.Include("~/Scripts/knockout-{version}.js")
-                //.Include("~/Scripts/knockout.validation.js")
-                //.Include("~/Scripts/knockout.validation.de-DE.js")
-                //.Include("~/Scripts/knockout.custom-bindings.js")
-                //.Include("~/Scripts/bootstrap.min.js")
-                .Include("~/Scripts/q.min.js")
-                .Include("~/Scripts/breeze.js")
-              );
-
+            
             bundles.Add(
               new StyleBundle("~/Content/css")
                 .Include("~/Content/bootstrap.min.css")

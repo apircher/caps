@@ -27,7 +27,7 @@
                     </div>
                 </td>
                 <td class="hidden-phone"><span data-bind="text: email"></span></td>
-                <td class="hidden-phone"><span data-bind="text: lastActivityDateFormatted"></span></td>
+                <td class="hidden-phone"><span data-bind="text: lastActivityDateFormatted, textTimeout: { interval: 30000, observable: lastActivityDate }"></span></td>
                 <td class="vertical-centered">
                     <a data-bind="attr: { href: '#/users/edit/' + userName() }" title="Bearbeiten" class="no-underline"><i class="icon-edit icon-2x"></i></a>                     
                 </td>

@@ -41,8 +41,14 @@
         </div>
         
         <div class="form-actions full-width-on-phone full-height">
+            <div class="pull-right">
+            <!-- ko if: !user().isValid() -->
+            <!-- ko validationSummary: { entity: user() } --><!-- /ko -->
+            <!-- /ko -->
+            </div>
+
             <button type="submit" class="btn btn-primary" data-bind="enable: user.isDirty()">Speichern</button> 
-            <a href="#" data-bind="click: cancel" class="btn">Abbrechen</a>            
+            <a href="#" data-bind="click: cancel" class="btn">Abbrechen</a>  
         </div>
     </form>
 

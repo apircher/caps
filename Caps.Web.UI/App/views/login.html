@@ -9,7 +9,7 @@
     <form data-bind="submit: logon, enable: !isBusy()">            
         <div class="row">
             <div class="span6 offset3">
-            <!-- ko composeEditor: { field: userName, title: 'Benutzername', valueUpdate: 'afterkeydown', popoverTrigger: 'hover', popoverPlacement: 'bottom', css: 'span6' } --><!-- /ko -->    
+            <!-- ko composeEditor: { field: userName, title: 'Benutzername', valueUpdate: 'afterkeydown', popoverTrigger: 'hover', popoverPlacement: 'bottom', css: 'span6 autofocus' } --><!-- /ko -->    
             </div>
         </div> 
 
@@ -28,13 +28,16 @@
         <div class="row full-width-on-phone">
             <div class="span6 offset3">
                 <div class="form-actions">
-                    <button class="btn btn-primary btn-medium pull-right" data-bind="click: logon, enable: isValid() && !isBusy()">Und los</button>
-                    <div class="error-summary" data-bind="visible: !isValid(), tooltip: { title: errors().length == 1 ? 'Noch 1 Eingabe ungültig' : 'Noch ' + errors().length + ' Eingaben ungültig', placement: 'right' }">
-                        <span data-bind="text: errors().length"></span>
+                    <div class="pull-right">
+                        <!-- ko if: !isValid() -->
+                        <!-- ko validationSummary: { entity: $data } --><!-- /ko -->
+                        <!-- /ko -->
+
+                        <div class="form-status" data-bind="visible: isValid() && isBusy()">
+                            <p><i class="icon-fixed-width icon-cog icon-spin"></i> Wird geprüft...</p>
+                        </div>
                     </div>
-                    <div class="form-status" data-bind="visible: isValid() && isBusy()">
-                        <p><i class="icon-fixed-width icon-cog icon-spin"></i> Wird geprüft...</p>
-                    </div>
+                    <button class="btn btn-primary btn-medium" data-bind="click: logon, enable: isValid() && !isBusy()">Und los</button>
                 </div>
             </div>
         </div>

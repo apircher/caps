@@ -64,18 +64,17 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
             var options = valueAccessor() || {},
                 type = options.type || 'input';
 
+            var defaultOptions = {
+                field: null,
+                title: '',
+                valueUpdate: '',
+                css: {},
+                placeholder: ''
+            };
+
             return {
                 view: 'views/editorTemplates/' + type + 'Template',
-                model: $.extend({
-                    field: null,
-                    title: '',
-                    valueUpdate: '',
-                    popoverContainer: '',
-                    popoverPlacement: 'right',
-                    popoverTrigger: 'focus',
-                    css: {},
-                    placeholder: ''
-                }, options)
+                model: $.extend(defaultOptions, options)
             };
         },
         init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -87,6 +86,82 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
         }
     };
     ko.virtualElements.allowedBindings.composeEditor = true;
+
+    //
+    // Validation Summary
+    //
+    ko.bindingHandlers.validationSummary = {
+        prepareOptions: function (valueAccessor) {
+            var value = valueAccessor() || {},
+                entity = value.entity || {},
+                errors = entity.errors;
+
+            var defaultOptions = {
+                title: errors().length == 1 ? 'Noch 1 Eingabe ungültig' : 'Noch ' + errors().length + ' Eingaben ungültig'
+            };
+
+            return {
+                view: 'views/partial/errorSummary',
+                model: $.extend(defaultOptions, value)
+            };
+        },
+        init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var newValueAccessor = function () {
+                return ko.bindingHandlers.validationSummary.prepareOptions(valueAccessor);
+            };
+            ko.bindingHandlers.compose.init(elem, newValueAccessor, allBindingsAccessor, viewModel, bindingContext);
+        },
+        update: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var newValueAccessor = function () {
+                return ko.bindingHandlers.validationSummary.prepareOptions(valueAccessor);
+            };
+            ko.bindingHandlers.compose.update(elem, newValueAccessor, allBindingsAccessor, viewModel, bindingContext);
+        }
+    };
+    ko.virtualElements.allowedBindings.validationSummary = true;
+
+    //
+    // Periodic Update of displayed text
+    //
+    ko.bindingHandlers.textTimeout = {
+        clearInterval: function (elem) {
+            var $elem = $(elem),
+              handle = $elem.data('textTimeoutInterval');
+
+            if (handle) {
+                window.clearInterval(handle);
+                $elem.data('textTimeoutInterval', null);
+            }
+        },
+        configureUpdate: function (elem, options, allBindingsAccessor) {
+            var $elem = $(elem),
+                text = allBindingsAccessor().text;
+
+            ko.bindingHandlers.textTimeout.clearInterval(elem);
+                        
+            if (options.interval && text) {
+                var handle = window.setInterval(updateText, options.interval);
+                $elem.data('textTimeoutInterval', handle);
+            }
+
+            function updateText() {
+                options.observable.valueHasMutated();
+            }
+        },
+        init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var valueOrObservable = valueAccessor(),
+                value = ko.unwrap(valueOrObservable);
+            ko.bindingHandlers.textTimeout.configureUpdate(elem, value, allBindingsAccessor);
+            ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {
+                ko.bindingHandlers.textTimeout.clearInterval(elem);
+            });
+        },
+        update: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var valueOrObservable = valueAccessor(),
+                value = ko.unwrap(valueOrObservable);
+            ko.bindingHandlers.textTimeout.configureUpdate(elem, value, allBindingsAccessor);
+        }
+    };
     
     //
     // Unique Ids for Dom-Elements.
