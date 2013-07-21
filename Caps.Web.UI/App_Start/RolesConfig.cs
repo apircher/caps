@@ -19,7 +19,7 @@ namespace Caps.Web.UI.App_Start
                 if (!Roles.RoleExists(roleName)) Roles.CreateRole(roleName);
         }
 
-        public static void EnsureUserInRole(String roleName, String defaultUserName = "admin", String defaultPassword = "caps234")
+        public static void EnsureUserInRole(String roleName, String defaultUserName = "admin", String defaultPassword = "caps234", String email = "admin@your-mail.server")
         {
             EnsureRoleExists(roleName);
 
@@ -27,6 +27,9 @@ namespace Caps.Web.UI.App_Start
             {
                 var user = Membership.CreateUser(defaultUserName, defaultPassword);
                 Roles.AddUserToRole(user.UserName, roleName);
+
+                user.Email = email;
+                Membership.UpdateUser(user);
             }
         }
     }
