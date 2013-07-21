@@ -45,7 +45,7 @@ namespace Caps.Web.UI.Controllers
                     return Json(new AuthenticatedUserModel());
 
                 var roles = Roles.GetRolesForUser(User.Identity.Name);
-                return Json(new AuthenticatedUserModel(true, user.UserName, roles));
+                return Json(new AuthenticatedUserModel(user, roles));
             }
         }
 
@@ -54,29 +54,30 @@ namespace Caps.Web.UI.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = Membership.GetUser(model.UserName, false);
+                if (user == null)
+                    return Json(new LogonResponseModel("ERROR_USER_OR_PASSWORD_INVALID"));
+
                 if (Membership.ValidateUser(model.UserName, model.Password))
                 {
                     FormsAuthentication.SetAuthCookie(model.UserName, model.RememberMe);
-                    return Json(new LogonResponseModel(true, model.UserName));
+                    return Json(new LogonResponseModel(user));
                 }
                 else
                 {
-                    var user = Membership.GetUser(model.UserName, false);
-                    if (user != null)
+                    if (user.IsLockedOut)
                     {
-                        if (user.IsLockedOut)
+                        if ((DateTime.Now - user.LastLockoutDate).TotalMinutes >= GetLockoutPeriod())
                         {
-                            if ((DateTime.Now - user.LastLockoutDate).TotalMinutes >= GetLockoutPeriod())
-                            {
-                                user.UnlockUser();
-                                return Logon(model);
-                            }
-
-                            return Json(new LogonResponseModel("ERROR_LOCKED"));
+                            user.UnlockUser();
+                            return Logon(model);
                         }
-                        if (!user.IsApproved)
-                            return Json(new LogonResponseModel("ERROR_NOTAPPROVED"));
-                    }                    
+                        return Json(new LogonResponseModel("ERROR_LOCKED"));
+                    }
+
+                    if (!user.IsApproved)
+                        return Json(new LogonResponseModel("ERROR_NOTAPPROVED"));
+
                     return Json(new LogonResponseModel("ERROR_USER_OR_PASSWORD_INVALID"));
                 }
             }

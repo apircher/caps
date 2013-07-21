@@ -1,3 +1,5 @@
-﻿<div class="error-summary" data-bind="tooltip: { title: title, placement: 'left' }">
-    <!-- ko text: entity.errors().length --><!-- /ko -->
+﻿<div class="error-summary-container" data-bind="tooltip: { title: title, placement: 'left', trigger: 'hover' }">
+    <div class="error-summary">
+        <!-- ko text: entity.errors().length --><!-- /ko -->
+    </div>
 </div>

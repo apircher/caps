@@ -27,7 +27,7 @@
     
     function getUser() {
         return Q.when($.ajax('/Caps/GetCurrentUser', { method: 'post' }))
-            .then(function (data) { user(new UserModel(data.IsAuthenticated, data.UserName, data.Roles)); })
+            .then(function (data) { user(new UserModel(data.IsAuthenticated, data.UserName, data.Roles, data)); })
             .fail(function (error) { system.log('getCurrentUser failed: ' + error.message); });
     }
 
@@ -80,7 +80,8 @@
     }
 
     function changePassword(oldPassword, newPassword) {
-        return Q.when($.ajax('/Caps/ChangePassword', { method: 'post', data: { OldPassword: oldPassword, NewPassword: newPassword } }));
+        return Q.when($.ajax('/Caps/ChangePassword', { method: 'post', data: { OldPassword: oldPassword, NewPassword: newPassword } }))
+            .then(getUser);
     }
 
     function logonResponseToDisplayMessage(response) {
@@ -146,13 +147,31 @@
         return deferred.promise;
     };
 
+    function ExpirationTicket(expiration) {
+        this.created = new Date();
+        this.expiration = expiration || false;
+    }
+
+    ExpirationTicket.prototype.isExpired = function () {
+        if (!this.expiration) return false;
+        return moment(this.created).add('seconds', this.expiration) < new Date();
+    };
+
     // User ViewModel
-    function UserModel(isAuthenticated, userName, roles, expiration) {
+    function UserModel(isAuthenticated, userName, roles, data, expiration) {
+        var self = this;
+        data = data || {};
+
+        this.expirationTicket = new ExpirationTicket(expiration);
         this.isAuthenticated = ko.observable(isAuthenticated || false);
         this.userName = ko.observable(userName || '');
         this.roles = ko.observable(roles || []);
-        this.created = new Date();
-        this.expiration = expiration || false;
+        this.creationDate = ko.observable(data.CreationDate || new Date());
+        this.lastPasswordChangedDate = ko.observable(data.LastPasswordChangedDate);
+
+        this.hasEverChangedPassword = ko.computed(function () {
+            return self.lastPasswordChangedDate() > self.creationDate();
+        });
 
         this.isInRole = function (roleName) {
             for (var i = 0; i < this.roles().length; i++) {
@@ -172,8 +191,7 @@
     }
 
     UserModel.prototype.isExpired = function () {
-        if (!this.expiration) return false;
-        return moment(this.created).add('seconds', this.expiration) < new Date();
+        return this.expirationTicket.isExpired();
     };
 
     return {

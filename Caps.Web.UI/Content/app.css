@@ -182,6 +182,10 @@ a.no-underline:hover {
     color:red;
 }
 
+.error-summary-container {
+    display:inline-block;
+    padding-left: 10px;
+}
 .error-summary {
     display:inline-block;
     vertical-align:middle;

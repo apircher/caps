@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Security;
 
 namespace Caps.Web.UI.Models
 {
@@ -27,16 +28,23 @@ namespace Caps.Web.UI.Models
         public AuthenticatedUserModel()
         {
         }
-        public AuthenticatedUserModel(bool isAuthenticated, String userName, String[] roles = null)
+        public AuthenticatedUserModel(MembershipUser user, String[] roles = null)
         {
-            IsAuthenticated = isAuthenticated;
-            UserName = userName;
+            if (user == null)
+                throw new ArgumentNullException("The parameter user may not be null");
+
+            IsAuthenticated = true;
+            UserName = user.UserName;
             Roles = roles ?? new String[0];
+            CreationDate = user.CreationDate;
+            LastPasswordChangedDate = user.LastPasswordChangedDate;
         }
 
         public bool IsAuthenticated { get; set; }
         public String UserName { get; set; }
         public String[] Roles { get; set; }
+        public DateTime CreationDate { get; set; }
+        public DateTime LastPasswordChangedDate { get; set; }
     }
 
     public class LogonResponseModel : AuthenticatedUserModel
@@ -44,8 +52,8 @@ namespace Caps.Web.UI.Models
         public LogonResponseModel()
         {
         }
-        public LogonResponseModel(bool isAuthenticated, String userName)
-            : base(isAuthenticated, userName)
+        public LogonResponseModel(MembershipUser user)
+            : base(user)
         {
         }
         public LogonResponseModel(String error)

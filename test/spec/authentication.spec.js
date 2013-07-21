@@ -171,15 +171,15 @@ define(['infrastructure/authentication', 'plugins/router', 'moment'], function (
                 expect(user.isExpired()).toBe(false);
                 user.created = moment().subtract('minutes', 60);
                 expect(user.isExpired()).toBe(false);
-                expect(user.expiration).toBe(false);
+                expect(user.expirationTicket.expiration).toBe(false);
             });
 
             it('does expire when a positive amount of seconds is provided', function () {
-                var user = new authentication.UserModel(true, 'John Doe', ['Administrator'], 60);
+                var user = new authentication.UserModel(true, 'John Doe', ['Administrator'], {}, 60);
                 expect(user.isExpired()).toBe(false);
-                user.created = moment().subtract('seconds', 59);
+                user.expirationTicket.created = moment().subtract('seconds', 59);
                 expect(user.isExpired()).toBe(false);
-                user.created = moment().subtract('seconds', 61);
+                user.expirationTicket.created = moment().subtract('seconds', 61);
                 expect(user.isExpired()).toBe(true);
             });
 

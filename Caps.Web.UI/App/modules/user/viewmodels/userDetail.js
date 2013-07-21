@@ -1,6 +1,6 @@
 ﻿define([
-    '../datacontext', '../entities', 'knockout', 'Q', 'plugins/dialog', 'modules/user/module', '../commands/deleteUser', 'durandal/app', 'moment', './setPasswordDialog', 'authentication', 'toastr', 'jquery'
-], function (datacontext, model, ko, Q, dialog, module, deleteUserCommand, app, moment, SetPasswordDialog, authentication, toastr, $) {
+    '../datacontext', '../entities', 'knockout', 'Q', 'plugins/dialog', 'modules/user/module', '../commands/deleteUser', 'durandal/app', 'moment', './setPasswordDialog', 'authentication', 'toastr', 'infrastructure/screen'
+], function (datacontext, model, ko, Q, dialog, module, deleteUserCommand, app, moment, SetPasswordDialog, authentication, toastr, screen) {
 
     var vm = {
         user: ko.observable(),
@@ -71,14 +71,8 @@
         datacontext.setPassword(vm.userName(), newPassword)
             .then(refreshUser)
             .then(function () {
-                var width = $(window).width();
-                var onPhone = width <= 480;
                 toastr.success('Das Passwort wurde erfolgreich geändert.', 'Passwort geändert', {
-                    positionClass: onPhone ? 'toast-bottom-full-width' : 'toast-bottom-right',
-                    fadeIn: 300,
-                    fadeOut: 1000,
-                    timeOut: 5000,
-                    extendedTimeOut: 1000
+                    positionClass: screen.isPhone() ? 'toast-bottom-full-width' : 'toast-bottom-right'
                 });
             })
             .fail(function (err) {

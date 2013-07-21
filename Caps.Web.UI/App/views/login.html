@@ -1,45 +1,48 @@
-﻿<div id="login-form" class="app-page">        
+﻿<div id="login-form" class="app-page"> 
     
-    <div class="row">
-        <div class="span6 offset3">
-            <h3>Anmelden</h3>
-        </div>
-    </div>
-
-    <form data-bind="submit: logon, enable: !isBusy()">            
+    <div class="container">
+    
         <div class="row">
             <div class="span6 offset3">
-            <!-- ko composeEditor: { field: userName, title: 'Benutzername', valueUpdate: 'afterkeydown', popoverTrigger: 'hover', popoverPlacement: 'bottom', css: 'span6 autofocus' } --><!-- /ko -->    
-            </div>
-        </div> 
-
-        <div class="row">
-            <div class="span6 offset3">
-            <!-- ko composeEditor: { field: password, title: 'Passwort', valueUpdate: 'afterkeydown', type: 'password', popoverTrigger: 'hover', popoverPlacement: 'bottom', css: 'span6' } --><!-- /ko -->  
+                <h3>Anmelden</h3>
             </div>
         </div>
 
-        <div class="row">
-            <div class="span6 offset3">
-                <!-- ko composeEditor: { field: rememberMe, title: 'Angemeldet bleiben', type: 'checkbox' } --><!-- /ko -->
-            </div>
-        </div>
+        <form data-bind="submit: logon, enable: !isBusy()">            
+            <div class="row">
+                <div class="span6 offset3">
+                <!-- ko composeEditor: { field: userName, title: 'Benutzername', valueUpdate: 'afterkeydown', popoverTrigger: 'hover', popoverPlacement: 'bottom', css: 'span6 autofocus' } --><!-- /ko -->    
+                </div>
+            </div> 
 
-        <div class="row full-width-on-phone">
-            <div class="span6 offset3">
-                <div class="form-actions">
-                    <div class="pull-right">
-                        <!-- ko if: !isValid() -->
-                        <!-- ko validationSummary: { entity: $data } --><!-- /ko -->
-                        <!-- /ko -->
-
-                        <div class="form-status" data-bind="visible: isValid() && isBusy()">
-                            <p><i class="icon-fixed-width icon-cog icon-spin"></i> Wird geprüft...</p>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary btn-medium" data-bind="click: logon, enable: isValid() && !isBusy()">Und los</button>
+            <div class="row">
+                <div class="span6 offset3">
+                <!-- ko composeEditor: { field: password, title: 'Passwort', valueUpdate: 'afterkeydown', type: 'password', popoverTrigger: 'hover', popoverPlacement: 'bottom', css: 'span6' } --><!-- /ko -->  
                 </div>
             </div>
-        </div>
-    </form>
+
+            <div class="row">
+                <div class="span6 offset3">
+                    <!-- ko composeEditor: { field: rememberMe, title: 'Angemeldet bleiben', type: 'checkbox' } --><!-- /ko -->
+                </div>
+            </div>
+
+            <div class="row full-width-on-phone">
+                <div class="span6 offset3">
+                    <div class="form-actions">
+                        <div class="pull-right">
+                            <!-- ko if: !isValid() -->
+                            <!-- ko validationSummary: { entity: $data } --><!-- /ko -->
+                            <!-- /ko -->
+
+                            <div class="form-status" data-bind="visible: isValid() && isBusy()">
+                                <p><i class="icon-fixed-width icon-cog icon-spin"></i> Wird geprüft...</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-medium" data-bind="click: logon, enable: isValid() && !isBusy()">Und los</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>       
 </div>

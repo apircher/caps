@@ -101,7 +101,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
             };
 
             return {
-                view: 'views/partial/errorSummary',
+                view: 'views/partial/validationSummary',
                 model: $.extend(defaultOptions, value)
             };
         },
