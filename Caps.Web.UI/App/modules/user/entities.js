@@ -1,7 +1,8 @@
 ﻿define(function (require) {
 
     var ko = require('knockout'),
-        moment = require('moment');
+        moment = require('moment'),
+        authentication = require('authentication');
 
     //
     // Class "User".
@@ -52,6 +53,14 @@
         this.lastPasswordChangedDateFormatted = ko.computed(function () {
             if (!self.hasEverChangedPassword()) return 'Noch nie';
             return moment.utc(self.lastPasswordChangedDate()).fromNow();
+        });
+
+        this.isEffectivelyLockedOut = ko.computed(function () {
+            if (self.isLockedOut()) {
+                var d = moment(self.lastLockoutDate()).add('minutes', authentication.metadata.lockoutPeriod);
+                return d > new Date();
+            }
+            return false;
         });
 
         ko.validation.group(this);

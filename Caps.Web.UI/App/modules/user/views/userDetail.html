@@ -2,9 +2,10 @@
     
     <div class="container-fluid">
         <h2><span data-bind="text: user().userName"></span> <small>Benutzerdetails</small></h2>         
-        <div class="alert" data-bind="visible: user().isLockedOut">
+        <div class="alert" data-bind="visible: user().isEffectivelyLockedOut">
             <strong>Gesperrt </strong> Der Benutzer wurde <span data-bind="text: moment(user().lastLockoutDate()).fromNow(), attr: { title: moment(user().lastLockoutDate()).format('LLLL') }"></span> aufgrund zu vieler ungültiger Anmelde-Versuche gesperrt.
-            <a href="#" data-bind="click: unlockUser"><i class="icon-fixed-width icon-unlock"></i> Sperrung aufheben</a>
+            Die Sperrung wird nach <!-- ko text: authentication.metadata.lockoutPeriod --><!-- /ko --> Minuten automatisch aufgehoben.
+            <a href="#" data-bind="click: unlockUser"><i class="icon-unlock"></i> Sperrung aufheben</a>
         </div>
         <div class="alert" data-bind="visible: user().isOnline">
             <strong>Online </strong> <span data-bind="text: user().userName"></span> ist derzeit online.
@@ -43,7 +44,7 @@
         <h5>Optionen</h5>
         <div class="row-fluid">
             <div class="span6">
-                <ul class="icons-ul">
+                <ul class="icons-ul full-height">
                     <li><i class="icon-li icon-wrench"></i> <a href="#" data-bind="click: changePassword">Passwort festlegen</a> </li>
                 </ul>
             </div>

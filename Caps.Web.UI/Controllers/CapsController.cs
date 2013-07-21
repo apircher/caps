@@ -2,6 +2,7 @@
 using Caps.Web.UI.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -18,6 +19,16 @@ namespace Caps.Web.UI.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        [HttpPost, ValidateJsonAntiForgeryToken]
+        public JsonResult GetAuthenticationMetadata()
+        {
+            return Json(new AuthenticationMetadata
+            {
+                LockoutPeriod = GetLockoutPeriod(),
+                MinRequiredPasswordLength = Membership.MinRequiredPasswordLength
+            });
         }
 
         [HttpPost, ValidateJsonAntiForgeryToken]
@@ -49,8 +60,27 @@ namespace Caps.Web.UI.Controllers
                     return Json(new LogonResponseModel(true, model.UserName));
                 }
                 else
-                    return Json(new LogonResponseModel("Benutzername oder Passwort ungültig."));
+                {
+                    var user = Membership.GetUser(model.UserName, false);
+                    if (user != null)
+                    {
+                        if (user.IsLockedOut)
+                        {
+                            if ((DateTime.Now - user.LastLockoutDate).TotalMinutes >= GetLockoutPeriod())
+                            {
+                                user.UnlockUser();
+                                return Logon(model);
+                            }
+
+                            return Json(new LogonResponseModel("ERROR_LOCKED"));
+                        }
+                        if (!user.IsApproved)
+                            return Json(new LogonResponseModel("ERROR_NOTAPPROVED"));
+                    }                    
+                    return Json(new LogonResponseModel("ERROR_USER_OR_PASSWORD_INVALID"));
+                }
             }
+
             return Json(new LogonResponseModel("Bad request"));
         }
 
@@ -80,6 +110,14 @@ namespace Caps.Web.UI.Controllers
             String cookieToken, formToken;
             System.Web.Helpers.AntiForgery.GetTokens(null, out cookieToken, out formToken);
             return Json(new { c = cookieToken, f = formToken });
+        }
+
+        int GetLockoutPeriod()
+        {
+            int result;
+            if (int.TryParse(ConfigurationManager.AppSettings["LockoutPeriod"], out result))
+                return result;
+            return 15;
         }
     }
 }

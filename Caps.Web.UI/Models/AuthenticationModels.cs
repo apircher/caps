@@ -6,6 +6,12 @@ using System.Web;
 
 namespace Caps.Web.UI.Models
 {
+    public class AuthenticationMetadata
+    {
+        public int LockoutPeriod { get; set; }
+        public int MinRequiredPasswordLength { get; set; }
+    }
+
     public class LoginModel
     {
         [Required]

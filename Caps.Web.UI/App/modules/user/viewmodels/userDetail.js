@@ -1,6 +1,6 @@
 ﻿define([
-    '../datacontext', '../entities', 'knockout', 'Q', 'plugins/dialog', 'modules/user/module', '../commands/deleteUser', 'durandal/app', 'moment', './setPasswordDialog'
-], function (datacontext, model, ko, Q, dialog, module, deleteUserCommand, app, moment, SetPasswordDialog) {
+    '../datacontext', '../entities', 'knockout', 'Q', 'plugins/dialog', 'modules/user/module', '../commands/deleteUser', 'durandal/app', 'moment', './setPasswordDialog', 'authentication'
+], function (datacontext, model, ko, Q, dialog, module, deleteUserCommand, app, moment, SetPasswordDialog, authentication) {
 
     var vm = {
         user: ko.observable(),
@@ -21,7 +21,8 @@
         },
         refresh: refreshUser,
         navigateBack: navigateBack,
-        moment: moment
+        moment: moment,
+        authentication: authentication
     };
 
     function refreshUser() {

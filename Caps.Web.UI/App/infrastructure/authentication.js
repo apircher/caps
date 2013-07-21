@@ -4,11 +4,26 @@
         user = ko.observable(new UserModel()),
         logonModuleId = 'viewmodels/login',
         logonRoute = 'login',
-        defaultReturnUrl = '';
+        defaultReturnUrl = '',
+        metadata = {
+            lockoutPeriod: 15,
+            minRequiredPasswordLength: 6
+        };
 
     var isAuthenticated = ko.computed(function () {
-            return user().isAuthenticated();
-        });
+        return user().isAuthenticated();
+    });
+
+    function getMetadata() {
+        return Q.when($.ajax('/Caps/GetAuthenticationMetadata', { method: 'post' }))
+            .then(function (data) {
+                metadata.lockoutPeriod = data.LockoutPeriod;
+                metadata.minRequiredPasswordLength = data.MinRequiredPasswordLength;
+            })
+            .fail(function (err) {
+                system.log('getMetadata failed: ' + err.message);
+            });
+    }
     
     function getUser() {
         return Q.when($.ajax('/Caps/GetCurrentUser', { method: 'post' }))
@@ -42,8 +57,10 @@
                             deferred.reject(err);
                         });
                 }
-                else
-                    deferred.reject(data);
+                else {
+                    var msg = logonResponseToDisplayMessage(data);
+                    deferred.reject(new Error(msg));
+                }
 
             })
             .fail(function (err) {
@@ -64,6 +81,26 @@
 
     function changePassword(oldPassword, newPassword) {
         return Q.when($.ajax('/Caps/ChangePassword', { method: 'post', data: { OldPassword: oldPassword, NewPassword: newPassword } }));
+    }
+
+    function logonResponseToDisplayMessage(response) {
+        var defaultMessage = 'Die Anmeldung ist fehlgeschlagen. Versuche es in einigen Minuten nochmal. Melde das Problem, wenn es weiterhin besteht.';
+        if (response) {
+            var err = response.Error;
+            if (err) {
+                if (err == 'ERROR_LOCKED') {
+                    var message = 'Dein Konto wurde aufgrund zu vieler ungültiger Anmelde-Versuche gesperrt. Die Sperrung wird nach {0} Minuten automatisch aufgehoben.';
+                    return message.replace(/\{0\}/gi, metadata.lockoutPeriod);
+                }
+                if (err == 'ERROR_NOTAPPROVED')
+                    return 'Dein Konto wurde noch nicht bestätigt.';
+                if (err == 'ERROR_USER_OR_PASSWORD_INVALID')
+                    return 'Der Benutzername oder das Passwort sind ungültig.';
+                if (err == 'Bad request')
+                    return defaultMessage;
+            }
+        }
+        return response.Error || defaultMessage;
     }
 
     // Extend the Router Plugin
@@ -140,12 +177,16 @@
     };
 
     return {
+        metadata: metadata,
         user: user,
         logon: logon,
         logoff: logoff,
         changePassword: changePassword,
         isAuthenticated: isAuthenticated,
-        initialize: getUser,
+        initialize: function () {
+            return getMetadata().then(getUser);
+
+        },
 
         UserModel: UserModel
     };

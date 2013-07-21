@@ -1,4 +1,9 @@
 ﻿
+
+html, body {
+    min-width:280px;
+}
+
 .splash-host {
     position:fixed;
     top:0;
@@ -118,7 +123,7 @@
 }
 
 .loader {
-    margin: 6px 8px 4px 8px;
+    margin: 5px 8px 4px 8px;
     visibility: hidden;
 }
 
@@ -154,7 +159,7 @@ a.no-underline:hover {
     margin-left:-.75em;
 }
 
-.table.table-fullheight {
+.full-height {
     margin-bottom:0;
 }
 

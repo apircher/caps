@@ -10,7 +10,7 @@
         <!-- /ko -->
     </div>
 
-    <form id="theform" data-bind="submit: save">
+    <form id="theform" data-bind="submit: save" class="full-height">
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span6">
@@ -39,8 +39,8 @@
                 </div> 
             </div>
         </div>
-
-        <div class="form-actions">
+        
+        <div class="form-actions full-width-on-phone full-height">
             <button type="submit" class="btn btn-primary" data-bind="enable: user.isDirty()">Speichern</button> 
             <a href="#" data-bind="click: cancel" class="btn">Abbrechen</a>            
         </div>
