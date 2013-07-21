@@ -2,14 +2,13 @@
 
     <div class="container-fluid">
         <h2><!-- ko text: user().userName --><!-- /ko --> <small>Mein Profil</small></h2>
+        <div class="well">
+            <p>
+                Letzte Passwort-Änderung: <span data-bind="text: lastPasswordChangedDateFormatted, attr: { title: moment(user().lastPasswordChangedDate()).format('LLLL') }"></span><br />
+                <a href="#" data-bind="click: changePassword">Passwort ändern</a>
+            </p>
+        </div>
     </div>    
-
-    <div class="well">
-        <p>
-            Letzte Passwort-Änderung: <span data-bind="text: lastPasswordChangedDateFormatted, attr: { title: moment(user().lastPasswordChangedDate()).format('LLLL') }"></span><br />
-            <a href="#" data-bind="click: changePassword">Passwort ändern</a>
-        </p>
-    </div>
 
     <div class="navbar navbar-fixed-bottom">
         <div class="navbar-inner">
