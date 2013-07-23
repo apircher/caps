@@ -230,7 +230,7 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
             rootRouter.navigatingBack = !rootRouter.explicitNavigation && currentActivation != instruction.fragment;
             router.trigger('router:route:activating', instance, instruction, router);
 
-            activator.activateItem(instance, instruction.params).then(function(succeeded, failData) {
+            activator.activateItem(instance, instruction.params).then(function(succeeded) {
                 if (succeeded) {
                     var previousActivation = currentActivation;
                     completeNavigation(instance, instruction);
@@ -246,8 +246,8 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
                     if (previousActivation == instance) {
                         router.attached();
                     }
-                } else if(failData && failData.redirect){
-                    redirect(failData.redirect);
+                } else if(activator.settings.lifecycleData && activator.settings.lifecycleData.redirect){
+                    redirect(activator.settings.lifecycleData.redirect);
                 }else{
                     cancelNavigation(instance, instruction);
                 }
@@ -332,6 +332,8 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
                 system.acquire(instruction.config.moduleId).then(function(module) {
                     var instance = system.resolveObject(module);
                     ensureActivation(activeItem, instance, instruction);
+                }).fail(function(err){
+                    system.error('Failed to load routed module (' + instruction.config.moduleId + '). Details: ' + err.message);
                 });
             }
         }
@@ -558,7 +560,7 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
         };
 
         /**
-         * Converts a route to a displayable title. This is only callef if no title is specified as part of the route mapping.
+         * Converts a route to a displayable title. This is only called if no title is specified as part of the route mapping.
          * @method convertRouteToTitle
          * @param {string} route
          * @return {string} The title.
@@ -639,20 +641,21 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
          * @param {string|function} [config] If not supplied, then the router will map routes to modules with the same name.
          * If a string is supplied, it represents the module id to route all unknown routes to.
          * Finally, if config is a function, it will be called back with the route instruction containing the route info. The function can then modify the instruction by adding a moduleId and the router will take over from there.
+         * @param {string} [replaceRoute] If config is a module id, then you can optionally provide a route to replace the url with.
          * @chainable
          */
-        router.mapUnknownRoutes = function(config) {
-            var route = "*catchall";
-            var routePattern = routeStringToRegExp(route);
+        router.mapUnknownRoutes = function(config, replaceRoute) {
+            var catchAllRoute = "*catchall";
+            var catchAllPattern = routeStringToRegExp(catchAllRoute);
             
-            router.route(routePattern, function (fragment, queryString) {
-                var paramInfo = createParams(routePattern, fragment, queryString);
+            router.route(catchAllPattern, function (fragment, queryString) {
+                var paramInfo = createParams(catchAllPattern, fragment, queryString);
                 var instruction = {
                     fragment: fragment,
                     queryString: queryString,
                     config: {
-                        route: route,
-                        routePattern: routePattern
+                        route: catchAllRoute,
+                        routePattern: catchAllPattern
                     },
                     params: paramInfo.params,
                     queryParams: paramInfo.queryParams
@@ -662,6 +665,9 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
                     instruction.config.moduleId = fragment;
                 } else if (system.isString(config)) {
                     instruction.config.moduleId = config;
+                    if(replaceRoute){
+                        history.navigate(replaceRoute, { trigger:false, replace:true });
+                    }
                 } else if (system.isFunction(config)) {
                     var result = config(instruction);
                     if (result && result.then) {
@@ -674,8 +680,8 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
                     }
                 } else {
                     instruction.config = config;
-                    instruction.config.route = route;
-                    instruction.config.routePattern = routePattern;
+                    instruction.config.route = catchAllRoute;
+                    instruction.config.routePattern = catchAllPattern;
                 }
 
                 router.trigger('router:route:before-config', instruction.config, router);
@@ -687,7 +693,7 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
         };
 
         /**
-         * Resets the router by removing handlers, routes and previously configured options.
+         * Resets the router by removing handlers, routes, event handlers and previously configured options.
          * @method reset
          */
         router.reset = function() {
@@ -768,9 +774,26 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
         return system.defer(function(dfd) {
             startDeferred = dfd;
             rootRouter.options = system.extend({ routeHandler: rootRouter.loadUrl }, rootRouter.options, options);
+
             history.activate(rootRouter.options);
-            $(document).on('click', 'a', function(){
+
+            $(document).delegate("a", 'click', function(evt){
                 rootRouter.explicitNavigation = true;
+
+                if(history._hasPushState){
+                    if(!evt.altKey && !evt.ctrlKey && !evt.metaKey && !evt.shiftKey){
+                        // Get the anchor href and protcol
+                        var href = $(this).attr("href");
+                        var protocol = this.protocol + "//";
+
+                        // Ensure the protocol is not part of URL, meaning its relative.
+                        // Stop the event bubbling to ensure the link will not cause a page refresh.
+                        if (href.slice(protocol.length) !== protocol) {
+                            evt.preventDefault();
+                            history.navigate(href, true);
+                        }
+                    }
+                }
             });
         }).promise();
     };

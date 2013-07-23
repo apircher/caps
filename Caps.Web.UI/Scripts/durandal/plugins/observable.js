@@ -4,13 +4,13 @@
  * see: http://durandaljs.com or https://github.com/BlueSpire/Durandal for details.
  */
 /**
- * Enables automatic observability of plain javascript object for ES5 compatible browsers.
+ * Enables automatic observability of plain javascript object for ES5 compatible browsers. Also, converts promise properties into observables that are updated when the promise resolves.
  * @module observable
  * @requires system
- * @requires viewModelBinder
+ * @requires binder
  * @requires knockout
  */
-define(['durandal/system', 'durandal/viewModelBinder', 'knockout'], function(system, viewModelBinder, ko) {
+define(['durandal/system', 'durandal/binder', 'knockout'], function(system, binder, ko) {
     var observableModule,
         toString = Object.prototype.toString,
         nonObservableTypes = ['[object Function]', '[object String]', '[object Boolean]', '[object Number]', '[object Date]', '[object RegExp]'],
@@ -265,11 +265,11 @@ define(['durandal/system', 'durandal/viewModelBinder', 'knockout'], function(sys
             computedOptions.read = evaluatorOrOptions;
         } else {
             if ('value' in evaluatorOrOptions) {
-                throw new Error('For ko.defineProperty, you must not specify a "value" for the property. You must provide a "get" function.');
+                system.error('For ko.defineProperty, you must not specify a "value" for the property. You must provide a "get" function.');
             }
 
             if (typeof evaluatorOrOptions.get !== 'function') {
-                throw new Error('For ko.defineProperty, the third parameter must be either an evaluator function, or an options object containing a function called "get".');
+                system.error('For ko.defineProperty, the third parameter must be either an evaluator function, or an options object containing a function called "get".');
             }
 
             computedOptions.read = evaluatorOrOptions.get;
@@ -315,9 +315,9 @@ define(['durandal/system', 'durandal/viewModelBinder', 'knockout'], function(sys
      * @method install
      */
     observableModule.install = function(options) {
-        var original = viewModelBinder.beforeBind;
+        var original = binder.beforeBind;
 
-        viewModelBinder.beforeBind = function(obj, view, instruction) {
+        binder.beforeBind = function(obj, view, instruction) {
             if(instruction.applyBindings && ! instruction.skipConversion){
                 convertObject(obj);
             }
