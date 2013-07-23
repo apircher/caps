@@ -1,5 +1,6 @@
 ﻿using Caps.Data;
 using Caps.Data.Model;
+using Caps.Web.UI.Infrastructure;
 using Caps.Web.UI.Infrastructure.WebApi;
 using Caps.Web.UI.Models;
 using System;
@@ -99,7 +100,14 @@ namespace Caps.Web.UI.Controllers
 
             try
             {
-                ((SimpleMembershipProvider)Membership.Provider).DeleteAccount(model.UserName);
+                // Delete the Author
+                var author = db.GetAuthorByUserName(model.UserName);
+                if (author == null)
+                    return Request.CreateResponse(HttpStatusCode.NotFound);
+
+                author.DeleteAuthorAndAccount(db);
+                db.SaveChanges();
+
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception)

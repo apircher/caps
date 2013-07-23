@@ -12,7 +12,6 @@ requirejs.config({
         'bootstrap': '../Scripts/bootstrap.min',
         'jquery': '../Scripts/jquery-2.0.3.min',
         'moment': '../Scripts/moment.min',
-        'modules': 'modules',
 
         'breeze': '../Scripts/breeze.debug',
         'Q': '../Scripts/q.min',

@@ -8,11 +8,27 @@ namespace Caps.Data.Migrations
         public override void Up()
         {
             CreateTable(
+                "dbo.Author",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        UserName = c.String(),
+                        FirstName = c.String(),
+                        LastName = c.String(),
+                        Email = c.String(),
+                        LastLoginDate = c.DateTime(),
+                        LastActivityDate = c.DateTime(),
+                        Comment = c.String(),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
                 "dbo.Websites",
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
                         Name = c.String(),
+                        Url = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -36,6 +52,7 @@ namespace Caps.Data.Migrations
             DropForeignKey("dbo.Sitemaps", "WebsiteId", "dbo.Websites");
             DropTable("dbo.Sitemaps");
             DropTable("dbo.Websites");
+            DropTable("dbo.Author");
         }
     }
 }

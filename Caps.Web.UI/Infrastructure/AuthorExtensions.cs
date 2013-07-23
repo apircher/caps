@@ -1,4 +1,5 @@
-﻿using Caps.Data.Model;
+﻿using Caps.Data;
+using Caps.Data.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +52,16 @@ namespace Caps.Web.UI.Infrastructure
         public static void RegisterLogin(this Author author)
         {
             author.LastLoginDate = DateTime.UtcNow;
+        }
+
+        public static void DeleteAuthorAndAccount(this Author author, CapsDbContext db)
+        {
+            // Remove all Roles.
+            Array.ForEach(author.GetRoles(), r => Roles.RemoveUserFromRole(author.UserName, r));
+            // Delete the Author
+            db.Authors.Remove(author);
+            // Delete the account.
+            ((SimpleMembershipProvider)Membership.Provider).DeleteAccount(author.UserName);
         }
     }
 }

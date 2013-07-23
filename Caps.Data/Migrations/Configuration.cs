@@ -11,7 +11,7 @@ namespace Caps.Data.Migrations
     {
         public Configuration()
         {
-            //AutomaticMigrationsEnabled = true;
+            AutomaticMigrationsEnabled = false;
         }
 
         protected override void Seed(Caps.Data.CapsDbContext context)
@@ -29,11 +29,7 @@ namespace Caps.Data.Migrations
             //    );
             //
 
-            WebSecurity.InitializeDatabaseConnection("CapsDbContext", "Author", "Id", "UserName", true);
-
-            if (!Roles.RoleExists("Administrator")) Roles.CreateRole("Administrator");
-            WebSecurity.CreateUserAndAccount("admin", "caps234", new { Email = "admin@your-company.xx" });
-            Roles.AddUserToRole("admin", "Administrator");
+            //WebSecurity.InitializeDatabaseConnection("CapsDbContext", "Author", "Id", "UserName", true);
         }
     }
 }

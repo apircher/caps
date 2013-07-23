@@ -11,7 +11,7 @@ namespace Caps.Data.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201306302007251_InitialCreate"; }
+            get { return "201307231135187_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

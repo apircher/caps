@@ -38,7 +38,10 @@ namespace Caps.Web.UI
             try
             {
                 using (var context = new Caps.Data.CapsDbContext())
+                {
                     context.Database.CreateIfNotExists();
+                    context.Database.Initialize(false);
+                }
 
                 WebSecurity.InitializeDatabaseConnection("CapsDbContext", "Author", "Id", "UserName", true);
             }
