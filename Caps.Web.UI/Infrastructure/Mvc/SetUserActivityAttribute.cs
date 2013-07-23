@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Caps.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using Caps.Web.UI.Infrastructure;
 
 namespace Caps.Web.UI.Infrastructure.Mvc
 {
@@ -14,8 +16,12 @@ namespace Caps.Web.UI.Infrastructure.Mvc
             var httpContext = filterContext.RequestContext.HttpContext;
             if (httpContext.Request.IsAuthenticated)
             {
-                var user = Membership.GetUser(httpContext.User.Identity.Name, true);
-                httpContext.Items["MembershipUser"] = user;
+                using (var db = new CapsDbContext())
+                {
+                    var author = db.GetCurrentAuthor();
+                    author.RegisterActivity();
+                    db.SaveChanges();
+                }
             }
 
             base.OnActionExecuting(filterContext);

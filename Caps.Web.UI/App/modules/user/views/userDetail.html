@@ -2,10 +2,9 @@
     
     <div class="container-fluid">
         <h2><span data-bind="text: user().userName"></span> <small>Benutzerdetails</small></h2>         
-        <div class="alert" data-bind="visible: user().isEffectivelyLockedOut">
-            <strong>Gesperrt </strong> Der Benutzer wurde <span data-bind="text: moment(user().lastLockoutDate()).fromNow(), attr: { title: moment(user().lastLockoutDate()).format('LLLL') }"></span> aufgrund zu vieler ungültiger Anmelde-Versuche gesperrt.
+        <div class="alert" data-bind="visible: user().isLockedOut">
+            <strong>Gesperrt </strong> Der Benutzer wurde <span data-bind="text: moment.utc(user().lastLockoutDate()).fromNow(), attr: { title: moment(user().lastLockoutDate()).format('LLLL') }"></span> aufgrund zu vieler ungültiger Anmelde-Versuche gesperrt.
             Die Sperrung wird nach <!-- ko text: authentication.metadata.lockoutPeriod --><!-- /ko --> Minuten automatisch aufgehoben.
-            <a href="#" data-bind="click: unlockUser"><i class="icon-unlock"></i> Sperrung aufheben</a>
         </div>
         <div class="alert" data-bind="visible: user().isOnline">
             <strong>Online </strong> <span data-bind="text: user().userName"></span> ist derzeit online.
@@ -23,9 +22,9 @@
                 </div>
                 <div class="span6">
                     <p>Erstellt: <span data-bind="attr: { title: moment(user().creationDate()).format('LLLL') }, text: moment(user().creationDate()).fromNow(), textTimeout: { interval: 30000, observable: user().creationDate }"></span></p>      
-                    <p data-bind="visible: user().hasEverLoggedIn">Letzte Anmeldung: <em data-bind="    attr: { title: moment(user().lastLoginDate()).format('LLLL') }, text: user().lastLoginDateFormatted(), textTimeout: { interval: 30000, observable: user().lastLoginDate }"></em></p>  
-                    <p data-bind="visible: user().hasEverLoggedIn">Zuletzt aktiv: <em data-bind="    attr: { title: moment(user().lastActivityDate()).format('LLLL') }, text: user().lastActivityDateFormatted, textTimeout: { interval: 30000, observable: user().lastActivityDate }"></em></p>  
-                    <p data-bind="visible: user().hasEverChangedPassword">Passwort-Änderung: <em data-bind="    attr: { title: moment(user().lastPasswordChangedDate()).format('LLLL') }, text: user().lastPasswordChangedDateFormatted, textTimeout: { interval: 30000, observable: user().lastPasswordChangedDate }"></em></p>
+                    <p data-bind="visible: user().hasEverLoggedIn">Letzte Anmeldung: <em data-bind="attr: { title: moment(user().lastLoginDate()).format('LLLL') }, text: user().lastLoginDateFormatted(), textTimeout: { interval: 30000, observable: user().lastLoginDate }"></em></p>  
+                    <p data-bind="visible: user().hasEverLoggedIn">Zuletzt aktiv: <em data-bind="attr: { title: moment(user().lastActivityDate()).format('LLLL') }, text: user().lastActivityDateFormatted, textTimeout: { interval: 30000, observable: user().lastActivityDate }"></em></p>  
+                    <p data-bind="visible: user().hasEverChangedPassword">Passwort-Änderung: <em data-bind="attr: { title: moment(user().lastPasswordChangedDate()).format('LLLL') }, text: user().lastPasswordChangedDateFormatted, textTimeout: { interval: 30000, observable: user().lastPasswordChangedDate }"></em></p>
                     <p data-bind="visible: !user().hasEverLoggedIn()">Noch nie angemeldet</p>
                 </div>
 

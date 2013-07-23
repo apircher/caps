@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Security;
+using WebMatrix.WebData;
 
 namespace Caps.Web.UI.Controllers
 {
@@ -16,9 +17,7 @@ namespace Caps.Web.UI.Controllers
         [HttpPost, Authorize(Roles = "Administrator")]
         public HttpResponseMessage IsUserNameUnique(PropertyValidationModel model)
         {
-            // Load user.
-            var user = Membership.GetUser(model.Value, false);
-            if (user == null)
+            if (!WebSecurity.UserExists(model.Value))
                 return Request.CreateResponse(HttpStatusCode.OK, true);
             return Request.CreateResponse(HttpStatusCode.OK, false);
         }
@@ -30,32 +29,17 @@ namespace Caps.Web.UI.Controllers
         }
 
         [HttpPost, Authorize(Roles = "Administrator")]
-        public HttpResponseMessage UnlockUser(UnlockUserModel model)
-        {
-            if (!ModelState.IsValid)
-                return Request.CreateResponse(HttpStatusCode.BadRequest);
-
-            var user = Membership.GetUser(model.UserName, false);
-            if (user == null)
-                return Request.CreateResponse(HttpStatusCode.NotFound);
-            var result = user.UnlockUser();
-            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(user));
-        }
-
-        [HttpPost, Authorize(Roles = "Administrator")]
         public HttpResponseMessage SetPassword(SetPasswordModel model)
         {
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
 
-            var user = Membership.GetUser(model.UserName, false);
-            if (user == null)
+            if (!WebSecurity.UserExists(model.UserName))
                 return Request.CreateResponse(HttpStatusCode.NotFound);
+            
+            var token = WebSecurity.GeneratePasswordResetToken(model.UserName);
+            WebSecurity.ResetPassword(token, model.NewPassword);
 
-            if (user.IsLockedOut)  user.UnlockUser();
-
-            var randomPassword = user.ResetPassword();
-            user.ChangePassword(randomPassword, model.NewPassword);
             return Request.CreateResponse(HttpStatusCode.OK);
         }
     }

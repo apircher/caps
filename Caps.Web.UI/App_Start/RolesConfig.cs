@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Security;
+using WebMatrix.WebData;
 
 namespace Caps.Web.UI.App_Start
 {
@@ -25,11 +26,8 @@ namespace Caps.Web.UI.App_Start
 
             if (!Roles.GetUsersInRole(roleName).Any())
             {
-                var user = Membership.CreateUser(defaultUserName, defaultPassword);
-                Roles.AddUserToRole(user.UserName, roleName);
-
-                user.Email = email;
-                Membership.UpdateUser(user);
+                WebSecurity.CreateUserAndAccount(defaultUserName, defaultPassword, new { Email = email });
+                Roles.AddUserToRole(defaultUserName, roleName);
             }
         }
     }

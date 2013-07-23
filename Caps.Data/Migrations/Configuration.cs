@@ -4,12 +4,14 @@ namespace Caps.Data.Migrations
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
+    using System.Web.Security;
+    using WebMatrix.WebData;
 
     internal sealed class Configuration : DbMigrationsConfiguration<Caps.Data.CapsDbContext>
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
+            //AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(Caps.Data.CapsDbContext context)
@@ -26,6 +28,12 @@ namespace Caps.Data.Migrations
             //      new Person { FullName = "Rowan Miller" }
             //    );
             //
+
+            WebSecurity.InitializeDatabaseConnection("CapsDbContext", "Author", "Id", "UserName", true);
+
+            if (!Roles.RoleExists("Administrator")) Roles.CreateRole("Administrator");
+            WebSecurity.CreateUserAndAccount("admin", "caps234", new { Email = "admin@your-company.xx" });
+            Roles.AddUserToRole("admin", "Administrator");
         }
     }
 }

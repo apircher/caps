@@ -1,4 +1,6 @@
-﻿using Caps.Web.UI.Infrastructure.WebApi;
+﻿using Caps.Data;
+using Caps.Data.Model;
+using Caps.Web.UI.Infrastructure.WebApi;
 using Caps.Web.UI.Models;
 using System;
 using System.Collections.Generic;
@@ -7,25 +9,36 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Security;
+using WebMatrix.WebData;
 
 namespace Caps.Web.UI.Controllers
 {
     [Authorize(Roles = "Administrator"), ValidateJsonAntiForgeryToken, SetUserActivity]
     public class UserController : ApiController
     {
+        CapsDbContext db;
+
+        public UserController() 
+            : this(new CapsDbContext()) 
+        {
+        }
+        public UserController(CapsDbContext db) 
+        {
+            this.db = db;
+        }
+
         public IList<UserModel> GetAll()
         {
-            var users = Membership.GetAllUsers();
-            return users.Cast<MembershipUser>().Select(u => new UserModel(u, Roles.GetRolesForUser(u.UserName))).ToList();
+            var authors = db.Authors.ToList();
+            return authors.Select(u => new UserModel(u)).ToList();
         }
 
         public HttpResponseMessage Get(String id)
         {
-            // Load User.
-            var user = Membership.GetUser(id, false);
-            if (user == null)
+            var author = db.GetAuthorByUserName(id);
+            if (author == null)
                 return Request.CreateResponse(HttpStatusCode.BadRequest);            
-            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(user, Roles.GetRolesForUser(user.UserName)));
+            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(author));
         }
 
         public HttpResponseMessage Put(UserModel model)
@@ -34,24 +47,24 @@ namespace Caps.Web.UI.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
 
             // Ensure unique username.
-            if (Membership.FindUsersByName(model.UserName).Count > 0)
+            if (WebSecurity.UserExists(model.UserName))
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { ErrorMessage = "Der Benutzername ist bereits vergeben.", ErrorId = "duplicate_username" });
 
             // Add the user.
-            MembershipUser user;
             try
             {
-                user = Membership.CreateUser(model.UserName, model.Password);
+                WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
             }
             catch (MembershipCreateUserException)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { ErrorMessage = "Der Benutzer konnte nicht erstellt werden.", ErrorId = "createuser_exception" });
             }
 
-            model.UpdateMembershipUser(user);
-            Membership.UpdateUser(user);
-
-            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(user));
+            var author = db.GetAuthorByUserName(model.UserName);
+            model.UpdateAuthor(author);
+            
+            db.SaveChanges();
+            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(author));
         }
 
         public HttpResponseMessage Post(UserModel model)
@@ -59,22 +72,21 @@ namespace Caps.Web.UI.Controllers
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
 
-            // Load user.
-            var user = Membership.GetUser(model.UserName, false);
-            if (user == null)
+            if (!WebSecurity.UserExists(model.UserName))
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
 
+            var author = db.GetAuthorByUserName(model.UserName);
             try
             {
-                model.UpdateMembershipUser(user);
+                model.UpdateAuthor(author);
             }
             catch (InvalidOperationException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { ErrorMessage = ex.Message, ErrorId = "updateuser_exception" });
             }
-            Membership.UpdateUser(user);
 
-            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(user));
+            db.SaveChanges();
+            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(author));
         }
 
         public HttpResponseMessage Delete(UserModel model)
@@ -82,13 +94,12 @@ namespace Caps.Web.UI.Controllers
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
 
-            var user = Membership.GetUser(model.UserName, false);
-            if (String.Equals(user.UserName, System.Web.HttpContext.Current.User.Identity.Name))
+            if (String.Equals(model.UserName, System.Web.HttpContext.Current.User.Identity.Name))
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
 
             try
             {
-                Membership.DeleteUser(model.UserName);
+                ((SimpleMembershipProvider)Membership.Provider).DeleteAccount(model.UserName);
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception)

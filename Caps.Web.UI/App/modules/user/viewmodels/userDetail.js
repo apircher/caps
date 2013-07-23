@@ -13,7 +13,6 @@
         },
 
         editUser: editUser,
-        unlockUser: unlockUser,
         changePassword : changePassword,
         deleteUser: function () {
             deleteUserCommand.execute(this.user())
@@ -50,16 +49,6 @@
     }
     function editUser() {
         module.router.navigate('#/users/edit/' + vm.userName());
-    }
-    function unlockUser() {
-        datacontext.unlockUser(vm.userName())
-            .then(function (data) {
-                vm.user().refresh(data);
-                app.trigger('caps:user:updated', data);
-            })
-            .fail(function (err) {
-                dialog.showMessage('Die Sperrung konnte nicht aufgehoben werden. Versuche es in ein paar Minuten erneut. Melde das Problem, wenn es weiterhin auftritt.', 'Nicht erfolgreich');
-            });
     }
     function changePassword() {
         SetPasswordDialog.show()

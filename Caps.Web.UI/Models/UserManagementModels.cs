@@ -5,6 +5,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Security;
 using Caps.Web.UI.Infrastructure;
+using Caps.Data.Model;
+using WebMatrix.WebData;
 
 namespace Caps.Web.UI.Models
 {
@@ -13,24 +15,19 @@ namespace Caps.Web.UI.Models
         public UserModel()
         {
         }
-        public UserModel(MembershipUser msu) : this(msu, new String[0]) 
+        public UserModel(Author author)
         {
-        }
-        public UserModel(MembershipUser msu, String[] roles)
-        {
-            UserName = msu.UserName;
-            Comment = msu.Comment;
-            CreationDate = msu.CreationDate;
-            Email = msu.Email;
-            IsApproved = msu.IsApproved;
-            IsLockedOut = msu.IsLockedOut;
-            IsOnline = msu.IsOnline && (msu.LastLoginDate != msu.CreationDate);
-            LastActivityDate = msu.LastActivityDate;
-            LastLockoutDate = msu.LastLockoutDate;
-            LastLoginDate = msu.LastLoginDate;
-            LastPasswordChangedDate = msu.LastPasswordChangedDate;
-
-            Roles = roles;
+            UserName = author.UserName;
+            Comment = author.Comment;
+            CreationDate = WebSecurity.GetCreateDate(author.UserName);
+            Email = author.Email;
+            IsApproved = WebSecurity.IsConfirmed(author.UserName);
+            IsLockedOut = author.IsLockedOut();
+            LastActivityDate = author.LastActivityDate.GetValueOrDefault(DateTime.MinValue);
+            LastLockoutDate = WebSecurity.GetLastPasswordFailureDate(author.UserName);
+            LastLoginDate = author.LastLoginDate.GetValueOrDefault(DateTime.MinValue);
+            LastPasswordChangedDate = WebSecurity.GetPasswordChangedDate(author.UserName);
+            Roles = author.GetRoles();
         }
 
         [Required]
@@ -50,15 +47,15 @@ namespace Caps.Web.UI.Models
 
         public String[] Roles { get; set; }
 
-        public void UpdateMembershipUser(MembershipUser msu)
+        public void UpdateAuthor(Author author)
         {
-            msu.Comment = Comment;
-            msu.Email = Email;
+            author.Comment = Comment;
+            author.Email = Email;
 
-            UpdateRoles(msu);
+            UpdateRoles(author);
         }
 
-        void UpdateRoles(MembershipUser msu)
+        void UpdateRoles(Author author)
         {
             var currentRoles = System.Web.Security.Roles.GetRolesForUser(UserName);
 
@@ -67,7 +64,7 @@ namespace Caps.Web.UI.Models
                 rolesToAdd = Roles.Where(r => !currentRoles.Contains(r, StringComparer.OrdinalIgnoreCase)).ToArray();
             var rolesToRemove = Roles != null ? currentRoles.Where(r => !Roles.Contains(r, StringComparer.OrdinalIgnoreCase)).ToArray() : currentRoles;
 
-            if (rolesToRemove.Contains("Administrator", StringComparer.OrdinalIgnoreCase) && msu.IsLastUserInRole("Administrator"))
+            if (rolesToRemove.Contains("Administrator", StringComparer.OrdinalIgnoreCase) && author.IsLastUserInRole("Administrator"))
                 throw new InvalidOperationException("Der letzte Administrator kann nicht entfernt werden.");
             
             Array.ForEach(rolesToAdd, r => System.Web.Security.Roles.AddUserToRole(UserName, r));
@@ -79,12 +76,6 @@ namespace Caps.Web.UI.Models
     {
         public String Value { get; set; }
         public String Param { get; set; }
-    }
-
-    public class UnlockUserModel
-    {
-        [Required]
-        public String UserName { get; set; }
     }
 
     public class SetPasswordModel

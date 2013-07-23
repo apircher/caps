@@ -19,7 +19,6 @@
         this.email = ko.observable(data.Email || '').extend({ required: true, email: true });
         this.isApproved = ko.observable(data.IsApproved || false);
         this.isLockedOut = ko.observable(data.IsLockedOut || false);
-        this.isOnline = ko.observable(data.IsOnline || false);
         this.lastActivityDate = ko.observable(data.LastActivityDate);
         this.lastLockoutDate = ko.observable(data.LastLockoutDate);
         this.lastLoginDate = ko.observable(data.LastLoginDate);
@@ -27,6 +26,12 @@
 
         this.roles = ko.observableArray(data.Roles || []);
         
+        this.isOnline = ko.computed(function () {
+            if (!self.lastActivityDate())
+                return false;
+            return moment.utc() <= moment.utc(self.lastActivityDate()).add('minutes', 15);
+        });
+
         this.hasEverLoggedIn = ko.computed(function () {
             return self.lastLoginDate() > self.creationDate();
         });

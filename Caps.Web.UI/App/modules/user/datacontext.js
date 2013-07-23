@@ -29,10 +29,6 @@
             .then(function () { return user; });
     }
 
-    function unlockUser(userName) {
-        return promiseAjax('rpc/UserMgmt/UnlockUser', { method: 'post', data: { UserName: userName } });
-    }
-
     function setPassword(userName, newPassword) {
         return promiseAjax('rpc/UserMgmt/SetPassword', { method: 'post', data: { UserName: userName, NewPassword: newPassword } });
     }
@@ -50,7 +46,6 @@
         createUser: createUser,
         updateUser: updateUser,
         deleteUser: deleteUser,
-        unlockUser: unlockUser,
         setPassword: setPassword
     };
 

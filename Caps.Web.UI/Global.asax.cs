@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
+using WebMatrix.WebData;
 
 namespace Caps.Web.UI
 {
@@ -17,9 +18,8 @@ namespace Caps.Web.UI
     {
         protected void Application_Start()
         {
-            System.Data.Entity.Database.SetInitializer<Caps.Data.CapsDbContext>(
-                new System.Data.Entity.DropCreateDatabaseIfModelChanges<Caps.Data.CapsDbContext>());
-
+            InitializeDatabase();
+                        
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);
@@ -29,6 +29,23 @@ namespace Caps.Web.UI
 
             RolesConfig.EnsureDefaultRoles();
             RolesConfig.EnsureUserInRole("Administrator");
+        }
+
+        void InitializeDatabase()
+        {
+            System.Data.Entity.Database.SetInitializer<Caps.Data.CapsDbContext>(
+                new System.Data.Entity.DropCreateDatabaseIfModelChanges<Caps.Data.CapsDbContext>());
+            try
+            {
+                using (var context = new Caps.Data.CapsDbContext())
+                    context.Database.CreateIfNotExists();
+
+                WebSecurity.InitializeDatabaseConnection("CapsDbContext", "Author", "Id", "UserName", true);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Die ASP.NET Simple Membership-Datenbank konnte nicht initialisiert werden. Weitere Informationen finden Sie unter http://go.microsoft.com/fwlink/?LinkId=256588", ex);
+            }
         }
     }
 }

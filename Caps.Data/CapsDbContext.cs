@@ -16,7 +16,13 @@ namespace Caps.Data
             Configuration.LazyLoadingEnabled = false;
         }
 
+        public DbSet<Author> Authors { get; set; }
         public DbSet<Website> Websites { get; set; }
         public DbSet<Sitemap> Sitemaps { get; set; }
+
+        public Author GetAuthorByUserName(String userName)
+        {
+            return Authors.FirstOrDefault(a => a.UserName == userName);
+        }
     }
 }
