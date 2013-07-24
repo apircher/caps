@@ -54,7 +54,7 @@ namespace Caps.Web.UI.Controllers
             // Add the user.
             try
             {
-                WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
+                WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { Email = model.Email, FirstName = model.FirstName, LastName = model.LastName });
             }
             catch (MembershipCreateUserException)
             {

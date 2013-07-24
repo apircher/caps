@@ -21,6 +21,7 @@ namespace Caps.Web.UI.Models
             Comment = author.Comment;
             CreationDate = WebSecurity.GetCreateDate(author.UserName);
             Email = author.Email;
+            Phone = author.Phone;
             IsApproved = WebSecurity.IsConfirmed(author.UserName);
             IsLockedOut = author.IsLockedOut();
             LastActivityDate = new DateTime(author.LastActivityDate.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
@@ -40,6 +41,7 @@ namespace Caps.Web.UI.Models
         public DateTime CreationDate { get; set; }
         [Required]
         public String Email { get; set; }
+        public String Phone { get; set; }
         public bool IsApproved { get; set; }
         public bool IsLockedOut { get; set; }
         public bool IsOnline { get; set; }
@@ -59,6 +61,7 @@ namespace Caps.Web.UI.Models
         {
             author.Comment = Comment;
             author.Email = Email;
+            author.Phone = Phone;
 
             author.FirstName = FirstName;
             author.LastName = LastName;

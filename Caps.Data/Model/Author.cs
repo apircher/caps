@@ -14,12 +14,18 @@ namespace Caps.Data.Model
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [MaxLength(20), Required]
         public String UserName { get; set; }
 
+        [MaxLength(50), Required]
         public String FirstName { get; set; }
+        [MaxLength(50), Required]
         public String LastName { get; set; }
 
+        [MaxLength(50), Required]
         public String Email { get; set; }
+        [MaxLength(50)]
+        public String Phone { get; set; }
 
         public DateTime? LastLoginDate { get; set; }
         public DateTime? LastActivityDate { get; set; }

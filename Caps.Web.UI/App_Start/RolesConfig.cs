@@ -20,13 +20,13 @@ namespace Caps.Web.UI.App_Start
                 if (!Roles.RoleExists(roleName)) Roles.CreateRole(roleName);
         }
 
-        public static void EnsureUserInRole(String roleName, String defaultUserName = "admin", String defaultPassword = "caps234", String email = "admin@your-mail.server")
+        public static void EnsureUserInRole(String roleName, String defaultUserName = "admin", String defaultPassword = "caps234", String email = "admin@your-mail.server", String defaultFirstName = "Admin", String defaultLastName = "Istrator")
         {
             EnsureRoleExists(roleName);
 
             if (!Roles.GetUsersInRole(roleName).Any())
             {
-                WebSecurity.CreateUserAndAccount(defaultUserName, defaultPassword, new { Email = email });
+                WebSecurity.CreateUserAndAccount(defaultUserName, defaultPassword, new { Email = email, FirstName = defaultFirstName, LastName = defaultLastName });
                 Roles.AddUserToRole(defaultUserName, roleName);
             }
         }

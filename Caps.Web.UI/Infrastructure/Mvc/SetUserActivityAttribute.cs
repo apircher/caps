@@ -19,8 +19,11 @@ namespace Caps.Web.UI.Infrastructure.Mvc
                 using (var db = new CapsDbContext())
                 {
                     var author = db.GetCurrentAuthor();
-                    author.RegisterActivity();
-                    db.SaveChanges();
+                    if (author != null)
+                    {
+                        author.RegisterActivity();
+                        db.SaveChanges();
+                    }
                 }
             }
 

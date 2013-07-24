@@ -17,6 +17,7 @@
         this.comment = ko.observable(data.Comment || '');
         this.creationDate = ko.observable(data.CreationDate || new Date());
         this.email = ko.observable(data.Email || '').extend({ required: true, email: true });
+        this.phone = ko.observable(data.Phone || '');
         this.isApproved = ko.observable(data.IsApproved || false);
         this.isLockedOut = ko.observable(data.IsLockedOut || false);
         this.lastActivityDate = ko.observable(data.LastActivityDate);
@@ -39,11 +40,11 @@
             return self.lastLoginDate() > self.creationDate();
         });
         this.lastLoginDateFormatted = ko.computed(function () {
-            if (!self.hasEverLoggedIn()) return 'Noch nie';
+            if (!self.hasEverLoggedIn()) return 'noch nie';
             return moment(self.lastLoginDate()).fromNow();
         });
         this.lastActivityDateFormatted = ko.computed(function () {
-            if (!self.hasEverLoggedIn()) return 'Noch nie';
+            if (!self.hasEverLoggedIn()) return 'noch nie';
             return moment(self.lastActivityDate()).subtract('seconds', 20).fromNow();
         });
 
@@ -51,7 +52,7 @@
             return self.lastLockoutDate() > self.creationDate();
         });
         this.lastLockoutDateFormatted = ko.computed(function () {
-            if (!self.hasEverBeenLockedOut()) return 'Noch nie';
+            if (!self.hasEverBeenLockedOut()) return 'noch nie';
             return moment(self.lastLockoutDate()).fromNow();
         });
 
@@ -59,7 +60,7 @@
             return self.lastPasswordChangedDate() > self.creationDate();
         });
         this.lastPasswordChangedDateFormatted = ko.computed(function () {
-            if (!self.hasEverChangedPassword()) return 'Noch nie';
+            if (!self.hasEverChangedPassword()) return 'noch nie';
             return moment(self.lastPasswordChangedDate()).fromNow();
         });
 
@@ -85,6 +86,10 @@
                 .replace(/\{0\}/, self.firstName())
                 .replace(/\{1\}/, self.lastName()).trim();
             return full.length ? full : self.userName();
+        });
+
+        this.hasPhone = ko.computed(function () {
+            return self.phone().length > 0;
         });
 
         ko.validation.group(this);
@@ -114,7 +119,8 @@
             Email: this.email(),
             Roles: this.roles(),
             FirstName: this.firstName(),
-            LastName: this.lastName()
+            LastName: this.lastName(),
+            Phone: this.phone()
         };
         return dto;
     };

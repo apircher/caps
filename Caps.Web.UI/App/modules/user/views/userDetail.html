@@ -17,6 +17,7 @@
             <div class="row-fluid">
                 <div class="span6">
                     <p>Email: <a data-bind="text: user().email, attr: { href: 'mailto:' + user().email() }"></a></p>
+                    <p data-bind="visible: user().hasPhone">Telefon: <a data-bind="text: user().phone, attr: { href: 'tel:' + user().phone() }"></a></p>
                     <p>Benutzername: <span data-bind="text: user().userName"></span></p>
                     <p data-bind="visible: user().roles().length">Rollen: <em><!-- ko foreach: user().roles --><span data-bind="text: $data + (($index < $parent.user().roles().length) ? ', ' : '')"></span><!-- /ko --></em></p>                                    
                 </div>

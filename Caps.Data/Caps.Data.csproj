@@ -58,6 +58,10 @@
     <Compile Include="Migrations\201307231135187_InitialCreate.Designer.cs">
       <DependentUpon>201307231135187_InitialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201307240935142_Extend_Authors.cs" />
+    <Compile Include="Migrations\201307240935142_Extend_Authors.Designer.cs">
+      <DependentUpon>201307240935142_Extend_Authors.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\Sitemap.cs" />
@@ -71,6 +75,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201307231135187_InitialCreate.resx">
       <DependentUpon>201307231135187_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201307240935142_Extend_Authors.resx">
+      <DependentUpon>201307240935142_Extend_Authors.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

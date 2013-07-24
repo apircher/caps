@@ -1,43 +1,48 @@
 ﻿<div class="app-page bottom-fixed-navbar-container">
     
     <div class="full-width-on-phone">
-    <div class="row-fluid">
-        <table class="table table-striped full-height">
-        <thead class="hidden-phone">
-            <tr>
-                <th></th>
-                <th>Benutzer</th>
-                <th class="hidden-phone">Email</th>
-                <th class="hidden-phone">Zuletzt aktiv</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody data-bind="foreach: users">
-            <tr>
-                <td class="vertical-centered">
-                    <a data-bind="attr: { href: '#/users/detail/' + userName() }" class="no-underline">
-                    <i class="icon-user icon-2x" data-bind="css: { 'user-online': isOnline(), 'user-offline': !isOnline() }, attr: { title: isOnline() ? 'Online' : 'Offline' }"></i>
-                    </a>
-                </td>
-                <td>
-                    <a data-bind="text: fullName, attr: { href: '#/users/detail/' + userName(), title: userName }"></a>
-                    <div class="visible-phone">
-                        <span data-bind="text: email"></span>
-                    </div>
-                </td>
-                <td class="hidden-phone"><span data-bind="text: email"></span></td>
-                <td class="hidden-phone"><span data-bind="text: lastActivityDateFormatted, textTimeout: { interval: 30000, observable: lastActivityDate }, attr: { title: moment(lastActivityDate()).format('LLLL') }"></span></td>
-                <td class="vertical-centered">
-                    <a data-bind="attr: { href: '#/users/edit/' + userName() }" title="Bearbeiten" class="no-underline"><i class="icon-edit icon-2x"></i></a>                     
-                </td>
-                <td class="vertical-centered">
-                    <a href="#" data-bind="click: $parent.deleteUser" title="Löschen" class="no-underline"><i class="icon-remove icon-2x"></i></a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    </div>
+        <div class="row-fluid">
+            <table class="table table-striped full-height">
+                <thead class="hidden-phone">
+                    <tr>
+                        <th></th>
+                        <th>Benutzer</th>
+                        <th class="hidden-phone">Email</th>
+                        <th class="hidden-phone">Zuletzt aktiv</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: users">
+                    <tr>
+                        <td class="vertical-centered">
+                            <a data-bind="attr: { href: '#/users/detail/' + userName() }" class="no-underline">
+                            <i class="icon-user icon-2x" data-bind="css: { 'user-online': isOnline(), 'user-offline': !isOnline() }, attr: { title: isOnline() ? 'Online' : 'Offline' }"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a data-bind="text: fullName, attr: { href: '#/users/detail/' + userName(), title: userName }"></a>
+                            <div class="visible-phone">
+                                <!-- ko if: hasEverLoggedIn -->
+                                <span data-bind="text: lastActivityDateFormatted, attr: { title: moment(lastActivityDate()).format('LLLL') }"></span> zuletzt aktiv
+                                <!-- /ko -->
+                                <!-- ko if: !hasEverLoggedIn() -->
+                                noch nie aktiv
+                                <!-- /ko -->
+                            </div>
+                        </td>
+                        <td class="hidden-phone"><span data-bind="text: email"></span></td>
+                        <td class="hidden-phone"><span data-bind="text: lastActivityDateFormatted, textTimeout: { interval: 30000, observable: lastActivityDate }, attr: { title: moment(lastActivityDate()).format('LLLL') }"></span></td>
+                        <td class="vertical-centered">
+                            <a data-bind="attr: { href: '#/users/edit/' + userName() }" title="Bearbeiten" class="no-underline"><i class="icon-edit icon-2x"></i></a>                     
+                        </td>
+                        <td class="vertical-centered">
+                            <a href="#" data-bind="click: $parent.deleteUser" title="Löschen" class="no-underline"><i class="icon-remove icon-2x"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="navbar navbar-fixed-bottom">
