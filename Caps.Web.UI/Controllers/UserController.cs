@@ -19,10 +19,6 @@ namespace Caps.Web.UI.Controllers
     {
         CapsDbContext db;
 
-        public UserController() 
-            : this(new CapsDbContext()) 
-        {
-        }
         public UserController(CapsDbContext db) 
         {
             this.db = db;

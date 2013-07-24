@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http.Filters;
 using System.Web.Security;
+using System.Net.Http;
 using WebMatrix.WebData;
 using Caps.Web.UI.Infrastructure;
 
@@ -18,14 +19,14 @@ namespace Caps.Web.UI.Infrastructure.WebApi
             var httpContext = HttpContext.Current;
             if (httpContext.Request.IsAuthenticated)
             {
-                using (var db = new CapsDbContext())
+                var scope = actionContext.Request.GetDependencyScope();
+                var db = scope.GetService<CapsDbContext>();
+
+                var author = db.GetCurrentAuthor();
+                if (author != null)
                 {
-                    var author = db.GetCurrentAuthor();
-                    if (author != null)
-                    {
-                        author.RegisterActivity();
-                        db.SaveChanges();
-                    }
+                    author.RegisterActivity();
+                    db.SaveChanges();
                 }
             }
 

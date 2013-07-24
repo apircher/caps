@@ -16,14 +16,12 @@ namespace Caps.Web.UI.Infrastructure.Mvc
             var httpContext = filterContext.RequestContext.HttpContext;
             if (httpContext.Request.IsAuthenticated)
             {
-                using (var db = new CapsDbContext())
+                var db = DependencyResolver.Current.GetService<CapsDbContext>();
+                var author = db.GetCurrentAuthor();
+                if (author != null)
                 {
-                    var author = db.GetCurrentAuthor();
-                    if (author != null)
-                    {
-                        author.RegisterActivity();
-                        db.SaveChanges();
-                    }
+                    author.RegisterActivity();
+                    db.SaveChanges();
                 }
             }
 

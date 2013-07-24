@@ -18,11 +18,6 @@ namespace Caps.Web.UI.Controllers
     {
         CapsDbContext db;
 
-        public CapsController()
-            : this(new CapsDbContext()) 
-        {
-
-        }
         public CapsController(CapsDbContext context) 
         {
             this.db = context;

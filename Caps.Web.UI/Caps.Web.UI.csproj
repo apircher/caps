@@ -70,6 +70,19 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject">
+      <HintPath>..\packages\Ninject.3.0.1.10\lib\net45-full\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Web.Common">
+      <HintPath>..\packages\Ninject.Web.Common.3.0.0.7\lib\net45-full\Ninject.Web.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Web.Mvc">
+      <HintPath>..\packages\Ninject.MVC3.3.0.0.6\lib\net45-full\Ninject.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Web.WebApi, Version=3.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Ninject.Web.WebApi-RC.3.0.0.22\lib\net45-full\Ninject.Web.WebApi.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
@@ -159,6 +172,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BreezeWebApiConfig.cs" />
     <Compile Include="App_Start\CapsBundleConfig.cs" />
+    <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RolesConfig.cs" />
     <Compile Include="Controllers\CapsController.cs" />
     <Compile Include="Controllers\CapsDataController.cs" />
@@ -173,6 +187,7 @@
     <Compile Include="Infrastructure\DbContextExtensions.cs" />
     <Compile Include="Infrastructure\Mvc\SetUserActivityAttribute.cs" />
     <Compile Include="Infrastructure\Mvc\ValidateJsonAntiForgeryTokenAttribute.cs" />
+    <Compile Include="Infrastructure\WebApi\IDependencyScopeExtensions.cs" />
     <Compile Include="Infrastructure\WebApi\SetUserActivityAttribute.cs" />
     <Compile Include="Infrastructure\WebApi\ValidateJsonAntiForgeryTokenAttribute.cs" />
     <Compile Include="Models\AuthenticationModels.cs" />
