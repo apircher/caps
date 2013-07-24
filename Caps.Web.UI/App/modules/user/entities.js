@@ -81,9 +81,10 @@
         });
 
         this.fullName = ko.computed(function () {
-            return '{0} {1}'
+            var full = '{0} {1}'
                 .replace(/\{0\}/, self.firstName())
                 .replace(/\{1\}/, self.lastName()).trim();
+            return full.length ? full : self.userName();
         });
 
         ko.validation.group(this);
