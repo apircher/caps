@@ -26,15 +26,14 @@ namespace Caps.Web.UI
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             CapsBundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            RolesConfig.EnsureDefaultRoles();
-            RolesConfig.EnsureUserInRole("Administrator");
         }
 
         void InitializeDatabase()
         {
+#if DEBUG
             System.Data.Entity.Database.SetInitializer<Caps.Data.CapsDbContext>(
                 new System.Data.Entity.DropCreateDatabaseIfModelChanges<Caps.Data.CapsDbContext>());
+#endif
             try
             {
                 using (var context = new Caps.Data.CapsDbContext())
@@ -44,6 +43,9 @@ namespace Caps.Web.UI
                 }
 
                 WebSecurity.InitializeDatabaseConnection("CapsDbContext", "Author", "Id", "UserName", true);
+
+                RolesConfig.EnsureDefaultRoles();
+                RolesConfig.EnsureUserInRole("Administrator");
             }
             catch (Exception ex)
             {
