@@ -24,12 +24,15 @@
         this.lastLoginDate = ko.observable(data.LastLoginDate);
         this.lastPasswordChangedDate = ko.observable(data.LastPasswordChangedDate);
 
+        this.firstName = ko.observable(data.FirstName || '').extend({ required: true });
+        this.lastName = ko.observable(data.LastName || '').extend({ required: true });
+
         this.roles = ko.observableArray(data.Roles || []);
         
         this.isOnline = ko.computed(function () {
             if (!self.lastActivityDate())
                 return false;
-            return moment.utc() <= moment.utc(self.lastActivityDate()).add('minutes', 15);
+            return moment() <= moment(self.lastActivityDate()).add('minutes', 15);
         });
 
         this.hasEverLoggedIn = ko.computed(function () {
@@ -37,11 +40,11 @@
         });
         this.lastLoginDateFormatted = ko.computed(function () {
             if (!self.hasEverLoggedIn()) return 'Noch nie';
-            return moment.utc(self.lastLoginDate()).fromNow();
+            return moment(self.lastLoginDate()).fromNow();
         });
         this.lastActivityDateFormatted = ko.computed(function () {
             if (!self.hasEverLoggedIn()) return 'Noch nie';
-            return moment.utc(self.lastActivityDate()).fromNow();
+            return moment(self.lastActivityDate()).subtract('seconds', 20).fromNow();
         });
 
         this.hasEverBeenLockedOut = ko.computed(function () {
@@ -49,7 +52,7 @@
         });
         this.lastLockoutDateFormatted = ko.computed(function () {
             if (!self.hasEverBeenLockedOut()) return 'Noch nie';
-            return moment.utc(self.lastLockoutDate()).fromNow();
+            return moment(self.lastLockoutDate()).fromNow();
         });
 
         this.hasEverChangedPassword = ko.computed(function () {
@@ -57,7 +60,7 @@
         });
         this.lastPasswordChangedDateFormatted = ko.computed(function () {
             if (!self.hasEverChangedPassword()) return 'Noch nie';
-            return moment.utc(self.lastPasswordChangedDate()).fromNow();
+            return moment(self.lastPasswordChangedDate()).fromNow();
         });
 
         this.isEffectivelyLockedOut = ko.computed(function () {
@@ -66,6 +69,21 @@
                 return d > new Date();
             }
             return false;
+        });
+
+        this.displayName = ko.computed(function () {
+            if (self.firstName().length > 0)
+                return self.firstName();
+            else if (self.lastName().length > 0)
+                return self.lastName();
+            else
+                return self.userName();
+        });
+
+        this.fullName = ko.computed(function () {
+            return '{0} {1}'
+                .replace(/\{0\}/, self.firstName())
+                .replace(/\{1\}/, self.lastName()).trim();
         });
 
         ko.validation.group(this);
@@ -79,11 +97,12 @@
         this.email(data.Email || '');
         this.isApproved(data.IsApproved || false);
         this.isLockedOut(data.IsLockedOut || false);
-        this.isOnline(data.IsOnline || false);
         this.lastActivityDate(data.LastActivityDate);
         this.lastLockoutDate(data.LastLockoutDate);
         this.lastLoginDate(data.LastLoginDate);
         this.lastPasswordChangedDate(data.LastPasswordChangedDate);
+        this.firstName(data.FirstName || '');
+        this.lastName(data.LastName || '');
     };
 
     User.prototype.toDto = function () {
@@ -92,7 +111,9 @@
             Password: this.password(),
             Comment: this.comment(),
             Email: this.email(),
-            Roles: this.roles()
+            Roles: this.roles(),
+            FirstName: this.firstName(),
+            LastName: this.lastName()
         };
         return dto;
     };

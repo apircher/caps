@@ -20,6 +20,8 @@
                     <!-- /ko -->
                 
                     <!-- ko if: user() -->        
+                    <!-- ko composeEditor: { field: user().firstName, title: 'Vorname', valueUpdate: 'afterkeydown', popoverPlacement: 'bottom', css: 'span12' } --><!-- /ko -->
+                    <!-- ko composeEditor: { field: user().lastName, title: 'Nachname', valueUpdate: 'afterkeydown', popoverPlacement: 'bottom', css: 'span12' } --><!-- /ko -->
                     <!-- ko composeEditor: { field: user().email, title: 'Email', valueUpdate: 'afterkeydown', popoverPlacement: 'bottom', css: 'span12' } --><!-- /ko -->
                     <!-- ko composeEditor: { type: 'textarea', field: user().comment, title: 'Notizen', valueUpdate: 'afterkeydown', popoverPlacement: 'bottom', css: 'span12' } --><!-- /ko -->
                     <!-- /ko -->     

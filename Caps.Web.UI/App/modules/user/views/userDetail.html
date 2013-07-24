@@ -2,7 +2,7 @@
     
     <div class="container-fluid">
         <h2><span data-bind="text: user().userName"></span> <small>Benutzerdetails</small></h2>         
-        <div class="alert" data-bind="visible: user().isLockedOut">
+        <div class="alert" data-bind="visible: user().isEffectivelyLockedOut">
             <strong>Gesperrt </strong> Der Benutzer wurde <span data-bind="text: moment.utc(user().lastLockoutDate()).fromNow(), attr: { title: moment(user().lastLockoutDate()).format('LLLL') }"></span> aufgrund zu vieler ungültiger Anmelde-Versuche gesperrt.
             Die Sperrung wird nach <!-- ko text: authentication.metadata.lockoutPeriod --><!-- /ko --> Minuten automatisch aufgehoben.
         </div>

@@ -23,11 +23,14 @@ namespace Caps.Web.UI.Models
             Email = author.Email;
             IsApproved = WebSecurity.IsConfirmed(author.UserName);
             IsLockedOut = author.IsLockedOut();
-            LastActivityDate = author.LastActivityDate.GetValueOrDefault(DateTime.MinValue);
-            LastLockoutDate = WebSecurity.GetLastPasswordFailureDate(author.UserName);
-            LastLoginDate = author.LastLoginDate.GetValueOrDefault(DateTime.MinValue);
-            LastPasswordChangedDate = WebSecurity.GetPasswordChangedDate(author.UserName);
+            LastActivityDate = new DateTime(author.LastActivityDate.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
+            LastLockoutDate = new DateTime(WebSecurity.GetLastPasswordFailureDate(author.UserName).Ticks, DateTimeKind.Utc);
+            LastLoginDate = new DateTime(author.LastLoginDate.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
+            LastPasswordChangedDate = new DateTime(WebSecurity.GetPasswordChangedDate(author.UserName).Ticks, DateTimeKind.Utc);
             Roles = author.GetRoles();
+
+            FirstName = author.FirstName;
+            LastName = author.LastName;
         }
 
         [Required]
@@ -45,12 +48,20 @@ namespace Caps.Web.UI.Models
         public DateTime LastLoginDate { get; set; }
         public DateTime LastPasswordChangedDate { get; set; }
 
+        [Required]
+        public String FirstName { get; set; }
+        [Required]
+        public String LastName { get; set; }
+
         public String[] Roles { get; set; }
 
         public void UpdateAuthor(Author author)
         {
             author.Comment = Comment;
             author.Email = Email;
+
+            author.FirstName = FirstName;
+            author.LastName = LastName;
 
             UpdateRoles(author);
         }

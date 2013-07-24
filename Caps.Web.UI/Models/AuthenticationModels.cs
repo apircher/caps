@@ -40,6 +40,9 @@ namespace Caps.Web.UI.Models
                 Roles = author.GetRoles();
                 CreationDate = WebSecurity.GetCreateDate(author.UserName);
                 LastPasswordChangedDate = WebSecurity.GetPasswordChangedDate(author.UserName);
+
+                FirstName = author.FirstName;
+                LastName = author.LastName;
             }
         }
 
@@ -48,6 +51,9 @@ namespace Caps.Web.UI.Models
         public String[] Roles { get; set; }
         public DateTime CreationDate { get; set; }
         public DateTime LastPasswordChangedDate { get; set; }
+
+        public String FirstName { get; set; }
+        public String LastName { get; set; }
     }
 
     public class LogonResponseModel : AuthenticatedUserModel

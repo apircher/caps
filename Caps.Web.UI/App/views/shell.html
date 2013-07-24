@@ -17,7 +17,7 @@
                 </div>
 
                 <ul id="nav-user" class="nav pull-right" data-bind="visible: authentication.isAuthenticated">
-                    <li><a href="/#profile"><strong data-bind="text: authentication.user().userName()"></strong></a></li>
+                    <li><a href="/#profile"><strong data-bind="text: authentication.user().displayName()"></strong></a></li>
                     <li><a href="#" class="nav-btn" data-bind="click: logOff, clickBubble: false" title="Abmelden"><i class="icon-fixed-width icon-off icon-2x"></i></a></li>                    
                 </ul>
 

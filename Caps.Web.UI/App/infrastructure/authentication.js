@@ -169,6 +169,24 @@
         this.creationDate = ko.observable(data.CreationDate || new Date());
         this.lastPasswordChangedDate = ko.observable(data.LastPasswordChangedDate);
 
+        this.firstName = ko.observable(data.FirstName || '');
+        this.lastName = ko.observable(data.LastName || '');
+
+        this.displayName = ko.computed(function () {
+            if (self.firstName().length > 0)
+                return self.firstName();
+            else if (self.lastName().length > 0)
+                return self.lastName();
+            else
+                return self.userName();
+        });
+
+        this.fullName = ko.computed(function () {
+            return '{0} {1}'
+                .replace(/\{0\}/, self.firstName())
+                .replace(/\{1\}/, self.lastName()).trim();
+        });
+
         this.hasEverChangedPassword = ko.computed(function () {
             return self.lastPasswordChangedDate() > self.creationDate();
         });

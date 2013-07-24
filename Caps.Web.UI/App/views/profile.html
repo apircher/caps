@@ -1,7 +1,7 @@
 ﻿<div id="user-profile" class="app-page bottom-fixed-navbar-container">
 
     <div class="container-fluid">
-        <h2><!-- ko text: user().userName --><!-- /ko --> <small>Mein Profil</small></h2>
+        <h2><!-- ko text: user().fullName --><!-- /ko --> <small>Mein Profil</small></h2>
         <div class="well">
             <p>
                 Letzte Passwort-Änderung: <span data-bind="text: lastPasswordChangedDateFormatted, attr: { title: moment(user().lastPasswordChangedDate()).format('LLLL') }"></span><br />
