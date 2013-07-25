@@ -255,6 +255,10 @@
     <Content Include="App\views\welcome.html" />
     <Content Include="App\viewmodels\welcome.js" />
     <Content Include="App\main.js" />
+    <Content Include="App_Data\CapsDb.mdf" />
+    <Content Include="App_Data\CapsDb_log.ldf">
+      <DependentUpon>CapsDb.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\app.css" />
     <Content Include="Content\bootstrap-responsive.css" />
     <Content Include="Content\bootstrap-responsive.min.css" />

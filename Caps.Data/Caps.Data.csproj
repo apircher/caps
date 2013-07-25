@@ -62,8 +62,16 @@
     <Compile Include="Migrations\201307240935142_Extend_Authors.Designer.cs">
       <DependentUpon>201307240935142_Extend_Authors.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201307251150401_AddFileEntities.cs" />
+    <Compile Include="Migrations\201307251150401_AddFileEntities.Designer.cs">
+      <DependentUpon>201307251150401_AddFileEntities.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
+    <Compile Include="Model\ChangeInfo.cs" />
+    <Compile Include="Model\DbFile.cs" />
+    <Compile Include="Model\DbFileContent.cs" />
+    <Compile Include="Model\DbFileVersion.cs" />
     <Compile Include="Model\Sitemap.cs" />
     <Compile Include="Model\Website.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -78,6 +86,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201307240935142_Extend_Authors.resx">
       <DependentUpon>201307240935142_Extend_Authors.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201307251150401_AddFileEntities.resx">
+      <DependentUpon>201307251150401_AddFileEntities.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

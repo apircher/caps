@@ -11,7 +11,12 @@ namespace Caps.Data.Migrations
     {
         public Configuration()
         {
+#if DEBUG
+            AutomaticMigrationsEnabled = true;
+            AutomaticMigrationDataLossAllowed = true;
+#else
             AutomaticMigrationsEnabled = false;
+#endif
         }
 
         protected override void Seed(Caps.Data.CapsDbContext context)
