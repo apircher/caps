@@ -72,6 +72,7 @@
     <Compile Include="Model\DbFile.cs" />
     <Compile Include="Model\DbFileContent.cs" />
     <Compile Include="Model\DbFileVersion.cs" />
+    <Compile Include="Model\DbThumbnail.cs" />
     <Compile Include="Model\Sitemap.cs" />
     <Compile Include="Model\Website.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

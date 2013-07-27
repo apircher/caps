@@ -24,6 +24,20 @@ namespace Caps.Web.UI.Controllers
             return _contextProvider.Metadata();
         }
 
+        // ~/breeze/capsdata/Authors
+        [HttpGet]
+        public IQueryable<Author> Authors()
+        {
+            return _contextProvider.Context.Authors;
+        }
+
+        // ~/breeze/capsdata/DbFiles
+        [HttpGet]
+        public IQueryable<DbFile> Files()
+        {
+            return _contextProvider.Context.Files;
+        }
+
         // ~/breeze/capsdata/Websites
         [HttpGet]
         public IQueryable<Website> Websites()

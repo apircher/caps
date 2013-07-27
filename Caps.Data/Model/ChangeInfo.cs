@@ -14,5 +14,10 @@ namespace Caps.Data.Model
         [MaxLength(50)]
         public String By { get; set; }
         public DateTime At { get; set; }
+
+        public static ChangeInfo GetChangeInfo(String userName)
+        {
+            return new ChangeInfo { By = userName, At = DateTime.UtcNow };
+        }
     }
 }

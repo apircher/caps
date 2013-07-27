@@ -21,6 +21,7 @@ namespace Caps.Data
         public DbSet<DbFile> Files { get; set; }
         public DbSet<DbFileVersion> FileVersions { get; set; }
         public DbSet<DbFileContent> FileContents { get; set; }
+        public DbSet<DbThumbnail> Thumbnails { get; set; }
 
         public DbSet<Website> Websites { get; set; }
         public DbSet<Sitemap> Sitemaps { get; set; }

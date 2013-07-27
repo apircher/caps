@@ -12,6 +12,9 @@ requirejs.config({
         'bootstrap': '../Scripts/bootstrap.min',
         'jquery': '../Scripts/jquery-2.0.3.min',
         'moment': '../Scripts/moment.min',
+        'jquery-ui': '../Scripts/jquery-ui-1.10.3.min',
+        'jquery.fileupload': '../Scripts/jquery.fileupload',
+        'jquery.infinitescroll': '../Scripts/jquery.infinitescroll.min',
 
         'breeze': '../Scripts/breeze.debug',
         'Q': '../Scripts/q.min',
@@ -19,11 +22,18 @@ requirejs.config({
 
         'entityManagerProvider': 'infrastructure/entityManagerProvider',
         'authentication': 'infrastructure/authentication',
-        'localization': 'infrastructure/localization'
+        'localization': 'infrastructure/localization',
+
+        'Scripts': '../Scripts'
 
     },
     shim: {
         'bootstrap': {
+            deps: ['jquery'],
+            exports: 'jQuery'
+        },
+
+        'jquery-ui': {
             deps: ['jquery'],
             exports: 'jQuery'
         }
@@ -36,7 +46,7 @@ requirejs.config({
 });
 
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authentication', 'infrastructure/antiForgeryToken',
-    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'knockout.custom-bindings', 'knockout.extenders', 'infrastructure/validation',
+    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'jquery-ui', 'knockout.custom-bindings', 'knockout.extenders', 'infrastructure/validation',
     '../Scripts/safari.cancelZoom'],
     function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $) {
 

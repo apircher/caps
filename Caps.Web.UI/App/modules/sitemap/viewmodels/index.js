@@ -1,5 +1,7 @@
-﻿define(function () {
+﻿define(['knockout'], function (ko) {
     
-    return {
+    var vm = {
     };
+
+    return vm;
 });

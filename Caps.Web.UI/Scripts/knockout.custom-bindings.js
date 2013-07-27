@@ -57,6 +57,26 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     };
 
     //
+    // jQuery Fileupload
+    //
+    ko.bindingHandlers.fileupload = {
+        init: function (elem, valueAccessor) {
+            var $elem = $(elem);
+            $elem.fileupload(valueAccessor());
+        }
+    };
+
+    //
+    // jQuery Infinite Scroll
+    //
+    ko.bindingHandlers.infiniteScroll = {
+        init: function (elem, valueAccessor) {
+            var $elem = $(elem);
+            $elem.infinitescroll(valueAccessor());
+        }
+    };
+
+    //
     // Editor Templates
     //
     ko.bindingHandlers.composeEditor = {

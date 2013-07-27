@@ -1,3 +1,35 @@
-﻿<div>
-    <h1>Module ContentFile</h1>
+﻿<div class="app-page bottom-fixed-navbar-container">
+    
+    <ul data-bind="foreach: files" class="thumbnails thumbnails-fixed-size">
+        <li class="span3">
+            <div class="thumbnail" data-bind="attr: { title: FileName }">
+                <div class="preview" data-bind="style: { 'background-image': 'url(/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160)' }">
+                </div>                
+                <div class="thumbnail-controls">
+                    <a class="pull-right btn-link" data-bind="click: $parent.deleteFile, attr: { title: FileName() + ' löschen' }"><i class="icon-remove icon-large"></i></a>
+                </div>
+            </div>
+        </li>
+    </ul>
+
+    <div class="navbar navbar-fixed-bottom">
+        <div class="navbar-inner">
+            <div class="navbar-panel navbar-text pull-right">
+                <span data-bind="text: files().length"></span> Dateien
+            </div>
+            <ul class="nav pull-right">
+                <li>
+                    <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="icon-fixed-width icon-refresh" data-bind="css: { 'icon-spin': isLoading }"></i></a>
+                </li>
+            </ul>
+            <ul class="nav">
+                <li class="fileinput-button">
+                    <a>
+                        <i class="icon-fixed-width icon-plus"></i> Dateien hinzufügen
+                    </a>
+                    <input id="file1" type="file" name="files" data-url="api/DbFileUpload" data-bind="fileupload: { done: uploadDone, drop: filesDropped }" multiple class="btn">
+                </li>
+            </ul>
+        </div> 
+    </div>
 </div>

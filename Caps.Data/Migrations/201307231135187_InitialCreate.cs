@@ -50,8 +50,14 @@ namespace Caps.Data.Migrations
         {
             DropIndex("dbo.Sitemaps", new[] { "WebsiteId" });
             DropForeignKey("dbo.Sitemaps", "WebsiteId", "dbo.Websites");
+            
             DropTable("dbo.Sitemaps");
             DropTable("dbo.Websites");
+
+            DropTable("dbo.webpages_UsersInRoles");
+            DropTable("dbo.webpages_Roles");
+            DropTable("dbo.webpages_OAuthMembership");
+            DropTable("dbo.webpages_Membership");
             DropTable("dbo.Author");
         }
     }

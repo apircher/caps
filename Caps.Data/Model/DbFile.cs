@@ -18,13 +18,29 @@ namespace Caps.Data.Model
         public String FileName { get; set; }
         [MaxLength(50)]
         public String ContentType { get; set; }
-
-        public String Description { get; set; }
+        [MaxLength(200)]
+        public String Copyright { get; set; }
 
         [InverseProperty("File")]
         public ICollection<DbFileVersion> Versions { get; set; }
 
         public ChangeInfo Created { get; set; }
         public ChangeInfo Modified { get; set; }
+
+        [NotMapped]
+        public bool IsImage
+        {
+            get
+            {
+                if (String.IsNullOrWhiteSpace(ContentType))
+                    return false;
+                return ContentType.StartsWith("image");
+            }
+        }
+
+        public DbFileVersion GetLatestVersion()
+        {
+            return Versions != null ? Versions.OrderByDescending(v => v.Id).FirstOrDefault() : null;
+        }
     }
 }

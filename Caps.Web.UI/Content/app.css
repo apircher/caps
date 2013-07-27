@@ -207,9 +207,62 @@ p.message > strong {
     font-weight:bold;
 }
 
+/** 
+ *  File input 
+ */
+
+.fileinput-button {
+    overflow:hidden;
+    position:relative;
+}
+    .fileinput-button input {
+        opacity:0;
+        position:absolute;
+        transform: translate(-300px, 0) scale(4);
+        cursor:pointer;
+        top:0;
+        right:0;
+        font-size:23px;
+        margin:0;
+        direction:ltr;
+    }
+
+/** 
+ *  Thumbnails 
+ */
+.thumbnails-fixed-size {
+}
+.thumbnails-fixed-size .thumbnail {
+    position:relative;
+    overflow:hidden;
+}
+    .thumbnail div.preview {
+        width:100%;
+        height:180px;
+        background-repeat:no-repeat;
+        background-position:center center;
+    }
+
+.thumbnail-controls {
+    position:absolute;
+    left: 9px;
+    right:9px;
+    bottom:9px;
+}
+    .thumbnail-controls .btn-link {
+        text-decoration:none;
+        color:#333;
+        background-color:rgba(255, 255, 255, 0.7);
+        padding:0 .3em;
+        opacity:.3;
+    }
+    .thumbnail-controls .btn-link:hover {
+        opacity:.9;
+    }
+
 @media (max-width: 979px) {
     .page-host {
-        top: 0;
+        top: 8px;
     }
 
     .navbar-fixed-top {
@@ -226,7 +279,7 @@ p.message > strong {
 
     .bottom-fixed-navbar-container {
         padding-bottom:0;
-    }
+    }    
 }
 
 
@@ -243,7 +296,7 @@ p.message > strong {
             padding-right:20px;
         }
 
-
+        
     .navbar-panel {
         margin: 0 8px 0 0;
     }
@@ -274,6 +327,15 @@ p.message > strong {
     .table td .cell-warning {
         display:block;
     }
+
+
+    /** 
+     *  Thumbnails 
+     */
+    .thumbnails-fixed-size .thumbnail {
+    }
+        .thumbnails-fixed-size .thumbnail img {
+        }
 }
 
 @media (max-width: 320px) {
