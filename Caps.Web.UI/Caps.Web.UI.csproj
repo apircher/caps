@@ -265,10 +265,6 @@
     <Content Include="App\views\welcome.html" />
     <Content Include="App\viewmodels\welcome.js" />
     <Content Include="App\main.js" />
-    <Content Include="App_Data\CapsDb.mdf" />
-    <Content Include="App_Data\CapsDb_log.ldf">
-      <DependentUpon>CapsDb.mdf</DependentUpon>
-    </Content>
     <Content Include="Content\app.css" />
     <Content Include="Content\bootstrap-responsive.css" />
     <Content Include="Content\bootstrap-responsive.min.css" />
@@ -389,6 +385,7 @@
     <Content Include="Scripts\jquery-ui-1.10.3.min.js" />
     <Content Include="Scripts\jquery.fileupload.js" />
     <Content Include="Scripts\jquery.infinitescroll.min.js" />
+    <Content Include="Scripts\jquery.ui.widget.js" />
     <Content Include="Scripts\knockout-2.3.0.debug.js" />
     <Content Include="Scripts\knockout-2.3.0.js" />
     <Content Include="Scripts\knockout.custom-bindings.js" />
@@ -418,7 +415,9 @@
     <Content Include="App\infrastructure\validation.js" />
     <Content Include="Scripts\jquery-2.0.3.min.map" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>

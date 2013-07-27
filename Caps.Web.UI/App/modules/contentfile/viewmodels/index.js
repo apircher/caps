@@ -1,5 +1,5 @@
 ﻿define([
-    'knockout', '../datacontext', 'jquery', 'toastr', 'plugins/dialog', 'Q', 'jquery-ui', 'jquery.fileupload', 'jquery.infinitescroll'
+    'knockout', '../datacontext', 'jquery', 'toastr', 'plugins/dialog', 'Q', 'jquery.fileupload'
 ], function (ko, datacontext, $, toastr, dialog, Q) {
         
     var files = ko.observableArray([]),

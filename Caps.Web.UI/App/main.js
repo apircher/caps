@@ -5,26 +5,26 @@ requirejs.config({
         'durandal': '../Scripts/durandal',
         'plugins': '../Scripts/durandal/plugins',
         'transitions': '../Scripts/durandal/transitions',
+
         'knockout': '../Scripts/knockout-2.3.0',
         'knockout.validation': '../Scripts/knockout.validation.min',
         'knockout.custom-bindings': '../Scripts/knockout.custom-bindings',
         'knockout.extenders': '../Scripts/knockout.extenders',
-        'bootstrap': '../Scripts/bootstrap.min',
-        'jquery': '../Scripts/jquery-2.0.3.min',
-        'moment': '../Scripts/moment.min',
-        'jquery-ui': '../Scripts/jquery-ui-1.10.3.min',
-        'jquery.fileupload': '../Scripts/jquery.fileupload',
-        'jquery.infinitescroll': '../Scripts/jquery.infinitescroll.min',
 
+        'bootstrap': '../Scripts/bootstrap.min',
+
+        'jquery': '../Scripts/jquery-2.0.3.min',
+        'jquery.fileupload': '../Scripts/jquery.fileupload',
+        'jquery.ui.widget': '../Scripts/jquery.ui.widget',
+
+        'moment': '../Scripts/moment.min',
         'breeze': '../Scripts/breeze.debug',
         'Q': '../Scripts/q.min',
         'toastr': '../Scripts/toastr.min',
 
         'entityManagerProvider': 'infrastructure/entityManagerProvider',
         'authentication': 'infrastructure/authentication',
-        'localization': 'infrastructure/localization',
-
-        'Scripts': '../Scripts'
+        'localization': 'infrastructure/localization'
 
     },
     shim: {
@@ -32,11 +32,9 @@ requirejs.config({
             deps: ['jquery'],
             exports: 'jQuery'
         },
-
-        'jquery-ui': {
-            deps: ['jquery'],
-            exports: 'jQuery'
-        }
+        
+        'jquery.ui.widget': ['jquery'],
+        'jquery.fileupload': ['jquery.ui.widget']
     },
     map: {
         '*': {
@@ -46,9 +44,9 @@ requirejs.config({
 });
 
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authentication', 'infrastructure/antiForgeryToken',
-    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'jquery-ui', 'knockout.custom-bindings', 'knockout.extenders', 'infrastructure/validation',
+    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'knockout.custom-bindings', 'knockout.extenders', 'infrastructure/validation',
     '../Scripts/safari.cancelZoom'],
-    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $) {
+    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, widget) {
 
         //>>excludeStart("build", true);
         system.debug(true);

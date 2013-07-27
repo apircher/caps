@@ -25,14 +25,16 @@
                 document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
             }
         </script>
-
-        <script src="~/Scripts/holder.js"></script>
     </head>
     <body>
         <div id="applicationHost">
             @Html.Partial("_splash")
         </div>
-        
+        <script type="text/javascript">
+            var require = {
+                urlArgs: "v=1.0-pre"
+            };
+        </script>
         <script type="text/javascript" src="~/Scripts/require.js" data-main="@Url.Content("~/App/main")"></script>
     </body>
 </html>
