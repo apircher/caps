@@ -149,9 +149,14 @@ a.no-underline:hover {
 }
 
 .messageBox {
-    max-width:100%;
     min-width:400px;
 }
+    .messageBox .modal-body p.message {
+        word-wrap:hyphenate;
+    }
+        .messageBox .modal-body p.message > strong {
+            font-weight:bold;
+        }
 
 .title-with-back-link {
     margin-left:-.75em;
@@ -203,10 +208,6 @@ a.no-underline:hover {
     margin:0;
 }
 
-p.message > strong {
-    font-weight:bold;
-}
-
 /** 
  *  File input 
  */
@@ -230,8 +231,6 @@ p.message > strong {
 /** 
  *  Thumbnails 
  */
-.thumbnails-fixed-size {
-}
 .thumbnails-fixed-size .thumbnail {
     position:relative;
     overflow:hidden;
@@ -241,24 +240,68 @@ p.message > strong {
         height:180px;
         background-repeat:no-repeat;
         background-position:center center;
+        text-align:center;
     }
+        .thumbnail div.preview i.icon-spin {
+            position:relative;
+            top:50%;
+            margin-top:-.5em;
+        }
 
 .thumbnail-controls {
     position:absolute;
-    left: 9px;
-    right:9px;
-    bottom:9px;
+    left: 5px;
+    right:5px;
+    bottom:5px;
+    visibility:hidden;
+}
+.thumbnail.selected-item .thumbnail-controls,
+.thumbnail:hover .thumbnail-controls {
+    visibility:visible;
 }
     .thumbnail-controls .btn-link {
         text-decoration:none;
         color:#333;
         background-color:rgba(255, 255, 255, 0.7);
         padding:0 .3em;
-        opacity:.3;
+        opacity:.5;
     }
     .thumbnail-controls .btn-link:hover {
-        opacity:.9;
+        opacity:1;
     }
+
+
+.thumbnail .item-check {
+    position:absolute;
+    left:5px;
+    bottom:1px;
+    color:#ddd;
+    cursor:pointer;
+    padding-right:25px;
+    padding-top:25px;
+    opacity:.5;
+}
+.thumbnail.item-selected .item-check {
+    color: #3a7921;
+    opacity:1;
+}
+.thumbnail.selected-item {
+    border-color:#0088cc;
+    box-shadow:0px 1px 4px rgba(0,105,214,0.25);
+}
+
+#drop-zone {
+    overflow:hidden;
+    background:#fafafa;
+
+}
+.dragdrop-placeholder p {
+    text-align:center;
+    font-size:150%;
+    line-height:24pt;
+    color:#999;
+    padding:4em;
+}
 
 @media (max-width: 979px) {
     .page-host {
@@ -280,6 +323,10 @@ p.message > strong {
     .bottom-fixed-navbar-container {
         padding-bottom:0;
     }    
+
+    .dragdrop-placeholder p {
+        padding:3em;
+    }
 }
 
 
@@ -320,27 +367,34 @@ p.message > strong {
     }
 
     .messageBox {
-        min-width: 300px;
+        min-width: initial;
         max-width: 100%;
     }
 
     .table td .cell-warning {
         display:block;
     }
-
-
-    /** 
-     *  Thumbnails 
-     */
-    .thumbnails-fixed-size .thumbnail {
+    
+    .dragdrop-placeholder p {
+        padding:2em;
     }
-        .thumbnails-fixed-size .thumbnail img {
-        }
+        
+    .navbar-fixed-bottom .navbar li {
+        float:none;
+    }
+
+    .navbar-fixed-bottom .pull-right {
+        clear:right;
+    }
 }
 
 @media (max-width: 320px) {
 
     #nav-user li a {
         max-width: 80px;
+    }
+    
+    .dragdrop-placeholder p {
+        padding:1em;
     }
 }

@@ -1,33 +1,78 @@
 ﻿<div class="app-page bottom-fixed-navbar-container">
     
-    <ul data-bind="foreach: files" class="thumbnails thumbnails-fixed-size">
-        <li class="span3">
-            <div class="thumbnail" data-bind="attr: { title: FileName }">
-                <div class="preview" data-bind="style: { 'background-image': 'url(/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160)' }">
-                </div>                
-                <div class="thumbnail-controls">
-                    <a class="pull-right btn-link" data-bind="click: $parent.deleteFile, attr: { title: FileName() + ' löschen' }"><i class="icon-remove icon-large"></i></a>
+    <div id="drop-zone">
+        <ul data-bind="foreach: files, click: resetSelectedItem" class="thumbnails thumbnails-fixed-size">
+            <li class="span3">
+                <!-- ko if: data() && !isUploading() -->
+                <div class="thumbnail" data-bind="attr: { title: data().FileName }, css: { 'item-selected': isSelected, 'selected-item': isSelectedItem }, click: selectItem, clickBubble: false">
+                    <div class="preview" data-bind="style: { 'background-image': 'url(/DbFileContent/Thumbnail/' + data().Id() + '?thumbnailName=220x160)' }">
+                    </div>                
+                    <div class="thumbnail-controls">
+                        <a class="pull-right btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="icon-trash icon-large"></i></a>
+                    </div>
+                    <div class="item-check" data-bind="click: toggleSelected, clickBubble: false, attr: { title: data().FileName() + ' auswählen' }">
+                        <i data-bind="css: { 'icon-check': isSelected, 'icon-check-empty': !isSelected()}"></i>
+                    </div>
                 </div>
-            </div>
-        </li>
-    </ul>
+                <!-- /ko -->
+                <!-- ko if: isUploading() -->
+                <div class="thumbnail">
+                    <div class="preview">
+                        <i class="icon-cog icon-spin icon-4x icon-mood"></i>
+                    </div>
+                </div>
+                <!-- /ko -->
+            </li>
+        </ul>
+
+        <div class="dragdrop-placeholder" data-bind="visible: files().length == 0 && !isLoading()">
+            <p data-bind="if: (window.FileReader && Modernizr.draganddrop)">
+                <!-- ko if: (window.FileReader && Modernizr.draganddrop) -->
+                Füge Dateien hinzu, indem Du sie hier per Drag and Drop ablegst oder unten auf "Dateien hinzufügen" klickst.
+                <!-- /ko -->
+                <!-- ko if: !(window.FileReader && Modernizr.draganddrop) -->
+                Füge Dateien hinzu, indem Du unten auf "Dateien hinzufügen" klickst.
+                <!-- /ko -->
+
+            </p>
+        </div>
+    </div>
 
     <div class="navbar navbar-fixed-bottom">
         <div class="navbar-inner">
-            <div class="navbar-panel navbar-text pull-right">
-                <span data-bind="text: files().length"></span> Dateien
-            </div>
             <ul class="nav pull-right">
                 <li>
                     <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="icon-fixed-width icon-refresh" data-bind="css: { 'icon-spin': isLoading }"></i></a>
                 </li>
             </ul>
+            <div class="navbar-panel navbar-text pull-right">
+                <span data-bind="text: files().length"></span> Dateien
+            </div>
+
+            <div class="navbar-panel navbar-text pull-right" data-bind="visible: selectedFiles().length > 0">
+                <!-- ko if: selectedFiles().length > 0 -->
+                <span data-bind="text: selectedFiles().length"></span> Dateien ausgewählt
+                <!-- /ko -->
+                <!-- ko if: selectedFiles().length <= 0 && selectedFile() -->
+                <span data-bind="text: selectedFile().data().FileName"></span>
+                <!-- /ko -->
+            </div>
+
+            <div class="navbar-panel navbar-text pull-right" data-bind="visible: isUploading">
+                Upload: <span data-bind="text: progress"></span> %
+            </div>
+
             <ul class="nav">
-                <li class="fileinput-button">
-                    <a>
-                        <i class="icon-fixed-width icon-plus"></i> Dateien hinzufügen
+                <li>
+                    <a class="fileinput-button">
+                        <span><i class="icon-plus"></i> Dateien hinzufügen</span>
+                        <input type="file" name="files" data-url="api/DbFileUpload" data-bind="fileupload: { add: startUpload, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: $('#drop-zone'), drop: filesDropped }" multiple>
+                    </a>                    
+                </li>
+                <li data-bind="visible: selectedFiles().length > 0">
+                    <a href="#" data-bind="click: deleteSelection">
+                        <i class="icon-remove"></i> Auswahl löschen
                     </a>
-                    <input id="file1" type="file" name="files" data-url="api/DbFileUpload" data-bind="fileupload: { done: uploadDone, drop: filesDropped }" multiple class="btn">
                 </li>
             </ul>
         </div> 

@@ -60,9 +60,17 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     // jQuery Fileupload
     //
     ko.bindingHandlers.fileupload = {
-        init: function (elem, valueAccessor) {
-            var $elem = $(elem);
-            $elem.fileupload(valueAccessor());
+        init: function (elem, valueAccessor, allBindingsAccessor, viewModel) {
+            var $elem = $(elem),
+                options = valueAccessor();
+            var plugin = $elem.fileupload(options);
+            plugin.on('progressall', function (e, data) {
+                if (options.progressall && typeof (options.progressall) === 'function')
+                    options.progressall.call(viewModel, e, data);
+            });
+            ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {
+                $elem.fileupload('destroy');
+            });
         }
     };
 

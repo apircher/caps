@@ -25,6 +25,8 @@
                 document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
             }
         </script>
+
+        <script type="text/javascript" src="~/Scripts/modernizr-2.6.2.js"></script>
     </head>
     <body>
         <div id="applicationHost">
@@ -32,7 +34,7 @@
         </div>
         <script type="text/javascript">
             var require = {
-                urlArgs: "v=1.0-pre"
+                urlArgs: "v=0.3"
             };
         </script>
         <script type="text/javascript" src="~/Scripts/require.js" data-main="@Url.Content("~/App/main")"></script>
