@@ -124,6 +124,9 @@
 
         showDetail: function (item) {
             if (item) {
+                if (selectedFile() !== item)
+                    selectedFile(item);
+
                 module.router.navigate('#/files/detail/' + item.data().Id(), true);
             }
         }
