@@ -8,7 +8,18 @@
     }
 
     function fetchFile(id) {
-        return manager.fetchEntityByKey('DbFile', id, false);
+        var deferred = Q.defer();
+        manager.fetchEntityByKey('DbFile', id, false)
+            .then(function (result) {
+                var entity = result.entity;
+                entity.entityAspect.loadNavigationProperty('Versions')
+                    .then(function () {
+                        deferred.resolve(entity);
+                    })
+                    .fail(deferred.reject);
+            })
+            .fail(deferred.reject);
+        return deferred.promise;
     }
 
     function localGetFile(id) {

@@ -31,11 +31,18 @@ namespace Caps.Web.UI.Controllers
             return _contextProvider.Context.Authors;
         }
 
-        // ~/breeze/capsdata/DbFiles
+        // ~/breeze/capsdata/Files
         [HttpGet]
         public IQueryable<DbFile> Files()
         {
             return _contextProvider.Context.Files;
+        }
+
+        // ~/breeze/capsdata/FileVersions
+        [HttpGet]
+        public IQueryable<DbFileVersion> FileVersions()
+        {
+            return _contextProvider.Context.FileVersions;
         }
 
         // ~/breeze/capsdata/Websites

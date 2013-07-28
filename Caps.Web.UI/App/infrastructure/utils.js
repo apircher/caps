@@ -12,8 +12,24 @@
         return true;
     }
 
+    function formatFileSize(fileSizeInBytes) {
+        var units = ["Bytes", "KB", "MB", "TB"];
+        var unit = 0;
+        var fileSize = fileSizeInBytes;
+
+        while (fileSize > 1024) {
+            fileSize /= 1024.0;
+            if (unit++ >= 3)
+                break;
+        }
+        var s = fileSize.toFixed(2).toLocaleString() + " " + units[unit];
+        //TODO: Localization...
+        return s.replace('.00', '').replace('.', ',');
+    }
+
     return {
-        compareArrays: compareArrays
+        compareArrays: compareArrays,
+        formatFileSize: formatFileSize
     };
 
 });

@@ -1,4 +1,4 @@
-﻿define(['breeze'], function (breeze) {
+﻿define(['breeze', 'infrastructure/moduleRegistry'], function (breeze, moduleRegistry) {
 
     var serviceName = '/breeze/capsdata';
     var masterManager = new breeze.EntityManager(serviceName);
@@ -22,6 +22,13 @@
 
     function initialize() {
         //TODO: load masterManager with lookup entities and any other startup data. Returns a promise.
+        var modules = moduleRegistry.modules();
+        for (var i = 0; i < modules.length; i++) {
+            var func = modules[i].extendModel;
+            if (func && typeof func === 'function') 
+                func.call(modules[i], masterManager.metadataStore);            
+        }
+
         return masterManager.fetchMetadata();
     }
 

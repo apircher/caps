@@ -1,12 +1,14 @@
-﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter'], function (moduleFactory, routerFactory) {
+﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter', './entities'], function (moduleFactory, routerFactory, model) {
 
     var module = moduleFactory.createModule({
         route: 'files*details',
         moduleId: 'modules/contentfile/module',
         title: 'Dateien',
         nav: 30,
-        hash: '#files'
+        hash: '#files'        
     });
+
+    module.extendModel = model.extendModel;
 
     module.initializeRouter = function () {
         module.router = routerFactory.createModuleRouter(module, 'modules/contentfile', 'files')

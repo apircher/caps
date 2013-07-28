@@ -173,6 +173,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="App_Start\BreezeWebApiConfig.cs" />
     <Compile Include="App_Start\CapsBundleConfig.cs" />
     <Compile Include="App_Start\CapsDbInitializer.cs" />
@@ -188,6 +191,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\VersionHelpers.cs" />
     <Compile Include="Infrastructure\AuthorExtensions.cs" />
     <Compile Include="Infrastructure\LockoutHelper.cs" />
     <Compile Include="Infrastructure\MultipartStreamProviderExtensions.cs" />
@@ -220,6 +224,7 @@
     <Content Include="App\infrastructure\screen.js" />
     <Content Include="App\infrastructure\utils.js" />
     <Content Include="App\modules\contentfile\datacontext.js" />
+    <Content Include="App\modules\contentfile\entities.js" />
     <Content Include="App\modules\contentfile\module.html" />
     <Content Include="App\modules\contentfile\viewmodels\detail.js" />
     <Content Include="App\modules\contentfile\viewmodels\index.js" />

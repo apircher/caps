@@ -53,6 +53,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="CapsDbContext.cs" />
     <Compile Include="Migrations\201307231135187_InitialCreate.cs" />
     <Compile Include="Migrations\201307231135187_InitialCreate.Designer.cs">

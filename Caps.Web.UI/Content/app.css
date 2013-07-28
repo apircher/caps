@@ -6,28 +6,28 @@
     position:fixed;
     top:0;
     left:0;
-    width:100%;
-    height:100%;
-    background-color:#333333;
-    color:#fff;
+    right:0;
+    bottom:0;
+    background-color:#111;
+    color:#eee;
+    overflow:hidden;
 }
 
 .splash {
     position:fixed;
     top:50%;
     left:50%;
-    width:50%;
-    height:50%;
+    margin-right:-50%;
+    margin-bottom:-50%;
+    height:316.27px;
 }
 
 .splash-content {
     position:relative;
-    width: 100%;
-    height: 100%;
-    top:-52%;
+    top:-50%;
     left:-50%;
     text-align: center;
-    overflow:hidden;
+    font-size:150%;
 }
 
 .splash-message {
@@ -42,11 +42,11 @@
     text-align: center;
     display: block;
     color:#fff;
-    margin:20px 0 20px;
+    margin:40px 0 40px;
 }
 
 .splash-footer {
-    font-size:1.5em;
+    font-size:1em;
     line-height: 1.5em;
     -webkit-text-shadow: rgba(0, 0, 0, 0.3) 0px 0px 5px;
     text-shadow: rgba(0, 0, 0, 0.3) 0px 0px 5px;
@@ -240,12 +240,15 @@ a.no-underline:hover {
         height:180px;
         background-repeat:no-repeat;
         background-position:center center;
+        background-size:contain;
         text-align:center;
     }
-        .thumbnail div.preview i.icon-spin {
+        .thumbnail div.preview i.icon-spin,
+        .thumbnail div.preview i.center-icon-h {
             position:relative;
             top:50%;
             margin-top:-.5em;
+            display:inline-block;
         }
 
 .thumbnail-controls {

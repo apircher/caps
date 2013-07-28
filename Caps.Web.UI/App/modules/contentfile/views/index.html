@@ -4,9 +4,14 @@
         <ul data-bind="foreach: { data: files }, doubleTap: true" class="thumbnails thumbnails-fixed-size" id="files-list">
             <li class="span3">
                 <!-- ko if: data() && !isUploading() -->
-                <div class="thumbnail" data-bind="attr: { title: data().FileName }, css: { 'item-selected': isSelected, 'selected-item': isSelectedItem }, click: selectItem, clickBubble: false, event: { dbltap: $parent.showDetail }">
+                <div class="thumbnail" data-bind="attr: { title: data().FileName }, css: { 'item-selected': isSelected, 'selected-item': isSelectedItem }, click: selectItem, clickBubble: false, event: { dbltap: $parent.showDetail }">                    
+                    <!-- ko if: !data().isImage() -->
+                    <div class="preview"><i class="icon-file  center-icon-h icon-4x icon-mood"></i></div>                
+                    <!-- /ko -->
+                    <!-- ko if: data().isImage -->
                     <div class="preview" data-bind="style: { 'background-image': 'url(/DbFileContent/Thumbnail/' + data().Id() + '?thumbnailName=220x160)' }">
                     </div>                
+                    <!-- /ko -->
                     <div class="thumbnail-controls">
                         <a class="pull-right btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="icon-trash icon-2x"></i></a>
                     </div>

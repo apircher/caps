@@ -86,8 +86,8 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
         // Initialize application
         Q.fcall(antiForgeryToken.initToken)
             .then(authentication.initialize)
-            .then(entityManagerProvider.initialize)
             .then(moduleLoader.loadModules(['sitemap', 'draft', 'contentfile', 'user']))
+            .then(entityManagerProvider.initialize)
             .then(app.start)
             .then(function () {
                 //Replace 'viewmodels' in the moduleId with 'views' to locate the view.
