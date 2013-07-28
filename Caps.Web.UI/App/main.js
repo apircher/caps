@@ -21,6 +21,7 @@ requirejs.config({
         'breeze': '../Scripts/breeze.debug',
         'Q': '../Scripts/q.min',
         'toastr': '../Scripts/toastr.min',
+        'doubleTap': '../Scripts/doubleTap',
 
         'entityManagerProvider': 'infrastructure/entityManagerProvider',
         'authentication': 'infrastructure/authentication',
@@ -44,9 +45,9 @@ requirejs.config({
 });
 
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authentication', 'infrastructure/antiForgeryToken',
-    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'knockout.custom-bindings', 'knockout.extenders', 'infrastructure/validation',
+    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider', 'knockout.custom-bindings', 'knockout.extenders', 'infrastructure/validation',
     '../Scripts/safari.cancelZoom'],
-    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, widget) {
+    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider) {
 
         //>>excludeStart("build", true);
         system.debug(true);
@@ -85,6 +86,7 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
         // Initialize application
         Q.fcall(antiForgeryToken.initToken)
             .then(authentication.initialize)
+            .then(entityManagerProvider.initialize)
             .then(moduleLoader.loadModules(['sitemap', 'draft', 'contentfile', 'user']))
             .then(app.start)
             .then(function () {

@@ -85,6 +85,88 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     };
 
     //
+    // Stretch Height
+    //
+    ko.bindingHandlers.forceViewportHeight = {
+        init: function (elem, valueAccessor) {
+            var $elem = $(elem),
+                $window = $(window),
+                options = valueAccessor();
+
+            $window.on('resize', setElementHeight);
+            setElementHeight();
+
+            function setElementHeight() {
+                window.setTimeout(function () {
+                    ko.bindingHandlers.forceViewportHeight.setElementHeight($window, $elem, options);
+                }, 100);
+            }
+
+            ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {
+                $window.off('resize', setElementHeight);
+            });
+        },
+
+        update: function (elem, valueAccessor) {
+            var $elem = $(elem),
+                $window = $(window),
+                options = valueAccessor();
+            ko.bindingHandlers.forceViewportHeight.setElementHeight($window, $elem, options);
+        },
+
+        setElementHeight: function ($window, $elem, options) {
+
+            var viewportWidth = $window.width();
+            var viewportHeight = $window.height();
+
+            if (options.minWidth && typeof options.minWidth === 'number') {
+                if (options.minWidth >= viewportWidth) {
+                    $elem.height('auto');
+                    return;
+                }
+            }
+
+            if (options.spacers && typeof(options.spacers) === 'string') {
+                var $spacers = $(options.spacers);
+                $.each($spacers, function (index, spacer) {
+                    var spacerHeight = $(spacer).outerHeight();
+                    viewportHeight -= spacerHeight;
+                });
+            }
+
+            var $ce = $elem, $document = $(document);
+            while ($ce && ($ce[0].nodeName != 'HTML')) {
+                var paddingTop = new Number($ce.css('padding-top').replace('px', ''));
+                var paddingBottom = new Number($ce.css('padding-bottom').replace('px', ''));
+                var marginTop = new Number($ce.css('margin-top').replace('px', ''));
+                var marginBottom = new Number($ce.css('margin-bottom').replace('px', ''));
+                viewportHeight -= (paddingTop + paddingBottom + marginTop + marginBottom);
+                $ce = $ce.parent();
+            }
+
+            if (viewportHeight > 0)
+                $elem.height(viewportHeight + 'px');
+        }
+    };
+
+    //
+    // Click and Touch
+    // http://stackoverflow.com/a/10431057/1286665 
+    //
+    ko.bindingHandlers.clickAndTouch = {
+        init: function (element, valueAccessor, allBindingsAccessor, data) {
+            var action = valueAccessor(),
+                newValueAccessor = function () {
+                    return {
+                        click: action,
+                        touchend: action
+                    }
+                };
+            ko.bindingHandlers.event.init.call(this, element, newValueAccessor, allBindingsAccessor, data);
+        }
+    };
+
+    //
     // Editor Templates
     //
     ko.bindingHandlers.composeEditor = {

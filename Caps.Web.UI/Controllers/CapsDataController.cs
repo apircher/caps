@@ -18,7 +18,7 @@ namespace Caps.Web.UI.Controllers
         readonly EFContextProvider<CapsDbContext> _contextProvider = new EFContextProvider<CapsDbContext>();
 
         // ~/breeze/capsdata/Metadata
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         public String Metadata()
         {
             return _contextProvider.Metadata();

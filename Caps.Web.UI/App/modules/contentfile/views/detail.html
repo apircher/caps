@@ -1,0 +1,34 @@
+﻿<div class="app-page bottom-fixed-navbar-container">
+
+    <div class="row-fluid">
+        <!-- ko if: file() -->
+        <div class="span9">
+            <div class="file-preview" data-bind="style: { 'background-image': 'url(/DbFileContent/Inline/' + file().Id() + ')' }, forceViewportHeight: { spacers: '.navbar-fixed-top', minWidth: 767 }">
+            </div>
+        </div>
+
+        <div class="span3">
+            <h3 class="break-h"><!-- ko text: file().FileName --><!-- /ko --> <small>Details</small></h3>
+        </div>
+        <!-- /ko -->
+    </div>
+
+
+    
+    <div class="navbar navbar-fixed-bottom">
+        <div class="navbar-inner">
+            <ul class="nav pull-right">
+                <li>
+                    <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="icon-fixed-width icon-refresh" data-bind="css: { 'icon-spin': isLoading }"></i></a>
+                </li>
+            </ul>
+                        
+            <ul class="nav">
+                <li>
+                    <a href="#" data-bind="click: navigateBack">
+                        <i class="icon-fixed-width icon-arrow-left"></i> Zurück</a>
+                </li>
+            </ul>
+        </div> 
+    </div>
+</div>

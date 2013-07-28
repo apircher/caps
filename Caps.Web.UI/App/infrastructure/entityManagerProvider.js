@@ -22,6 +22,7 @@
 
     function initialize() {
         //TODO: load masterManager with lookup entities and any other startup data. Returns a promise.
+        return masterManager.fetchMetadata();
     }
 
     function refresh() {

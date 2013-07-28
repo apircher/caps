@@ -221,7 +221,9 @@
     <Content Include="App\infrastructure\utils.js" />
     <Content Include="App\modules\contentfile\datacontext.js" />
     <Content Include="App\modules\contentfile\module.html" />
+    <Content Include="App\modules\contentfile\viewmodels\detail.js" />
     <Content Include="App\modules\contentfile\viewmodels\index.js" />
+    <Content Include="App\modules\contentfile\views\detail.html" />
     <Content Include="App\modules\draft\module.html" />
     <Content Include="App\modules\draft\module.js" />
     <Content Include="App\modules\draft\viewmodels\index.js" />
@@ -361,6 +363,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\breeze.debug.js" />
     <Content Include="Scripts\breeze.min.js" />
+    <Content Include="Scripts\doubleTap.js" />
     <Content Include="Scripts\durandal\activator.js" />
     <Content Include="Scripts\durandal\app.js" />
     <Content Include="Scripts\durandal\binder.js" />

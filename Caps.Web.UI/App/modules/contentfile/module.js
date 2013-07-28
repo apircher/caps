@@ -11,7 +11,8 @@
     module.initializeRouter = function () {
         module.router = routerFactory.createModuleRouter(module, 'modules/contentfile', 'files')
             .map([
-                { route: '', moduleId: 'viewmodels/index', title: 'Dateien', nav: false }
+                { route: '', moduleId: 'viewmodels/index', title: 'Dateien', nav: false },
+                { route: 'detail/:fileId', moduleId: 'viewmodels/detail', title: 'Details', nav: false },
             ])
             .buildNavigationModel();
     };

@@ -1,14 +1,22 @@
 ﻿define([
-    'knockout', '../datacontext', 'jquery', 'toastr', 'plugins/dialog', 'Q', 'jquery.fileupload'
-], function (ko, datacontext, $, toastr, dialog, Q) {
+    'knockout', '../module', '../datacontext', 'jquery', 'toastr', 'plugins/dialog', 'Q', 'doubleTap', 'jquery.fileupload'
+], function (ko, module, datacontext, $, toastr, dialog, Q, doubleTap) {
         
-    var files = ko.observableArray([]),
+    var vm,
+        initialized = false,
+        files = ko.observableArray([]),
         isLoading = ko.observable(false),
         isUploading = ko.observable(false),
         progress = ko.observable(0),
         selectedFile = ko.observable();
 
-    var vm = {
+    module.router.on('router:navigation:attached', function (currentActivation, currentInstruction, router) {
+        if (currentActivation == vm) {
+            scrollToSelectedFile();
+        }
+    });
+
+    vm = {
         files: files,
         isLoading: isLoading,
         isUploading: isUploading,
@@ -71,7 +79,10 @@
         },
 
         activate: function () {
-            getFiles();
+            if (!initialized) {
+                initialized = true;
+                getFiles();
+            }
         },
 
         deleteFile: function (item) {
@@ -105,7 +116,18 @@
 
         resetSelectedItem: function () {
             selectedFile(null);
+        },
+
+        navigateToSelectedFile: function () {
+            this.showDetail(selectedFile());
+        },
+
+        showDetail: function (item) {
+            if (item) {
+                module.router.navigate('#/files/detail/' + item.data().Id(), true);
+            }
         }
+
     };
     
     function getFiles() {
@@ -146,6 +168,18 @@
         ko.utils.arrayForEach(vm.selectedFiles(), function (f) {
             deleteFile(f);
         });
+    }
+
+    function scrollToSelectedFile() {
+        if (selectedFile()) {
+            $.each($('#files-list > li'), function (index, item) {
+                if (ko.dataFor(item) === selectedFile()) {
+                    var offset = $(item).offset();
+                    $('html, body').scrollTop(offset.top - 70);
+                    return false;
+                }
+            });
+        }
     }
 
     /**
