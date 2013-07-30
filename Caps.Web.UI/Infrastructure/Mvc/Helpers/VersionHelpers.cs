@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Caps.Web.UI.Helpers
+namespace Caps.Web.UI.Infrastructure.Mvc.Helpers
 {
     public static class VersionHelpers
     {

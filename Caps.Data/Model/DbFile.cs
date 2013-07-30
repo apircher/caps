@@ -18,8 +18,6 @@ namespace Caps.Data.Model
         public String FileName { get; set; }
         [MaxLength(50)]
         public String ContentType { get; set; }
-        [MaxLength(200)]
-        public String Copyright { get; set; }
 
         [InverseProperty("File")]
         public ICollection<DbFileVersion> Versions { get; set; }

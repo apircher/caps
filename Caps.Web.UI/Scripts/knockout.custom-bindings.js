@@ -122,6 +122,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
             if (options.minWidth && typeof options.minWidth === 'number') {
                 if (options.minWidth >= viewportWidth) {
                     $elem.height('auto');
+                    $elem.trigger('stretchHeight:reseted');
                     return;
                 }
             }
@@ -144,28 +145,30 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
                 $ce = $ce.parent();
             }
 
-            if (viewportHeight > 0)
+            if (viewportHeight > 0) {
                 $elem.height(viewportHeight + 'px');
+                $elem.trigger('stretchHeight:resized');
+            }
         }
     };
 
-    //
-    // Click and Touch
-    // http://stackoverflow.com/a/10431057/1286665 
-    //
-    ko.bindingHandlers.clickAndTouch = {
-        init: function (element, valueAccessor, allBindingsAccessor, data) {
-            var action = valueAccessor(),
-                newValueAccessor = function () {
-                    return {
-                        click: action,
-                        touchend: action
-                    }
-                };
-            ko.bindingHandlers.event.init.call(this, element, newValueAccessor, allBindingsAccessor, data);
+    ko.bindingHandlers.stretchLineHeight = {
+        setLineHeight: function($elem, options) {
+            var parentHeight = $elem.parent().css('height');
+            $elem.css('line-height', parentHeight);
+        },
+        init: function (elem, valueAccessor) {
+            var $elem = $(elem);
+            ko.bindingHandlers.stretchLineHeight.setLineHeight($elem);
+            $elem.parent().on('stretchHeight:resized', function () {
+                ko.bindingHandlers.stretchLineHeight.setLineHeight($elem);
+            });
+            $elem.parent().on('stretchHeight:reseted', function () {
+                $elem.css('line-height', '0');
+            });
         }
     };
-
+    
     //
     // Editor Templates
     //

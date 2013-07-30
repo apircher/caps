@@ -1,25 +1,17 @@
 ﻿define(['breeze', 'entityManagerProvider', 'Q', 'jquery'], function (breeze, entityManagerProvider, Q, $) {
 
     var manager = entityManagerProvider.createManager();
+    var EntityQuery = breeze.EntityQuery;
 
     function getFiles() {
-        var query = new breeze.EntityQuery().from('Files');
+        var query = EntityQuery.from('Files');
         return manager.executeQuery(query);
     }
 
     function fetchFile(id) {
-        var deferred = Q.defer();
-        manager.fetchEntityByKey('DbFile', id, false)
-            .then(function (result) {
-                var entity = result.entity;
-                entity.entityAspect.loadNavigationProperty('Versions')
-                    .then(function () {
-                        deferred.resolve(entity);
-                    })
-                    .fail(deferred.reject);
-            })
-            .fail(deferred.reject);
-        return deferred.promise;
+        var query = EntityQuery.from('Files').where('Id', '==', id)
+            .expand('Versions, Versions.Properties');
+        return manager.executeQuery(query);
     }
 
     function localGetFile(id) {

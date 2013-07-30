@@ -191,7 +191,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\VersionHelpers.cs" />
+    <Compile Include="Infrastructure\Mvc\Helpers\VersionHelpers.cs" />
     <Compile Include="Infrastructure\AuthorExtensions.cs" />
     <Compile Include="Infrastructure\LockoutHelper.cs" />
     <Compile Include="Infrastructure\MultipartStreamProviderExtensions.cs" />

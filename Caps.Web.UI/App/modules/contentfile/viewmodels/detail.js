@@ -27,6 +27,11 @@
             module.router.navigate(module.routeConfig.hash, true);
         },
 
+        previewTemplate: function (file) {
+            if (file && file.isImage()) return 'file-preview-image';
+            return 'file-preview-general';
+        },
+
         moment: moment,
         utils: utils
     };

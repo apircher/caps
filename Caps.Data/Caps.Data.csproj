@@ -69,11 +69,16 @@
     <Compile Include="Migrations\201307251150401_AddFileEntities.Designer.cs">
       <DependentUpon>201307251150401_AddFileEntities.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201307300929481_AddFileProperties.cs" />
+    <Compile Include="Migrations\201307300929481_AddFileProperties.Designer.cs">
+      <DependentUpon>201307300929481_AddFileProperties.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
     <Compile Include="Model\DbFile.cs" />
     <Compile Include="Model\DbFileContent.cs" />
+    <Compile Include="Model\DbFileProperty.cs" />
     <Compile Include="Model\DbFileVersion.cs" />
     <Compile Include="Model\DbThumbnail.cs" />
     <Compile Include="Model\Sitemap.cs" />
@@ -93,6 +98,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201307251150401_AddFileEntities.resx">
       <DependentUpon>201307251150401_AddFileEntities.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201307300929481_AddFileProperties.resx">
+      <DependentUpon>201307300929481_AddFileProperties.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

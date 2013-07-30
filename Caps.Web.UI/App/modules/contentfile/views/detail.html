@@ -2,17 +2,20 @@
 
     <div class="row-fluid">
         <!-- ko if: file() -->
-        <div class="span9">
-            <div class="file-preview" data-bind="style: { 'background-image': 'url(/DbFileContent/Inline/' + file().Id() + ')' }, forceViewportHeight: { spacers: '.navbar-fixed-top', minWidth: 767 }">
-            </div>
+        <div class="span9" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top', minWidth: 767 }">
+            <!-- ko template: { name: previewTemplate, data: file } -->
+            <!-- /ko -->
         </div>
 
         <div class="span3">
-            <h3 class="break-h"><!-- ko text: file().FileName --><!-- /ko --> <small>Details</small></h3>
+            <h4 class="break-h"><!-- ko text: file().FileName --><!-- /ko --> <small>Details</small></h4>
 
             <div data-bind="with: file().Created">
                 Hochgeladen <span data-bind="text: moment(At()).fromNow(), attr: { title: moment(At()).format('LLLL') }"></span> 
                 von <span data-bind="text: By"></span>
+            </div>
+            <div>
+                Größe: <!-- ko text: utils.formatFileSize(file().latestVersion().FileSize()) --><!-- /ko -->
             </div>
             <!-- ko if: moment(file().Created().At()).diff(moment(file().Modified().At()), 'seconds') > 0 -->
             <div data-bind="with: file().Modified">
@@ -24,7 +27,12 @@
                 Inhaltstyp: <span data-bind="text: file().ContentType()"></span>
             </div>
 
-            Aktuelle Version: <!-- ko text: utils.formatFileSize(file().latestVersion().FileSize()) --><!-- /ko -->
+            <!-- ko if: file().isImage -->
+            <div data-bind="with: file().latestVersion">
+                Bildgröße: <span data-bind="text: imageWidth"></span> x <span data-bind="text: imageHeight"></span> px
+            </div>
+            <!-- /ko -->
+
         </div>
         <!-- /ko -->
     </div>
@@ -47,4 +55,14 @@
             </ul>
         </div> 
     </div>
+
+    <script type="text/html" id="file-preview-image">
+        <div class="file-preview image-preview" data-bind="stretchLineHeight: true">
+            <img data-bind="attr: { src: '/DbFileContent/Inline/' + Id() }" />
+        </div>
+    </script>
+    <script type="text/html" id="file-preview-general">
+        <div class="file-preview">
+        </div>
+    </script>
 </div>

@@ -13,7 +13,8 @@
                     </div>                
                     <!-- /ko -->
                     <div class="thumbnail-controls">
-                        <a class="pull-right btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="icon-trash icon-2x"></i></a>
+                        <a class="btn-link pull-right" data-bind="click: $parent.showDetail, clickBubble: false" title="Details anzeigen"><i class="icon-arrow-right icon-2x"></i></a>
+                        <a class="btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="icon-trash icon-2x"></i></a>
                     </div>
                     <div class="item-check" data-bind="click: toggleSelected, clickBubble: false, attr: { title: data().FileName() + ' auswählen' }">
                         <i data-bind="css: { 'icon-check': isSelected, 'icon-check-empty': !isSelected()}"></i>

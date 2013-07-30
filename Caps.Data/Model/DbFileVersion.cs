@@ -28,9 +28,23 @@ namespace Caps.Data.Model
         [InverseProperty("FileVersion")]
         public DbFileContent Content { get; set; }
         [InverseProperty("FileVersion")]
+        public ICollection<DbFileProperty> Properties { get; set; }
+        [InverseProperty("FileVersion")]
         public ICollection<DbThumbnail> Thumbnails { get; set; }
 
         public ChangeInfo Created { get; set; }
         public ChangeInfo Modified { get; set; }
+
+        public void AddProperty(String propertyName, object value)
+        {
+            if (Properties == null)
+                Properties = new List<DbFileProperty>();
+
+            var prop = Properties.FirstOrDefault(p => String.Equals(p.PropertyName, propertyName, StringComparison.OrdinalIgnoreCase));
+            if (prop != null)
+                throw new InvalidOperationException("A property with the name " + propertyName + " has already been added.");
+
+            Properties.Add(new DbFileProperty { FileVersion = this, PropertyName = propertyName, PropertyValue = value.ToString() });
+        }
     }
 }

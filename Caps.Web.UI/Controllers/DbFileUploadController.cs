@@ -44,18 +44,27 @@ namespace Caps.Web.UI.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
             }
         }
-
-
+        
         void AddFile(DbFile file)
         {
+            var latestVersion = file.GetLatestVersion();
+
             db.Files.Add(file);
 
             if (file.IsImage)
-            {
-                var latestVersion = file.GetLatestVersion();
-                var thumbnail = latestVersion.CreateThumbnail(220, 160);
-                db.Thumbnails.Add(thumbnail);
-            }
+                HandleNewImageFile(latestVersion);
+        }
+
+        void HandleNewImageFile(DbFileVersion version)
+        {
+            // Create Thumbnail
+            var thumbnail = version.CreateThumbnail(220, 160);
+            db.Thumbnails.Add(thumbnail);
+
+            // Add Properties
+            var size = version.GetImageSize();
+            version.AddProperty(DbFileProperties.ImageWidth, size.Width);
+            version.AddProperty(DbFileProperties.ImageHeight, size.Height);
         }
     }
 }

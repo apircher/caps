@@ -1,6 +1,7 @@
 ﻿using Caps.Data.Model;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -90,6 +91,15 @@ namespace Caps.Web.UI.Infrastructure
                 thumbnail = newThumbnail;
             }
             return thumbnail;
+        }
+
+        public static System.Drawing.Size GetImageSize(this DbFileVersion fileVersion)
+        {
+            using (var stream = new MemoryStream(fileVersion.Content.Data))
+            using (var bmp = new System.Drawing.Bitmap(stream))
+            {
+                return bmp.Size;
+            }
         }
 
         static bool TryParseDimensions(String s, out int width, out int height)

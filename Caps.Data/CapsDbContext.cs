@@ -20,6 +20,7 @@ namespace Caps.Data
 
         public DbSet<DbFile> Files { get; set; }
         public DbSet<DbFileVersion> FileVersions { get; set; }
+        public DbSet<DbFileProperty> FileProperties { get; set; }
         public DbSet<DbFileContent> FileContents { get; set; }
         public DbSet<DbThumbnail> Thumbnails { get; set; }
 

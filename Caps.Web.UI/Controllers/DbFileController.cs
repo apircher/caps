@@ -30,6 +30,7 @@ namespace Caps.Web.UI.Controllers
                 Array.ForEach(file.Versions.ToArray(), v =>
                 {
                     Array.ForEach(v.Thumbnails.ToArray(), t => db.Thumbnails.Remove(t));
+                    Array.ForEach(v.Properties.ToArray(), p => db.FileProperties.Remove(p));
                     db.FileContents.Remove(v.Content);
                     db.FileVersions.Remove(v);
                 });
