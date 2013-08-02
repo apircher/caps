@@ -4,12 +4,12 @@
         <ul data-bind="foreach: { data: files }, doubleTap: true" class="thumbnails thumbnails-fixed-size" id="files-list">
             <li class="span3">
                 <!-- ko if: data() && !isUploading() -->
-                <div class="thumbnail" data-bind="attr: { title: data().FileName }, css: { 'item-selected': isSelected, 'selected-item': isSelectedItem }, click: selectItem, clickBubble: false, event: { dbltap: $parent.showDetail }">                    
+                <div class="thumbnail" data-bind="attr: { title: data().FileName }, css: { 'item-checked': isSelected, 'item-selected': isSelectedItem }, click: selectItem, clickBubble: false, event: { dbltap: $parent.showDetail }">                    
                     <!-- ko if: !data().isImage() -->
-                    <div class="preview"><i class="icon-file  center-icon-h icon-4x icon-mood"></i></div>                
+                    <div class="thumbnail-content preview"><i class="icon-file  center-icon-h icon-4x icon-mood"></i></div>                
                     <!-- /ko -->
                     <!-- ko if: data().isImage -->
-                    <div class="preview" data-bind="style: { 'background-image': 'url(/DbFileContent/Thumbnail/' + data().Id() + '?thumbnailName=220x160)' }">
+                    <div class="thumbnail-content thumbnail-image" data-bind="style: { 'background-image': 'url(/DbFileContent/Thumbnail/' + data().Id() + '?thumbnailName=220x160)' }">
                     </div>                
                     <!-- /ko -->
                     <div class="thumbnail-controls">
@@ -31,7 +31,7 @@
             </li>
         </ul>
 
-        <div class="dragdrop-placeholder" data-bind="visible: files().length == 0 && !isLoading()">
+        <div class="drop-zone-placeholder" data-bind="visible: files().length == 0 && !isLoading()">
             <p data-bind="if: (window.FileReader && Modernizr.draganddrop)">
                 <!-- ko if: (window.FileReader && Modernizr.draganddrop) -->
                 Füge Dateien hinzu, indem Du sie hier per Drag and Drop ablegst oder unten auf "Dateien hinzufügen" klickst.
