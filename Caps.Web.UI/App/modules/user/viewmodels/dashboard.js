@@ -1,5 +1,5 @@
-﻿define(['infrastructure/utils', 'durandal/app', 'durandal/system', 'plugins/dialog', 'knockout', 'moment', 'authentication', '../datacontext', '../module', '../commands/deleteUser'],
-function (utils, app, system, dialog, ko, moment, authentication, datacontext, module, deleteUserCommand) {
+﻿define(['infrastructure/utils', 'durandal/app', 'durandal/system', 'knockout', 'moment', 'authentication', '../datacontext', '../module', '../commands/deleteUser'],
+function (utils, app, system, ko, moment, authentication, datacontext, module, deleteUserCommand) {
 
     var users = ko.observableArray(),
         initialized = false,
@@ -38,7 +38,7 @@ function (utils, app, system, dialog, ko, moment, authentication, datacontext, m
         })
         .fail(function (err) {
             system.log('Error loading Users: ' + err.message);
-            dialog.showMessage('Die Benutzer-Daten konnten nicht geladen werden.');
+            app.showMessage('Die Benutzer-Daten konnten nicht geladen werden.');
         })
         .done(function () {
             isLoading(false);
@@ -46,7 +46,7 @@ function (utils, app, system, dialog, ko, moment, authentication, datacontext, m
     }
 
     function addUser() {
-        module.router.navigate('#/users/add', true);
+        module.router.navigate('#/users/add');
     }
 
     function findCachedUserByUserName(userName) {

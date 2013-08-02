@@ -1,6 +1,6 @@
 ﻿define([
-    '../datacontext', '../entities', 'knockout', 'Q', 'plugins/dialog', 'modules/user/module', '../commands/deleteUser', 'durandal/app', 'moment', './setPasswordDialog', 'authentication', 'toastr', 'infrastructure/screen'
-], function (datacontext, model, ko, Q, dialog, module, deleteUserCommand, app, moment, SetPasswordDialog, authentication, toastr, screen) {
+    '../datacontext', '../entities', 'knockout', 'Q', 'modules/user/module', '../commands/deleteUser', 'durandal/app', 'moment', './setPasswordDialog', 'authentication', 'toastr', 'infrastructure/screen'
+], function (datacontext, model, ko, Q, module, deleteUserCommand, app, moment, SetPasswordDialog, authentication, toastr, screen) {
 
     var vm = {
         user: ko.observable(),
@@ -38,7 +38,7 @@
                     deferred.resolve();
                 })
                 .fail(function (err) {
-                    dialog.showMessage('Die Benutzerdaten konnten nicht geladen werden.', 'Nicht geladen')
+                    app.showMessage('Die Benutzerdaten konnten nicht geladen werden.', 'Nicht geladen')
                         .then(deferred.reject);
                 })
                 .done(function () {
@@ -65,11 +65,11 @@
                 });
             })
             .fail(function (err) {
-                dialog.showMessage('Das Passwort konnte nicht festgelegt werden. Versuche es in einigen Minuten nochmal. Melde das Problem, wenn es weiterhin auftritt.', 'Nicht erfolgreich');
+                app.showMessage('Das Passwort konnte nicht festgelegt werden. Versuche es in einigen Minuten nochmal. Melde das Problem, wenn es weiterhin auftritt.', 'Nicht erfolgreich');
             });
     }
     function navigateBack() {
-        module.router.navigate(module.routeConfig.hash, true);
+        module.router.navigate(module.routeConfig.hash);
     }
 
     return vm;

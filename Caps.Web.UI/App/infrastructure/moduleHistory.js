@@ -15,7 +15,7 @@
         if (lastActivation)
             return navigateToActivation(this.router, lastActivation);
         else
-            return this.router.navigate(this.module.routeConfig.hash, true);
+            return this.router.navigate(this.module.routeConfig.hash);
     };
 
     ModuleHistory.prototype.navigateBack = function () {
@@ -24,11 +24,11 @@
         if (lastActivation)
             return navigateToActivation(this.router, lastActivation);
         else
-            return this.router.navigate(this.module.routeConfig.hash, true);
+            return this.router.navigate(this.module.routeConfig.hash);
     };
 
     function navigateToActivation(router, activation) {
-        return router.navigate('#' + activation.instruction.fragment, true);
+        return router.navigate('#' + activation.instruction.fragment);
     }
 
     return ModuleHistory;

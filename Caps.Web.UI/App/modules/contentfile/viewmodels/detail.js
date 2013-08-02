@@ -24,7 +24,7 @@
         },
 
         navigateBack: function () {
-            module.router.navigate(module.routeConfig.hash, true);
+            module.router.navigate(module.routeConfig.hash);
         },
 
         previewTemplate: function (file) {

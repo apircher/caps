@@ -1,11 +1,11 @@
-﻿define(['durandal/app', 'plugins/dialog', 'authentication', '../datacontext', 'Q', '../viewmodels/deleteUserConfirmationDialog'
-], function (app, dialog, authentication, datacontext, Q, DeleteUserConfirmationDialog) {
+﻿define(['durandal/app', 'authentication', '../datacontext', 'Q', '../viewmodels/deleteUserConfirmationDialog'
+], function (app, authentication, datacontext, Q, DeleteUserConfirmationDialog) {
 
     function deleteUser(item) {
         var deferred = Q.defer();
 
         if (item.userName() === authentication.user().userName()) {
-            dialog.showMessage('Du kannst Dich nicht selbst löschen. Verwende einen anderen Benutzer, um diesen Benutzer zu löschen.', 'Nicht erlaubt')
+            app.showMessage('Du kannst Dich nicht selbst löschen. Verwende einen anderen Benutzer, um diesen Benutzer zu löschen.', 'Nicht erlaubt')
                 .then(deferred.reject);
             return deferred.promise;
         }
@@ -26,7 +26,7 @@
         }
 
         function deleteUserFailed(err) {
-            dialog.showMessage('Die Aktion konnte nicht ausgeführt werden.', 'Benutzer löschen');
+            app.showMessage('Die Aktion konnte nicht ausgeführt werden.', 'Benutzer löschen');
             deferred.reject();
         }
 

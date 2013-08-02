@@ -1,6 +1,6 @@
 ﻿define([
-    'knockout', '../module', '../datacontext', 'jquery', 'toastr', 'plugins/dialog', 'Q', 'doubleTap', 'jquery.fileupload'
-], function (ko, module, datacontext, $, toastr, dialog, Q, doubleTap) {
+    'knockout', 'durandal/app', '../module', '../datacontext', 'jquery', 'toastr', 'Q', 'doubleTap', 'jquery.fileupload'
+], function (ko, app, module, datacontext, $, toastr, Q, doubleTap) {
         
     var vm,
         initialized = false,
@@ -88,7 +88,7 @@
         deleteFile: function (item) {
             var btnOk = 'Datei löschen';
             var btnCancel = 'Abbrechen';
-            dialog.showMessage('Soll die Datei ' + item.data().FileName() + ' wirklich gelöscht werden?', 'Datei löschen', [btnOk, btnCancel])
+            app.showMessage('Soll die Datei ' + item.data().FileName() + ' wirklich gelöscht werden?', 'Datei löschen', [btnOk, btnCancel])
                 .then(function (result) {
                     if (result === btnOk) deleteFile(item);
                 });
@@ -102,7 +102,7 @@
                 return this.deleteFile(sel[0]);
 
             var btnOk = 'Auswahl löschen';
-            dialog.showMessage('Sollen die ' + this.selectedFiles().length + ' ausgewählten Dateien wirklich endgültig gelöscht werden?', 'Auswahl löschen', [btnOk, 'Abbrechen'])
+            app.showMessage('Sollen die ' + this.selectedFiles().length + ' ausgewählten Dateien wirklich endgültig gelöscht werden?', 'Auswahl löschen', [btnOk, 'Abbrechen'])
                 .then(function (result) {
                     if (result === btnOk) deleteSelection();
                 });
@@ -127,7 +127,7 @@
                 if (selectedFile() !== item)
                     selectedFile(item);
 
-                module.router.navigate('#/files/detail/' + item.data().Id(), true);
+                module.router.navigate('#/files/detail/' + item.data().Id());
             }
         }
 

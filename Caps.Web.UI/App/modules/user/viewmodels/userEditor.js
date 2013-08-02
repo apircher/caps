@@ -1,4 +1,4 @@
-﻿define(['modules/user/module', '../entities', '../datacontext', 'knockout', 'plugins/dialog', 'Q'], function (module, model, datacontext, ko, dialog, Q) {
+﻿define(['modules/user/module', '../entities', '../datacontext', 'knockout', 'Q'], function (module, model, datacontext, ko, Q) {
     
     var app = require('durandal/app'),
         system = require('durandal/system'),
@@ -33,7 +33,7 @@
             if (!vm.user.isDirty())
                 return value;
 
-            return dialog.showMessage('Sollen die Änderungen gespeichert werden', 'Änderungen speichern?', ['Speichern', 'Verwerfen', 'Abbrechen'])
+            return app.showMessage('Sollen die Änderungen gespeichert werden', 'Änderungen speichern?', ['Speichern', 'Verwerfen', 'Abbrechen'])
                 .then(function (result) {
                     if (result === 'Speichern') {
                         return saveChanges()
@@ -85,7 +85,7 @@
         var deferred = Q.defer();
 
         if (vm.user().errors().length > 0) {
-            return dialog.showMessage('Die Änderungen können noch nicht gespeichert werden. Kontrolliere die markierten Eingabefelder.', 'Eingaben unvollständig')
+            return app.showMessage('Die Änderungen können noch nicht gespeichert werden. Kontrolliere die markierten Eingabefelder.', 'Eingaben unvollständig')
                 .then(function () {
                     deferred.reject();
                     return deferred.promise;
@@ -155,7 +155,7 @@
     }
 
     function handleAjaxError(err) {
-        dialog.showMessage('Bei der Ausführung der Aktion ist ein Fehler aufgetreten.', 'Fehler aufgetreten');
+        app.showMessage('Bei der Ausführung der Aktion ist ein Fehler aufgetreten.', 'Fehler aufgetreten');
     }
 
     function navigateBack() {
