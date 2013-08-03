@@ -23,7 +23,7 @@
                 <!-- /ko -->
                 <!-- ko if: isUploading() -->
                 <div class="thumbnail">
-                    <div class="preview">
+                    <div class="thumbnail-content preview">
                         <i class="icon-cog icon-spin icon-4x icon-mood"></i>
                     </div>
                 </div>
@@ -46,27 +46,14 @@
 
     <div class="navbar navbar-fixed-bottom">
         <div class="navbar-inner">
+            <div class="navbar-panel navbar-text pull-right">
+                <span data-bind="text: files().length"></span> Dateien
+            </div>
             <ul class="nav pull-right">
                 <li>
                     <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="icon-fixed-width icon-refresh" data-bind="css: { 'icon-spin': isLoading }"></i></a>
                 </li>
             </ul>
-            <div class="navbar-panel navbar-text pull-right">
-                <span data-bind="text: files().length"></span> Dateien
-            </div>
-
-            <div class="navbar-panel navbar-text pull-right">
-                <!-- ko if: selectedFiles().length > 0 -->
-                <span data-bind="text: selectedFiles().length"></span> Dateien ausgewählt
-                <!-- /ko -->
-                <!-- ko if: selectedFiles().length <= 0 && selectedFile() -->
-                <span data-bind="text: selectedFile().data().FileName"></span>
-                <!-- /ko -->
-            </div>
-
-            <div class="navbar-panel navbar-text pull-right" data-bind="visible: isUploading">
-                Upload: <span data-bind="text: progress"></span> %
-            </div>
 
             <ul class="nav">
                 <li>
@@ -86,6 +73,19 @@
                     </a>
                 </li>
             </ul>
+
+            <div class="navbar-panel navbar-text pull-right hidden-phone">
+                <!-- ko if: selectedFiles().length > 0 -->
+                <span data-bind="text: selectedFiles().length"></span> Dateien ausgewählt
+                <!-- /ko -->
+                <!-- ko if: selectedFiles().length <= 0 && selectedFile() -->
+                <span data-bind="text: selectedFile().data().FileName"></span>
+                <!-- /ko -->
+            </div>
+
+            <div class="navbar-panel navbar-text pull-right" data-bind="visible: isUploading">
+                Upload: <span data-bind="text: progress"></span> %
+            </div>
         </div> 
     </div>
 </div>

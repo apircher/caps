@@ -99,7 +99,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
             function setElementHeight() {
                 window.setTimeout(function () {
                     ko.bindingHandlers.forceViewportHeight.setElementHeight($window, $elem, options);
-                }, 100);
+                }, 20);
             }
 
             ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {

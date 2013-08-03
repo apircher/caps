@@ -2,6 +2,9 @@
     min-width:280px;
 }
 
+/** 
+ *  Splash
+ */
 .splash-host {
     position:fixed;
     top:0;
@@ -53,10 +56,9 @@
     max-width:none;
 }
 
-#login-form {
-    margin:25px 0 0;
-}
-
+/** 
+ *  Shell
+ */
 .page-host {
     position: relative;
     top: 40px;
@@ -68,19 +70,8 @@
 }
 
 /** 
- *  Navbar
+ *  Top Navbar
  */
-.bottom-fixed-navbar-container {
-    padding-bottom:50px;
-}
-.navbar-fixed-top .navbar-inner {
-    padding-left: 15px;
-    padding-right: 15px;
-}
-.navbar-fixed-bottom .navbar-inner {
-    padding-right: 15px;
-}
-
 .navbar-panel {
     margin: 0 10px 0 20px;
 }
@@ -98,8 +89,23 @@
         color: #fff;
     }
 
+/* Top Navbar */
+.navbar-fixed-top .navbar-inner {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Sub Navbar */
 .subnav {
     padding-top: 10px;
+}
+
+/* Bottom Navbar */
+.bottom-fixed-navbar-container {
+    padding-bottom:50px;
+}
+.navbar-fixed-bottom .navbar-inner {
+    padding-right: 15px;
 }
 
 /** 
@@ -114,7 +120,7 @@
 }
 
 /** 
- *  T.B.S.L
+ *  Navbar Authenticated User Area
  */
 #nav-user li {
     float:left;
@@ -362,6 +368,9 @@ a.no-underline:hover {
     color:#ccc;
 }
 
+#login-form {
+    margin:25px 0 0;
+}
 
 /**
  * Media Queries
@@ -441,14 +450,6 @@ a.no-underline:hover {
     .dragdrop-placeholder p {
         padding:2em;
     }
-        
-    .navbar-fixed-bottom .navbar li {
-        float:none;
-    }
-
-    .navbar-fixed-bottom .pull-right {
-        clear:right;
-    }
 
     .image-preview {
         padding:8px;
@@ -469,8 +470,8 @@ a.no-underline:hover {
         min-width: 280px;
         max-width: 100%;
     }
-    .messageBox p.message {
-        max-width:245px;
-        overflow:hidden;
-    }
+        .messageBox p.message {
+            max-width: 245px;
+            overflow: hidden;
+        }
 }
