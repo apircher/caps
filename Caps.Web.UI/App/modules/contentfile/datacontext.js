@@ -8,6 +8,15 @@
         return manager.executeQuery(query);
     }
 
+    function searchFiles(pageNumber, itemsPerPage) {
+        var query = EntityQuery.from('Files')
+            .orderBy('Created.At desc')
+            .skip((pageNumber - 1) * itemsPerPage)
+            .take(itemsPerPage)
+            .inlineCount(true);
+        return manager.executeQuery(query);
+    }
+
     function fetchFile(id) {
         var query = EntityQuery.from('Files').where('Id', '==', id)
             .expand('Versions, Versions.Properties');
@@ -34,7 +43,8 @@
         getFiles: getFiles,
         fetchFile: fetchFile,
         localGetFile: localGetFile,
-        deleteFile: deleteFile
+        deleteFile: deleteFile,
+        searchFiles: searchFiles
     };
 
 });

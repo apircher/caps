@@ -168,6 +168,54 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
             });
         }
     };
+
+    //
+    // Infinite Scroll
+    //
+    ko.bindingHandlers.infiniteScroll = {
+        init: function (elem, valueAccessor) {
+            var $window = $(window),
+                $elem = $(elem),
+                distance = -1,
+                options = valueAccessor(),
+                $container = options.container,
+                loading = false,
+                enabled = options.enabled;
+
+            if (ko.isObservable(enabled)) {
+                enabled.subscribe(getDistance);
+            }
+
+            function checkDistance() {
+                if (ko.unwrap(enabled) && distance >= 0 && distance < options.distance && !loading) {
+                    loading = true;
+                    // Fire OnLoad
+                    var r = options.loadMoreItems();
+                    if (r.then) {
+                        r.then(function () {
+                            getDistance();
+                            loading = false;
+                        });
+                    }
+                    else
+                        loading = false;
+                }
+            }
+
+            function getDistance() {
+                distance = Math.max(0, $elem.height() - $container.height() - $container.scrollTop());
+            }
+
+            getDistance();
+            $window.on('scroll resize', getDistance);
+            var handle = setInterval(checkDistance, 100);
+            
+            ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {
+                $window.off('scroll resize', getDistance);
+                clearInterval(handle);
+            });
+        }
+    };
     
     //
     // Editor Templates
