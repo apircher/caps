@@ -216,6 +216,52 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
             });
         }
     };
+
+    //
+    // ScrollTop
+    //
+    ko.bindingHandlers.scrollTop = {
+        init: function (elem, valueAccessor) {
+            var $window = $(window),
+                options = valueAccessor(),
+                observable = options.observable,
+                enabled = options.enabled;
+
+            function _saveScrollTop() {
+                if (ko.unwrap(enabled)) ko.bindingHandlers.scrollTop.saveScrollTop(observable);
+            }
+            function _restoreScrollTop() {
+                if (ko.unwrap(enabled)) ko.bindingHandlers.scrollTop.restoreScrollTop(observable);
+            }
+
+            _restoreScrollTop();
+            $window.on('scroll resize', _saveScrollTop);
+            ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {
+                $window.off('scroll resize', _saveScrollTop);
+            });
+        },
+
+        update: function (elem, valueAccessor) {
+            var options = valueAccessor(),
+                observable = options.observable,
+                enabled = options.enabled;
+            if (ko.unwrap(enabled)) ko.bindingHandlers.scrollTop.restoreScrollTop(observable);
+        },
+
+        saveScrollTop: function (o) {
+            if (ko.isObservable(o)) {                
+                o($('html').scrollTop() || $('body').scrollTop());
+                console.log('saveScrollTop, offset=' + o());
+            }
+        },
+
+        restoreScrollTop: function (o) {
+            if (ko.isObservable(o) && o()) {
+                $('html, body').scrollTop(o());
+                console.log('restoreScrollTop, offset=' + o());
+            }
+        }
+    };
     
     //
     // Editor Templates

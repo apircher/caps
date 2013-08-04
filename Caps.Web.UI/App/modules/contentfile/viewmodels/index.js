@@ -1,6 +1,6 @@
 ﻿define([
-    'knockout', 'durandal/app', '../module', '../datacontext', 'jquery', 'toastr', 'Q', 'doubleTap', 'jquery.fileupload'
-], function (ko, app, module, datacontext, $, toastr, Q, doubleTap) {
+    'knockout', 'durandal/system', 'durandal/app', '../module', '../datacontext', 'jquery', 'toastr', 'Q', 'doubleTap', 'jquery.fileupload'
+], function (ko, system, app, module, datacontext, $, toastr, Q, doubleTap) {
         
     var vm,
         initialized = false,
@@ -11,14 +11,10 @@
         progress = ko.observable(0),
         selectedFile = ko.observable(),
         isInteractive = ko.observable(false),
-        lastScrollTop = 0;
+        scrollTop = ko.observable(0);
 
     module.router.on('router:navigation:attached', function (currentActivation, currentInstruction, router) {
-        if (currentActivation == vm) {
-            //scrollToSelectedFile();
-            restoreScrollTop();
-            isInteractive(true);
-        }
+        if (currentActivation == vm)  isInteractive(true);
     });
 
     vm = {
@@ -27,6 +23,8 @@
         isUploading: isUploading,
         progress: progress,
         selectedFile: selectedFile,
+        scrollTop: scrollTop,
+        isInteractive: isInteractive,
 
         selectedFiles: ko.computed(function () {
             return ko.utils.arrayFilter(searchResult().items(), function (f) {
@@ -93,7 +91,6 @@
 
         deactivate: function () {
             isInteractive(false);
-            saveScrollTop();
         },
 
         deleteFile: function (item) {
@@ -120,7 +117,7 @@
         },
 
         refresh: function () {
-            lastScrollTop = 0;
+            scrollTop(0);
             selectedFile(null);
             files.removeAll();
             getFiles(itemsPerPage());
@@ -200,25 +197,6 @@
         ko.utils.arrayForEach(vm.selectedFiles(), function (f) {
             deleteFile(f);
         });
-    }
-
-    function scrollToSelectedFile() {
-        if (selectedFile()) {
-            $.each($('#files-list > li'), function (index, item) {
-                if (ko.dataFor(item) === selectedFile()) {
-                    var offset = $(item).offset();
-                    $('html, body').scrollTop(offset.top - 70);
-                    return false;
-                }
-            });
-        }
-    }
-
-    function saveScrollTop() {
-        lastScrollTop = $('html, body').scrollTop();
-    }
-    function restoreScrollTop() {
-        $('html, body').scrollTop(lastScrollTop);
     }
 
     /**

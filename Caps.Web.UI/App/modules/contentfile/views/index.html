@@ -1,7 +1,8 @@
 ﻿<div id="files-index" class="app-page bottom-fixed-navbar-container">
     
     <div id="drop-zone" data-bind="click: resetSelectedItem">
-        <ul data-bind="foreach: { data: searchResult().items }, infiniteScroll: { distance: 400, container: $(window), loadMoreItems: loadMoreItems, enabled: hasMorePages }" class="thumbnails thumbnails-fixed-size" id="files-list">
+        <ul data-bind="foreach: { data: searchResult().items }, infiniteScroll: { distance: 400, container: $(window), loadMoreItems: loadMoreItems, enabled: hasMorePages }, scrollTop: { observable: scrollTop, enabled: isInteractive }" 
+            class="thumbnails thumbnails-fixed-size" id="files-list">
             <li class="span3">
                 <!-- ko if: data() && !isUploading() -->
                 <div class="thumbnail" data-bind="attr: { title: data().FileName }, css: { 'item-checked': isSelected, 'item-selected': isSelectedItem }, click: selectItem, clickBubble: false, event: { dblclick: $parent.showDetail }">                    
