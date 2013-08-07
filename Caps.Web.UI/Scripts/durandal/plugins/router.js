@@ -539,6 +539,11 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
          * @return {boolean} Returns true/false from loading the url.
          */
         router.navigate = function(fragment, options) {
+            if(fragment && fragment.indexOf('://') != -1){
+                window.location.href = fragment;
+                return true;
+            }
+
             rootRouter.explicitNavigation = true;
             return history.navigate(fragment, options);
         };
@@ -617,10 +622,10 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
          * @param {object} [config] The config for the specified route.
          * @chainable
          * @example
-         router.map([
-             { route: '', title:'Home', moduleId: 'homeScreen', nav: true },
-             { route: 'customer/:id', moduleId: 'customerDetails'}
-         ]);
+ router.map([
+    { route: '', title:'Home', moduleId: 'homeScreen', nav: true },
+    { route: 'customer/:id', moduleId: 'customerDetails'}
+ ]);
          */
         router.map = function(route, config) {
             if (system.isArray(route)) {
