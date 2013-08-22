@@ -149,10 +149,11 @@
     function getFiles(itemsPerPage) {
         var deferred = Q.defer();
         isLoading(true);
-        datacontext.searchFiles(1, itemsPerPage)
+        var filters = searchFilters();
+        datacontext.searchFiles(1, itemsPerPage, filters)
             .then(function (data) {
                 
-                var sr = new SearchResult(data, 1, itemsPerPage);
+                var sr = new SearchResult(data, 1, itemsPerPage, filters);
                 searchResult(sr);
 
                 deferred.resolve();
@@ -169,7 +170,7 @@
             sr = searchResult(),
             page = sr.currentPage() + 1;
         isLoading(true);
-        datacontext.searchFiles(page, sr.itemsPerPage())
+        datacontext.searchFiles(page, sr.itemsPerPage(), sr.filters)
             .then(function (data) {
                 sr.addPage(data, page);
                 deferred.resolve();
@@ -179,6 +180,10 @@
                 isLoading(false);
             });
         return deferred.promise;
+    }
+
+    function searchFilters() {
+        return [];
     }
 
     function deleteFile(item) {
@@ -223,8 +228,9 @@
     /**
      * SearchResult Class
      */
-    function SearchResult(data, currentPage, itemsPerPage) {
+    function SearchResult(data, currentPage, itemsPerPage, filters) {
         var self = this;
+        this.filters = filters;
         this.items = ko.observableArray();
         this.currentPage = ko.observable(currentPage || 1);
         this.itemsPerPage = ko.observable(itemsPerPage || 10);
