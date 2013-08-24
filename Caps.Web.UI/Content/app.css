@@ -1,4 +1,4 @@
-﻿html, body {
+﻿html, body, .navbar {
     min-width:280px;
 }
 
@@ -36,6 +36,7 @@
 .splash-message {
     font-size: 2.75em;
     line-height: 1.5em;
+    font-weight:bold;
     -webkit-text-shadow: rgba(0, 0, 0, 0.3) 0px 0px 10px;
     text-shadow: rgba(0, 0, 0, 0.3) 0px 0px 10px;
     max-width:none;
@@ -61,23 +62,18 @@
  */
 .page-host {
     position: relative;
-    top: 40px;
+    top: 50px;
 }
 
 .app-page {
     position:relative;    
-    padding-top:10px;
+    padding-top:15px;
+    margin-bottom:15px;
 }
 
 /** 
  *  Top Navbar
  */
-.navbar-panel {
-    margin: 0 10px 0 20px;
-}
-    .navbar-panel.pull-right {
-        margin-left: 10px;
-    }
 
 .navbar-inverse .navbar-panel.navbar-text a,
 .navbar-inverse .navbar-panel.navbar-text a:active,
@@ -89,12 +85,24 @@
         color: #fff;
     }
 
-/* Top Navbar */
-.navbar-fixed-top .navbar-inner {
-    padding-left: 15px;
-    padding-right: 15px;
+.navbar-toggle {
+    margin-right:0;
 }
 
+.navbar-col-left {
+    float:left;
+}
+.navbar-col-right {
+    float:right;
+}
+.navbar-panel {
+    margin: 0 10px 0 20px;
+}
+    .navbar-panel.pull-right {
+        margin-left: 10px;
+        margin-right: 20px;
+    }
+    
 /* Sub Navbar */
 .subnav {
     padding-top: 10px;
@@ -103,9 +111,6 @@
 /* Bottom Navbar */
 .bottom-fixed-navbar-container {
     padding-bottom:50px;
-}
-.navbar-fixed-bottom .navbar-inner {
-    padding-right: 15px;
 }
 
 /** 
@@ -122,6 +127,9 @@
 /** 
  *  Navbar Authenticated User Area
  */
+#nav-user {
+    margin-left: 30px;
+}
 #nav-user li {
     float:left;
 }
@@ -133,17 +141,19 @@
         text-overflow: ellipsis;
     }
 
-#nav-user a.nav-btn,
-#nav-user a.nav-btn:active,
-#nav-user a.nav-btn:visited,
-#nav-user a.nav-btn:hover {
-    padding:9px 0 0px;
-    font-size:85%;
-}
-
 /** 
  *  MessageBox
  */
+.modal-header h3 {
+    font-size:110%;
+    font-weight:bold;
+    margin:0;
+    padding:0;
+}
+.modal-body > .container {
+    padding-left:0;
+    padding-right:0;
+}
 .messageBox {
     min-width: 400px;
 }
@@ -164,6 +174,10 @@
 .table td .cell-warning {
     color: red;
     display: inline-block;
+}
+
+.table .row-header-icon {
+    padding-left:15px;
 }
 
 /** 
@@ -190,6 +204,8 @@
  */
 .thumbnail {
     background-color:#fff;
+    position:relative;
+    margin:0 15px 15px 0;
 }
 .thumbnails-fixed-size .thumbnail {
     position: relative;
@@ -378,22 +394,7 @@ a.no-underline:hover {
  */
 
 @media (max-width: 979px) {
-    .page-host {
-        top: 8px;
-    }
-
-    .navbar-fixed-top {
-        margin-bottom: 0;
-    }
-
-    .app-page {
-        padding-top:0;
-    }
-
-    .bottom-fixed-navbar-container {
-        padding-bottom:0;
-    }    
-
+    
     .dragdrop-placeholder p {
         padding:3em;
     }
@@ -401,7 +402,11 @@ a.no-underline:hover {
 
 
 @media (max-width: 767px) {
-    .full-width-on-phone {
+    #nav-user {
+      margin-left: 0;
+    }
+
+    /*.full-width-on-phone {
         position:relative;
         margin-left:-20px;
         margin-right:-20px;
@@ -411,26 +416,8 @@ a.no-underline:hover {
         }
         .full-width-on-phone .table tr td:last-child {
             padding-right:20px;
-        }
-
-        
-    .navbar-panel {
-        margin: 0 8px 0 0;
-    }
-    .navbar-panel.pull-right {
-        margin: 0 0 0 8px;
-    }
-    .navbar-fixed-bottom .navbar-inner {
-        padding-right: 15px;
-    }
-
-    .navbar .nav li {
-        float:none;
-    }
-    .navbar .nav {
-        margin-right:0px;
-    }
-    
+        }*/
+                    
     .loader {
         margin-left:0;
         margin-right:0;
@@ -453,6 +440,28 @@ a.no-underline:hover {
 
     .image-preview {
         padding:8px;
+    }
+
+    
+    .bottom-fixed-navbar-container {
+        padding-bottom:0px;
+    }
+
+    .navbar-panel.pull-right > .navbar-text,
+    .navbar-panel.pull-right > .nav.navbar-nav {
+        float:left;
+        margin-left:0;
+    }
+    .navbar-panel.pull-right > .nav.navbar-nav {
+        margin-left:15px;
+    }
+
+    .navbar.navbar-fixed-bottom {
+        position:relative;
+        margin-top:15px;
+        margin-left:-15px;
+        margin-right:-15px;
+        margin-bottom:-15px;
     }
 }
 

@@ -1,13 +1,13 @@
 ﻿<div class="app-page bottom-fixed-navbar-container">
 
-    <div class="row-fluid">
+    <div class="row">
         <!-- ko if: file() -->
-        <div class="span9" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top', minWidth: 767 }">
+        <div class="col-md-9" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top', minWidth: 767 }">
             <!-- ko template: { name: previewTemplate, data: file } -->
             <!-- /ko -->
         </div>
 
-        <div class="span3">
+        <div class="col-md-3">
             <h4 class="break-h"><!-- ko text: file().FileName --><!-- /ko --> <small>Details</small></h4>
 
             <div data-bind="with: file().Created">
@@ -39,18 +39,20 @@
 
 
     
-    <div class="navbar navbar-fixed-bottom">
-        <div class="navbar-inner">
-            <ul class="nav pull-right">
-                <li>
-                    <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="icon-fixed-width icon-refresh" data-bind="css: { 'icon-spin': isLoading }"></i></a>
-                </li>
-            </ul>
-                        
-            <ul class="nav">
+    <div class="navbar navbar-default navbar-fixed-bottom">
+        
+        <div class="navbar-panel pull-left">                        
+            <ul class="nav navbar-nav">
                 <li>
                     <a href="#" data-bind="click: navigateBack">
                         <i class="icon-fixed-width icon-arrow-left"></i> Zurück</a>
+                </li>
+            </ul>
+        </div>
+        <div class="navbar-panel pull-right">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="icon-fixed-width icon-refresh" data-bind="css: { 'icon-spin': isLoading }"></i></a>
                 </li>
             </ul>
         </div> 

@@ -1,36 +1,34 @@
 ﻿<div>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="navbar-inner">
-            <div>
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse" data-bind="visible: authentication.isAuthenticated">
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                </a>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="loader pull-right" data-bind="css: { active: router.isNavigating }">
+            <i class="icon-cog icon-2x icon-spin"></i>
+        </div>
 
-                <a class="brand" href="" data-bind="attr: { href: router.routes[0].hash }">
-                    <span>CAPS</span>
-                </a>
+        <ul id="nav-user" class="nav navbar-nav pull-right" data-bind="visible: authentication.isAuthenticated">
+            <li><a href="/#profile"><strong data-bind="text: authentication.user().displayName()"></strong></a></li>
+            <li><a href="#" data-bind="click: logOff, clickBubble: false" title="Abmelden"><i class="icon-fixed-width icon-off"></i></a></li>                    
+        </ul>
 
-                <div class="loader pull-right" data-bind="css: { active: router.isNavigating }">
-                    <i class="icon-cog icon-2x icon-spin"></i>
-                </div>
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse" data-bind="visible: authentication.isAuthenticated">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
 
-                <ul id="nav-user" class="nav pull-right" data-bind="visible: authentication.isAuthenticated">
-                    <li><a href="/#profile"><strong data-bind="text: authentication.user().displayName()"></strong></a></li>
-                    <li><a href="#" class="nav-btn" data-bind="click: logOff, clickBubble: false" title="Abmelden"><i class="icon-fixed-width icon-off icon-2x"></i></a></li>                    
-                </ul>
+            <a class="navbar-brand" data-bind="attr: { href: router.routes[0].hash }">
+                <strong>CAPS</strong>
+            </a>
+        </div>
 
-                <div class="nav-collapse collapse">
-                    <ul class="nav pull-right" data-bind="foreach: navigationItems">
-                        <li data-bind="css: { active: isActive }, template: { name: $parent.navigationItemTemplate }"></li>
-                    </ul>
-                </div>
-            </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav navbar-right" data-bind="foreach: navigationItems">
+                <li data-bind="css: { active: isActive }, template: { name: $parent.navigationItemTemplate }"></li>
+            </ul>
         </div>
     </div>
     
-    <div class="container-fluid page-host">
+    <div class="container page-host">
         <!--ko router: { transition:'entrance', cacheViews:true }--><!--/ko-->
     </div>
 </div>

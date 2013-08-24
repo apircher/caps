@@ -15,9 +15,9 @@ namespace Caps.Web.UI.App_Start
             
             bundles.Add(
               new StyleBundle("~/Content/css")
-                .Include("~/Content/bootstrap.min.css")
+                .Include("~/Content/bootstrap/bootstrap.min.css")
+                .Include("~/Content/bootstrap/bootstrap-theme.min.css")
                 .Include("~/Content/font-awesome.min.css")
-                .Include("~/Content/bootstrap-responsive.min.css")
                 .Include("~/Content/durandal.css")
                 .Include("~/Content/app.css")
                 .Include("~/Content/ie10mobile.css")

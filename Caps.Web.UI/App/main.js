@@ -93,6 +93,8 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
                 //Replace 'viewmodels' in the moduleId with 'views' to locate the view.
                 //Look for partial views in a 'views' folder in the root.
                 viewLocator.useConvention();
+                // Override default MessageBox Template
+                setDefaultMessageBoxTemplate();
                 //Show the app by setting the root view model for our application with a transition.
                 app.setRoot('viewmodels/shell', 'entrance');
             })
@@ -106,5 +108,25 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
             app.trigger('app:beforeunload', options);
             if (options.cancel)
                 return options.message;
+        }
+
+
+        function setDefaultMessageBoxTemplate() {
+            require(['plugins/dialog'], function (dialog) {
+                dialog.MessageBox.defaultViewMarkup = [
+                    '<div data-view="plugins/messageBox" class="messageBox">',
+                        '<div class="modal-header">',
+                            '<h4 data-bind="text: title"></h4>',
+                        '</div>',
+                        '<div class="modal-body">',
+                            '<p class="message" data-bind="text: message"></p>',
+                        '</div>',
+                        '<div class="modal-footer" data-bind="foreach: options">',
+                            '<button class="btn" data-bind="click: function () { $parent.selectOption($data); }, text: $data, css: { \'btn-primary\': $index() == 0, \'btn-default\': $index() != 0, autofocus: $index() == 0 }"></button>',
+                        '</div>',
+                    '</div>'
+                ].join('\n');
+            }
+            );
         }
     });
