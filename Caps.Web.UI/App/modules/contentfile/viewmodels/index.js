@@ -141,7 +141,7 @@
         },
 
         loadHandler: function (element, e) {
-            console.log('First visible: ' + e.firstVisible.index + ' (Page #' + e.firstVisible.page + '); Last visible: '
+            console.log('loadHandler called. First visible: ' + e.firstVisible.index + ' (Page #' + e.firstVisible.page + '); Last visible: '
                 + e.lastVisible.index + ' (Page #' + e.lastVisible.page + ')');
             for (var i = e.firstVisible.page; i <= e.lastVisible.page; i++) {
                 var pageNumber = i + 1,
@@ -179,6 +179,7 @@
         var deferred = Q.defer(),
             sr = searchResult();
         isLoading(true);
+        console.log('loadPage called. pageNumber=' + pageNumber);
         datacontext.searchFiles(pageNumber, sr.itemsPerPage(), sr.filters)
             .then(function (data) {
                 sr.addPage(data, pageNumber);
@@ -231,13 +232,15 @@
     function updateListItems() {
         for (var i = 0, x = 0; i < searchResult().pages.length; i++) {
             var page = searchResult().pages[i];
-            for (var j = 0; j < page.count; j++) {
-                var item = listItems()[x++];
-                if (page.isLoaded) {
+            if (page.isLoaded) {
+                for (var j = 0; j < page.count; j++) {
+                    var item = listItems()[x++];
                     var data = page.items ? page.items[j] : null;
                     if (data && item.data() !== data) item.setData(data);
                 }
             }
+            else
+                x += page.count;
         }
     }
 
