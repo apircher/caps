@@ -5,7 +5,7 @@
         initialized = false,
         listItems = ko.observableArray([]),
         searchResult = ko.observable(new SearchResult()),
-        itemsPerPage = ko.observable(10),
+        itemsPerPage = ko.observable(24),
         isLoading = ko.observable(false),
         isUploading = ko.observable(false),
         progress = ko.observable(0),
@@ -39,7 +39,7 @@
                 var listItem = new FileListItem();
                 f.listItem = listItem;
                 listItem.isUploading(true);
-                searchResult().items.push(listItem);
+                listItems.push(listItem);
             });
                         
             isUploading(true);
@@ -119,7 +119,7 @@
         refresh: function () {
             scrollTop(0);
             selectedFile(null);
-            files.removeAll();
+            listItems.removeAll();
             search(itemsPerPage());
         },
 
@@ -143,18 +143,21 @@
         loadHandler: function (element, e) {
             console.log('loadHandler called. First visible: ' + e.firstVisible.index + ' (Page #' + e.firstVisible.page + '); Last visible: '
                 + e.lastVisible.index + ' (Page #' + e.lastVisible.page + ')');
-            for (var i = e.firstVisible.page; i <= e.lastVisible.page; i++) {
-                var pageNumber = i + 1,
-                    page = searchResult().findPage(pageNumber);
+
+            for (var i = e.firstVisible.page; i <= e.lastVisible.page; i++) 
+                checkPage(i + 1);
+
+            function checkPage(pageNumber) {
+                var page = searchResult().findPage(pageNumber);
                 if (!page.isLoaded && !page.isLoading) {
                     searchResult().markPageLoading(pageNumber);
                     loadPage(pageNumber).then(function () {
                         searchResult().markPageLoaded(pageNumber);
+                        e.pageLoaded(pageNumber);
                     });
                 }
             }
         }
-
     };
     
     function search(itemsPerPage) {
@@ -193,28 +196,6 @@
         return deferred.promise;
     }
 
-    function searchFilters() {
-        return [];
-    }
-
-    function deleteFile(item) {
-        datacontext.deleteFile(item.data()).then(deleteSucceeded).fail(deleteFailed);
-        function deleteSucceeded() {
-            searchResult().items.remove(item);
-            if (selectedFile() === item)
-                selectedFile(null);
-        }
-        function deleteFailed(err) {
-            dialog.showMessage('Die Datei konnte nicht gelöscht werden.', 'Nicht erfolgreich');
-        }
-    }
-
-    function deleteSelection() {
-        ko.utils.arrayForEach(vm.selectedFiles(), function (f) {
-            deleteFile(f);
-        });
-    }
-
     function buildListItems() {
         var items = [];
         for (var i = 0; i < searchResult().pages.length; i++) {
@@ -239,10 +220,32 @@
                     if (data && item.data() !== data) item.setData(data);
                 }
             }
-            else
-                x += page.count;
+            else x += page.count;
         }
     }
+
+    function searchFilters() {
+        return [];
+    }
+
+    function deleteFile(item) {
+        datacontext.deleteFile(item.data()).then(deleteSucceeded).fail(deleteFailed);
+        function deleteSucceeded() {
+            searchResult().items.remove(item);
+            if (selectedFile() === item)
+                selectedFile(null);
+        }
+        function deleteFailed(err) {
+            dialog.showMessage('Die Datei konnte nicht gelöscht werden.', 'Nicht erfolgreich');
+        }
+    }
+
+    function deleteSelection() {
+        ko.utils.arrayForEach(vm.selectedFiles(), function (f) {
+            deleteFile(f);
+        });
+    }
+
 
     /**
      * FileListItem Class

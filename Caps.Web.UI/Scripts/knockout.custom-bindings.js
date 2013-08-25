@@ -213,8 +213,10 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
             var items = $(elem).children(),
                 visibleItems = [];
             for (var i = 0; i < items.length; i++) {
-                if (ko.bindingHandlers.lazyLoad._elementInView(items[i])) 
+                if (ko.bindingHandlers.lazyLoad._elementInView(items[i])) {
                     visibleItems.push(items[i]);
+                    ko.bindingHandlers.lazyLoad._loadImage(items[i]);
+                }
             }
 
             if (visibleItems.length && loadHandler) {
@@ -232,9 +234,36 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
                         index: lastVisible,
                         page: lastVisiblePage,
                         viewModel: ko.dataFor(items[lastVisible])
+                    },
+                    pageLoaded: function (pageNumber) {
+                        var pageStartIndex = (pageNumber - 1) * pageSize,
+                            pageEndIndex = pageStartIndex + pageSize;
+                        for (var i = pageStartIndex; i <= pageEndIndex; i++) {
+                            if (i >= 0 && i < items.length) {
+                                if (ko.bindingHandlers.lazyLoad._elementInView(items[i])) {
+                                    ko.bindingHandlers.lazyLoad._loadImage(items[i]);
+                                }
+                            }
+                        }
                     }
                 };
                 loadHandler(elem, eventArgs);
+            }
+        },
+
+        _loadImage: function (elem) {
+            var img = new Image(),
+                original = $(elem).find('img.lazy')[0],
+                src = original ? original.getAttribute('data-src') : '';
+
+            if (src != '' && src != original.src) {
+                img.onload = function () {
+                    if (!!original.parent)
+                        original.parent.replaceChild(img, original);
+                    else
+                        original.src = src;
+                };
+                img.src = src;
             }
         }
     };
