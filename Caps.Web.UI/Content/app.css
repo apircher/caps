@@ -202,20 +202,22 @@
 /** 
  *  Thumbnails 
  */
+
+.thumbnail-container {
+    position:relative;
+    padding:0 0 15px;
+}
+
 .thumbnail {
     background-color:#fff;
-    position:relative;
-    margin:0 15px 15px 0;
 }
 .thumbnails-fixed-size .thumbnail {
     position: relative;
     overflow: hidden;
+    background-color:#fff;
+    min-height: 180px;
+    text-align: center;
 }
-    .thumbnails-fixed-size .thumbnail .thumbnail-content {
-        width: 100%;
-        height: 180px;
-        text-align: center;
-    }
         .thumbnails-fixed-size .thumbnail .thumbnail-content > i.icon-spin,
         .thumbnails-fixed-size .thumbnail .thumbnail-content > i.center-icon-h {
             position: relative;
@@ -233,7 +235,7 @@
     position: absolute;
     left: 1px;
     right: 1px;
-    bottom: 1px;
+    bottom: 18px;
     font-size: 79.5%;
 }
 /* Hide if not on touch device. */
@@ -242,8 +244,8 @@
 }
 /* On no-touch devices, show the controls when hovering
    over the item or when the item is selected. */
-.no-touch .thumbnail.item-selected .thumbnail-controls,
-.no-touch .thumbnail:hover .thumbnail-controls {
+/*.no-touch .thumbnail.item-selected .thumbnail-controls,   <- Not supported... */
+.no-touch .thumbnail-container:hover .thumbnail-controls {
     visibility: visible;
 }
 
@@ -266,7 +268,7 @@
     box-shadow:0px 1px 4px rgba(0,105,214,0.25);
 }
 
-.thumbnail .item-check {
+.thumbnail-container .item-check {
     position: absolute;
     left: 0px;
     top: 0px;
@@ -275,26 +277,33 @@
     padding: 0px 21px 16px 4px;
     opacity: 1;
 } 
-    .thumbnail .item-check i {
+    .thumbnail-container .item-check i {
         background-color: #fff;
         padding-right: 3px;
         padding-bottom: 1px;
     }
 /* Hover feedback on no-touch devices. */
-.no-touch .thumbnail .item-check:hover {
+.no-touch .thumbnail-container .item-check:hover {
     color: #999;
     opacity: 1;
 }
 
-.thumbnail.item-checked .item-check,
-.no-touch .thumbnail.item-checked .item-check:hover {
+.thumbnail-container.item-checked .item-check,
+.no-touch .thumbnail-container.item-checked .item-check:hover {
     color: #3a7921;
     opacity: 1;
 }
-    .thumbnail.item-checked .item-check i,
-    .no-touch .thumbnail.item-checked .item-check:hover i {
+    .thumbnail-container.item-checked .item-check i,
+    .no-touch .thumbnail-container.item-checked .item-check:hover i {
         padding-right: 1px;
     }
+
+.in-view {
+    background:green;
+}
+.outof-view {
+    background:red;
+}
 
 /**
  * File Drop Zone
@@ -302,6 +311,7 @@
 #drop-zone {
     overflow:hidden;
     background:#fafafa;
+    padding:0 15px;
 }
 .drop-zone-placeholder p {
     text-align:center;

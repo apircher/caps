@@ -75,16 +75,6 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     };
 
     //
-    // jQuery Infinite Scroll
-    //
-    ko.bindingHandlers.infiniteScroll = {
-        init: function (elem, valueAccessor) {
-            var $elem = $(elem);
-            $elem.infinitescroll(valueAccessor());
-        }
-    };
-
-    //
     // Stretch Height
     //
     ko.bindingHandlers.forceViewportHeight = {
@@ -166,6 +156,86 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
             $elem.parent().on('stretchHeight:reseted', function () {
                 $elem.css('line-height', '0');
             });
+        }
+    };
+
+    //
+    // Lazy loading
+    //
+    ko.bindingHandlers.lazyLoad = {
+        init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var $window = $(window),
+                options = valueAccessor(),
+                data = options.data,
+                timeoutHandle;
+
+            function processScroll() {
+                if (timeoutHandle)
+                    window.clearTimeout(timeoutHandle);
+                timeoutHandle = window.setTimeout(function () {
+                    ko.bindingHandlers.lazyLoad._processScroll(elem, options.pageSize, options.loadHandler);
+                }, 20);
+            }
+
+            $window.on('scroll resize', processScroll);
+            ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {
+                $window.off('scroll resize', processScroll);
+            });
+
+            return ko.bindingHandlers['foreach'].init(elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext);
+        },
+
+        update: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var options = valueAccessor(),
+                data = options.data,
+                count = data ? ko.unwrap(data).length : 0,
+                numRendered = 0;
+            ko.bindingHandlers['foreach'].update(elem, function () {
+                return $.extend(options, {
+                    afterRender: function () {
+                        if (++numRendered == count) {
+                            window.setTimeout(function () {
+                                ko.bindingHandlers.lazyLoad._processScroll(elem, options.pageSize, options.loadHandler);
+                            }, 100);
+                        }
+                    }
+                });
+            }, allBindingsAccessor, viewModel, bindingContext);
+        },
+
+        _elementInView: function (elem) {
+            var rect = elem.getBoundingClientRect();
+            return (rect.bottom >= 0 && rect.left >= 0 && rect.top <= (window.innerHeight || document.documentElement.clientHeight));
+        },
+
+        _processScroll: function (elem, pageSize, loadHandler) {
+            console.log('LazyLoad._processScroll called.');
+            var items = $(elem).children(),
+                visibleItems = [];
+            for (var i = 0; i < items.length; i++) {
+                if (ko.bindingHandlers.lazyLoad._elementInView(items[i])) 
+                    visibleItems.push(items[i]);
+            }
+
+            if (visibleItems.length && loadHandler) {
+                var firstVisible = $(visibleItems[0]).index(),
+                    lastVisible = $(visibleItems[visibleItems.length - 1]).index(),
+                    firstVisiblePage = Math.floor(firstVisible / pageSize),
+                    lastVisiblePage = Math.floor(lastVisible / pageSize);
+                var eventArgs = {
+                    firstVisible: {
+                        index: firstVisible,
+                        page: firstVisiblePage,
+                        viewModel: ko.dataFor(items[firstVisible])
+                    },
+                    lastVisible: {
+                        index: lastVisible,
+                        page: lastVisiblePage,
+                        viewModel: ko.dataFor(items[lastVisible])
+                    }
+                };
+                loadHandler(elem, eventArgs);
+            }
         }
     };
 

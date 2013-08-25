@@ -1,11 +1,11 @@
-﻿define([
-    'knockout', 'durandal/system', 'durandal/app', '../module', '../datacontext', 'jquery', 'toastr', 'Q', 'doubleTap', 'jquery.fileupload'
+﻿define(['knockout', 'durandal/system', 'durandal/app', '../module', '../datacontext', 'jquery', 'toastr', 'Q', 'doubleTap', 'jquery.fileupload'
 ], function (ko, system, app, module, datacontext, $, toastr, Q, doubleTap) {
         
     var vm,
         initialized = false,
+        listItems = ko.observableArray([]),
         searchResult = ko.observable(new SearchResult()),
-        itemsPerPage = ko.observable(20),
+        itemsPerPage = ko.observable(10),
         isLoading = ko.observable(false),
         isUploading = ko.observable(false),
         progress = ko.observable(0),
@@ -19,6 +19,8 @@
 
     vm = {
         searchResult: searchResult,
+        itemsPerPage: itemsPerPage,
+        listItems: listItems,
         isLoading: isLoading,
         isUploading: isUploading,
         progress: progress,
@@ -27,12 +29,10 @@
         isInteractive: isInteractive,
 
         selectedFiles: ko.computed(function () {
-            return ko.utils.arrayFilter(searchResult().items(), function (f) {
+            return ko.utils.arrayFilter(listItems(), function (f) {
                 return f.isSelected();
             });
         }),
-
-        loadMoreItems: loadMoreItems,
 
         startUpload: function (e, data) {
             ko.utils.arrayForEach(data.files, function (f) {
@@ -85,7 +85,7 @@
         activate: function () {
             if (!initialized) {
                 initialized = true;
-                getFiles(itemsPerPage());
+                search(itemsPerPage());
             }
         },
 
@@ -120,7 +120,7 @@
             scrollTop(0);
             selectedFile(null);
             files.removeAll();
-            getFiles(itemsPerPage());
+            search(itemsPerPage());
         },
 
         resetSelectedItem: function () {
@@ -140,22 +140,32 @@
             }
         },
 
-        hasMorePages: ko.computed(function () {
-            return isInteractive() && searchResult().hasMorePages();
-        })
+        loadHandler: function (element, e) {
+            console.log('First visible: ' + e.firstVisible.index + ' (Page #' + e.firstVisible.page + '); Last visible: '
+                + e.lastVisible.index + ' (Page #' + e.lastVisible.page + ')');
+            for (var i = e.firstVisible.page; i <= e.lastVisible.page; i++) {
+                var pageNumber = i + 1,
+                    page = searchResult().findPage(pageNumber);
+                if (!page.isLoaded && !page.isLoading) {
+                    searchResult().markPageLoading(pageNumber);
+                    loadPage(pageNumber).then(function () {
+                        searchResult().markPageLoaded(pageNumber);
+                    });
+                }
+            }
+        }
 
     };
     
-    function getFiles(itemsPerPage) {
+    function search(itemsPerPage) {
         var deferred = Q.defer();
         isLoading(true);
         var filters = searchFilters();
         datacontext.searchFiles(1, itemsPerPage, filters)
-            .then(function (data) {
-                
-                var sr = new SearchResult(data, 1, itemsPerPage, filters);
+            .then(function (data) {                
+                var sr = new SearchResult(itemsPerPage, filters, data);
                 searchResult(sr);
-
+                buildListItems();
                 deferred.resolve();
             })
             .fail(deferred.reject)
@@ -165,14 +175,14 @@
         return deferred.promise;
     }
 
-    function loadMoreItems() {
+    function loadPage(pageNumber) {
         var deferred = Q.defer(),
-            sr = searchResult(),
-            page = sr.currentPage() + 1;
+            sr = searchResult();
         isLoading(true);
-        datacontext.searchFiles(page, sr.itemsPerPage(), sr.filters)
+        datacontext.searchFiles(pageNumber, sr.itemsPerPage(), sr.filters)
             .then(function (data) {
-                sr.addPage(data, page);
+                sr.addPage(data, pageNumber);
+                updateListItems();
                 deferred.resolve();
             })
             .fail(deferred.reject)
@@ -204,6 +214,33 @@
         });
     }
 
+    function buildListItems() {
+        var items = [];
+        for (var i = 0; i < searchResult().pages.length; i++) {
+            var page = searchResult().pages[i];
+            for (var j = 0; j < page.count; j++) {
+                var item = new FileListItem();
+                if (page.isLoaded) 
+                    item.setData(page.items[j]);
+                items.push(item);
+            }
+        }
+        listItems(items);
+    }
+
+    function updateListItems() {
+        for (var i = 0, x = 0; i < searchResult().pages.length; i++) {
+            var page = searchResult().pages[i];
+            for (var j = 0; j < page.count; j++) {
+                var item = listItems()[x++];
+                if (page.isLoaded) {
+                    var data = page.items ? page.items[j] : null;
+                    if (data && item.data() !== data) item.setData(data);
+                }
+            }
+        }
+    }
+
     /**
      * FileListItem Class
      */
@@ -225,42 +262,99 @@
         selectedFile(this);
     };
 
+    FileListItem.prototype.setData = function (data) {
+        this.data(data);
+    };
+
     /**
      * SearchResult Class
      */
-    function SearchResult(data, currentPage, itemsPerPage, filters) {
+    function SearchResult(itemsPerPage, filters, data) {
         var self = this;
-        this.filters = filters;
-        this.items = ko.observableArray();
-        this.currentPage = ko.observable(currentPage || 1);
-        this.itemsPerPage = ko.observable(itemsPerPage || 10);
-        this.totalCount = ko.observable(0);
+
+        self.filters = filters;
+        self.pages = [];
+        self.itemsPerPage = ko.observable(itemsPerPage || 10);
+        self.totalCount = ko.observable(0);
+
         this.totalPages = ko.computed(function () {
             return Math.ceil(self.totalCount() / self.itemsPerPage());
         });
-        this.hasMorePages = ko.computed(function () {
-            return self.currentPage() < self.totalPages();
-        });
 
-        if (data) this.addPage(data, this.currentPage());
+        if (data) this.addPage(data, 1);
     }
 
-    SearchResult.prototype._addItems = function (results) {
+    SearchResult.prototype._addItems = function (results, index) {
         var self = this;
-        var listItems = ko.utils.arrayMap(results, function (item) {
-            return new FileListItem(item);
-        });
-        ko.utils.arrayForEach(listItems, function (item) {
-            self.items.push(item);
-        });
+        var page = new SearchResultPage(index, results);
+        page.isLoaded = true;
+        self.pages[index] = page;
+    };
+
+    SearchResult.prototype._buildDummyPages = function (totalCount, itemsPerPage) {
+        var self = this,
+            numPages = self.totalPages(),
+            numItems = self.totalCount(),
+            dummyPages = [];
+
+        for (var i = 0; i < numPages; i++) {
+            var numItems = (i < numPages - 1) ? itemsPerPage : totalCount - (i * itemsPerPage),
+                dummy = new SearchResultPage(i);
+            dummy.count = numItems;
+            dummyPages.push(dummy);
+        }
+        self.pages = dummyPages;
     };
 
     SearchResult.prototype.addPage = function (data, pageNumber) {
-        this.currentPage(pageNumber);
-        this._addItems(data.results);
-        if (data.inlineCount)
+        if (data.inlineCount && data.inlineCount != this.totalCount()) {
             this.totalCount(data.inlineCount);
+            this._buildDummyPages(data.inlineCount, this.itemsPerPage());
+        }
+        this._addItems(data.results, pageNumber -1);
     };
+
+    SearchResult.prototype.findPage = function (pageNumber) {
+        if (this.pages.length <= 0 || this.pages.length < pageNumber)
+            return null;
+        return this.pages[pageNumber - 1];
+    };
+
+    SearchResult.prototype.isPageLoaded = function (pageNumber) {
+        var page = this.findPage(pageNumber);
+        return page ? page.isLoaded : false;
+    };
+
+    SearchResult.prototype.isPageLoading = function (pageNumber) {
+        var page = this.findPage(pageNumber);
+        return page ? page.isLoading : false;
+    };
+
+    SearchResult.prototype.markPageLoading = function (pageNumber) {
+        var page = this.findPage(pageNumber);
+        if (page) page.isLoading = true;
+    };
+
+    SearchResult.prototype.markPageLoaded = function (pageNumber) {
+        var page = this.findPage(pageNumber);
+        if (page) {
+            page.isLoading = false;
+            page.isLoaded = true;
+        }
+    };
+
+    /**
+     * SearchResultPage Class
+     */
+    function SearchResultPage(index, items) {
+        var self = this;
+        self.index = index;
+        self.items = items;
+        self.count = items ? items.length : 0;
+
+        self.isLoaded = false;
+        self.isLoading = false;
+    }
 
     return vm;
 });

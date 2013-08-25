@@ -1,39 +1,30 @@
 ﻿<div id="files-index" class="app-page bottom-fixed-navbar-container">
     
     <div id="drop-zone" data-bind="click: resetSelectedItem">
-        <ul data-bind="foreach: { data: searchResult().items }, infiniteScroll: { distance: 400, container: $(window), loadMoreItems: loadMoreItems, enabled: hasMorePages }, scrollTop: { observable: scrollTop, enabled: isInteractive }" 
-            class="list-unstyled thumbnails thumbnails-fixed-size" id="files-list">
-            <li class="col-md-3">
-                <!-- ko if: data() && !isUploading() -->
-                <div class="thumbnail" data-bind="attr: { title: data().FileName }, css: { 'item-checked': isSelected, 'item-selected': isSelectedItem }, click: selectItem, clickBubble: false, event: { dblclick: $parent.showDetail }">                    
-                    <!-- ko if: !data().isImage() -->
-                    <div class="thumbnail-content preview"><i class="icon-file  center-icon-h icon-4x icon-mood"></i></div>                
-                    <!-- /ko -->
-                    <!-- ko if: data().isImage -->
-                    <div class="thumbnail-content thumbnail-image" data-bind="style: { 'background-image': 'url(/DbFileContent/Thumbnail/' + data().Id() + '?thumbnailName=220x160)' }">
-                    </div>                
-                    <!-- /ko -->
-                    <div class="thumbnail-controls">
-                        <a class="btn-link pull-right" data-bind="click: $parent.showDetail, clickBubble: false" title="Details anzeigen"><i class="icon-arrow-right icon-2x"></i></a>
-                        <a class="btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="icon-trash icon-2x"></i></a>
-                    </div>
-                    <div class="item-check" data-bind="click: toggleSelected, clickBubble: false, attr: { title: data().FileName() + ' auswählen' }">
-                        <i data-bind="css: { 'icon-check': isSelected, 'icon-check-empty': !isSelected()}"></i>
-                    </div>
-                </div>
-                <!-- /ko -->
-                <!-- ko if: isUploading() -->
-                <div class="thumbnail">
-                    <div class="thumbnail-content preview">
-                        <i class="icon-cog icon-spin icon-4x icon-mood"></i>
-                    </div>
-                </div>
-                <!-- /ko -->
-            </li>
-        </ul>
-        <a href="#" class="btn btn-default" data-bind="visible: searchResult().hasMorePages() && !isLoading(), click: loadMoreItems, clickBubble: false">Mehr anzeigen</a>
 
-        <div class="drop-zone-placeholder" data-bind="visible: searchResult().items().length == 0 && !isLoading()">
+        <div class="row thumbnails-fixed-size list-files" data-bind="lazyLoad: { pageSize: itemsPerPage(), loadHandler: loadHandler, data: listItems }">
+            <div class="col-sm-6 col-md-3">
+                <div class="thumbnail-container">
+                    <a href="#" class="thumbnail">
+                        <!-- ko if: data() && data().isImage -->
+                        <img data-bind="attr: { 'src': '/DbFileContent/Thumbnail/' + data().Id() + '?thumbnailName=220x160' }" alt="..." />
+                        <!-- /ko -->
+                    </a>
+                    <!-- ko if: data() -->          
+                        <div class="item-check" data-bind="click: toggleSelected, clickBubble: false, attr: { title: data().FileName() + ' auswählen' }">
+                            <i data-bind="css: { 'icon-check': isSelected, 'icon-check-empty': !isSelected() }"></i>
+                        </div>          
+                        <div class="thumbnail-controls">
+                            <a class="btn-link pull-right" data-bind="click: $parent.showDetail, clickBubble: false" title="Details anzeigen"><i class="icon-arrow-right icon-2x"></i></a>
+                            <a class="btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="icon-trash icon-2x"></i></a>
+                        </div>
+                    <!-- /ko -->
+                </div>
+            </div>
+        </div>
+
+
+        <div class="drop-zone-placeholder" data-bind="visible: listItems().length == 0 && !isLoading()">
             <p data-bind="if: (window.FileReader && Modernizr.draganddrop)">
                 <!-- ko if: (window.FileReader && Modernizr.draganddrop) -->
                 Füge Dateien hinzu, indem Du sie hier per Drag and Drop ablegst oder unten auf "Dateien hinzufügen" klickst.
