@@ -165,6 +165,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     ko.bindingHandlers.lazyLoad = {
         init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             var $window = $(window),
+                $elem = $(elem),
                 options = valueAccessor(),
                 data = options.data,
                 timeoutHandle;
@@ -181,41 +182,28 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
             ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {
                 $window.off('scroll resize', processScroll);
             });
-
             return ko.bindingHandlers['foreach'].init(elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext);
         },
 
-        update: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var options = valueAccessor(),
-                data = options.data,
-                count = data ? ko.unwrap(data).length : 0,
-                numRendered = 0;
-            ko.bindingHandlers['foreach'].update(elem, function () {
-                return $.extend(options, {
-                    afterRender: function () {
-                        if (++numRendered == count) {
-                            window.setTimeout(function () {
-                                ko.bindingHandlers.lazyLoad._processScroll(elem, options.pageSize, options.loadHandler);
-                            }, 100);
-                        }
-                    }
-                });
-            }, allBindingsAccessor, viewModel, bindingContext);
+        update: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {            
+            ko.bindingHandlers['foreach'].update(elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext);
         },
 
         _elementInView: function (elem) {
             var rect = elem.getBoundingClientRect();
-            return (rect.bottom >= 0 && rect.left >= 0 && rect.top <= (window.innerHeight || document.documentElement.clientHeight));
+            if (rect.width > 0 && rect.height > 0)
+                return (rect.bottom >= 0 && rect.left >= 0 && rect.top <= (window.innerHeight || document.documentElement.clientHeight));
+            return false;
         },
 
         _processScroll: function (elem, pageSize, loadHandler) {
             console.log('LazyLoad._processScroll called.');
-            var items = $(elem).children(),
+            var $elem = $(elem),
+                items = $elem.children(),
                 visibleItems = [];
             for (var i = 0; i < items.length; i++) {
                 if (ko.bindingHandlers.lazyLoad._elementInView(items[i])) {
                     visibleItems.push(items[i]);
-                    ko.bindingHandlers.lazyLoad._loadImage(items[i]);
                 }
             }
 
@@ -236,34 +224,55 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
                         viewModel: ko.dataFor(items[lastVisible])
                     },
                     pageLoaded: function (pageNumber) {
-                        var pageStartIndex = (pageNumber - 1) * pageSize,
-                            pageEndIndex = pageStartIndex + pageSize;
-                        for (var i = pageStartIndex; i <= pageEndIndex; i++) {
-                            if (i >= 0 && i < items.length) {
-                                if (ko.bindingHandlers.lazyLoad._elementInView(items[i])) {
-                                    ko.bindingHandlers.lazyLoad._loadImage(items[i]);
-                                }
-                            }
-                        }
                     }
                 };
-                loadHandler(elem, eventArgs);
+
+                if (items.length > 0)
+                    loadHandler(elem, eventArgs);
             }
+        }
+    };
+
+    
+    ko.bindingHandlers.lazyImage = {
+        init: function (elem, valueAccessor) {
+            var $window = $(window),
+                $elem = $(elem),
+                timeoutHandle;
+
+            function processScroll() {
+                if (timeoutHandle)
+                    window.clearTimeout(timeoutHandle);
+                timeoutHandle = window.setTimeout(function () {
+                    ko.bindingHandlers.lazyImage._processScroll(elem);
+                }, 20);
+            }
+
+            $window.on('scroll resize', processScroll);
+            ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {
+                $window.off('scroll resize', processScroll);
+            });
+            processScroll();
         },
 
-        _loadImage: function (elem) {
-            var img = new Image(),
-                original = $(elem).find('img.lazy')[0],
-                src = original ? original.getAttribute('data-src') : '';
+        _elementInView: function (elem) {
+            var rect = elem.getBoundingClientRect();
+            return (rect.bottom >= 0 && rect.left >= 0 && rect.top <= (window.innerHeight || document.documentElement.clientHeight));
+        },
 
-            if (src != '' && src != original.src) {
-                img.onload = function () {
-                    if (!!original.parent)
-                        original.parent.replaceChild(img, original);
-                    else
-                        original.src = src;
-                };
-                img.src = src;
+        _processScroll: function (elem) {
+            if (ko.bindingHandlers.lazyImage._elementInView(elem)) {
+                var src = elem ? elem.getAttribute('data-src') : '';
+                if (src != '' && src != elem.src) {
+                    var img = new Image();
+                    img.onload = function () {
+                        if (elem.parent)
+                            elem.parent.replaceChild(img, elem);
+                        else
+                            elem.src = src;
+                    };
+                    img.src = src;
+                }
             }
         }
     };

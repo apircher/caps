@@ -230,6 +230,7 @@
     <Content Include="App\modules\contentfile\module.html" />
     <Content Include="App\modules\contentfile\viewmodels\detail.js" />
     <Content Include="App\modules\contentfile\viewmodels\index.js" />
+    <Content Include="App\modules\contentfile\viewmodels\virtualListModel.js" />
     <Content Include="App\modules\contentfile\views\detail.html" />
     <Content Include="App\modules\draft\module.html" />
     <Content Include="App\modules\draft\module.js" />

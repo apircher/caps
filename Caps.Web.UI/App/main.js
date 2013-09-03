@@ -18,7 +18,7 @@ requirejs.config({
         'jquery.ui.widget': '../Scripts/jquery.ui.widget',
 
         'moment': '../Scripts/moment.min',
-        'breeze': '../Scripts/breeze.debug',
+        'breeze': '../Scripts/breeze.min',
         'Q': '../Scripts/q.min',
         'toastr': '../Scripts/toastr.min',
         'doubleTap': '../Scripts/doubleTap',
