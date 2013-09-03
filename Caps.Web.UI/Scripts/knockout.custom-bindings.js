@@ -144,8 +144,8 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
 
     ko.bindingHandlers.stretchLineHeight = {
         setLineHeight: function($elem, options) {
-            var parentHeight = $elem.parent().css('height');
-            $elem.css('line-height', parentHeight);
+            var parentHeight = $elem.parent().innerHeight(); // css('height');
+            $elem.css('line-height', (parentHeight - 2) + 'px');
         },
         init: function (elem, valueAccessor) {
             var $elem = $(elem);
