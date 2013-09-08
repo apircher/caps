@@ -477,6 +477,54 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
             ko.bindingHandlers.textTimeout.configureUpdate(elem, value, allBindingsAccessor);
         }
     };
+
+    //
+    // Live search
+    //
+    (function (ko) {
+
+        function callSearchHandler($element, options) {
+            if (options.searchObservable && ko.isObservable(options.searchObservable))
+                options.searchObservable($element.val());
+            if (options.searchHandler && (typeof options.searchHandler === 'function'))
+                options.searchHandler.call(this, $element);
+        }
+
+        function callSearchHandlerDelayed($element, options) {
+            var timeout = $element.data('search-timeout');
+            if (timeout) window.clearTimeout(timeout);
+            timeout = window.setTimeout(function () { callSearchHandler($element, options); }, options.timeout || 500);
+            $element.data('search-timeout', timeout);
+        }
+
+        ko.bindingHandlers.delayedSearch = {
+            init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+                var options = valueAccessor() || {};
+                var $element = $(element);
+                $element.data('oldVal', $element.val());
+                $element.bind("propertychange keyup input paste", function (e) {
+                    if ($element.data('oldVal') != $element.val()) {
+                        $element.data('oldVal', $element.val());
+
+                        var minLength = options.minLength || 2;
+                        var length = $element.val().length;
+                        if (length == 0 || length >= minLength)
+                            callSearchHandlerDelayed($element, options);
+                    }
+                });
+            },
+            update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+                var options = valueAccessor() || {};
+                var $element = $(element);
+
+                if (options.searchObservable && ko.isObservable(options.searchObservable)) {
+                    $element.data('oldVal', options.searchObservable());
+                    $element.val(options.searchObservable());
+                }
+            }
+        };
+
+    })(ko);
     
     //
     // Unique Ids for Dom-Elements.

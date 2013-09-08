@@ -1,13 +1,23 @@
 ﻿<div id="files-index" class="app-page bottom-fixed-navbar-container">
+
+    <div id="files-toolbar">
+        <div class="toolbar">
+            <div class="pull-right">
+                Suche: <input type="text" data-bind="delayedSearch: { searchObservable: searchWords, searchHandler: refresh }" />
+            </div>
+        </div>
+    </div>
     
     <div id="drop-zone" data-bind="click: resetSelectedItem">
 
         <div class="row thumbnails-fixed-size list-files" data-bind="lazyLoad: { data: list.items(), pageSize: list.itemsPerPage(), loadHandler: loadHandler }, scrollTop: { observable: scrollTop, enabled: isInteractive }">
             <div class="col-sm-6 col-md-3">
                 <div class="thumbnail-container">
-                    <a href="#" class="thumbnail" data-bind="css: { 'item-checked': isSelected, 'item-selected': isSelectedItem }, click: selectItem, clickBubble: false, event: { dblclick: $parent.showDetail }">
+                    <a href="#" class="thumbnail" data-bind="css: { 'item-checked': isSelected, 'item-selected': isSelectedItem }, click: $parent.showDetail, clickBubble: false, event: { dblclick: $parent.showDetail }">
                         <!-- ko if: data() && data().isImage -->
-                        <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + data().Id() + '?thumbnailName=220x160' }, lazyImage: true" />
+                        <!-- ko with: data() -->
+                        <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: FileName, alt: FileName }, lazyImage: true" />
+                        <!-- /ko -->
                         <!-- /ko -->
                     </a>
                     <!-- ko if: data() -->          
@@ -15,7 +25,7 @@
                             <i data-bind="css: { 'icon-check': isSelected, 'icon-check-empty': !isSelected() }"></i>
                         </div>          
                         <div class="thumbnail-controls">
-                            <a class="btn-link pull-right" data-bind="click: $parent.showDetail, clickBubble: false" title="Details anzeigen"><i class="icon-arrow-right icon-2x"></i></a>
+                            <!--<a class="btn-link pull-right" data-bind="click: $parent.showDetail, clickBubble: false" title="Details anzeigen"><i class="icon-arrow-right icon-2x"></i></a>-->
                             <a class="btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="icon-trash icon-2x"></i></a>
                         </div>
                     <!-- /ko -->

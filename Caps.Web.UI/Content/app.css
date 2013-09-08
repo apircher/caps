@@ -199,6 +199,14 @@
         direction: ltr;
     }
 
+/**
+  * Toolbar
+  */
+.toolbar {
+    overflow:hidden;
+    padding:15px;
+}
+
 /** 
  *  Thumbnails 
  */

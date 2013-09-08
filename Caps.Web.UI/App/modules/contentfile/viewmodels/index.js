@@ -9,7 +9,8 @@
         progress = ko.observable(0),
         selectedFile = ko.observable(),
         isInteractive = ko.observable(false),
-        scrollTop = ko.observable(0);
+        scrollTop = ko.observable(0),
+        searchWords = ko.observable('');
 
     module.router.on('router:navigation:attached', function (currentActivation, currentInstruction, router) {
         if (currentActivation == vm)  isInteractive(true);
@@ -23,6 +24,7 @@
         selectedFile: selectedFile,
         scrollTop: scrollTop,
         isInteractive: isInteractive,
+        searchWords: searchWords,
 
         selectedFiles: ko.computed(function () {
             return ko.utils.arrayFilter(list.items(), function (f) {
@@ -173,7 +175,15 @@
     }
 
     function searchFilters() {
-        return [];
+        var result = [];
+        if (searchWords().length) {
+            result.push({
+                col: 'FileName',
+                operator: 'Contains',
+                val: searchWords()
+            });
+        }
+        return result;
     }
 
     function deleteFile(item) {
