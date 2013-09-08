@@ -408,6 +408,10 @@ a.no-underline:hover {
     .dragdrop-placeholder p {
         padding:3em;
     }
+
+    .image-preview {
+        padding:4px 0 8px 0;
+    }
 }
 
 
@@ -446,10 +450,6 @@ a.no-underline:hover {
     
     .dragdrop-placeholder p {
         padding:2em;
-    }
-
-    .image-preview {
-        padding:4px 0 8px 0;
     }
 
     
