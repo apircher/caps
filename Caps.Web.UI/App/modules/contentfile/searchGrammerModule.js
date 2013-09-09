@@ -1,6 +1,5 @@
-﻿define(['breeze', './searchGrammer'], function (breeze) {
+﻿define(['breeze', './searchGrammer'], function (breeze, grammer) {
 
-    var grammer = SearchGrammer;
     grammer.yy = {
         AndExpression: AndExpression,
         OrExpression: OrExpression,
@@ -10,20 +9,18 @@
 
     function AndExpression(child) {
         this.child = child;
-        this.op = "AND";
-        this.type = "AndExpression";
+        this.type = 'AndExpression';
     }
 
     function OrExpression(child) {
         this.child = child;
-        this.op = "OR";
-        this.type = "OrExpression";
+        this.type = 'OrExpression';
     }
 
     function Query(firstNode) {
         this.nodes = [];
         this.nodes.push(firstNode);
-        this.type = "Query";
+        this.type = 'Query';
     }
 
     Query.prototype.getPredicates = function() {
@@ -47,21 +44,22 @@
         function NodeToPredicate(n) {
             switch (n.type) {
                 case 'Query': return n.getPredicates();
-                case 'SearchTerm': return new breeze.Predicate('FileName', 'contains', n.value);
+                case 'SearchTerm': return new breeze.Predicate(translateColumnName(n.col), 'contains', n.value);
             }
             return null;
         }
     }
 
-    function SearchTerm(value) {
+    function SearchTerm(value, col) {
         this.value = value;
-        this.type = "SearchTerm";
+        this.type = 'SearchTerm';
+        this.col = col;
     }
 
 
     function parseUserQuery(searchWords) {
         try {
-            return SearchGrammer.parse(searchWords);
+            return grammer.parse(searchWords);
         }
         catch (err) {
             console.log('validateUserQuery failed. ' + err.message);
@@ -71,6 +69,13 @@
 
     function isValidUserQuery(searchWords) {
         return parseUserQuery(searchWords) != null;
+    }
+
+    function translateColumnName(col) {
+        if (col && col.length) {
+            if (/autor/i.test(col)) return 'Created.By';
+        }
+        return 'FileName';
     }
 
     return {

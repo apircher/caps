@@ -10,6 +10,7 @@
 \w+                   return 'SEARCHTERM'
 "("                   return '('
 ")"                   return ')'
+":"					  return ':'
 <<EOF>>               return 'EOF'
 
 /lex
@@ -45,6 +46,8 @@ EXPR
 
 T   : SEARCHTERM
         {$$ = new yy.SearchTerm($1);}
+	| SEARCHTERM ':' SEARCHTERM
+		{$$ = new yy.SearchTerm($3, $1);}
     | '(' QRY ')'
         {$$ = $2;}
     ;
