@@ -493,7 +493,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
         function callSearchHandlerDelayed($element, options) {
             var timeout = $element.data('search-timeout');
             if (timeout) window.clearTimeout(timeout);
-            timeout = window.setTimeout(function () { callSearchHandler($element, options); }, options.timeout || 500);
+            timeout = window.setTimeout(function () { callSearchHandler($element, options); }, options.timeout || 750);
             $element.data('search-timeout', timeout);
         }
 

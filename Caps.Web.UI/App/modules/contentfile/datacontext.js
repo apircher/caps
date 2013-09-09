@@ -1,4 +1,4 @@
-﻿define(['breeze', 'entityManagerProvider', 'Q', 'jquery', 'knockout'], function (breeze, entityManagerProvider, Q, $, ko) {
+﻿define(['breeze', 'entityManagerProvider', 'Q', 'jquery', 'knockout', './searchGrammerModule'], function (breeze, entityManagerProvider, Q, $, ko, searchGrammer) {
 
     var manager = entityManagerProvider.createManager();
     var EntityQuery = breeze.EntityQuery;
@@ -8,8 +8,8 @@
         return manager.executeQuery(query);
     }
 
-    function searchFiles(pageNumber, itemsPerPage, filters) {
-        var query = filterQuery(EntityQuery.from('Files'), filters)
+    function searchFiles(searchWords, pageNumber, itemsPerPage) {
+        var query = filterQuery(EntityQuery.from('Files'), searchWords)
             .orderBy('Created.At desc')
             .skip((pageNumber - 1) * itemsPerPage)
             .take(itemsPerPage)
@@ -17,12 +17,13 @@
         return manager.executeQuery(query);
     }
 
-    function filterQuery(query, filters) {
-        if (filters && filters.length) {
-            var predicates = ko.utils.arrayMap(filters, function (f) {
-                return new breeze.Predicate(f.col, f.operator || 'contains', f.val);
-            });
-            return query.where(breeze.Predicate.and(predicates));
+    function filterQuery(query, searchWords) {
+        if (searchWords && searchWords.length) {
+            var ast = searchGrammer.parseUserQuery(searchWords);
+            if (ast) {
+                var predicates = ast.getPredicates();
+                if (predicates) return query.where(predicates);
+            }            
         }
         return query;
     }
@@ -54,7 +55,10 @@
         fetchFile: fetchFile,
         localGetFile: localGetFile,
         deleteFile: deleteFile,
-        searchFiles: searchFiles
+        searchFiles: searchFiles,
+        isValidUserQuery: function (searchWords) {
+            return searchGrammer.isValidUserQuery(searchWords);
+        }
     };
 
 });

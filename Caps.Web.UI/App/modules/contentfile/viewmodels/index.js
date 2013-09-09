@@ -1,5 +1,5 @@
 ﻿define(['knockout', 'durandal/system', 'durandal/app', '../module', '../datacontext', './virtualListModel', 'jquery', 'toastr', 'Q', 'doubleTap', 'jquery.fileupload'
-], function (ko, system, app, module, datacontext, VirtualListModel, $, toastr, Q, doubleTap) {
+], function (ko, system, app, module, datacontext, VirtualListModel, $, toastr, Q, doubleTap, fileupload) {
         
     var vm,
         initialized = false,
@@ -119,6 +119,14 @@
             loadPage(1);
         },
 
+        search: function () {            
+            if (searchWords() && searchWords().length) {
+                if (!datacontext.isValidUserQuery(searchWords()))
+                    return false;
+            }
+            vm.refresh();
+        },
+
         resetSelectedItem: function () {
             selectedFile(null);
         },
@@ -162,7 +170,7 @@
         var deferred = Q.defer();
         isLoading(true);
         console.log('loadPage called. pageNumber=' + pageNumber);
-        datacontext.searchFiles(pageNumber, list.itemsPerPage(), searchFilters())
+        datacontext.searchFiles(searchWords(), pageNumber, list.itemsPerPage())
             .then(function (data) {
                 list.addPage(data, pageNumber);
                 deferred.resolve();
@@ -172,18 +180,6 @@
                 isLoading(false);
             });
         return deferred.promise;
-    }
-
-    function searchFilters() {
-        var result = [];
-        if (searchWords().length) {
-            result.push({
-                col: 'FileName',
-                operator: 'Contains',
-                val: searchWords()
-            });
-        }
-        return result;
     }
 
     function deleteFile(item) {

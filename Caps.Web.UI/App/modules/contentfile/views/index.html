@@ -1,9 +1,9 @@
 ﻿<div id="files-index" class="app-page bottom-fixed-navbar-container">
 
     <div id="files-toolbar">
-        <div class="toolbar">
-            <div class="pull-right">
-                Suche: <input type="text" data-bind="delayedSearch: { searchObservable: searchWords, searchHandler: refresh }" />
+        <div class="toolbar row">
+            <div class="col-md-offset-8 col-md-4">
+                <input type="text" data-bind="delayedSearch: { searchObservable: searchWords, searchHandler: search }" class="form-control" placeholder="Suche" />
             </div>
         </div>
     </div>

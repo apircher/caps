@@ -228,7 +228,9 @@
     <Content Include="App\modules\contentfile\datacontext.js" />
     <Content Include="App\modules\contentfile\entities.js" />
     <Content Include="App\modules\contentfile\module.html" />
+    <Content Include="App\modules\contentfile\searchGrammerModule.js" />
     <Content Include="App\modules\contentfile\viewmodels\detail.js" />
+    <Content Include="App\modules\contentfile\searchGrammer.js" />
     <Content Include="App\modules\contentfile\viewmodels\index.js" />
     <Content Include="App\modules\contentfile\viewmodels\virtualListModel.js" />
     <Content Include="App\modules\contentfile\views\detail.html" />
@@ -366,6 +368,7 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
+    <None Include="App\modules\contentfile\searchGrammer.jison" />
     <None Include="Properties\PublishProfiles\caps-dev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\caps-dev - Web Deploy.pubxml" />
     <Content Include="Scripts\almond-custom.js" />
