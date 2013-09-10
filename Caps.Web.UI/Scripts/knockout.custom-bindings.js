@@ -358,16 +358,17 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
 
         saveScrollTop: function (o) {
             if (ko.isObservable(o)) {
-                var st = $('body').scrollTop();
+                var st = $('html').scrollTop() || $('body').scrollTop();
+                console.log('saveScrollTop, offset=' + st);
                 if (o() !== st) o(st);
-                console.log('saveScrollTop, offset=' + o());
             }
         },
 
         restoreScrollTop: function (o) {
             if (ko.isObservable(o) && o()) {
-                $('body').scrollTop(o());
-                console.log('restoreScrollTop, offset=' + o());
+                var st = $('html').scrollTop() || $('body').scrollTop();
+                console.log('restoreScrollTop, offset=' + st);
+                if (o() != st) $('html, body').scrollTop(o());
             }
         }
     };
