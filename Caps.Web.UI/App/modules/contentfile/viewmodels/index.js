@@ -36,8 +36,7 @@
             ko.utils.arrayForEach(data.files, function (f) {
                 var item = list.addItem();
                 f.listItem = item;
-            });
-                        
+            });                        
             isUploading(true);
             data.submit();
         },
@@ -218,6 +217,7 @@
 
         self.toggleSelected = function () {
             self.isSelected(!self.isSelected());
+            if (self.isSelected()) selectedFile(self);
         };
         self.selectItem = function () {
             selectedFile(self);
