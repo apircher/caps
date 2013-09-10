@@ -33,8 +33,9 @@
         }),
 
         startUpload: function (e, data) {
+            var i = 0;
             ko.utils.arrayForEach(data.files, function (f) {
-                var item = list.addItem();
+                var item = list.insertItem(undefined, i++);
                 f.listItem = item;
             });                        
             isUploading(true);
@@ -105,9 +106,16 @@
                 return this.deleteFile(sel[0]);
 
             var btnOk = 'Auswahl löschen';
-            app.showMessage('Sollen die ' + this.selectedFiles().length + ' ausgewählten Dateien wirklich endgültig gelöscht werden?', 'Auswahl löschen', [btnOk, 'Abbrechen'])
+            app.showMessage('Sollen die ' + sel.length + ' ausgewählten Dateien wirklich endgültig gelöscht werden?', 'Auswahl löschen', [btnOk, 'Abbrechen'])
                 .then(function (result) {
-                    if (result === btnOk) deleteSelection();
+                    if (result === btnOk) {
+                        list.suspendEvents = true;
+                        var promises = ko.utils.arrayMap(sel, function (f) { return deleteFile(f); });
+                        Q.all(promises).then(function () {
+                            list.suspendEvents = false;
+                            list.raiseItemsChanged();
+                        });
+                    }
                 });
         },
 
@@ -149,8 +157,13 @@
 
             if (!isInteractive()) return;
 
-            for (var i = e.firstVisible.page; i <= e.lastVisible.page; i++) 
-                checkPage(i + 1);
+            var firstPage = e.firstVisible.viewModel ? list.findItemPage(e.firstVisible.viewModel) : undefined;
+            var lastPage = e.lastVisible.viewModel ? list.findItemPage(e.lastVisible.viewModel) : undefined;
+            if (firstPage && lastPage) {
+                for (var i = firstPage.index; i <= lastPage.index; i++) {
+                    checkPage(i + 1);
+                }
+            }
 
             function checkPage(pageNumber) {
                 var page = list.findPage(pageNumber);
@@ -182,21 +195,14 @@
     }
 
     function deleteFile(item) {
-        datacontext.deleteFile(item.data()).then(deleteSucceeded).fail(deleteFailed);
+        return datacontext.deleteFile(item.data()).then(deleteSucceeded).fail(deleteFailed);
         function deleteSucceeded() {
-            list.remove(item);
-            if (selectedFile() === item)
-                selectedFile(null);
+            if (selectedFile() === item) selectedFile(null);
+            list.removeItem(item);
         }
         function deleteFailed(err) {
             dialog.showMessage('Die Datei konnte nicht gelöscht werden.', 'Nicht erfolgreich');
         }
-    }
-
-    function deleteSelection() {
-        ko.utils.arrayForEach(vm.selectedFiles(), function (f) {
-            deleteFile(f);
-        });
     }
 
 

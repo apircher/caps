@@ -242,9 +242,9 @@
 .thumbnail-controls {
     position: absolute;
     left: 1px;
-    right: 1px;
     bottom: 18px;
     font-size: 79.5%;
+    width:auto;
 }
 /* Hide if not on touch device. */
 .no-touch .thumbnail-controls {

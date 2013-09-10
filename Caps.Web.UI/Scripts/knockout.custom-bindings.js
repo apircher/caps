@@ -1,6 +1,10 @@
 ﻿
 define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     
+    var $window = $(window),
+        $html = $('html'),
+        $body = $('body');
+
     //
     // Bootstrap Popover Binding.
     //
@@ -80,7 +84,6 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     ko.bindingHandlers.forceViewportHeight = {
         init: function (elem, valueAccessor) {
             var $elem = $(elem),
-                $window = $(window),
                 options = valueAccessor();
 
             $window.on('resize', setElementHeight);
@@ -99,7 +102,6 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
 
         update: function (elem, valueAccessor) {
             var $elem = $(elem),
-                $window = $(window),
                 options = valueAccessor();
             ko.bindingHandlers.forceViewportHeight.setElementHeight($window, $elem, options);
         },
@@ -164,8 +166,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     //
     ko.bindingHandlers.lazyLoad = {
         init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var $window = $(window),
-                $elem = $(elem),
+            var $elem = $(elem),
                 options = valueAccessor(),
                 data = options.data,
                 timeoutHandle;
@@ -174,7 +175,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
                 if (timeoutHandle)
                     window.clearTimeout(timeoutHandle);
                 timeoutHandle = window.setTimeout(function () {
-                    ko.bindingHandlers.lazyLoad._processScroll(elem, options.pageSize, options.loadHandler);
+                    ko.bindingHandlers.lazyLoad._processScroll(elem, options.loadHandler);
                 }, 20);
             }
 
@@ -196,7 +197,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
             return false;
         },
 
-        _processScroll: function (elem, pageSize, loadHandler) {
+        _processScroll: function (elem, loadHandler) {
             console.log('LazyLoad._processScroll called.');
             var $elem = $(elem),
                 items = $elem.children(),
@@ -209,18 +210,14 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
 
             if (visibleItems.length && loadHandler) {
                 var firstVisible = $(visibleItems[0]).index(),
-                    lastVisible = $(visibleItems[visibleItems.length - 1]).index(),
-                    firstVisiblePage = Math.floor(firstVisible / pageSize),
-                    lastVisiblePage = Math.floor(lastVisible / pageSize);
+                    lastVisible = $(visibleItems[visibleItems.length - 1]).index();
                 var eventArgs = {
                     firstVisible: {
                         index: firstVisible,
-                        page: firstVisiblePage,
                         viewModel: ko.dataFor(items[firstVisible])
                     },
                     lastVisible: {
                         index: lastVisible,
-                        page: lastVisiblePage,
                         viewModel: ko.dataFor(items[lastVisible])
                     },
                     pageLoaded: function (pageNumber) {
@@ -236,8 +233,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     
     ko.bindingHandlers.lazyImage = {
         init: function (elem, valueAccessor) {
-            var $window = $(window),
-                $elem = $(elem),
+            var $elem = $(elem),
                 timeoutHandle;
 
             function processScroll() {
@@ -282,8 +278,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     //
     ko.bindingHandlers.infiniteScroll = {
         init: function (elem, valueAccessor) {
-            var $window = $(window),
-                $elem = $(elem),
+            var $elem = $(elem),
                 distance = -1,
                 options = valueAccessor(),
                 $container = options.container,
@@ -330,8 +325,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
     //
     ko.bindingHandlers.scrollTop = {
         init: function (elem, valueAccessor) {
-            var $window = $(window),
-                options = valueAccessor(),
+            var options = valueAccessor(),
                 observable = options.observable,
                 enabled = options.enabled;
 
@@ -358,7 +352,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
 
         saveScrollTop: function (o) {
             if (ko.isObservable(o)) {
-                var st = $('html').scrollTop() || $('body').scrollTop();
+                var st = $html.scrollTop() || $body.scrollTop();
                 console.log('saveScrollTop, offset=' + st);
                 if (o() !== st) o(st);
             }
@@ -366,7 +360,7 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
 
         restoreScrollTop: function (o) {
             if (ko.isObservable(o) && o()) {
-                var st = $('html').scrollTop() || $('body').scrollTop();
+                var st = $html.scrollTop() || $body.scrollTop();
                 console.log('restoreScrollTop, offset=' + st);
                 if (o() != st) $('html, body').scrollTop(o());
             }

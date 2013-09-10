@@ -45,6 +45,7 @@ define(['require', 'knockout', 'jquery'], function (require, ko, $) {
         self.count = ko.observable(0);
         self.pages = ko.observableArray([]);
         self.items = ko.computed(function () { return self.getItems.call(self); });
+        self.suspendEvents = false;
 
         if (data) this.addPage(data, 1);
     }
@@ -60,13 +61,46 @@ define(['require', 'knockout', 'jquery'], function (require, ko, $) {
         var self = this,
             vm = new self.ListItemType(data),
             page = self.pages().length ? self.pages()[0] : undefined;
-        if (page && page.count == self.itemsPerPage())
-            page = undefined;
-        if (!page)
+        if (!page) {
             page = new VirtualListPage(self.pages().length, [vm], true);
+            self.pages().push(page);
+        }
         else {
             page.items.push(vm);
             page.count++;
+        }
+        self.count(self.count() + 1);
+        self.raiseItemsChanged();
+        return vm;
+    };
+
+    VirtualList.prototype.insertItem = function (data, index) {
+        var self = this,
+            arr = self.items();
+
+        if (index < 0 || index >= arr.length) 
+            return self.addItem(data);
+
+        var item = arr[index],
+            vm = new self.ListItemType(data),
+            page = self.findItemPage(item),
+            indexInPage = page.items.indexOf(item);
+
+        page.items.splice(0, indexInPage, vm);
+        page.count++;
+        self.count(self.count() + 1);
+        self.raiseItemsChanged();
+        return vm;
+    };
+
+    VirtualList.prototype.removeItem = function (item) {
+        var page = this.findItemPage(item);
+        if (page) {
+            var index = page.items.indexOf(item);
+            page.items.splice(index, 1);
+            page.count--;
+            this.count(this.count() - 1);
+            this.raiseItemsChanged();
         }
     };
 
@@ -110,6 +144,21 @@ define(['require', 'knockout', 'jquery'], function (require, ko, $) {
     VirtualList.prototype.removeAll = function () {
         this.pages([]);
         this.count(0);
+    };
+
+    VirtualList.prototype.findItemPage = function (item) {
+        var pagesArray = this.pages();
+        for (var i = 0; i < pagesArray.length; i++) {
+            var page = pagesArray[i];
+            if (page.items.indexOf(item) >= 0)
+                return page;
+        }
+        return null;
+    };
+
+    VirtualList.prototype.raiseItemsChanged = function () {
+        if (!this.suspendEvents)
+            this.pages.valueHasMutated();
     };
 
     VirtualList.prototype._addItems = function (data, pageIndex) {

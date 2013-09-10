@@ -10,7 +10,7 @@
     
     <div id="drop-zone" data-bind="click: resetSelectedItem">
 
-        <div class="row thumbnails-fixed-size list-files" data-bind="lazyLoad: { data: list.items(), pageSize: list.itemsPerPage(), loadHandler: loadHandler }, scrollTop: { observable: scrollTop, enabled: isInteractive }">
+        <div class="row thumbnails-fixed-size list-files" data-bind="lazyLoad: { data: list.items(), loadHandler: loadHandler }, scrollTop: { observable: scrollTop, enabled: isInteractive }">
             <div class="col-sm-6 col-md-3">
                 <div class="thumbnail-container" data-bind="css: { 'item-checked': isSelected  }">
                     <a href="#" class="thumbnail" data-bind="css: { 'item-selected': isSelectedItem }, clickBubble: false, event: { dblclick: $parent.showDetail }, click: selectItem">
