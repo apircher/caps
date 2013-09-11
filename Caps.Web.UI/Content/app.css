@@ -219,13 +219,29 @@
 .thumbnail {
     background-color:#fff;
 }
+    .thumbnail,
+    .thumbnail:active,
+    .thumbnail:visited,
+    .thumbnail:focus,
+    .thumbnail:hover {
+        text-decoration:none;
+    }
 .thumbnails-fixed-size .thumbnail {
     position: relative;
     overflow: hidden;
     background-color:#fff;
     height: 180px;
     text-align: center;
+    padding:0;
 }
+    .thumbnails-fixed-size .thumbnail,
+    .thumbnails-fixed-size .thumbnail > span > i {
+        line-height: 176px;
+    }
+        .thumbnails-fixed-size .thumbnail > img {
+            display: inline-block;
+            vertical-align: middle;
+        }
         .thumbnails-fixed-size .thumbnail .thumbnail-content > i.icon-spin,
         .thumbnails-fixed-size .thumbnail .thumbnail-content > i.center-icon-h {
             position: relative;
@@ -233,11 +249,6 @@
             margin-top: -.5em;
             display: inline-block;
         }
-    .thumbnails-fixed-size .thumbnail .thumbnail-image {
-        background-repeat: no-repeat;
-        background-position: center center;
-        background-size: contain;
-    }
 
 .thumbnail-controls {
     position: absolute;
@@ -342,11 +353,23 @@
 
 .image-preview {
     text-align:center;
+    min-height:180px;
 }
     .image-preview img {
         max-width:100%;
         max-height:100%;
         vertical-align:middle;
+    }
+
+.file-preview.unknown-preview {
+    display:table;
+    width:100%;
+}
+    .unknown-preview > span {
+        display:table-cell;
+        vertical-align:middle;
+        text-align:center;
+        padding:2em;
     }
 
 /**
