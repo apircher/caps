@@ -1,62 +1,58 @@
 ﻿<div class="app-page bottom-fixed-navbar-container">
 
-    <div class="row">
-        <!-- ko if: file() -->
-        <div class="col-md-9" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top', minWidth: 979 }">
-            <!-- ko template: { name: previewTemplate, data: file } -->
-            <!-- /ko -->
-        </div>
-
-        <div class="col-md-3">
-            <h4 class="break-h"><span data-bind="text: file().FileName"></span> <small>Details</small></h4>
-
-            <div data-bind="with: file().Created">
-                Hochgeladen <span data-bind="text: moment(At()).fromNow(), attr: { title: moment(At()).format('LLLL') }"></span> 
-                von <span data-bind="text: By"></span>
-            </div>
-            <div>
-                Inhaltstyp: <span data-bind="text: file().ContentType()"></span>
-            </div>
-            <div>
-                Größe: <!-- ko text: utils.formatFileSize(file().latestVersion().FileSize()) --><!-- /ko -->
-            </div>
-            <!-- ko if: moment(file().Created().At()).diff(moment(file().Modified().At()), 'seconds') > 0 -->
-            <div data-bind="with: file().Modified">
-                Letzte Änderung <span data-bind="text: moment(At()).fromNow(), attr: { title: moment(At()).format('LLLL') }"></span> 
-                von <span data-bind="text: By"></span>
-            </div>
-            <!-- /ko -->
-
-            <!-- ko if: file().isImage -->
-            <div data-bind="with: file().latestVersion">
-                Bildgröße: <span data-bind="text: imageWidth"></span> x <span data-bind="text: imageHeight"></span> px
-            </div>
-            <!-- /ko -->
-
-            <h4>Tags</h4>
-            <form class="form-inline" role="form">
-                <div class="row">
-                    <div class="form-group col-xs-10 col-sm-10 col-md-10">
-                        <input type="text" class="form-control" data-bind="value: tagName" />
-                    </div>
-                    <button data-bind="click: addTag" class="btn btn-default col-xs-2 col-sm-2 col-md-2">
-                        <span><i class="icon-plus"></i></span>
-                    </button>
-                </div>
-            </form>
-            <br />
-            <ul data-bind="foreach: file().Tags" class="list-unstyled">
-                <li>                    
-                    <span data-bind="text: Tag().Name"></span> <a href="#" data-bind="click: $parent.removeTag">Entfernen</a>
-                </li>
-            </ul>
-
-        </div>
+    <!-- ko if: file() -->
+    <div class="col-md-8 col-lg-9" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top', minWidth: 979 }">
+        <!-- ko template: { name: previewTemplate, data: file } -->
         <!-- /ko -->
     </div>
 
+    <div class="col-md-4 col-lg-3">
+        <h4 class="break-h"><span data-bind="text: file().FileName"></span> <small>Details</small></h4>
 
-    
+        <div data-bind="with: file().Created">
+            Hochgeladen <span data-bind="text: moment(At()).fromNow(), attr: { title: moment(At()).format('LLLL') }"></span> 
+            von <span data-bind="text: By"></span>
+        </div>
+        <div>
+            Inhaltstyp: <span data-bind="text: file().ContentType()"></span>
+        </div>
+        <div>
+            Größe: <!-- ko text: utils.formatFileSize(file().latestVersion().FileSize()) --><!-- /ko -->
+        </div>
+        <!-- ko if: moment(file().Created().At()).diff(moment(file().Modified().At()), 'seconds') > 0 -->
+        <div data-bind="with: file().Modified">
+            Letzte Änderung <span data-bind="text: moment(At()).fromNow(), attr: { title: moment(At()).format('LLLL') }"></span> 
+            von <span data-bind="text: By"></span>
+        </div>
+        <!-- /ko -->
+
+        <!-- ko if: file().isImage -->
+        <div data-bind="with: file().latestVersion">
+            Bildgröße: <span data-bind="text: imageWidth"></span> x <span data-bind="text: imageHeight"></span> px
+        </div>
+        <!-- /ko -->
+
+        <h4>Tags</h4>
+        <form class="form-inline" role="form">
+            <div class="input-group">
+                <input type="text" class="form-control" data-bind="value: tagName" />
+                <span class="input-group-btn">
+                    <button data-bind="click: addTag" class="btn btn-default">
+                        <span><i class="icon-plus"></i></span>
+                    </button>
+                </span>
+            </div>
+        </form>
+        <br />
+        <ul data-bind="foreach: file().Tags" class="list-unstyled">
+            <li>                    
+                <span data-bind="text: Tag().Name"></span> <a href="#" data-bind="click: $parent.removeTag">Entfernen</a>
+            </li>
+        </ul>
+
+    </div>
+    <!-- /ko -->
+        
     <div class="navbar navbar-default navbar-fixed-bottom">
         
         <div class="navbar-panel pull-left">                        
