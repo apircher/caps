@@ -38,6 +38,13 @@ namespace Caps.Web.UI.Controllers
             return _contextProvider.Context.Files;
         }
 
+        // ~/breeze/capsdata/Tags
+        [HttpGet]
+        public IQueryable<Tag> Tags()
+        {
+            return _contextProvider.Context.Tags;
+        }
+
         // ~/breeze/capsdata/FileVersions
         [HttpGet]
         public IQueryable<DbFileVersion> FileVersions()

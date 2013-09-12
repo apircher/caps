@@ -1,5 +1,6 @@
 ﻿using Caps.Data;
 using Caps.Web.UI.Infrastructure.WebApi;
+using Caps.Web.UI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,58 @@ namespace Caps.Web.UI.Controllers
                     db.FileVersions.Remove(v);
                 });
                 db.Files.Remove(file);
+                db.SaveChanges();
+            }
+            catch (System.Data.Common.DbException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        [HttpPost]
+        public HttpResponseMessage AddTag(EntityTagModel model)
+        {
+            if (!ModelState.IsValid)
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+
+            var file = db.Files.Include("Tags.Tag").FirstOrDefault(f => f.Id == model.EntityId);
+            if (file == null)
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+
+            try
+            {
+                if (!file.Tags.Any(t => t.Tag.Name.ToLower() == model.TagName.ToLower()))
+                {
+                    var tag = db.GetOrCreateTag(model.TagName);
+                    var fileTag = new Caps.Data.Model.DbFileTag { File = file, Tag = tag };
+                    file.Tags.Add(fileTag);
+                    db.SaveChanges();
+                }
+            }
+            catch (System.Data.Common.DbException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        [HttpPost]
+        public HttpResponseMessage RemoveTag(EntityTagModel model)
+        {
+            if (!ModelState.IsValid)
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+
+            var file = db.Files.Include("Tags.Tag").FirstOrDefault(f => f.Id == model.EntityId);
+            if (file == null)
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+
+            try
+            {
+                var fileTags = file.Tags.Where(t => t.Tag.Name.ToLower() == model.TagName.ToLower());
+                Array.ForEach(fileTags.ToArray(), t => file.Tags.Remove(t));
                 db.SaveChanges();
             }
             catch (System.Data.Common.DbException ex)

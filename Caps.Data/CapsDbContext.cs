@@ -23,13 +23,26 @@ namespace Caps.Data
         public DbSet<DbFileProperty> FileProperties { get; set; }
         public DbSet<DbFileContent> FileContents { get; set; }
         public DbSet<DbThumbnail> Thumbnails { get; set; }
+        public DbSet<DbFileTag> FileTags { get; set; }
 
+        public DbSet<Tag> Tags { get; set; }
         public DbSet<Website> Websites { get; set; }
         public DbSet<Sitemap> Sitemaps { get; set; }
 
         public Author GetAuthorByUserName(String userName)
         {
             return Authors.FirstOrDefault(a => a.UserName == userName);
+        }
+
+        public Tag GetOrCreateTag(String name)
+        {
+            var tag = Tags.FirstOrDefault(t => t.Name.ToLower() == name.ToLower());
+            if (tag == null)
+            {
+                tag = new Tag { Name = name };
+                Tags.Add(tag);
+            }
+            return tag;
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

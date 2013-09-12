@@ -8,9 +8,9 @@
         return manager.executeQuery(query);
     }
 
-    function searchFiles(searchWords, pageNumber, itemsPerPage) {
+    function searchFiles(searchWords, pageNumber, itemsPerPage, orderBy) {
         var query = filterQuery(EntityQuery.from('Files'), searchWords)
-            .orderBy('Created.At desc')
+            .orderBy(orderBy || 'Created.At desc')
             .skip((pageNumber - 1) * itemsPerPage)
             .take(itemsPerPage)
             .inlineCount(true);
@@ -28,9 +28,12 @@
         return query;
     }
 
-    function fetchFile(id) {
+    function fetchFile(id, forceRefresh) {
+        if (forceRefresh === true) {
+            manager.clear();
+        }
         var query = EntityQuery.from('Files').where('Id', '==', id)
-            .expand('Versions, Versions.Properties');
+            .expand('Tags.Tag, Versions, Versions.Properties');
         return manager.executeQuery(query);
     }
 
@@ -50,12 +53,26 @@
         return deferred.promise;
     }
 
+    function addFileTag(fileId, tagName) {
+        var deferred = Q.defer();
+        $.ajax('rpc/DbFile/AddTag', { method: 'post', data: { EntityId: fileId, TagName: tagName } }).done(deferred.resolve).fail(deferred.reject);
+        return deferred.promise;
+    }
+
+    function removeFileTag(fileId, tagName) {
+        var deferred = Q.defer();
+        $.ajax('rpc/DbFile/RemoveTag', { method: 'post', data: { EntityId: fileId, TagName: tagName } }).done(deferred.resolve).fail(deferred.reject);
+        return deferred.promise;
+    }
+
     return {
         getFiles: getFiles,
         fetchFile: fetchFile,
         localGetFile: localGetFile,
         deleteFile: deleteFile,
         searchFiles: searchFiles,
+        addFileTag: addFileTag,
+        removeFileTag: removeFileTag,
         isValidUserQuery: function (searchWords) {
             return searchGrammer.isValidUserQuery(searchWords);
         }

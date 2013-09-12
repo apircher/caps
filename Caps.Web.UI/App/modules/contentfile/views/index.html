@@ -1,9 +1,35 @@
 ﻿<div id="files-index" class="app-page bottom-fixed-navbar-container">
 
     <div id="files-toolbar">
-        <div class="toolbar row">
-            <div class="col-md-offset-8 col-md-4">
-                <input type="text" data-bind="delayedSearch: { searchObservable: searchWords, searchHandler: search }" class="form-control" placeholder="Suche" />
+        <div class="toolbar">
+
+            <div class="row">
+                <div class="col-md-offset-8 col-md-4">
+                    <div class="input-group">
+                        <input type="text" data-bind="delayedSearch: { searchObservable: searchWords, searchHandler: search }" class="form-control" placeholder="Suche" />
+                        <div class="input-group-btn btn-group">
+                            <a href="#" role="button" data-bind="click: toggleSortDirection">
+                                <span><i data-bind="css: { 'icon-sort-by-alphabet': sortOptions.sortDirection() == 'asc', 'icon-sort-by-alphabet-alt': sortOptions.sortDirection() != 'asc' }" class="icon-sort-by-alphabet"></i></span>
+                            </a>
+                            <a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn-dropdown">
+                                <b class="caret"/>
+                            </a>
+                            <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">    
+                                <!-- ko foreach: sortOptions.columns -->
+                                <li role="presentation">
+                                    <a role="menuitem" tabindex="-1" href="#" data-bind="click: sort">
+                                        <span class="pull-right" data-bind="visible: isSelected"><i class="icon-ok"></i></span> 
+                                        <span data-bind="text: title" class="mnu-label"></span>
+                                    </a>
+                                </li>
+                                <!-- /ko -->
+                                <li role="presentation" class="divider"></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortAsc"><span class="pull-right" data-bind="visible: sortOptions.sortDirection() == 'asc'"><i class="icon-ok"></i></span> Aufsteigend</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortDesc"><span class="pull-right" data-bind="visible: sortOptions.sortDirection() == 'desc'"><i class="icon-ok"></i></span> Absteigend</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -20,7 +46,7 @@
                         <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: FileName, alt: FileName }, lazyImage: true, click: function () { $parents[1].showDetail($parent); }" />
                         <!-- /ko -->
                         <!-- ko if: !isImage() -->
-                        <span><i class="icon-file icon-4x" data-bind="click: function () { $parents[1].showDetail($parent); }"></i></span>
+                        <span data-bind="attr: { title: FileName }"><i class="icon-file icon-4x" data-bind="    click: function () { $parents[1].showDetail($parent); }"></i></span>
                         <!-- /ko -->
                         <!-- /ko -->
                         <!-- /ko -->

@@ -10,7 +10,8 @@
         selectedFile = ko.observable(),
         isInteractive = ko.observable(false),
         scrollTop = ko.observable(0),
-        searchWords = ko.observable('');
+        searchWords = ko.observable(''),
+        sortOptions = new SortOptions();
 
     module.router.on('router:navigation:attached', function (currentActivation, currentInstruction, router) {
         if (currentActivation == vm)  isInteractive(true);
@@ -25,6 +26,7 @@
         scrollTop: scrollTop,
         isInteractive: isInteractive,
         searchWords: searchWords,
+        sortOptions: sortOptions,
 
         selectedFiles: ko.computed(function () {
             return ko.utils.arrayFilter(list.items(), function (f) {
@@ -134,6 +136,23 @@
             vm.refresh();
         },
 
+        toggleSortDirection: function () {
+            vm.setSortDirection(sortOptions.sortDirection() == 'desc' ? 'asc' : 'desc');
+        },
+
+        sortAsc: function () { vm.setSortDirection('asc'); },
+        sortDesc: function () { vm.setSortDirection('desc'); },
+
+        setSortDirection: function (dir) {
+            sortOptions.sortDirection(dir);
+            vm.refresh();
+        },
+
+        sortBy: function (column) {
+            sortOptions.selectedColumn(column);
+            vm.refresh();
+        },
+
         resetSelectedItem: function () {
             selectedFile(null);
         },
@@ -182,7 +201,7 @@
         var deferred = Q.defer();
         isLoading(true);
         console.log('loadPage called. pageNumber=' + pageNumber);
-        datacontext.searchFiles(searchWords(), pageNumber, list.itemsPerPage())
+        datacontext.searchFiles(searchWords(), pageNumber, list.itemsPerPage(), sortOptions.getOrderBy())
             .then(function (data) {
                 list.addPage(data, pageNumber);
                 deferred.resolve();
@@ -229,6 +248,56 @@
             selectedFile(self);
         };
     }
+
+
+    /**
+     * ListColumn Class
+     */
+    function ListColumn(name, title, owner) {
+        var self = this;
+        self.name = name;
+        self.title = title;
+        self.owner = owner;
+
+        self.sort = function () {
+            owner.selectedColumn(self);
+            vm.refresh();
+        };
+
+        self.isSelected = ko.computed(function () {
+            return owner.selectedColumn() === self;
+        });
+    }
+
+    /**
+     * SortOptions Class
+     */
+    function SortOptions() {
+        var self = this;
+
+        self.selectedColumn = ko.observable();
+        self.sortDirection = ko.observable('desc');
+
+        self.columns = [
+            new ListColumn('Created.At', 'Hochgeladen am', this),
+            new ListColumn('Created.By', 'Hochgeladen von', this),
+            new ListColumn('Modified.At', 'Letzte Änderung', this),
+            new ListColumn('Modified.By', 'Letzte Änderung von', this),
+            new ListColumn('FileName', 'Dateiname', this)
+        ];
+
+        self.selectedColumn(self.columns[0]);
+    }
+
+    SortOptions.prototype.getOrderBy = function () {
+        var col = this.selectedColumn();
+        if (col) {
+            var result = col.name || 'Created.At';
+            if (this.sortDirection() && this.sortDirection().toLowerCase() === 'desc')
+                result += ' desc';
+        }
+        return result;
+    };
 
     return vm;
 });

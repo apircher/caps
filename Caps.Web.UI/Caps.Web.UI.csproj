@@ -206,6 +206,7 @@
     <Compile Include="Infrastructure\WebApi\SetUserActivityAttribute.cs" />
     <Compile Include="Infrastructure\WebApi\ValidateJsonAntiForgeryTokenAttribute.cs" />
     <Compile Include="Models\AuthenticationModels.cs" />
+    <Compile Include="Models\TagModels.cs" />
     <Compile Include="Models\UserManagementModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

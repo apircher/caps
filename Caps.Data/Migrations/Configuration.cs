@@ -34,7 +34,9 @@ namespace Caps.Data.Migrations
             //    );
             //
 
+#if DEBUG
             //WebSecurity.InitializeDatabaseConnection("CapsDbContext", "Author", "Id", "UserName", true);
+#endif
         }
     }
 }

@@ -21,6 +21,8 @@ namespace Caps.Data.Model
 
         [InverseProperty("File")]
         public ICollection<DbFileVersion> Versions { get; set; }
+        [InverseProperty("File")]
+        public ICollection<DbFileTag> Tags { get; set; }
 
         public ChangeInfo Created { get; set; }
         public ChangeInfo Modified { get; set; }

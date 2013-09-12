@@ -73,15 +73,21 @@
     <Compile Include="Migrations\201307300929481_AddFileProperties.Designer.cs">
       <DependentUpon>201307300929481_AddFileProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201309111442207_AddTags.cs" />
+    <Compile Include="Migrations\201309111442207_AddTags.Designer.cs">
+      <DependentUpon>201309111442207_AddTags.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
     <Compile Include="Model\DbFile.cs" />
     <Compile Include="Model\DbFileContent.cs" />
     <Compile Include="Model\DbFileProperty.cs" />
+    <Compile Include="Model\DbFileTag.cs" />
     <Compile Include="Model\DbFileVersion.cs" />
     <Compile Include="Model\DbThumbnail.cs" />
     <Compile Include="Model\Sitemap.cs" />
+    <Compile Include="Model\Tag.cs" />
     <Compile Include="Model\Website.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -101,6 +107,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201307300929481_AddFileProperties.resx">
       <DependentUpon>201307300929481_AddFileProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201309111442207_AddTags.resx">
+      <DependentUpon>201309111442207_AddTags.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
