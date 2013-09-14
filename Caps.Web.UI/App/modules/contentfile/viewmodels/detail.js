@@ -1,6 +1,7 @@
 ﻿define(['require', 'knockout', '../module', '../datacontext', 'Q', 'moment', 'infrastructure/utils'], function (require, ko, module, datacontext, Q, moment, utils) {
 
-    var currentFileId = ko.observable(0),
+    var app = require('durandal/app'),
+        currentFileId = ko.observable(0),
         currentFile = ko.observable(),
         isLoading = ko.observable(false),
         tagName = ko.observable();
@@ -41,6 +42,7 @@
                         window.alert(err.message || err.responseText);
                     })
                     .done(function () {
+                        app.trigger('caps:tag:added', tagName());
                         tagName('');
                         vm.refresh();
                     });

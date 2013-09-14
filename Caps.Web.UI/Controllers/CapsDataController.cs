@@ -2,6 +2,7 @@
 using Caps.Data;
 using Caps.Data.Model;
 using Caps.Web.UI.Infrastructure.WebApi;
+using Caps.Web.UI.Models;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,15 @@ namespace Caps.Web.UI.Controllers
         public IQueryable<DbFile> Files()
         {
             return _contextProvider.Context.Files;
+        }
+
+        // ~/breeze/capsdata/Files
+        [HttpGet]
+        public IQueryable<DbFile> FilteredFiles(String filterOptions)
+        {
+            var filters = FilesFilterOptions.Parse(filterOptions);
+            var predicate = filters.GetPredicate();
+            return predicate == null ? _contextProvider.Context.Files : _contextProvider.Context.Files.Where(predicate);
         }
 
         // ~/breeze/capsdata/Tags

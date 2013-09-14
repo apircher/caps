@@ -1,9 +1,9 @@
-﻿define(['knockout', 'durandal/system', 'durandal/app', '../module', '../datacontext', './virtualListModel', 'jquery', 'toastr', 'Q', 'doubleTap', 'jquery.fileupload'
-], function (ko, system, app, module, datacontext, VirtualListModel, $, toastr, Q, doubleTap, fileupload) {
+﻿define(['knockout', 'durandal/system', 'durandal/app', '../module', '../datacontext', 'infrastructure/virtualListModel', 'jquery', 'toastr', 'Q', 'doubleTap', 'jquery.fileupload', 'infrastructure/tagService'
+], function (ko, system, app, module, datacontext, VirtualListModel, $, toastr, Q, doubleTap, fileupload, tagService) {
         
     var vm,
         initialized = false,
-        list = new VirtualListModel.VirtualList(24, null, FileListItem),
+        list = new VirtualListModel.VirtualList(20, null, FileListItem),
         isLoading = ko.observable(false),
         isUploading = ko.observable(false),
         progress = ko.observable(0),
@@ -11,10 +11,16 @@
         isInteractive = ko.observable(false),
         scrollTop = ko.observable(0),
         searchWords = ko.observable(''),
-        sortOptions = new SortOptions();
+        sortOptions = new SortOptions(),
+        filterOptions = new FilterOptions(),
+        lastFilter = '';
 
     module.router.on('router:navigation:attached', function (currentActivation, currentInstruction, router) {
         if (currentActivation == vm)  isInteractive(true);
+    });
+
+    app.on('caps:tag:added', function (data) {
+        refreshTags();
     });
 
     vm = {
@@ -27,6 +33,7 @@
         isInteractive: isInteractive,
         searchWords: searchWords,
         sortOptions: sortOptions,
+        filterOptions: filterOptions,
 
         selectedFiles: ko.computed(function () {
             return ko.utils.arrayFilter(list.items(), function (f) {
@@ -83,6 +90,7 @@
         activate: function () {
             if (!initialized) {
                 initialized = true;
+                refreshTags();
                 loadPage(1);
             }
         },
@@ -126,6 +134,11 @@
             selectedFile(null);
             list.removeAll();
             loadPage(1);
+        },
+
+        endSetFilter: function () {
+            var s = filterOptions.toString();
+            if (s !== lastFilter) vm.refresh();
         },
 
         search: function () {            
@@ -201,7 +214,9 @@
         var deferred = Q.defer();
         isLoading(true);
         console.log('loadPage called. pageNumber=' + pageNumber);
-        datacontext.searchFiles(searchWords(), pageNumber, list.itemsPerPage(), sortOptions.getOrderBy())
+
+        lastFilter = filterOptions.toString();
+        datacontext.searchFiles(searchWords(), pageNumber, list.itemsPerPage(), sortOptions.getOrderBy(), lastFilter)
             .then(function (data) {
                 list.addPage(data, pageNumber);
                 deferred.resolve();
@@ -222,6 +237,16 @@
         function deleteFailed(err) {
             dialog.showMessage('Die Datei konnte nicht gelöscht werden.', 'Nicht erfolgreich');
         }
+    }
+
+    function createTagFilterItems(data) {
+        for (var i = 0; i < data.length; i++) {
+            filterOptions.createOrUpdateFilter(data[i].Name(), 'DbFileTag', data[i].Id());
+        }
+    }
+
+    function refreshTags() {
+        createTagFilterItems(tagService.tags());
     }
 
 
@@ -295,6 +320,70 @@
             var result = col.name || 'Created.At';
             if (this.sortDirection() && this.sortDirection().toLowerCase() === 'desc')
                 result += ' desc';
+        }
+        return result;
+    };
+
+    /**
+     * FilterItem Class
+     */
+    function FilterItem(filterName, filterTitle, filterValue) {
+        var self = this;
+        self.title = filterTitle;
+        self.name = filterName;
+        self.value = filterValue;
+        self.isSelected = ko.observable(false);
+
+        self.toggleSelect = function () {
+            self.isSelected(!self.isSelected());
+        };
+    }
+
+    /**
+     * FilterOptions Class
+     */
+    function FilterOptions() {
+        var self = this;
+        self.filters = ko.observableArray([]);
+        self.selectedFilters = ko.computed(function () {
+            return ko.utils.arrayFilter(self.filters(), function (item) {
+                return item.isSelected();
+            });
+        });
+
+        self.clear = function () {
+            self.filters([]);
+        };
+        self.reset = function () {
+            ko.utils.arrayForEach(self.selectedFilters(), function (item) {
+                item.isSelected(false);
+            });
+        };
+    }
+
+    FilterOptions.prototype.createOrUpdateFilter = function (title, name, value) {
+        var item = this.findFilter(value);
+        if (!item) {
+            item = new FilterItem(name, title, value);
+            this.filters.push(item);
+        }
+        else {
+            item.title = title;
+            item.value = value;
+        }
+    };
+
+    FilterOptions.prototype.findFilter = function (value) {
+        return ko.utils.arrayFirst(this.filters(), function (item) {
+            return item.value === value;
+        });
+    };
+
+    FilterOptions.prototype.toString = function () {
+        var items = this.selectedFilters();
+        var result = '';
+        for (var i = 0; i < items.length; i++) {
+            result += items[i].value + (i < items.length -1 ? '|' : '');
         }
         return result;
     };

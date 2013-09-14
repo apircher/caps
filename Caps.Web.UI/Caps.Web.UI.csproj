@@ -197,6 +197,7 @@
     <Compile Include="Infrastructure\AuthorExtensions.cs" />
     <Compile Include="Infrastructure\LockoutHelper.cs" />
     <Compile Include="Infrastructure\MultipartStreamProviderExtensions.cs" />
+    <Compile Include="Infrastructure\PredicateBuilder.cs" />
     <Compile Include="Infrastructure\Settings.cs" />
     <Compile Include="Infrastructure\DbContextExtensions.cs" />
     <Compile Include="Infrastructure\Mvc\SetUserActivityAttribute.cs" />
@@ -206,6 +207,8 @@
     <Compile Include="Infrastructure\WebApi\SetUserActivityAttribute.cs" />
     <Compile Include="Infrastructure\WebApi\ValidateJsonAntiForgeryTokenAttribute.cs" />
     <Compile Include="Models\AuthenticationModels.cs" />
+    <Compile Include="Models\DbFileFilterModel.cs" />
+    <Compile Include="Models\FilterModel.cs" />
     <Compile Include="Models\TagModels.cs" />
     <Compile Include="Models\UserManagementModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -225,6 +228,7 @@
     <Content Include="App\infrastructure\moduleLoader.js" />
     <Content Include="App\infrastructure\moduleRegistry.js" />
     <Content Include="App\infrastructure\screen.js" />
+    <Content Include="App\infrastructure\tagService.js" />
     <Content Include="App\infrastructure\utils.js" />
     <Content Include="App\modules\contentfile\datacontext.js" />
     <Content Include="App\modules\contentfile\entities.js" />
@@ -233,7 +237,7 @@
     <Content Include="App\modules\contentfile\viewmodels\detail.js" />
     <Content Include="App\modules\contentfile\searchGrammer.js" />
     <Content Include="App\modules\contentfile\viewmodels\index.js" />
-    <Content Include="App\modules\contentfile\viewmodels\virtualListModel.js" />
+    <Content Include="App\infrastructure\virtualListModel.js" />
     <Content Include="App\modules\contentfile\views\detail.html" />
     <Content Include="App\modules\draft\module.html" />
     <Content Include="App\modules\draft\module.js" />

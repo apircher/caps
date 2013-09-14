@@ -8,8 +8,10 @@
         return manager.executeQuery(query);
     }
 
-    function searchFiles(searchWords, pageNumber, itemsPerPage, orderBy) {
-        var query = filterQuery(EntityQuery.from('Files'), searchWords)
+    function searchFiles(searchWords, pageNumber, itemsPerPage, orderBy, filters) {
+        var src = filters ? EntityQuery.from('FilteredFiles').withParameters({ filterOptions: filters }) : EntityQuery.from('Files');
+
+        var query = filterQuery(src, searchWords)
             .orderBy(orderBy || 'Created.At desc')
             .skip((pageNumber - 1) * itemsPerPage)
             .take(itemsPerPage)
