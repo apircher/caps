@@ -1,4 +1,5 @@
 ﻿using Breeze.WebApi;
+using Breeze.WebApi.EF;
 using Caps.Data;
 using Caps.Data.Model;
 using Caps.Web.UI.Infrastructure.WebApi;
