@@ -45,7 +45,7 @@
         </form>
         <br />
         <ul data-bind="foreach: file().Tags" class="list-unstyled">
-            <li>                    
+            <li data-bind="if: Tag()">                    
                 <span data-bind="text: Tag().Name"></span> <a href="#" data-bind="click: $parent.removeTag">Entfernen</a>
             </li>
         </ul>

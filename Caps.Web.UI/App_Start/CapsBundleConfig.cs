@@ -23,6 +23,7 @@ namespace Caps.Web.UI.App_Start
                 .Include("~/Content/ie10mobile.css")
                 .Include("~/Content/toastr.css")
               );
+
         }
 
         public static void AddDefaultIgnorePatterns(IgnoreList ignoreList)

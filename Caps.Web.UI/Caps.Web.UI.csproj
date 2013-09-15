@@ -220,6 +220,8 @@
     <Content Include="App\infrastructure\authentication.js" />
     <Content Include="App\infrastructure\datacontext.js" />
     <Content Include="App\infrastructure\entityManagerProvider.js" />
+    <Content Include="App\infrastructure\filterModel.js" />
+    <Content Include="App\infrastructure\listSortModel.js" />
     <Content Include="App\infrastructure\localization.js" />
     <Content Include="App\infrastructure\moduleFactory.js" />
     <Content Include="App\infrastructure\moduleHistory.js" />

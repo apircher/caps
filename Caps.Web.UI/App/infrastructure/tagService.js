@@ -23,8 +23,11 @@
         }
         else {
             datacontext.getOrCreateTag(tagName)
-                .done(deferred.resolve)
-                .fail(deferred.reject);
+                .fail(deferred.reject)
+                .done(function (data) {
+                    tags.push(data);
+                    deferred.resolve(data);
+                });
         }
         return deferred.promise;
     }

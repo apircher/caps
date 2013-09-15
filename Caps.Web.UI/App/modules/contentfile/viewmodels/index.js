@@ -1,96 +1,48 @@
-﻿define(['knockout', 'durandal/system', 'durandal/app', '../module', '../datacontext', 'infrastructure/virtualListModel', 'jquery', 'toastr', 'Q', 'doubleTap', 'jquery.fileupload', 'infrastructure/tagService'
-], function (ko, system, app, module, datacontext, VirtualListModel, $, toastr, Q, doubleTap, fileupload, tagService) {
+﻿define(['knockout', 'durandal/system', 'durandal/app', '../module', '../datacontext', 'infrastructure/virtualListModel', 'infrastructure/filterModel', 'infrastructure/listSortModel',
+    'jquery', 'toastr', 'Q', 'doubleTap', 'jquery.fileupload', 'infrastructure/tagService'
+], function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, SortModel, $, toastr, Q, doubleTap, fileupload, tagService) {
         
     var vm,
         initialized = false,
-        list = new VirtualListModel.VirtualList(20, null, FileListItem),
+        list = new VirtualListModel.VirtualList(35, null, FileListItem),
         isLoading = ko.observable(false),
-        isUploading = ko.observable(false),
-        progress = ko.observable(0),
+        uploadManager = createUploadManager(),
         selectedFile = ko.observable(),
         isInteractive = ko.observable(false),
         scrollTop = ko.observable(0),
         searchWords = ko.observable(''),
-        sortOptions = new SortOptions(),
-        filterOptions = new FilterOptions(),
-        lastFilter = '';
+        sortOptions = createSortOptions(),
+        tagFilterOptions = null,
+        filterOptions = ko.observable(),
+        currentFilter = '';
 
     module.router.on('router:navigation:attached', function (currentActivation, currentInstruction, router) {
         if (currentActivation == vm)  isInteractive(true);
     });
 
-    app.on('caps:tag:added', function (data) {
-        refreshTags();
+    app.on('caps:tags:added', function (data) {
+        if (tagFilterOptions) tagFilterOptions.add(new FileTagFilterItem(data));
     });
 
     vm = {
         list: list,
         isLoading: isLoading,
-        isUploading: isUploading,
-        progress: progress,
+        uploadManager: uploadManager,
         selectedFile: selectedFile,
         scrollTop: scrollTop,
         isInteractive: isInteractive,
         searchWords: searchWords,
         sortOptions: sortOptions,
         filterOptions: filterOptions,
-
         selectedFiles: ko.computed(function () {
             return ko.utils.arrayFilter(list.items(), function (f) {
                 return f.isSelected();
             });
         }),
 
-        startUpload: function (e, data) {
-            var i = 0;
-            ko.utils.arrayForEach(data.files, function (f) {
-                var item = list.insertItem(undefined, i++);
-                f.listItem = item;
-            });                        
-            isUploading(true);
-            data.submit();
-        },
-
-        uploadDone: function (e, data) {
-            ko.utils.arrayForEach(data.result, function (r) {
-
-                var file = ko.utils.arrayFirst(data.files, function (f) { return f.name === r.FileName; });
-                var item = file.listItem;
-
-                datacontext.fetchFile(r.Id).then(function () {
-                    item.data(datacontext.localGetFile(r.Id));
-                    item.isUploading(false);
-                })
-                .fail(function (err) {
-                    toastr.error('Die Datei ' + r.FileName + ' konnte nicht geladen werden.');
-                });
-            });
-
-            isUploading(false);
-        },
-
-        uploadFailed: function (e, data) {
-            ko.utils.arrayForEach(data.files, function (f) {
-                f.listItem.isUploading(false);
-            });
-
-            isUploading(false);
-        },
-
-        uploadProgress: function (e, data) {
-            var p = parseInt(data.loaded / data.total * 100, 10);
-            progress(p);
-        },
-
-        filesDropped: function(e, data) {            
-            if (e.dataTransfer.dropEffect === 'copy')
-                return false;
-        },
-
         activate: function () {
             if (!initialized) {
                 initialized = true;
-                refreshTags();
                 loadPage(1);
             }
         },
@@ -136,9 +88,20 @@
             loadPage(1);
         },
 
+        beginSetFilter: function () {
+            tagFilterOptions = tagFilterOptions || createTagFilterOptions();
+            filterOptions(tagFilterOptions.clone());
+            return true;
+        },
+
         endSetFilter: function () {
-            var s = filterOptions.toString();
-            if (s !== lastFilter) vm.refresh();
+            var filter = filterOptions().toString();
+            if (filter !== currentFilter) {
+                tagFilterOptions = filterOptions();
+                currentFilter = filter;
+                vm.refresh();
+            }
+            filterOptions(null);
         },
 
         search: function () {            
@@ -148,29 +111,12 @@
             }
             vm.refresh();
         },
-
-        toggleSortDirection: function () {
-            vm.setSortDirection(sortOptions.sortDirection() == 'desc' ? 'asc' : 'desc');
-        },
-
-        sortAsc: function () { vm.setSortDirection('asc'); },
-        sortDesc: function () { vm.setSortDirection('desc'); },
-
-        setSortDirection: function (dir) {
-            sortOptions.sortDirection(dir);
-            vm.refresh();
-        },
-
-        sortBy: function (column) {
-            sortOptions.selectedColumn(column);
-            vm.refresh();
-        },
-
+                
         resetSelectedItem: function () {
             selectedFile(null);
         },
 
-        navigateToSelectedFile: function () {
+        showSelectedFile: function () {
             this.showDetail(selectedFile());
         },
 
@@ -178,7 +124,6 @@
             if (item) {
                 if (selectedFile() !== item)
                     selectedFile(item);
-
                 module.router.navigate('#/files/detail/' + item.data().Id());
             }
         },
@@ -213,10 +158,9 @@
     function loadPage(pageNumber) {
         var deferred = Q.defer();
         isLoading(true);
-        console.log('loadPage called. pageNumber=' + pageNumber);
+        console.log('loadPage called. pageNumber=' + pageNumber + ', Filter=' + currentFilter);
 
-        lastFilter = filterOptions.toString();
-        datacontext.searchFiles(searchWords(), pageNumber, list.itemsPerPage(), sortOptions.getOrderBy(), lastFilter)
+        datacontext.searchFiles(searchWords(), pageNumber, list.itemsPerPage(), sortOptions.getOrderBy(), currentFilter)
             .then(function (data) {
                 list.addPage(data, pageNumber);
                 deferred.resolve();
@@ -239,16 +183,58 @@
         }
     }
 
-    function createTagFilterItems(data) {
-        for (var i = 0; i < data.length; i++) {
-            filterOptions.createOrUpdateFilter(data[i].Name(), 'DbFileTag', data[i].Id());
-        }
+    function createTagFilterOptions() {
+        var items = ko.utils.arrayMap(tagService.tags(), function (t) { return new FileTagFilterItem(t); });
+        return new FilterModel.FilterOptions(items);
     }
 
-    function refreshTags() {
-        createTagFilterItems(tagService.tags());
+    function createSortOptions() {
+        var columns = [
+            new SortModel.ListColumn('Created.At', 'Hochgeladen am'),
+            new SortModel.ListColumn('Created.By', 'Hochgeladen von'),
+            new SortModel.ListColumn('Modified.At', 'Letzte Änderung'),
+            new SortModel.ListColumn('Modified.By', 'Letzte Änderung von'),
+            new SortModel.ListColumn('FileName', 'Dateiname')
+        ];
+        return new SortModel.SortOptions(columns, function () {
+            vm.refresh();
+        });
     }
 
+    function createUploadManager() {
+        return new UploadManager({
+            uploadStarted: function (file, batchIndex) {
+                file.listItem = list.insertItem(undefined, batchIndex);
+            },
+            uploadDone: function (result, file) {
+                var listItem = file.listItem;
+                datacontext.fetchFile(result.Id).then(function () {
+                    listItem.data(datacontext.localGetFile(result.Id));
+                    listItem.isUploading(false);
+                })
+                .fail(function (err) {
+                    toastr.error('Die Datei ' + r.FileName + ' konnte nicht geladen werden.');
+                });
+            }
+        });
+    }
+
+    /**
+     * FileTagFilterItem Class
+     */
+    function FileTagFilterItem(tag) {
+        this.name = 'DbFileTag';
+        this.title = tag.Name();
+        this.value = tag.Id();
+        this.tag = tag;
+    }
+    FileTagFilterItem.prototype = new FilterModel.FilterItem();
+    FileTagFilterItem.prototype.constructor = FileTagFilterItem;
+    FileTagFilterItem.prototype.clone = function () {
+        var result = new FileTagFilterItem(this.tag);
+        result.isSelected(this.isSelected());
+        return result;
+    };
 
     /**
      * FileListItem Class
@@ -269,124 +255,53 @@
             self.isSelected(!self.isSelected());
             if (self.isSelected()) selectedFile(self);
         };
+
         self.selectItem = function () {
             selectedFile(self);
         };
     }
 
-
     /**
-     * ListColumn Class
+     * UploadManager Class
      */
-    function ListColumn(name, title, owner) {
+    function UploadManager(options) {
         var self = this;
-        self.name = name;
-        self.title = title;
-        self.owner = owner;
+        
+        self.isUploading = ko.observable(false);
+        self.progress = ko.observable(0);
 
-        self.sort = function () {
-            owner.selectedColumn(self);
-            vm.refresh();
-        };
-
-        self.isSelected = ko.computed(function () {
-            return owner.selectedColumn() === self;
-        });
-    }
-
-    /**
-     * SortOptions Class
-     */
-    function SortOptions() {
-        var self = this;
-
-        self.selectedColumn = ko.observable();
-        self.sortDirection = ko.observable('desc');
-
-        self.columns = [
-            new ListColumn('Created.At', 'Hochgeladen am', this),
-            new ListColumn('Created.By', 'Hochgeladen von', this),
-            new ListColumn('Modified.At', 'Letzte Änderung', this),
-            new ListColumn('Modified.By', 'Letzte Änderung von', this),
-            new ListColumn('FileName', 'Dateiname', this)
-        ];
-
-        self.selectedColumn(self.columns[0]);
-    }
-
-    SortOptions.prototype.getOrderBy = function () {
-        var col = this.selectedColumn();
-        if (col) {
-            var result = col.name || 'Created.At';
-            if (this.sortDirection() && this.sortDirection().toLowerCase() === 'desc')
-                result += ' desc';
-        }
-        return result;
-    };
-
-    /**
-     * FilterItem Class
-     */
-    function FilterItem(filterName, filterTitle, filterValue) {
-        var self = this;
-        self.title = filterTitle;
-        self.name = filterName;
-        self.value = filterValue;
-        self.isSelected = ko.observable(false);
-
-        self.toggleSelect = function () {
-            self.isSelected(!self.isSelected());
-        };
-    }
-
-    /**
-     * FilterOptions Class
-     */
-    function FilterOptions() {
-        var self = this;
-        self.filters = ko.observableArray([]);
-        self.selectedFilters = ko.computed(function () {
-            return ko.utils.arrayFilter(self.filters(), function (item) {
-                return item.isSelected();
+        self.addFiles = function (e, data) {
+            var i = 0;
+            ko.utils.arrayForEach(data.files, function (f) {
+                if (options.uploadStarted && typeof options.uploadStarted === 'function')
+                    options.uploadStarted(f, i++);
             });
-        });
-
-        self.clear = function () {
-            self.filters([]);
+            self.isUploading(true);
+            data.submit();
         };
-        self.reset = function () {
-            ko.utils.arrayForEach(self.selectedFilters(), function (item) {
-                item.isSelected(false);
+        self.uploadDone = function (e, data) {
+            ko.utils.arrayForEach(data.result, function (r) {
+                var file = ko.utils.arrayFirst(data.files, function (f) { return f.name === r.FileName; });
+                if (options.uploadDone && typeof options.uploadDone === 'function')
+                    options.uploadDone(r, file);                
             });
+            self.isUploading(false);
+        };
+        self.uploadFailed = function (e, data) {
+            ko.utils.arrayForEach(data.files, function (f) {
+                f.listItem.isUploading(false);
+            });
+            self.isUploading(false);
+        };
+        self.uploadProgress = function (e, data) {
+            var p = parseInt(data.loaded / data.total * 100, 10);
+            self.progress(p);
+        };
+        self.filesDropped = function (e, data) {
+            if (e.dataTransfer.dropEffect === 'copy')
+                return false;
         };
     }
-
-    FilterOptions.prototype.createOrUpdateFilter = function (title, name, value) {
-        var item = this.findFilter(value);
-        if (!item) {
-            item = new FilterItem(name, title, value);
-            this.filters.push(item);
-        }
-        else {
-            item.title = title;
-            item.value = value;
-        }
-    };
-
-    FilterOptions.prototype.findFilter = function (value) {
-        return ko.utils.arrayFirst(this.filters(), function (item) {
-            return item.value === value;
-        });
-    };
-
-    FilterOptions.prototype.toString = function () {
-        var items = this.selectedFilters();
-        var result = '';
-        for (var i = 0; i < items.length; i++) {
-            result += items[i].value + (i < items.length -1 ? '|' : '');
-        }
-        return result;
-    };
-
+            
     return vm;
 });

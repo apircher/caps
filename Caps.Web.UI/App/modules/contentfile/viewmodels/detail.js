@@ -1,4 +1,4 @@
-﻿define(['require', 'knockout', '../module', '../datacontext', 'Q', 'moment', 'infrastructure/utils'], function (require, ko, module, datacontext, Q, moment, utils) {
+﻿define(['require', 'knockout', '../module', '../datacontext', 'Q', 'moment', 'infrastructure/utils', 'infrastructure/tagService'], function (require, ko, module, datacontext, Q, moment, utils, tagService) {
 
     var app = require('durandal/app'),
         currentFileId = ko.observable(0),
@@ -22,7 +22,7 @@
         },
 
         refresh: function () {
-            return getFile(true);
+            return getFile();
         },
 
         navigateBack: function () {
@@ -36,15 +36,18 @@
 
         tagName: tagName,
         addTag: function () {
-            if (tagName() && tagName().length) {
-                datacontext.addFileTag(currentFileId(), tagName())
+            var tn = tagName();
+            if (tn && tn.length) {
+                tagService.getOrCreateTag(tn)
+                    .then(function (data) {
+                        return datacontext.addFileTag(currentFile(), data);
+                    })
                     .fail(function (err) {
                         window.alert(err.message || err.responseText);
                     })
                     .done(function () {
                         app.trigger('caps:tag:added', tagName());
                         tagName('');
-                        vm.refresh();
                     });
             }
         },
@@ -56,10 +59,10 @@
         utils: utils
     };
 
-    function getFile(forceRefresh) {
+    function getFile() {
         var deferred = Q.defer();
         isLoading(true);
-        datacontext.fetchFile(currentFileId(), forceRefresh)
+        datacontext.fetchFile(currentFileId())
             .then(function () {
                 currentFile(datacontext.localGetFile(currentFileId()));
                 deferred.resolve(currentFile());

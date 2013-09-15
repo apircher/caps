@@ -1,4 +1,4 @@
-﻿define(['breeze', 'entityManagerProvider', 'Q'], function (breeze, provider, Q) {
+﻿define(['breeze', 'entityManagerProvider', 'Q', 'durandal/app'], function (breeze, provider, Q, app) {
 
     var manager = provider.createManager();
     var EntityQuery = breeze.EntityQuery;
@@ -18,8 +18,7 @@
         var query = new EntityQuery()
             .from('Tags')
             .where('Name', '==', tagName);
-        manager.executeQuery(query).done(lookupSucceeded)
-            .fail(deferred.reject);
+        manager.executeQuery(query).then(lookupSucceeded).fail(deferred.reject);
 
         function lookupSucceeded(data) {
             if (data.results.length > 0) {
@@ -28,14 +27,20 @@
             else {
                 var newTag = manager.createEntity('Tag', { Name: tagName });
                 manager.addEntity(newTag);
-                manager.saveChanges();
+                manager.saveChanges().done(function () {
+                    app.trigger('caps:tags:added', newTag);
+                    deferred.resolve(newTag);
+                });
             }
         }
+
+        return deferred.promise;
     }
     
     return {
         getWebsites: getWebsites,
-        getTags: getTags
+        getTags: getTags,
+        getOrCreateTag: getOrCreateTag
     };
 
 });

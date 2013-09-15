@@ -455,6 +455,52 @@ a.no-underline:hover {
     margin:25px 0 0;
 }
 
+
+#FiltersDropDown {
+    min-width:250px;
+    max-height:200px;
+}
+
+.menu-section {
+    margin:5px 11px;
+    padding:0px 10px 5px;
+}
+
+.scrollable {
+    overflow-x:hidden;
+    overflow-y:scroll;
+    -webkit-overflow-scrolling: touch;
+    border:1px solid #ddd;
+    margin:10px;
+}
+
+.dropdown-buttons {
+    padding:0 10px 0;
+    text-align:right;
+}
+    .dropdown-buttons > button {
+        min-width:80px;
+    }
+
+.dropdown-options {
+    padding:10px 16px;
+}
+
+.checkbox-list {
+    list-style-type:none;
+    padding:0;
+    margin:0;
+}
+    .checkbox-list > li {
+        position:relative;
+    }
+    .checkbox-list > li > a {
+        color:#000;
+        text-decoration:none;
+        padding:5px 0 0;
+        display:inline-block;
+    }
+
 /**
  * Media Queries
  * -----------------------------------------------------------------------------
@@ -464,6 +510,13 @@ a.no-underline:hover {
     
     .dragdrop-placeholder p {
         padding:3em;
+    }
+
+    #drop-zone {
+        padding-right:15px;
+    }
+    .toolbar {
+        padding-right:15px;
     }
 
     .image-preview {

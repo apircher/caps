@@ -30,10 +30,7 @@
         return query;
     }
 
-    function fetchFile(id, forceRefresh) {
-        if (forceRefresh === true) {
-            manager.clear();
-        }
+    function fetchFile(id) {
         var query = EntityQuery.from('Files').where('Id', '==', id)
             .expand('Tags.Tag, Versions, Versions.Properties');
         return manager.executeQuery(query);
@@ -55,9 +52,19 @@
         return deferred.promise;
     }
 
-    function addFileTag(fileId, tagName) {
-        var deferred = Q.defer();
-        $.ajax('rpc/DbFile/AddTag', { method: 'post', data: { EntityId: fileId, TagName: tagName } }).done(deferred.resolve).fail(deferred.reject);
+    function addFileTag(fileEntity, tagEntity) {
+        var deferred = Q.defer(),
+            tagQuery = EntityQuery.from('Tags').where('Id', '==', tagEntity.Id());
+
+        manager.executeQuery(tagQuery)
+            .then(function (data) {
+                var tag = data.results[0],
+                    fileTagEntity = manager.createEntity('DbFileTag', { FileId: fileEntity.Id(), TagId: tag.Id() });
+                manager.addEntity(fileTagEntity);
+                manager.saveChanges().fail(deferred.reject).done(deferred.resolve);
+            })
+            .fail(deferred.reject);
+
         return deferred.promise;
     }
 
