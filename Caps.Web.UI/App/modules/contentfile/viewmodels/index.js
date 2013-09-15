@@ -21,7 +21,7 @@
     });
 
     app.on('caps:tags:added', function (data) {
-        if (tagFilterOptions) tagFilterOptions.add(new FileTagFilterItem(data));
+        if (tagFilterOptions) tagFilterOptions.add(createTagFilterItem(data));
     });
 
     vm = {
@@ -184,7 +184,7 @@
     }
 
     function createTagFilterOptions() {
-        var items = ko.utils.arrayMap(tagService.tags(), function (t) { return new FileTagFilterItem(t); });
+        var items = ko.utils.arrayMap(tagService.tags(), function (t) { return createTagFilterItem(t); });
         return new FilterModel.FilterOptions(items);
     }
 
@@ -219,22 +219,9 @@
         });
     }
 
-    /**
-     * FileTagFilterItem Class
-     */
-    function FileTagFilterItem(tag) {
-        this.name = 'DbFileTag';
-        this.title = tag.Name();
-        this.value = tag.Id();
-        this.tag = tag;
+    function createTagFilterItem(tag) {
+        return new FilterModel.FilterItem('DbFileTag', tag.Name(), tag.Id());
     }
-    FileTagFilterItem.prototype = new FilterModel.FilterItem();
-    FileTagFilterItem.prototype.constructor = FileTagFilterItem;
-    FileTagFilterItem.prototype.clone = function () {
-        var result = new FileTagFilterItem(this.tag);
-        result.isSelected(this.isSelected());
-        return result;
-    };
 
     /**
      * FileListItem Class
