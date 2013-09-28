@@ -1,5 +1,5 @@
 ﻿
-define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
+define(['knockout', 'jquery', 'bootstrap', 'typeahead'], function (ko, $) {
     
     var $window = $(window),
         $html = $('html'),
@@ -49,6 +49,49 @@ define(['knockout', 'jquery', 'bootstrap'], function (ko, $) {
             }
         }
     };
+
+    //
+    // Twitter Typeahead Binding.
+    //
+    /*ko.bindingHandlers.typeahead = {
+        init: function (elem, valueAccessor) {
+            var $elem = $(elem),
+                options = ko.unwrap(valueAccessor()),
+                valObservable = options.value;
+            $elem.typeahead({ name: options.name, local: options.local });
+            ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {
+                $elem.typeahead('destroy');
+            });
+
+            if (valObservable) {
+                valObservable.subscribe(function () {
+                    $elem.typeahead('setQuery', valObservable());
+                });
+            }
+        },
+
+        update: function (elem, valueAccessor) {
+            var $elem = $(elem),
+                options = ko.unwrap(valueAccessor());
+            $elem.typeahead({ name: options.name, local: options.local });
+        }
+    };*/
+
+    // From https://github.com/billpull/knockout-bootstrap.
+    ko.bindingHandlers.typeahead = {
+        init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var $element = $(element);
+            var allBindings = allBindingsAccessor();
+            var typeaheadArr = ko.utils.unwrapObservable(valueAccessor());
+
+            $element.attr("autocomplete", "off")
+                    .typeahead({
+                        'local': typeaheadArr,
+                        'minLength': allBindings.minLength
+                    });
+        }
+    };
+
 
     //
     // CancelZoom Binding. (Cancel Mobile Safari zoom in on input fields)

@@ -12,6 +12,7 @@ requirejs.config({
         'knockout.extenders': '../Scripts/knockout.extenders',
 
         'bootstrap': '../Scripts/bootstrap.min',
+        'typeahead': '../Scripts/typeahead.min',
 
         'jquery': '../Scripts/jquery-2.0.3.min',
         'jquery.fileupload': '../Scripts/jquery.fileupload',
@@ -45,9 +46,9 @@ requirejs.config({
 });
 
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authentication', 'infrastructure/antiForgeryToken',
-    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider', 'infrastructure/tagService', 
+    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider', 
     'knockout.custom-bindings', 'knockout.extenders', 'infrastructure/validation', '../Scripts/safari.cancelZoom'],
-    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider, tagService) {
+    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider) {
 
         //>>excludeStart("build", true);
         system.debug(true);
@@ -88,7 +89,6 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
             .then(authentication.initialize)
             .then(moduleLoader.loadModules(['sitemap', 'draft', 'contentfile', 'user']))
             .then(entityManagerProvider.initialize)
-            .then(tagService.refreshTags)
             .then(app.start)
             .then(function () {
                 //Replace 'viewmodels' in the moduleId with 'views' to locate the view.

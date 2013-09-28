@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Q</id>
-    <version>0.9.6</version>
+    <version>0.9.7</version>
     <title>Q</title>
     <authors>Kris Kowal,  Irakli Gozalishvili,  Domenic Denicola</authors>
     <owners>Kris Kowal,  Irakli Gozalishvili,  Domenic Denicola</owners>

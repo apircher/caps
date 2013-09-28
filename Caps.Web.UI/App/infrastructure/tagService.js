@@ -1,6 +1,11 @@
-﻿define(['require', 'knockout', 'Q', 'infrastructure/datacontext'], function (require, ko, Q, datacontext) {
+﻿define(['require', 'durandal/app', 'knockout', 'Q', 'infrastructure/datacontext', 'authentication'], function (require, app, ko, Q, datacontext, authentication) {
 
     var tags = ko.observableArray([]);
+
+    app.on('caps:authentication:loggedOn', function () {
+        refreshTags();
+    });
+
 
     function findTagByName(tagName) {
         var k = tagName.toLowerCase();
@@ -33,11 +38,19 @@
     }
 
     function refreshTags() {
+        if (!authentication.isAuthenticated())
+            return;
         return datacontext.getTags()
+            .fail(function (err) {
+                console.log('Tags could not be refreshed. ' + err.message);
+            })
             .done(function (data) {
-                tags(data.results);
+                if (data && data.results) tags(data.results);
             });
     }
+
+    if (authentication.isAuthenticated())
+        refreshTags();
 
     return {
         tags: tags,

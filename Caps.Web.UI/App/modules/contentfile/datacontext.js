@@ -68,10 +68,10 @@
         return deferred.promise;
     }
 
-    function removeFileTag(fileId, tagName) {
-        var deferred = Q.defer();
-        $.ajax('rpc/DbFile/RemoveTag', { method: 'post', data: { EntityId: fileId, TagName: tagName } }).done(deferred.resolve).fail(deferred.reject);
-        return deferred.promise;
+    function removeFileTag(fileEntity, fileTagEntity) {
+        fileEntity.Tags.remove(fileTagEntity);
+        fileTagEntity.entityAspect.setDeleted();
+        return manager.saveChanges();
     }
 
     return {

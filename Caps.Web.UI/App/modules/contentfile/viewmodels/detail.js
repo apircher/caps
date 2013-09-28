@@ -1,4 +1,5 @@
-﻿define(['require', 'knockout', '../module', '../datacontext', 'Q', 'moment', 'infrastructure/utils', 'infrastructure/tagService'], function (require, ko, module, datacontext, Q, moment, utils, tagService) {
+﻿define(['require', 'knockout', '../module', '../datacontext', 'Q', 'moment', 'infrastructure/utils', 'infrastructure/tagService'
+], function (require, ko, module, datacontext, Q, moment, utils, tagService) {
 
     var app = require('durandal/app'),
         currentFileId = ko.observable(0),
@@ -34,7 +35,12 @@
             return 'file-preview-general';
         },
 
+        tagNames: ko.computed(function () {
+            return ko.utils.arrayMap(tagService.tags(), function (t) { return t.Name(); });
+        }),
+
         tagName: tagName,
+
         addTag: function () {
             var tn = tagName();
             if (tn && tn.length) {
@@ -51,8 +57,14 @@
                     });
             }
         },
+
+        updateTagName: function (element, e, datum, dataset) {
+            tagName(datum.value);
+        },
+
         removeTag: function (tag) {
-            datacontext.removeFileTag(currentFileId(), tag.Tag().Name()).fail(function () { alert(err.message || err.responseText); }).done(vm.refresh);
+            datacontext.removeFileTag(currentFile(), tag)
+                .fail(function () { alert(err.message || err.responseText); });
         },
 
         moment: moment,
