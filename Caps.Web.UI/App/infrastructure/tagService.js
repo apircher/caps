@@ -6,6 +6,10 @@
         refreshTags();
     });
 
+    app.on('caps:tag:deleted', function (tag) {
+        tags.remove(tag);
+    });
+
 
     function findTagByName(tagName) {
         var k = tagName.toLowerCase();

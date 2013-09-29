@@ -23,6 +23,12 @@
     app.on('caps:tags:added', function (data) {
         if (tagFilterOptions) tagFilterOptions.add(createTagFilterItem(data));
     });
+    app.on('caps:tag:deleted', function (data) {
+        if (tagFilterOptions) {
+            var filter = tagFilterOptions.findFilter(data.Id());
+            if (filter) tagFilterOptions.filters.remove(filter);
+        }
+    });
 
     vm = {
         list: list,

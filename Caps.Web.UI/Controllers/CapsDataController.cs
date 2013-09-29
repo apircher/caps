@@ -14,10 +14,42 @@ using System.Web.Http;
 
 namespace Caps.Web.UI.Controllers
 {
+    public class CapsDbContextProvider : EFContextProvider<CapsDbContext>
+    {
+        protected override Dictionary<Type, List<EntityInfo>> BeforeSaveEntities(Dictionary<Type, List<EntityInfo>> saveMap)
+        {
+            if (saveMap.ContainsKey(typeof(DbFileTag)))
+            {
+                var deletedFileTagEntityInfos = saveMap[typeof(DbFileTag)].Where(n => n.EntityState == EntityState.Deleted).ToList();
+                if (deletedFileTagEntityInfos.Count > 0)
+                {
+                    var fileTags = deletedFileTagEntityInfos.Select(d => d.Entity).Cast<DbFileTag>().ToList();
+                    foreach (var fileTag in fileTags)
+                    {
+                        if (!Context.FileTags.Any(ft => ft.TagId == fileTag.TagId && ft.FileId != fileTag.FileId))
+                        {
+                            var tag = Context.Tags.FirstOrDefault(t => t.Id == fileTag.TagId);
+                            var tagEntityInfo = CreateEntityInfo(fileTag.Tag, EntityState.Deleted);
+                            var tagType = typeof(Tag);
+                            if (!saveMap.ContainsKey(tagType))                            
+                                saveMap.Add(tagType, new List<EntityInfo>());                            
+                            saveMap[tagType].Add(CreateEntityInfo(tag, EntityState.Deleted));
+                        }
+                    }
+                }
+            }
+            return saveMap;
+        }
+    }
+
     [Authorize, BreezeController, ValidateJsonAntiForgeryToken, SetUserActivity]
     public class CapsDataController : ApiController
     {
-        readonly EFContextProvider<CapsDbContext> _contextProvider = new EFContextProvider<CapsDbContext>();
+        readonly CapsDbContextProvider _contextProvider = new CapsDbContextProvider();
+
+        public CapsDataController()
+        {
+        }
 
         // ~/breeze/capsdata/Metadata
         [HttpGet, AllowAnonymous]
@@ -82,5 +114,6 @@ namespace Caps.Web.UI.Controllers
         {
             return _contextProvider.SaveChanges(saveBundle);
         }
+
     }
 }

@@ -5,7 +5,8 @@
         currentFileId = ko.observable(0),
         currentFile = ko.observable(),
         isLoading = ko.observable(false),
-        tagName = ko.observable();
+        tagName = ko.observable(),
+        addTagUIVisible = ko.observable(false);
 
     var vm = {
         fileId: currentFileId,
@@ -16,6 +17,8 @@
         activate: function (fileId) {
             currentFile(null);
             currentFileId(fileId);
+            tagName(null);
+            addTagUIVisible(false);
             return getFile()
                 .fail(function (err) {
                     alert(err.message);
@@ -35,6 +38,7 @@
             return 'file-preview-general';
         },
 
+        addTagUIVisible: addTagUIVisible,
         tagNames: ko.computed(function () {
             return ko.utils.arrayMap(tagService.tags(), function (t) { return t.Name(); });
         }),
@@ -42,6 +46,7 @@
         tagName: tagName,
 
         addTag: function () {
+            addTagUIVisible(true);
             var tn = tagName();
             if (tn && tn.length) {
                 tagService.getOrCreateTag(tn)
@@ -58,13 +63,27 @@
             }
         },
 
+        cancelAddTag: function () {
+            tagName(null);
+            addTagUIVisible(false);
+        },
+
         updateTagName: function (element, e, datum, dataset) {
             tagName(datum.value);
         },
 
         removeTag: function (tag) {
             datacontext.removeFileTag(currentFile(), tag)
-                .fail(function () { alert(err.message || err.responseText); });
+                .then(function (result) {
+                    var deletedTags = ko.utils.arrayFilter(result.entities, function (entity) { return entity.entityType.shortName == 'Tag'; });
+                    ko.utils.arrayForEach(deletedTags, function (tag) {
+                        app.trigger('caps:tag:deleted', tag);
+                    });
+                })
+                .fail(function () { alert(err.message || err.responseText); })
+                .done(function () {
+                    app.trigger('caps:tag:removed', tag);
+                });
         },
 
         moment: moment,

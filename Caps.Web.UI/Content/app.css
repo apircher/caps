@@ -488,7 +488,7 @@ a.no-underline:hover {
 
 .checkbox-list {
     list-style-type:none;
-    padding:0;
+    padding:0 0 5px;
     margin:0;
 }
     .checkbox-list > li {

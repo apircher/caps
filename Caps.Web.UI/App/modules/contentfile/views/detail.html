@@ -8,32 +8,41 @@
 
     <div class="col-md-4 col-lg-3">
         <h4 class="break-h"><span data-bind="text: file().FileName"></span> <small>Details</small></h4>
-
         <div data-bind="with: file().Created">
+            <p>
             Hochgeladen <span data-bind="text: moment(At()).fromNow(), attr: { title: moment(At()).format('LLLL') }"></span> 
             von <span data-bind="text: By"></span>
+            </p>
         </div>
-        <div>
-            Inhaltstyp: <span data-bind="text: file().ContentType()"></span>
-        </div>
-        <div>
-            Größe: <!-- ko text: utils.formatFileSize(file().latestVersion().FileSize()) --><!-- /ko -->
-        </div>
-        <!-- ko if: moment(file().Created().At()).diff(moment(file().Modified().At()), 'seconds') > 0 -->
-        <div data-bind="with: file().Modified">
-            Letzte Änderung <span data-bind="text: moment(At()).fromNow(), attr: { title: moment(At()).format('LLLL') }"></span> 
-            von <span data-bind="text: By"></span>
-        </div>
-        <!-- /ko -->
+        <div class="well well-sm">
+            <div>
+                Inhaltstyp: <span data-bind="text: file().ContentType()"></span>
+            </div>
+            <div>
+                Größe: <!-- ko text: utils.formatFileSize(file().latestVersion().FileSize()) --><!-- /ko -->
+            </div>
+            <!-- ko if: moment(file().Created().At()).diff(moment(file().Modified().At()), 'seconds') > 0 -->
+            <div data-bind="with: file().Modified">
+                Letzte Änderung <span data-bind="text: moment(At()).fromNow(), attr: { title: moment(At()).format('LLLL') }"></span> 
+                von <span data-bind="text: By"></span>
+            </div>
+            <!-- /ko -->
 
-        <!-- ko if: file().isImage -->
-        <div data-bind="with: file().latestVersion">
-            Bildgröße: <span data-bind="text: imageWidth"></span> x <span data-bind="text: imageHeight"></span> px
+            <!-- ko if: file().isImage -->
+            <div data-bind="with: file().latestVersion">
+                Bildgröße: <span data-bind="text: imageWidth"></span> x <span data-bind="text: imageHeight"></span> px
+            </div>
+            <!-- /ko -->
         </div>
-        <!-- /ko -->
 
-        <h4>Markierungen</h4>
-        <form class="form-inline" role="form">
+        <h4>
+            Markierungen
+            <!-- ko if: !addTagUIVisible() -->
+            <small><a data-bind="click: addTag" href="#">Hinzufügen</a></small>
+            <!-- /ko -->
+        </h4>        
+        <!-- ko if: addTagUIVisible -->
+        <form role="form">
             <div class="input-group">
                 <input type="text" class="form-control hide-ms-clear" data-bind="typeahead: tagNames, value: tagName, event: { 'typeahead:selected': updateTagName, 'typeahead:autocompleted': updateTagName }" />
                 <span class="input-group-btn">
@@ -42,11 +51,16 @@
                     </button>
                 </span>
             </div>
+            <p class="form-control-static"><a data-bind="click: cancelAddTag" href="#">Abbrechen</a></p>
         </form>
         <br />
+        <!-- /ko -->        
         <ul data-bind="foreach: file().Tags" class="list-group">
             <li data-bind="if: Tag()" class="list-group-item">
-                <i class="icon-tag"></i> <span data-bind="text: Tag().Name"></span> <a href="#" data-bind="click: $parent.removeTag">Entfernen</a>
+                <div class="pull-right">
+                    <button class="btn btn-link btn-xs" data-bind="click: $parent.removeTag"><i class="icon-remove"></i></button>
+                </div>
+                <i class="icon-tag"></i> <span data-bind="text: Tag().Name"></span>
             </li>
         </ul>
 
