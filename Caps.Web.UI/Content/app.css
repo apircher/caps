@@ -457,13 +457,13 @@ a.no-underline:hover {
 
 
 #FiltersDropDown {
-    min-width:250px;
-    max-height:200px;
+    min-width:220px;
+    max-height:250px;
 }
 
 .menu-section {
-    margin:5px 11px;
-    padding:0px 10px 5px;
+    margin:3px 11px;
+    padding:0px 10px;
 }
 
 .scrollable {
@@ -475,7 +475,7 @@ a.no-underline:hover {
 }
 
 .dropdown-buttons {
-    padding:0 10px 0;
+    padding:0 10px 4px;
     text-align:right;
 }
     .dropdown-buttons > button {
@@ -483,7 +483,7 @@ a.no-underline:hover {
     }
 
 .dropdown-options {
-    padding:10px 16px;
+    padding:3px 16px 7px;
 }
 
 .checkbox-list {

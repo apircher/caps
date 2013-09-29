@@ -32,7 +32,7 @@
         </div>
         <!-- /ko -->
 
-        <h4>Tags</h4>
+        <h4>Markierungen</h4>
         <form class="form-inline" role="form">
             <div class="input-group">
                 <input type="text" class="form-control hide-ms-clear" data-bind="typeahead: tagNames, value: tagName, event: { 'typeahead:selected': updateTagName, 'typeahead:autocompleted': updateTagName }" />
@@ -44,9 +44,9 @@
             </div>
         </form>
         <br />
-        <ul data-bind="foreach: file().Tags" class="list-unstyled">
-            <li data-bind="if: Tag()">                    
-                <span data-bind="text: Tag().Name"></span> <a href="#" data-bind="click: $parent.removeTag">Entfernen</a>
+        <ul data-bind="foreach: file().Tags" class="list-group">
+            <li data-bind="if: Tag()" class="list-group-item">
+                <i class="icon-tag"></i> <span data-bind="text: Tag().Name"></span> <a href="#" data-bind="click: $parent.removeTag">Entfernen</a>
             </li>
         </ul>
 
