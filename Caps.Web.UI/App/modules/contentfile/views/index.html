@@ -82,7 +82,7 @@
             <div class="col-sm-6 col-md-3 col-lg-2">
                 <div class="thumbnail-container" data-bind="css: { 'item-checked': isSelected  }">
                     <a href="#" class="thumbnail" data-bind="css: { 'item-selected': isSelectedItem }, clickBubble: false, event: { dblclick: $parent.showDetail }, click: selectItem">
-                        <!-- ko if: data() -->
+                        <!-- ko if: data() && data().isImage -->
                         <!-- ko with: data() -->
                         <!-- ko if: isImage -->
                         <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: FileName, alt: FileName }, lazyImage: true, click: function () { $parents[1].showDetail($parent); }" />
