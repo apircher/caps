@@ -29,6 +29,13 @@ namespace Caps.Data
         public DbSet<Website> Websites { get; set; }
         public DbSet<Sitemap> Sitemaps { get; set; }
 
+        public DbSet<Draft> Drafts { get; set; }
+        public DbSet<DraftResource> DraftResources { get; set; }
+        public DbSet<DraftContentPart> DraftContentParts { get; set; }
+        public DbSet<DraftContentPartResource> DraftContentPartResources { get; set; }
+        public DbSet<DraftFile> DraftFiles { get; set; }
+        public DbSet<DraftFileResource> DraftFileResources { get; set; }
+
         public Author GetAuthorByUserName(String userName)
         {
             return Authors.FirstOrDefault(a => a.UserName == userName);

@@ -77,6 +77,10 @@
     <Compile Include="Migrations\201309111442207_AddTags.Designer.cs">
       <DependentUpon>201309111442207_AddTags.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201310150922418_AddDrafts.cs" />
+    <Compile Include="Migrations\201310150922418_AddDrafts.Designer.cs">
+      <DependentUpon>201310150922418_AddDrafts.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
@@ -86,6 +90,12 @@
     <Compile Include="Model\DbFileTag.cs" />
     <Compile Include="Model\DbFileVersion.cs" />
     <Compile Include="Model\DbThumbnail.cs" />
+    <Compile Include="Model\Draft.cs" />
+    <Compile Include="Model\DraftContentPart.cs" />
+    <Compile Include="Model\DraftContentPartResource.cs" />
+    <Compile Include="Model\DraftFile.cs" />
+    <Compile Include="Model\DraftFileResource.cs" />
+    <Compile Include="Model\DraftResource.cs" />
     <Compile Include="Model\Sitemap.cs" />
     <Compile Include="Model\Tag.cs" />
     <Compile Include="Model\Website.cs" />
@@ -110,6 +120,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201309111442207_AddTags.resx">
       <DependentUpon>201309111442207_AddTags.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201310150922418_AddDrafts.resx">
+      <DependentUpon>201310150922418_AddDrafts.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
