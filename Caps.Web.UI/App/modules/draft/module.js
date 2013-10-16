@@ -11,7 +11,9 @@
     module.initializeRouter = function () {
         module.router = routerFactory.createModuleRouter(module, 'modules/draft', 'drafts')
             .map([
-                { route: '', moduleId: 'viewmodels/index', title: 'Entwürfe', nav: false }
+                { route: '', moduleId: 'viewmodels/index', title: 'Entwürfe', nav: false },
+                { route: 'create', moduleId: 'viewmodels/editor', title: 'Editor', nav: false },
+                { route: 'edit/:draftId', moduleId: 'viewmodels/editor', title: 'Editor', nav: false }
             ])
             .buildNavigationModel();
     };

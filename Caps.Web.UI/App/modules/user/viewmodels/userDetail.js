@@ -48,7 +48,7 @@
         return deferred.promise;
     }
     function editUser() {
-        module.router.navigate('#/users/edit/' + vm.userName());
+        module.router.navigate('#users/edit/' + vm.userName());
     }
     function changePassword() {
         SetPasswordDialog.show()

@@ -130,7 +130,7 @@
             if (item) {
                 if (selectedFile() !== item)
                     selectedFile(item);
-                module.router.navigate('#/files/detail/' + item.data().Id());
+                module.router.navigate('#files/detail/' + item.data().Id());
             }
         },
 

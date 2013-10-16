@@ -192,6 +192,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\CapsDbContextProvider.cs" />
     <Compile Include="Infrastructure\Mvc\Helpers\VersionHelpers.cs" />
     <Compile Include="Infrastructure\AuthorExtensions.cs" />
     <Compile Include="Infrastructure\LockoutHelper.cs" />
@@ -240,9 +241,18 @@
     <Content Include="App\modules\contentfile\viewmodels\index.js" />
     <Content Include="App\infrastructure\virtualListModel.js" />
     <Content Include="App\modules\contentfile\views\detail.html" />
+    <Content Include="App\modules\draft\datacontext.js" />
     <Content Include="App\modules\draft\module.html" />
     <Content Include="App\modules\draft\module.js" />
+    <Content Include="App\modules\draft\viewmodels\editor.js" />
+    <Content Include="App\modules\draft\viewmodels\editor\draftProperties.js" />
+    <Content Include="App\modules\draft\viewmodels\editor\navigation.js" />
+    <Content Include="App\modules\draft\viewmodels\editor\draftTemplate.js" />
     <Content Include="App\modules\draft\viewmodels\index.js" />
+    <Content Include="App\modules\draft\views\editor.html" />
+    <Content Include="App\modules\draft\views\editor\draftProperties.html" />
+    <Content Include="App\modules\draft\views\editor\navigation.html" />
+    <Content Include="App\modules\draft\views\editor\draftTemplate.html" />
     <Content Include="App\modules\sitemap\module.html" />
     <Content Include="App\modules\sitemap\module.js" />
     <Content Include="App\modules\user\commands\deleteUser.js" />

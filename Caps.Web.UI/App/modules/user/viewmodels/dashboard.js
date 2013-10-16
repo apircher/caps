@@ -46,7 +46,7 @@ function (utils, app, system, ko, moment, authentication, datacontext, module, d
     }
 
     function addUser() {
-        module.router.navigate('#/users/add');
+        module.router.navigate('#users/add');
     }
 
     function findCachedUserByUserName(userName) {

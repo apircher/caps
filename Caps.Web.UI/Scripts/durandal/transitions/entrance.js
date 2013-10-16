@@ -28,10 +28,24 @@ define(['durandal/system', 'durandal/composition', 'jquery'], function(system, c
      * @class EntranceModule
      * @constructor
      */
-    var entrance = function(context) {
+    var entrance = function (context) {
+        var savedOverflowX,
+            $body = $('body');
+        
         return system.defer(function(dfd) {
             function endTransition() {
+                restoreOverflowX();
                 dfd.resolve();
+            }
+
+            function hideOverflowX() {
+                savedOverflowX = $body.css('overflow-x');
+                $body.css('overflow-x', 'hidden');
+            }
+
+            function restoreOverflowX() {
+                if (savedOverflowX)
+                    $body.css('overflow-x', savedOverflowX);
             }
 
             function scrollIfNeeded() {
@@ -48,6 +62,7 @@ define(['durandal/system', 'durandal/composition', 'jquery'], function(system, c
 
                 function startTransition() {
                     scrollIfNeeded();
+                    hideOverflowX();
                     context.triggerAttach();
 
                     var startValues = {

@@ -1,5 +1,19 @@
-﻿<div class="app-page">
-    <div class="container">
-        <h1>Module Draft</h1>
+﻿<div id="drafts-index" class="app-page bottom-fixed-navbar-container">
+    
+    <ul data-bind="foreach: drafts">
+        <li>
+            <a data-bind="click: $parent.editDraft"><span data-bind="text: Name"></span></a>
+        </li>
+    </ul>
+    
+        
+    <div class="navbar navbar-default navbar-fixed-bottom">        
+        <div class="navbar-panel pull-left">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#" data-bind="click:addDraft"><span><i class="icon-fixed-width icon-plus"></i> Neuer Entwurf</span></a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>

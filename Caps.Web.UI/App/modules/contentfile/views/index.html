@@ -153,7 +153,7 @@
                 <!-- ko if: selectedFiles().length > 0 -->
                 <span data-bind="text: selectedFiles().length"></span> Dateien ausgewählt
                 <!-- /ko -->
-                <!-- ko if: selectedFiles().length <= 0 && selectedFile() -->
+                <!-- ko if: selectedFiles().length <= 0 && selectedFile() && selectedFile().data() -->
                 <span data-bind="text: selectedFile().data().FileName"></span>
                 <!-- /ko -->
             </div>
