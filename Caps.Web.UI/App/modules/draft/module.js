@@ -1,4 +1,4 @@
-﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter'], function (moduleFactory, routerFactory) {
+﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter', './entities'], function (moduleFactory, routerFactory, model) {
 
     var module = moduleFactory.createModule({
         route: 'drafts*details',
@@ -7,6 +7,8 @@
         nav: 20,
         hash: '#drafts'
     });
+
+    module.extendModel = model.extendModel;
 
     module.initializeRouter = function () {
         module.router = routerFactory.createModuleRouter(module, 'modules/draft', 'drafts')

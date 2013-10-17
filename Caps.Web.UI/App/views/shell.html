@@ -38,5 +38,5 @@
 </script>
 
 <script type="text/html" id="module-tile">
-    <a href="#" data-bind="click: $parent.showModule"><!-- ko text: title --><!-- /ko --> <i class="icon-fixed-width icon-save" data-bind="visible: hasUnsavedChanges"></i></a>    
+    <a href="#" data-bind="click: $parent.showModule"><!-- ko text: title --><!-- /ko --> <span class="module-unsaved-data" data-bind="visible: hasUnsavedChanges">*</span></a>    
 </script>

@@ -12,7 +12,8 @@
 
         self.currentContent = ko.observable();
         self.currentNavigation = ko.observable();
-        self.entity = ko.observable();
+        self.entity = ko.observable().extend({ trackDirtyWithInitialStateOf: false });
+        self.entity.isDirty.subscribe(function (newValue) { module.routeConfig.hasUnsavedChanges(newValue); });
 
         self.activate = function (draftId) {
             var deferred = Q.defer();
@@ -54,7 +55,10 @@
         };
 
         self.saveChanges = function () {
-            manager.saveChanges().then(self.navigateBack);
+            manager.saveChanges().then(function () {
+                self.entity.markClean();
+                self.navigateBack();
+            });
         };
 
         self.deleteDraft = function () {
@@ -67,13 +71,16 @@
         };
 
         function createEntity() {
-            self.entity(manager.createEntity('Draft', { Name: 'Entwurf', Template: 'default' }));
+            var d = manager.createEntity('Draft', { Name: 'Entwurf', Template: 'default' });
+            self.entity(d);
+            self.entity.markClean();
         }
 
         function loadEntity(id) {
             var query = breeze.EntityQuery.from('Drafts').where('Id', '==', id);
             return manager.executeQuery(query).then(function (data) {
                 self.entity(data.results[0]);
+                self.entity.markClean();
             });
         }
 

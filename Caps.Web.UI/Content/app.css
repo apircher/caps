@@ -505,6 +505,10 @@ input.hide-ms-clear::-ms-clear {
     display:none;
 }
 
+.module-unsaved-data {
+    font-weight:normal;
+}
+
 /**
  * Media Queries
  * -----------------------------------------------------------------------------

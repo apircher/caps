@@ -242,6 +242,7 @@
     <Content Include="App\infrastructure\virtualListModel.js" />
     <Content Include="App\modules\contentfile\views\detail.html" />
     <Content Include="App\modules\draft\datacontext.js" />
+    <Content Include="App\modules\draft\entities.js" />
     <Content Include="App\modules\draft\module.html" />
     <Content Include="App\modules\draft\module.js" />
     <Content Include="App\modules\draft\viewmodels\editor.js" />
