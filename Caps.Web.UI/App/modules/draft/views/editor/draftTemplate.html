@@ -1,1 +1,16 @@
-﻿<h1 data-bind="text:title"></h1>
+﻿<div id="draftTemplate">
+    <!-- ko foreach: { data: editor.template().rows, as: 'row' } -->
+    <div class="row">
+        <!-- ko foreach: { data:row.cells, as: 'cell' } -->
+        <div class="dt-content-part" data-bind="draftTemplateClass: cell">
+            <div>
+                <span data-bind="text:title"></span>
+                <p>
+                    <a href="#" data-bind="click: $parents[1].editContentPart">Bearbeiten</a>
+                </p>
+            </div>
+        </div>
+        <!-- /ko -->
+    </div>
+    <!-- /ko -->
+</div>

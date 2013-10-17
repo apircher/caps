@@ -1,6 +1,6 @@
-﻿define(['../module', 'ko', 'Q', 'modules/draft/viewmodels/editor/navigation', 'modules/draft/viewmodels/editor/draftTemplate', 'modules/draft/viewmodels/editor/draftProperties',
-    'entityManagerProvider', 'breeze', 'durandal/app'
-], function (module, ko, Q, Navigation, DraftTemplate, DraftProperties, entityManagerProvider, breeze, app) {
+﻿define(['../module', '../datacontext', 'ko', 'Q', 'modules/draft/viewmodels/editor/navigation', 'modules/draft/viewmodels/editor/draftTemplate', 'modules/draft/viewmodels/editor/draftProperties', 'modules/draft/viewmodels/editor/draftFiles',
+    'entityManagerProvider', 'breeze', 'durandal/app', 'durandal/system'
+], function (module, datacontext, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, entityManagerProvider, breeze, app, system) {
 
     // Editor Model
     function DraftEditor() {
@@ -8,24 +8,26 @@
             manager = entityManagerProvider.createManager(),
             navigationVM,
             draftTemplateVM,
+            draftFilesVM,
             propertiesVM;
 
         self.currentContent = ko.observable();
         self.currentNavigation = ko.observable();
-        self.entity = ko.observable().extend({ trackDirtyWithInitialStateOf: false });
-        self.entity.isDirty.subscribe(function (newValue) { module.routeConfig.hasUnsavedChanges(newValue); });
+        self.entity = ko.observable();
+        self.entity.subscribe(onEntityChanged);
+        self.template = ko.observable();
 
-        self.activate = function (draftId) {
+        self.activate = function (draftIdOrTemplateName) {
             var deferred = Q.defer();
-            if (draftId) {
-                loadEntity(draftId)
+            if (draftIdOrTemplateName && /^[0-9]+$/.test(draftIdOrTemplateName)) {
+                loadEntity(draftIdOrTemplateName)
                     .then(function () {
                         initViews();
                         deferred.resolve();
                     });
             }
             else {
-                createEntity();
+                createEntity(draftIdOrTemplateName);
                 initViews();
                 deferred.resolve();
             }
@@ -45,18 +47,23 @@
             self.currentContent(draftTemplateVM);
         };
 
+        self.showFiles = function () {
+            draftFilesVM = draftFilesVM || new DraftFiles(self);
+            self.currentContent(draftFilesVM);
+        };
+
         self.showProperties = function () {
             propertiesVM = propertiesVM || new DraftProperties(self);
             self.currentContent(propertiesVM);
         };
 
         self.navigateBack = function () {
+            module.routeConfig.hasUnsavedChanges(false);
             module.router.navigate(module.routeConfig.hash);
         };
 
         self.saveChanges = function () {
             manager.saveChanges().then(function () {
-                self.entity.markClean();
                 self.navigateBack();
             });
         };
@@ -70,17 +77,17 @@
                 });
         };
 
-        function createEntity() {
-            var d = manager.createEntity('Draft', { Name: 'Entwurf', Template: 'default' });
+        function createEntity(templateName) {
+            var template = datacontext.getTemplate(templateName);
+            var d = manager.createEntity('Draft', { Name: 'Entwurf', Template: templateName });
+            d.TemplateContent(JSON.stringify(template));
             self.entity(d);
-            self.entity.markClean();
         }
 
         function loadEntity(id) {
             var query = breeze.EntityQuery.from('Drafts').where('Id', '==', id);
             return manager.executeQuery(query).then(function (data) {
                 self.entity(data.results[0]);
-                self.entity.markClean();
             });
         }
 
@@ -96,7 +103,41 @@
             self.currentContent(draftTemplateVM);
             self.currentNavigation(navigationVM);
         }
+        
+        function onEntityChanged() {
+            var e = self.entity();
+            if (e) {
+                getTemplate();
+                e.entityAspect.propertyChanged.subscribe(trackChanges);
+            }
+        }
+
+        function getTemplate() {
+            var e = self.entity();
+            if (e) {
+                self.template(e.deserializeTemplate());
+            }
+        }
+
+        function trackChanges() {
+            module.routeConfig.hasUnsavedChanges(manager.hasChanges());
+        }
     }
+
+    
+    //
+    // Custom knockout bindings
+    //
+    ko.bindingHandlers.draftTemplateClass = {
+        init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var value = ko.unwrap(valueAccessor());
+            $(elem).addClass('col-md-' + value.colspan);
+        },
+        update: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var value = ko.unwrap(valueAccessor());
+            $(elem).addClass('col-md-' + value.colspan);
+        }
+    };
     
     return DraftEditor;
 });

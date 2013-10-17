@@ -5,8 +5,11 @@
      */
     function Draft() {
         var self = this;
-
     }
+
+    Draft.prototype.deserializeTemplate = function () {
+        return JSON.parse(this.TemplateContent());
+    };
 
     Draft.prototype.toJSON = function () {
         var copy = ko.toJS(this);

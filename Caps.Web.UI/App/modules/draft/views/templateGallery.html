@@ -1,0 +1,7 @@
+﻿<h1>Template Gallery</h1>
+
+<ul data-bind="foreach: templates">
+    <li>
+        <a href="#" data-bind="text:name, click: $parent.createDraft"></a>
+    </li>
+</ul>
