@@ -19,6 +19,14 @@ namespace Caps.Web.UI.Infrastructure
 
         protected override Dictionary<Type, List<EntityInfo>> BeforeSaveEntities(Dictionary<Type, List<EntityInfo>> saveMap)
         {
+            ProcessNewOrModifiedDbFileTags(saveMap);
+            ProcessNewOrModifiedDrafts(saveMap);
+
+            return saveMap;
+        }
+        
+        void ProcessNewOrModifiedDbFileTags(Dictionary<Type, List<EntityInfo>> saveMap)
+        {
             if (saveMap.ContainsKey(typeof(DbFileTag)))
             {
                 var deletedFileTagEntityInfos = saveMap[typeof(DbFileTag)].Where(n => n.EntityState == EntityState.Deleted).ToList();
@@ -39,6 +47,29 @@ namespace Caps.Web.UI.Infrastructure
                     }
                 }
             }
+        }
+        void ProcessNewOrModifiedDrafts(Dictionary<Type, List<EntityInfo>> saveMap)
+        {
+            if (saveMap.ContainsKey(typeof(DraftContentPartResource)))
+            {
+                var newResources = saveMap[typeof(DraftContentPartResource)].Where(n => n.EntityState == EntityState.Added);
+                foreach (var entry in newResources)
+                {
+                    var resource = entry.Entity as DraftContentPartResource;
+                    resource.Created.By = user.Identity.Name;
+                    resource.Created.At = DateTime.Now;
+                    resource.Modified.By = user.Identity.Name;
+                    resource.Modified.At = DateTime.Now;
+                }
+
+                var modifiedResources = saveMap[typeof(DraftContentPartResource)].Where(n => n.EntityState == EntityState.Modified);
+                foreach (var entry in modifiedResources)
+                {
+                    var resource = entry.Entity as DraftContentPartResource;
+                    resource.Modified.By = user.Identity.Name;
+                    resource.Modified.At = DateTime.Now;
+                }
+            }
 
             if (saveMap.ContainsKey(typeof(Draft)))
             {
@@ -51,9 +82,18 @@ namespace Caps.Web.UI.Infrastructure
                     draft.Modified.By = user.Identity.Name;
                     draft.Modified.At = DateTime.Now;
                 }
-            }
 
-            return saveMap;
+                var modifiedDrafts = saveMap[typeof(Draft)].Where(n => n.EntityState == EntityState.Modified);
+                foreach (var entry in modifiedDrafts)
+                {
+                    entry.ForceUpdate = true;
+
+                    var draft = entry.Entity as Draft;
+                    draft.Modified.By = user.Identity.Name;
+                    draft.Modified.At = DateTime.Now;
+                    draft.Version++;
+                }
+            }
         }
     }
 }

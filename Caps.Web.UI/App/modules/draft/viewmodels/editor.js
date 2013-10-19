@@ -1,6 +1,6 @@
-﻿define(['../module', '../datacontext', 'ko', 'Q', 'modules/draft/viewmodels/editor/navigation', 'modules/draft/viewmodels/editor/draftTemplate', 'modules/draft/viewmodels/editor/draftProperties', 'modules/draft/viewmodels/editor/draftFiles',
+﻿define(['../module', '../datacontext', 'ko', 'Q', 'modules/draft/viewmodels/editor/navigation', 'modules/draft/viewmodels/editor/draftTemplate', 'modules/draft/viewmodels/editor/draftProperties', 'modules/draft/viewmodels/editor/draftFiles', 'modules/draft/viewmodels/editor/contentPartEditor',
     'entityManagerProvider', 'breeze', 'durandal/app', 'durandal/system'
-], function (module, datacontext, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, entityManagerProvider, breeze, app, system) {
+], function (module, datacontext, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, entityManagerProvider, breeze, app, system) {
 
     // Editor Model
     function DraftEditor() {
@@ -9,7 +9,8 @@
             navigationVM,
             draftTemplateVM,
             draftFilesVM,
-            propertiesVM;
+            propertiesVM,
+            contentPartEditors = [];
 
         self.currentContent = ko.observable();
         self.currentNavigation = ko.observable();
@@ -57,12 +58,19 @@
             self.currentContent(propertiesVM);
         };
 
+        self.showContentPartEditor = function (contentPart) {
+            var cpe = findContentPartEditor(contentPart);
+            if (cpe) self.currentContent(cpe);
+        };
+
         self.navigateBack = function () {
             module.routeConfig.hasUnsavedChanges(false);
             module.router.navigate(module.routeConfig.hash);
         };
 
         self.saveChanges = function () {
+            self.entity().Modified().At(new Date());
+            self.entity().Modified().By('me');
             manager.saveChanges().then(function () {
                 self.navigateBack();
             });
@@ -77,22 +85,53 @@
                 });
         };
 
+        self.getOrCreateContentPart = function (partType) {
+            var cp = ko.utils.arrayFirst(self.entity().ContentParts(), function (p) {
+                return p.PartType() === partType;
+            });
+            if (!cp) {
+                cp = manager.createEntity('DraftContentPart', {
+                    DraftId: self.entity().Id(),
+                    PartType: partType,
+                    ContentType: 'markdown'
+                });
+                manager.addEntity(cp);
+
+                var cpr = manager.createEntity('DraftContentPartResource', {
+                    DraftContentPartId: self.entity().Id(),
+                    Language: 'de',
+                    Content: 'Inhalt ' + partType
+                });
+                manager.addEntity(cpr);
+                
+                cp.Resources.push(cpr);
+                self.entity().ContentParts.push(cp);
+            }
+            return cp;
+        };
+
         function createEntity(templateName) {
             var template = datacontext.getTemplate(templateName);
+
             var d = manager.createEntity('Draft', { Name: 'Entwurf', Template: templateName });
             d.TemplateContent(JSON.stringify(template));
+
+            var res = manager.createEntity('DraftResource', { Language: 'de', Title: 'Neuer Entwurf' });
+            d.Resources.push(res);
+
             self.entity(d);
         }
 
         function loadEntity(id) {
-            var query = breeze.EntityQuery.from('Drafts').where('Id', '==', id);
+            var query = breeze.EntityQuery.from('Drafts').where('Id', '==', id)
+                .expand('Resources, ContentParts, ContentParts.Resources');
             return manager.executeQuery(query).then(function (data) {
                 self.entity(data.results[0]);
             });
         }
 
         function deleteEntity() {
-            self.entity().entityAspect.setDeleted();
+            self.entity().setDeleted();
             manager.saveChanges().then(self.navigateBack);
         }
 
@@ -121,6 +160,19 @@
 
         function trackChanges() {
             module.routeConfig.hasUnsavedChanges(manager.hasChanges());
+        }
+
+        function findContentPartEditor(contentPart) {
+            var cpe = ko.utils.arrayFirst(contentPartEditors, function (item) {
+                return item.contentPart === contentPart;
+            });
+
+            if (!cpe) {
+                cpe = new ContentPartEditor(self, contentPart);
+                contentPartEditors.push(cpe);
+            }
+
+            return cpe;
         }
     }
 

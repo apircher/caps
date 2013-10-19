@@ -1,4 +1,4 @@
-﻿define(['require', 'knockout'], function (require, ko) {
+﻿define(['require', 'ko'], function (require, ko) {
     
     /**
      * Draft Entity
@@ -7,23 +7,56 @@
         var self = this;
     }
 
+    Draft.prototype.findResource = function (language) {
+        var key = language.toLowerCase();
+        return ko.utils.arrayFirst(this.Resources(), function (res) {
+            return res.Language().toLowerCase() === key;
+        });
+    };
+
     Draft.prototype.deserializeTemplate = function () {
         return JSON.parse(this.TemplateContent());
     };
 
-    Draft.prototype.toJSON = function () {
-        var copy = ko.toJS(this);
-        delete copy.entityAspect;
-        delete copy.entityType;
-        delete copy.Created;
-        delete copy.Modified;
-        return copy;
+    Draft.prototype.setDeleted = function () {
+        while (this.Resources().length) {
+            this.Resources()[0].entityAspect.setDeleted();
+        }        
+        while (this.ContentParts().length) {
+            this.ContentParts()[0].setDeleted();
+        }                
+        this.entityAspect.setDeleted();
     };
+
+    /**
+     * DraftContentPart Entity
+     */
+    function DraftContentPart() {
+        var self = this;
+    }
+
+    DraftContentPart.prototype.findResource = function (language) {
+        var key = language.toLowerCase();
+        return ko.utils.arrayFirst(this.Resources(), function (res) {
+            return res.Language().toLowerCase() === key;
+        });
+    };
+
+    DraftContentPart.prototype.setDeleted = function () {
+        while (this.Resources().length) {
+            this.Resources()[0].entityAspect.setDeleted();
+        }
+        this.entityAspect.setDeleted();
+    };
+
 
     return {
         Draft: Draft,
+        DraftContentPart: DraftContentPart,
+
         extendModel: function (metadataStore) {
             metadataStore.registerEntityTypeCtor('Draft', Draft);
+            metadataStore.registerEntityTypeCtor('DraftContentPart', DraftContentPart);
         }
     };
 

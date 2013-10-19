@@ -246,6 +246,7 @@
     <Content Include="App\modules\draft\module.html" />
     <Content Include="App\modules\draft\module.js" />
     <Content Include="App\modules\draft\viewmodels\editor.js" />
+    <Content Include="App\modules\draft\viewmodels\editor\contentPartEditor.js" />
     <Content Include="App\modules\draft\viewmodels\editor\draftFiles.js" />
     <Content Include="App\modules\draft\viewmodels\editor\draftProperties.js" />
     <Content Include="App\modules\draft\viewmodels\editor\navigation.js" />
@@ -253,6 +254,7 @@
     <Content Include="App\modules\draft\viewmodels\index.js" />
     <Content Include="App\modules\draft\viewmodels\templateGallery.js" />
     <Content Include="App\modules\draft\views\editor.html" />
+    <Content Include="App\modules\draft\views\editor\contentPartEditor.html" />
     <Content Include="App\modules\draft\views\editor\draftFiles.html" />
     <Content Include="App\modules\draft\views\editor\draftProperties.html" />
     <Content Include="App\modules\draft\views\editor\navigation.html" />

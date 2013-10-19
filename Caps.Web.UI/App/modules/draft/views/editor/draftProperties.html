@@ -1,4 +1,36 @@
 ﻿<h1>Eigenschaften</h1>
 
-<label>Name</label>
-<input type="text" data-bind="value: editor.entity().Name" />
+<div>
+    <label>Name</label>
+    <input type="text" data-bind="value: editor.entity().Name" />
+</div>
+
+<div>
+    <label>Titel (Deutsch)</label>
+    <input type="text" data-bind="value: editor.entity().findResource('de').Title" />
+</div>
+
+<div>
+    <label>Id</label>
+    <span data-bind="text: editor.entity().Id"></span>
+</div>
+
+<div>
+    <label>Version</label>
+    <span data-bind="text: editor.entity().Version"></span>
+</div>
+
+<div>
+    <label>Vorlage</label>
+    <span data-bind="text: editor.entity().Template"></span>
+</div>
+
+<div>
+    <label>Erstellt von</label>
+    <span data-bind="text: editor.entity().Created().By"></span> <span data-bind="text: moment.utc(editor.entity().Created().At()).format('LLLL')"></span>
+</div>
+
+<div>
+    <label>Letzte Änderung</label>
+    <span data-bind="text: editor.entity().Modified().By"></span> <span data-bind="text: moment.utc(editor.entity().Modified().At()).format('LLLL')"></span>
+</div>
