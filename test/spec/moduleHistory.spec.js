@@ -29,13 +29,13 @@ define(['infrastructure/moduleHistory', 'durandal/system', 'spec/testModuleA'], 
             it('navigates to the module route when no activations are present', function () {
                 spyOn(moduleHistory.router, 'navigate');
                 moduleHistory.activateLast();
-                expect(moduleHistory.router.navigate).toHaveBeenCalledWith(testModule.routeConfig.hash, true);
+                expect(moduleHistory.router.navigate).toHaveBeenCalledWith(testModule.routeConfig.hash);
             });
             it('navigates to the last activation when one is present', function () {
                 moduleHistory.registerActivation(testActivation, testInstruction);
                 spyOn(moduleHistory.router, 'navigate');
                 moduleHistory.activateLast();
-                expect(moduleHistory.router.navigate).toHaveBeenCalledWith('#xyz', true);
+                expect(moduleHistory.router.navigate).toHaveBeenCalledWith('#xyz');
             });
             it('does not remove the last activation', function () {
                 moduleHistory.registerActivation(testActivation, testInstruction);
@@ -53,7 +53,7 @@ define(['infrastructure/moduleHistory', 'durandal/system', 'spec/testModuleA'], 
                 moduleHistory.registerActivation(testActivation2, testInstruction2);
                 spyOn(moduleHistory.router, 'navigate');
                 moduleHistory.navigateBack();
-                expect(moduleHistory.router.navigate).toHaveBeenCalledWith('#xyz', true);
+                expect(moduleHistory.router.navigate).toHaveBeenCalledWith('#xyz');
             });
         });
     });

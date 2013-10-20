@@ -11,6 +11,26 @@
         self.selectedFile = self.list.selectedItem;
         self.selectedFiles = self.list.selectedItems;
         self.initialized = false;
+
+        self.loadHandler = function (element, e) {
+            var firstPage = e.firstVisible.viewModel ? self.list.findItemPage(e.firstVisible.viewModel) : undefined;
+            var lastPage = e.lastVisible.viewModel ? self.list.findItemPage(e.lastVisible.viewModel) : undefined;
+            if (firstPage && lastPage) {
+                for (var i = firstPage.index; i <= lastPage.index; i++) {
+                    checkPage.call(self, i + 1);
+                }
+            }
+            function checkPage(pageNumber) {
+                var page = this.list.findPage(pageNumber);
+                if (!page.isLoaded && !page.isLoading) {
+                    this.list.markPageLoading(pageNumber);
+                    this.loadPage(pageNumber).then(function () {
+                        this.list.markPageLoaded(pageNumber);
+                        e.pageLoaded(pageNumber);
+                    });
+                }
+            }
+        };
     }
 
     FileSelectionDialog.prototype.activate = function () {
@@ -35,27 +55,7 @@
                 });
         }).promise();
     };
-
-    FileSelectionDialog.prototype.loadHandler = function (element, e) {
-        var firstPage = e.firstVisible.viewModel ? this.list.findItemPage(e.firstVisible.viewModel) : undefined;
-        var lastPage = e.lastVisible.viewModel ? this.list.findItemPage(e.lastVisible.viewModel) : undefined;
-        if (firstPage && lastPage) {
-            for (var i = firstPage.index; i <= lastPage.index; i++) {
-                checkPage.call(this, i + 1);
-            }
-        }
-        function checkPage(pageNumber) {
-            var page = this.list.findPage(pageNumber);
-            if (!page.isLoaded && !page.isLoading) {
-                this.list.markPageLoading(pageNumber);
-                loadPage(pageNumber).then(function () {
-                    this.list.markPageLoaded(pageNumber);
-                    e.pageLoaded(pageNumber);
-                });
-            }
-        }
-    };
-
+    
     FileSelectionDialog.prototype.selectOk = function () {
         var selection = ko.utils.arrayMap(this.selectedFiles(), function (f) {
             return f.data();

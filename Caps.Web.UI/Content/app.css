@@ -72,6 +72,10 @@
     min-width:100%;
 }
 
+.page-content {    
+    padding:0 25px 0 15px;
+}
+
 /** 
  *  Top Navbar
  */
@@ -356,7 +360,6 @@
 #drop-zone {
     overflow:hidden;
     background:#fafafa;
-    padding:0 25px 0 15px;
 }
 .drop-zone-placeholder p {
     text-align:center;

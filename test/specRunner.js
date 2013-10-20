@@ -15,7 +15,8 @@ require.config({
         'bootstrap': '../Scripts/bootstrap',
         'jquery': '../Scripts/jquery-2.0.3',
         'Q': '../Scripts/q',
-        'moment': '../Scripts/moment'
+        'moment': '../Scripts/moment',
+        'typeahead': '../Scripts/typeahead.min'
     },
     shim: {
         'bootstrap': {
@@ -42,7 +43,7 @@ require.config({
 });
 
 
-require(['jquery', 'jasmine-html', 'knockout', 'knockout.validation'], function ($, jasmine) {
+require(['jquery', 'jasmine-html', 'durandal/app', 'knockout', 'knockout.validation'], function ($, jasmine, app) {
     var jasmineEnv = jasmine.getEnv();
     jasmineEnv.updateInterval = 1000;
     
@@ -53,6 +54,14 @@ require(['jquery', 'jasmine-html', 'knockout', 'knockout.validation'], function 
     jasmineEnv.specFilter = function (spec) {
         return htmlReporter.specFilter(spec);
     };
+    
+    app.configurePlugins({
+        router: true,
+        dialog: true,
+        widget: true,
+        fileSelection: true
+    });
+    app.start();
     
     var specs = [
         'spec/testModuleA',

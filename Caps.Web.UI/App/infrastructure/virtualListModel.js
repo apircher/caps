@@ -23,7 +23,7 @@ define(['require', 'knockout', 'jquery'], function (require, ko, $) {
         this.items = data;
         this.count = data && data.length ? data.length : 0;
         this.isLoading = false;
-        this.isLoaded = isLoaded !== undefined ? isLoaded : (data && data.length);
+        this.isLoaded = isLoaded !== undefined ? isLoaded : (data && data.length > 0);
     };
 
     /**

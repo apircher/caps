@@ -8,7 +8,7 @@
         self.selectFiles = function () {
             app.selectFiles({
                 module: module,
-                title: 'Dateien zu ' + editor.entity().Name() + ' hinzufügen'
+                title: 'Dateien für ' + editor.entity().Name() + ' wählen'
             }).then(function (result) {
                 if (result.dialogResult) {
                     ko.utils.arrayForEach(result.selectedFiles, function (file) {

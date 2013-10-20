@@ -6,7 +6,8 @@
     var modules = ko.observableArray();
 
     function registerModule(module) {
-        system.log('register module ' + module.routeConfig.title);
+        if (module.routeConfig)
+            system.log('register module ' + module.routeConfig.title);
         modules.push(module);
     }
 
