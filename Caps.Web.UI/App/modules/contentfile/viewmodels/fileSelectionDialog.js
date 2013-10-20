@@ -1,9 +1,11 @@
 ﻿define(['plugins/fileSelection', 'plugins/dialog', 'ko', './fileListItem', 'durandal/system', '../datacontext', 'infrastructure/virtualListModel'
 ], function (fileSelection, dialog, ko, FileListItem, system, datacontext, VirtualListModel) {
 
-    function FileSelectionDialog() {
+    function FileSelectionDialog(options) {
         var self = this;
+        options = options || {};
 
+        self.title = options.title || 'Dateien hinzufügen';
         self.list = new VirtualListModel.VirtualList(35, null, FileListItem);
         self.isLoading = ko.observable(false);        
         self.selectedFile = self.list.selectedItem;

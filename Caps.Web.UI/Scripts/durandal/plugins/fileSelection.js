@@ -8,13 +8,20 @@
 
     var fileService = {
         install: function () {
-            app.selectFiles = function (module) {
-                if (!DialogVM) {
-                    system.log('fileSelection: No Dialog Model/View registered.');
-                    return;
-                }
-                if (module)
-                    return module.showDialog(new DialogVM());
+            app.selectFiles = function (options) {
+                return system.defer(function (dfd) {
+                    options = options || {};
+
+                    if (!DialogVM) {
+                        system.log('fileSelection: No Dialog Model/View registered.');
+                        dfd.reject();
+                    }
+
+                    if (options.module) {
+                        options.module.showDialog(new DialogVM(options)).then(dfd.resolve);
+                    }
+
+                }).promise();
             };
         },
 

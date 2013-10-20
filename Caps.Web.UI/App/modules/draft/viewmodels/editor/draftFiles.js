@@ -6,7 +6,10 @@
         self.editor = editor;
 
         self.selectFiles = function () {
-            app.selectFiles(module).then(function (result) {
+            app.selectFiles({
+                module: module,
+                title: 'Dateien zu ' + editor.entity().Name() + ' hinzufügen'
+            }).then(function (result) {
                 if (result.dialogResult) {
                     ko.utils.arrayForEach(result.selectedFiles, function (file) {
                         editor.createDraftFile(file);
@@ -17,6 +20,7 @@
 
         self.removeFile = function (file) {
             file.setDeleted();
+            editor.entity().Files.valueHasMutated();
         };
     }
 

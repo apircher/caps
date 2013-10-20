@@ -2,6 +2,10 @@
 
     <div>
         <div>
+            <h1 data-bind="text: title"></h1>
+        </div>
+
+        <div>
             <div class="row thumbnails-fixed-size list-files" data-bind="lazyLoad: { data: list.items(), loadHandler: loadHandler }">
                 <div class="col-sm-6 col-md-3 col-lg-2">
                     <div class="thumbnail-container" data-bind="css: { 'item-checked': isSelected  }">
