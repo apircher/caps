@@ -1,9 +1,9 @@
-﻿<div>
-    <textarea style="width:100%;min-height:350px" data-bind="value: resource.Content"></textarea>
+﻿<div class="text-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .contentpart-nav', minWidth: 979 }">
+    <textarea class="form-control" data-bind="value: resource.Content"></textarea>
 </div>
-<div>
+<div class="contentpart-nav">
     <div class="pull-right">
-        <span data-bind="text: title"></span>
+        <select data-bind="options: contentTypes, optionsText: 'title', optionsValue: 'value', value: contentPart.ContentType"></select>
     </div>
-    <select data-bind="options: contentTypes, optionsText: 'title', optionsValue: 'value', value: contentPart.ContentType"></select>
+    <span data-bind="text: title"></span>
 </div>

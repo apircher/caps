@@ -1,7 +1,7 @@
 ﻿define(function (require) {
 
     function DraftProperties(editor) {
-        this.title = 'Eigenschaften';
+        this.name = 'DraftProperties';
         this.editor = editor;
     }
 

@@ -1,11 +1,30 @@
 ﻿<div id="drafts-index" class="app-page bottom-fixed-navbar-container">
     
-    <ul data-bind="foreach: drafts">
-        <li>
-            <a data-bind="click: $parent.editDraft" href="#"><span data-bind="text: Name"></span></a>
-        </li>
-    </ul>
-    
+    <div class="row">
+        <div class="col-md-4 col-lg-3">
+            <ul data-bind="foreach: drafts" class="data-list">
+                <li data-bind="css: { active: $data === $parent.selectedDraft() }, click: $parent.selectDraft">
+                    <div class="pull-right">
+                        <span data-bind="text: $parent.formatDate(Modified.At)"></span>
+                    </div>
+                    <span data-bind="text: Name"></span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-8 col-lg-9">
+            <div class="draft-preview">
+                <!-- ko if: selectedDraft() -->
+                <div data-bind="foreach: selectedDraft().ContentParts">
+                    <strong data-bind="text: PartType"></strong>
+                    <p data-bind="text: findResource('de').Content"></p>
+                </div>
+                <p>
+                    <a href="#" data-bind="click: function() { editDraft(selectedDraft()); }"><i class="icon-edit"></i> Bearbeiten</a>
+                </p>
+                <!-- /ko -->
+            </div>
+        </div>
+    </div>
         
     <div class="navbar navbar-default navbar-fixed-bottom">        
         <div class="navbar-panel pull-left">

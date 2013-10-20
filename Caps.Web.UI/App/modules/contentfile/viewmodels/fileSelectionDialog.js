@@ -1,5 +1,5 @@
-﻿define(['plugins/fileSelection', 'plugins/dialog', 'ko', './fileListItem', 'durandal/system', '../datacontext', 'infrastructure/virtualListModel'
-], function (fileSelection, dialog, ko, FileListItem, system, datacontext, VirtualListModel) {
+﻿define(['plugins/fileSelection', 'plugins/dialog', 'ko', './fileListItem', 'durandal/system', '../datacontext', 'infrastructure/virtualListModel', './fileSearchControl'
+], function (fileSelection, dialog, ko, FileListItem, system, datacontext, VirtualListModel, FileSearchControl) {
 
     function FileSelectionDialog(options) {
         var self = this;
@@ -11,6 +11,13 @@
         self.selectedFile = self.list.selectedItem;
         self.selectedFiles = self.list.selectedItems;
         self.initialized = false;
+        self.searchControl = new FileSearchControl();
+
+        self.searchControl.refreshResults = function () {
+            self.list.resetSelection();
+            self.list.removeAll();
+            self.loadPage(1);
+        };
 
         self.loadHandler = function (element, e) {
             var firstPage = e.firstVisible.viewModel ? self.list.findItemPage(e.firstVisible.viewModel) : undefined;
@@ -41,10 +48,11 @@
     };
 
     FileSelectionDialog.prototype.loadPage = function (pageNumber) {
-        var self = this;
+        var self = this,
+            sc = self.searchControl;
         return system.defer(function (dfd) {
             self.isLoading(true);
-            datacontext.searchFiles('', pageNumber, self.list.itemsPerPage(), '', '')
+            datacontext.searchFiles(sc.searchWords(), pageNumber, self.list.itemsPerPage(), sc.sortOptions.getOrderBy(), sc.currentFilter)
                 .then(function (data) {
                     self.list.addPage(data, pageNumber);
                     dfd.resolve();

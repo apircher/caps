@@ -2,7 +2,7 @@
 
     function DraftTemplate(editor) {
         var self = this;
-        this.title = 'DraftTemplate';
+        this.name = 'DraftTemplate';
         this.editor = editor;
 
         self.editContentPart = function (templateCell) {

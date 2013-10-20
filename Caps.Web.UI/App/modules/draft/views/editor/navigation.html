@@ -1,7 +1,7 @@
-﻿<h2 data-bind="text:editor.entity().Name"></h2>
+﻿<h3 class="nav-header" data-bind="text:editor.entity().Name"></h3>
 
-<ul class="list-unstyled">
-    <li><a href="#" data-bind="click: editor.showEditorMain">Inhalte</a></li>
-    <li><a href="#" data-bind="click: editor.showFiles">Dateien</a></li>
-    <li><a href="#" data-bind="click: editor.showProperties">Eigenschaften</a></li>
+<ul class="nav nav-pills nav-stacked">
+    <li data-bind="css: { active: currentView() == 'DraftTemplate' }"><a href="#" data-bind="click: editor.showEditorMain">Inhalte</a></li>
+    <li data-bind="css: { active: currentView() == 'DraftFiles' }"><a href="#" data-bind="click: editor.showFiles">Dateien</a></li>
+    <li data-bind="css: { active: currentView() == 'DraftProperties' }"><a href="#" data-bind="click: editor.showProperties">Eigenschaften</a></li>
 </ul>

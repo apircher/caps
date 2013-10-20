@@ -2,11 +2,10 @@
     <!-- ko foreach: { data: editor.template().rows, as: 'row' } -->
     <div class="row">
         <!-- ko foreach: { data:row.cells, as: 'cell' } -->
-        <div class="dt-content-part" data-bind="draftTemplateClass: cell">
+        <div class="dt-content-part" data-bind="draftTemplateClass: cell, click: $parents[1].editContentPart">
             <div>
-                <span data-bind="text:title"></span>
                 <p>
-                    <a href="#" data-bind="click: $parents[1].editContentPart">Bearbeiten</a>
+                    <a href="#" data-bind="click: $parents[1].editContentPart"><i class="icon-edit"></i> <span data-bind="text:title"></span></a>
                 </p>
             </div>
         </div>

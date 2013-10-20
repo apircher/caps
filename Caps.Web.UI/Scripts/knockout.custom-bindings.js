@@ -53,30 +53,6 @@ define(['knockout', 'jquery', 'bootstrap', 'typeahead'], function (ko, $) {
     //
     // Twitter Typeahead Binding.
     //
-    /*ko.bindingHandlers.typeahead = {
-        init: function (elem, valueAccessor) {
-            var $elem = $(elem),
-                options = ko.unwrap(valueAccessor()),
-                valObservable = options.value;
-            $elem.typeahead({ name: options.name, local: options.local });
-            ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {
-                $elem.typeahead('destroy');
-            });
-
-            if (valObservable) {
-                valObservable.subscribe(function () {
-                    $elem.typeahead('setQuery', valObservable());
-                });
-            }
-        },
-
-        update: function (elem, valueAccessor) {
-            var $elem = $(elem),
-                options = ko.unwrap(valueAccessor());
-            $elem.typeahead({ name: options.name, local: options.local });
-        }
-    };*/
-
     // From https://github.com/billpull/knockout-bootstrap.
     ko.bindingHandlers.typeahead = {
         init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {

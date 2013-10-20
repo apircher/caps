@@ -13,7 +13,7 @@ using WebMatrix.WebData;
 
 namespace Caps.Web.UI.Controllers
 {
-    [SetUserActivity]
+    [SetUserActivity, OutputCache(VaryByParam = "*", Duration = 0, NoStore = true)]
     public class CapsController : Controller
     {
         CapsDbContext db;

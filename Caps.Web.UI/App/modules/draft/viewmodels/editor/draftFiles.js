@@ -2,7 +2,7 @@
 
     function DraftFiles(editor) {
         var self = this;
-        self.title = 'DraftFiles';
+        self.name = 'DraftFiles';
         self.editor = editor;
 
         self.selectFiles = function () {

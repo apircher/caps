@@ -8,6 +8,12 @@
         return manager.executeQuery(query);
     }
 
+    function getDraft(id) {
+        var query = EntityQuery.from('Drafts').where('Id', '==', id)
+                .expand('Resources, ContentParts, ContentParts.Resources, Files, Files.Resources');
+        return manager.executeQuery(query);
+    }
+
     var templates = null;
     function getTemplates() {
         if (!templates) templates = initTemplates();
@@ -83,6 +89,7 @@
 
     return {
         getDrafts: getDrafts,
+        getDraft: getDraft,
         getTemplates: getTemplates,
         getTemplate: getTemplate
     };

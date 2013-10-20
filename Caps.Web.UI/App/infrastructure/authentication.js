@@ -27,7 +27,11 @@
     
     function getUser() {
         return Q.when($.ajax('/Caps/GetCurrentUser', { method: 'post' }))
-            .then(function (data) { user(new UserModel(data.IsAuthenticated, data.UserName, data.Roles, data)); })
+            .then(function (data) {
+                user(new UserModel(data.IsAuthenticated, data.UserName, data.Roles, data));
+                if (data.IsAuthenticated)
+                    app.trigger('caps:authentication:loggedOn', user());
+            })
             .fail(function (error) { system.log('getCurrentUser failed: ' + error.message); });
     }
 
