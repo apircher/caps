@@ -110,6 +110,17 @@
             return cp;
         };
 
+        self.createDraftFile = function (file) {
+            var df = manager.createEntity('DraftFile', { DraftId: this.entity().Id(), Name: file.FileName() });
+            manager.addEntity(df);
+
+            var res = manager.createEntity('DraftFileResource', { Language: 'de', DbFileId: file.Id() });
+            manager.addEntity(res);
+
+            df.Resources.push(res);
+            self.entity().Files.push(df);
+        };
+
         function createEntity(templateName) {
             var template = datacontext.getTemplate(templateName);
 
@@ -124,7 +135,7 @@
 
         function loadEntity(id) {
             var query = breeze.EntityQuery.from('Drafts').where('Id', '==', id)
-                .expand('Resources, ContentParts, ContentParts.Resources');
+                .expand('Resources, ContentParts, ContentParts.Resources, Files, Files.Resources');
             return manager.executeQuery(query).then(function (data) {
                 self.entity(data.results[0]);
             });

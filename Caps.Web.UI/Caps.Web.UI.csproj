@@ -238,9 +238,13 @@
     <Content Include="App\modules\contentfile\searchGrammerModule.js" />
     <Content Include="App\modules\contentfile\viewmodels\detail.js" />
     <Content Include="App\modules\contentfile\searchGrammer.js" />
+    <Content Include="App\modules\contentfile\viewmodels\fileListItem.js" />
     <Content Include="App\modules\contentfile\viewmodels\index.js" />
     <Content Include="App\infrastructure\virtualListModel.js" />
+    <Content Include="App\modules\contentfile\viewmodels\fileSelectionDialog.js" />
+    <Content Include="App\modules\contentfile\viewmodels\uploadManager.js" />
     <Content Include="App\modules\contentfile\views\detail.html" />
+    <Content Include="App\modules\contentfile\views\fileSelectionDialog.html" />
     <Content Include="App\modules\draft\datacontext.js" />
     <Content Include="App\modules\draft\entities.js" />
     <Content Include="App\modules\draft\module.html" />
@@ -407,6 +411,7 @@
     <Content Include="Scripts\durandal\composition.js" />
     <Content Include="Scripts\durandal\events.js" />
     <Content Include="Scripts\durandal\plugins\dialog.js" />
+    <Content Include="Scripts\durandal\plugins\fileSelection.js" />
     <Content Include="Scripts\durandal\plugins\history.js" />
     <Content Include="Scripts\durandal\plugins\http.js" />
     <Content Include="Scripts\durandal\plugins\observable.js" />

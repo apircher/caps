@@ -1,4 +1,4 @@
-﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter', './entities'], function (moduleFactory, routerFactory, model) {
+﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter', './entities', './viewmodels/fileSelectionDialog'], function (moduleFactory, routerFactory, model) {
 
     var module = moduleFactory.createModule({
         route: 'files*details',

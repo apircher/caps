@@ -25,6 +25,7 @@
                 throw new Error('The parameter name has to be a string.');
             var moduleId = this.convertNameToModuleId(name);
             return require([moduleId], function (module) {
+                module.moduleName = name;
                 registry.registerModule(module);
             });
         },

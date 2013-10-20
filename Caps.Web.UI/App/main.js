@@ -46,7 +46,7 @@ requirejs.config({
 });
 
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authentication', 'infrastructure/antiForgeryToken',
-    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider', 
+    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider',
     'knockout.custom-bindings', 'knockout.extenders', 'infrastructure/validation', '../Scripts/safari.cancelZoom'],
     function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider) {
 
@@ -59,7 +59,8 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
         app.configurePlugins({
             router: true,
             dialog: true,
-            widget: true
+            widget: true,
+            fileSelection: true
         });
 
         // Plug Q´s promise mechanism into Durandal.

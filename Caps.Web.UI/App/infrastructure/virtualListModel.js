@@ -4,9 +4,10 @@ define(['require', 'knockout', 'jquery'], function (require, ko, $) {
     /**
      * VirtualListItem Class
      */
-    function VirtualListItem(data) {
+    function VirtualListItem(data, list) {
         var self = this;
         self.data = ko.observable(data);
+        self.list = list;
     }
 
     /**
@@ -46,6 +47,12 @@ define(['require', 'knockout', 'jquery'], function (require, ko, $) {
         self.pages = ko.observableArray([]);
         self.items = ko.computed(function () { return self.getItems.call(self); });
         self.suspendEvents = false;
+        self.selectedItem = ko.observable();
+        self.selectedItems = ko.computed(function () {
+            return ko.utils.arrayFilter(self.items(), function (f) {
+                return f.isSelected();
+            });
+        });
 
         if (data) this.addPage(data, 1);
     }
@@ -59,7 +66,7 @@ define(['require', 'knockout', 'jquery'], function (require, ko, $) {
 
     VirtualList.prototype.addItem = function (data) {
         var self = this,
-            vm = new self.ListItemType(data),
+            vm = new self.ListItemType(data, self),
             page = self.pages().length ? self.pages()[0] : undefined;
         if (!page) {
             page = new VirtualListPage(self.pages().length, [vm], true);
@@ -82,7 +89,7 @@ define(['require', 'knockout', 'jquery'], function (require, ko, $) {
             return self.addItem(data);
 
         var item = arr[index],
-            vm = new self.ListItemType(data),
+            vm = new self.ListItemType(data, self),
             page = self.findItemPage(item),
             indexInPage = page.items.indexOf(item);
 
@@ -161,10 +168,19 @@ define(['require', 'knockout', 'jquery'], function (require, ko, $) {
             this.pages.valueHasMutated();
     };
 
+    VirtualList.prototype.selectItem = function (item) {
+        if (this.selectedItem() !== item)
+            this.selectedItem(item);
+    };
+
+    VirtualList.prototype.resetSelection = function () {
+        this.selectedItem(null);
+    };
+
     VirtualList.prototype._addItems = function (data, pageIndex) {
         var self = this,
             items = ko.utils.arrayMap(data, function (d) {
-                return new self.ListItemType(d);
+                return new self.ListItemType(d, self);
             }),
             page = self.pages()[pageIndex];
         if (page) {
@@ -181,7 +197,7 @@ define(['require', 'knockout', 'jquery'], function (require, ko, $) {
         for (var pageIndex = 0; pageIndex < numPages; pageIndex++) {
             var isLastPage = pageIndex == numPages - 1,
                 length = isLastPage ? numItems - (pageIndex * itemsPerPage) : itemsPerPage,
-                page = new VirtualListPage(pageIndex, buildDummyItems(length), false);
+                page = new VirtualListPage(pageIndex, buildDummyItems.call(self, length), false);
             arr.push(page);
         }
         self.pages(arr);
@@ -189,7 +205,7 @@ define(['require', 'knockout', 'jquery'], function (require, ko, $) {
         function buildDummyItems(count) {
             var dummies = [];
             for (var i = 0; i < count; i++)
-                dummies.push(new self.ListItemType());
+                dummies.push(new self.ListItemType(undefined, this));
             return dummies;
         }
     };

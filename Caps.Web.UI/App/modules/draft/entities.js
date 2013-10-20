@@ -49,6 +49,19 @@
         this.entityAspect.setDeleted();
     };
 
+    /**
+     * DraftFile Entity
+     */
+    function DraftFile() {
+    }
+
+    DraftFile.prototype.setDeleted = function () {
+        while (this.Resources().length) {
+            this.Resources()[0].entityAspect.setDeleted();
+        }
+        this.entityAspect.setDeleted();
+    };
+
 
     return {
         Draft: Draft,
@@ -57,6 +70,7 @@
         extendModel: function (metadataStore) {
             metadataStore.registerEntityTypeCtor('Draft', Draft);
             metadataStore.registerEntityTypeCtor('DraftContentPart', DraftContentPart);
+            metadataStore.registerEntityTypeCtor('DraftFile', DraftFile);
         }
     };
 
