@@ -26,7 +26,9 @@ requirejs.config({
 
         'entityManagerProvider': 'infrastructure/entityManagerProvider',
         'authentication': 'infrastructure/authentication',
-        'localization': 'infrastructure/localization'
+        'localization': 'infrastructure/localization',
+
+        'markdown': '../Scripts/Markdown.Converter'
 
     },
     shim: {

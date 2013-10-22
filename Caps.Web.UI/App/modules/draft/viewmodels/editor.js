@@ -86,9 +86,7 @@
         };
 
         self.getOrCreateContentPart = function (partType) {
-            var cp = ko.utils.arrayFirst(self.entity().ContentParts(), function (p) {
-                return p.PartType() === partType;
-            });
+            var cp = self.entity().findContentPart(partType);
             if (!cp) {
                 cp = manager.createEntity('DraftContentPart', {
                     DraftId: self.entity().Id(),
@@ -186,21 +184,6 @@
             return cpe;
         }
     }
-
-    
-    //
-    // Custom knockout bindings
-    //
-    ko.bindingHandlers.draftTemplateClass = {
-        init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var value = ko.unwrap(valueAccessor());
-            $(elem).addClass('col-md-' + value.colspan);
-        },
-        update: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var value = ko.unwrap(valueAccessor());
-            $(elem).addClass('col-md-' + value.colspan);
-        }
-    };
-    
+        
     return DraftEditor;
 });

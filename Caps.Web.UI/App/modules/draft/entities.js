@@ -14,6 +14,13 @@
         });
     };
 
+    Draft.prototype.findContentPart = function (partType) {
+        var part = ko.utils.arrayFirst(this.ContentParts(), function (p) {
+            return p.PartType().toLowerCase() === partType.toLowerCase();
+        });
+        return part;
+    };
+
     Draft.prototype.deserializeTemplate = function () {
         return JSON.parse(this.TemplateContent());
     };

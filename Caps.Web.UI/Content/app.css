@@ -577,6 +577,15 @@ input.hide-ms-clear::-ms-clear {
     min-height:350px;
     padding:15px;
 }
+    .draft-preview pre {
+        border:0;
+        border-radius:0;
+        margin:0 0 10px;
+        padding:0;
+        font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-size:14px;
+        background:transparent;
+    }
 
 ul.data-list {
     list-style-type:none;

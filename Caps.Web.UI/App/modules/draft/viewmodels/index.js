@@ -1,11 +1,13 @@
 ﻿define(['../module', '../datacontext', 'ko'], function (module, datacontext, ko) {
 
     var drafts = ko.observableArray(),
-        selectedDraft = ko.observable();
+        selectedDraft = ko.observable(),
+        template = ko.observable();
 
     var vm = {
         drafts: drafts,
         selectedDraft: selectedDraft,
+        template: template,
 
         activate: function () {
             loadDrafts();
@@ -21,7 +23,12 @@
 
         selectDraft: function (draft) {
             selectedDraft(draft);
-            datacontext.getDraft(draft.Id());
+            template(null);
+
+            datacontext.getDraft(draft.Id()).then(function (data) {
+                var t = selectedDraft().deserializeTemplate();
+                template(t);
+            });
         },
 
         formatDate: function (date) {
@@ -38,6 +45,26 @@
             }
 
             return d.format('D.MMM YY HH:mm');            
+        },
+
+        getContent: function (templateCell) {
+            var cp = selectedDraft().findContentPart(templateCell.name);
+            if (cp) {
+                var res = cp.findResource('de');
+                if (res) return res.Content();
+            }
+            return '<i>[leer]</i>';
+        },
+
+        getContentPartTemplate: function (templateCell) {
+            var cp = selectedDraft().findContentPart(templateCell.name);
+            if (cp) {
+                if (cp.ContentType().toLowerCase() === 'html')
+                    return 'CT_HTML';
+                if (cp.ContentType().toLowerCase() === 'markdown')
+                    return 'CT_MARKDOWN';
+            }
+            return 'CT_TEXT';
         }
     };
 
