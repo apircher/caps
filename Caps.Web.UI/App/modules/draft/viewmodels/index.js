@@ -1,8 +1,14 @@
-﻿define(['../module', '../datacontext', 'ko'], function (module, datacontext, ko) {
+﻿define(['../module', '../datacontext', 'ko', 'durandal/app'], function (module, datacontext, ko, app) {
 
     var drafts = ko.observableArray(),
         selectedDraft = ko.observable(),
-        template = ko.observable();
+        template = ko.observable(),
+        initialized = false;
+
+    app.on('caps:draft:saved', function (draft) {
+        if (selectedDraft() && draft.Id() === selectedDraft().Id())
+            loadDraft(draft.Id());
+    });
 
     var vm = {
         drafts: drafts,
@@ -10,7 +16,10 @@
         template: template,
 
         activate: function () {
-            loadDrafts();
+            if (!initialized) {
+                initialized = true;
+                loadDrafts();
+            }
         },
 
         addDraft: function () {
@@ -21,14 +30,14 @@
             module.router.navigate('#drafts/edit/' + draft.Id());
         },
 
+        editSelectedDraft: function () {
+            vm.editDraft(selectedDraft());
+        },
+
         selectDraft: function (draft) {
             selectedDraft(draft);
             template(null);
-
-            datacontext.getDraft(draft.Id()).then(function (data) {
-                var t = selectedDraft().deserializeTemplate();
-                template(t);
-            });
+            loadDraft(draft.Id());
         },
 
         formatDate: function (date) {
@@ -71,6 +80,17 @@
     function loadDrafts() {
         datacontext.getDrafts().then(function (data) {
             drafts(data.results);
+            if (data.results.length) {
+                selectedDraft(data.results[0]);
+                loadDraft(selectedDraft().Id());
+            }
+        });
+    }
+
+    function loadDraft(id) {
+        datacontext.getDraft(id).then(function (data) {
+            var t = data.results[0].deserializeTemplate();
+            template(t);
         });
     }
 

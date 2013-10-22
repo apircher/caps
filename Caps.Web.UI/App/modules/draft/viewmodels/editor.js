@@ -10,7 +10,8 @@
             draftTemplateVM,
             draftFilesVM,
             propertiesVM,
-            contentPartEditors = [];
+            contentPartEditors = [],
+            router = module.router;
 
         self.currentContent = ko.observable();
         self.currentNavigation = ko.observable();
@@ -64,6 +65,14 @@
         };
 
         self.navigateBack = function () {
+            if (self.currentContent() && self.currentContent().name === 'ContentPartEditor') {
+                self.showEditorMain();
+                return;
+            }
+            self.showDraftsIndex();
+        };
+
+        self.showDraftsIndex = function () {
             module.routeConfig.hasUnsavedChanges(false);
             module.router.navigate(module.routeConfig.hash);
         };
@@ -72,7 +81,8 @@
             self.entity().Modified().At(new Date());
             self.entity().Modified().By('me');
             manager.saveChanges().then(function () {
-                self.navigateBack();
+                app.trigger('caps:draft:saved', self.entity());
+                self.showDraftsIndex();
             });
         };
 
@@ -98,7 +108,7 @@
                 var cpr = manager.createEntity('DraftContentPartResource', {
                     DraftContentPartId: self.entity().Id(),
                     Language: 'de',
-                    Content: 'Inhalt ' + partType
+                    Content: ''
                 });
                 manager.addEntity(cpr);
                 
@@ -146,9 +156,24 @@
 
         function initViews() {
             navigationVM = navigationVM || new Navigation(self);
-            draftTemplateVM = draftTemplateVM || new DraftTemplate(self);
 
-            self.currentContent(draftTemplateVM);
+            var qp = router.activeInstruction().queryParams;
+            if (qp && qp.t) {
+                if (qp.t === 'DraftProperties')
+                    self.showProperties();
+                else if (qp.t === 'DraftFiles')
+                    self.showFiles();
+                else {
+                    var cp = self.entity().findContentPart(qp.t);
+                    if (cp) self.showContentPartEditor(cp);
+                }
+            }
+
+            if (!self.currentContent()) {
+                draftTemplateVM = draftTemplateVM || new DraftTemplate(self);
+                self.currentContent(draftTemplateVM);
+            }
+            
             self.currentNavigation(navigationVM);
         }
         

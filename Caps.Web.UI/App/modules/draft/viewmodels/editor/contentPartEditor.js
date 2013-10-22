@@ -1,7 +1,6 @@
 ﻿define(['ko'], function (ko) {
 
-    function ContentPartEditor(editor, contentPart) {
-        this.title = contentPart.PartType();
+    function ContentPartEditor(editor, contentPart) {        
         this.name = 'ContentPartEditor';
         this.editor = editor;
         this.contentPart = contentPart;
@@ -11,6 +10,12 @@
             { title: 'Markdown', value: 'markdown' },
             { title: 'Text', value: 'text' }
         ]);
+
+        this.title = contentPart.PartType();
+        this.templateCell = editor.template().findCell(contentPart.PartType());
+        if (this.templateCell) {
+            this.title = this.templateCell.title;
+        }
     }
 
     return ContentPartEditor;

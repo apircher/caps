@@ -13,8 +13,7 @@
         </div>
         <div class="col-md-8 col-lg-9">
             <div class="draft-preview">
-                <!-- ko if: selectedDraft() -->
-                <!-- ko if: template() -->
+                <!-- ko if: selectedDraft() && template() -->
                 <!-- ko foreach: { data: template().rows, as: 'row' } -->
                 <div class="row">
                     <!-- ko foreach: { data:row.cells, as: 'cell' } -->
@@ -25,10 +24,6 @@
                 </div>
                 <!-- /ko -->
                 <!-- /ko -->
-                <p>
-                    <a href="#" data-bind="click: function() { editDraft(selectedDraft()); }"><i class="icon-edit"></i> Bearbeiten</a>
-                </p>
-                <!-- /ko -->
             </div>
         </div>
     </div>
@@ -38,6 +33,9 @@
             <ul class="nav navbar-nav">
                 <li>
                     <a href="#" data-bind="click:addDraft"><span><i class="icon-fixed-width icon-plus"></i> Neuer Entwurf</span></a>
+                </li>
+                <li data-bind="visible: selectedDraft()">
+                    <a href="#" data-bind="click:editSelectedDraft"><span><i class="icon-fixed-width icon-edit"></i> Entwurf Bearbeiten</span></a>
                 </li>
             </ul>
         </div>

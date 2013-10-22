@@ -22,7 +22,21 @@
     };
 
     Draft.prototype.deserializeTemplate = function () {
-        return JSON.parse(this.TemplateContent());
+        var t = JSON.parse(this.TemplateContent());
+
+        t.findCell = function (cellName) {
+            for (var r = 0; r < t.rows.length; r++) {
+                var row = t.rows[r];
+                for (var c = 0; c < row.cells.length; c++) {
+                    var cell = row.cells[c];
+                    if (cell.name.toLowerCase() === cellName.toLowerCase())
+                        return cell;
+                }
+            }
+            return undefined;
+        };
+
+        return t;
     };
 
     Draft.prototype.setDeleted = function () {
