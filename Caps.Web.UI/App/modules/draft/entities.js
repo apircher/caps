@@ -70,6 +70,17 @@
         this.entityAspect.setDeleted();
     };
 
+    DraftContentPart.prototype.previewText = function (language, length) {
+        language = language || 'de';
+        length = length || 80;
+        var res = this.findResource(language);
+        if (res && res.Content()) {
+            var content = res.Content();
+            return content.length > length ? content.substr(0, length - 3) + '...' : content;
+        }
+        return '';
+    };
+
     /**
      * DraftFile Entity
      */

@@ -550,7 +550,7 @@ input.hide-ms-clear::-ms-clear {
         box-sizing:padding-box;
         padding:1em;
     }
-        .dt-content-part > div {
+        .dt-content-part > div > a {
             font-weight:bold;
         }
 

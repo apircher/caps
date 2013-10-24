@@ -7,6 +7,9 @@
                 <p>
                     <a href="#" data-bind="click: $parents[1].editContentPart"><i class="icon-edit"></i> <span data-bind="text:title"></span></a>
                 </p>
+                <p>
+                    <i data-bind="text: $parents[1].previewText($data)"></i>
+                </p>
             </div>
         </div>
         <!-- /ko -->
