@@ -37,11 +37,7 @@
         };
 
         self.shouldActivate = function (router, currentData, newData) {
-            if (currentData[0] === newData[0]) {
-                module.router.attached();
-                return false;
-            }
-            return true;
+            return currentData[0] !== newData[0];
         };
 
         self.showEditorMain = function () {

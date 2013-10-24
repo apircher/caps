@@ -572,10 +572,9 @@ input.hide-ms-clear::-ms-clear {
 }
 
 .draft-preview {
-    overflow: hidden;
     background:#eee;
     min-height:350px;
-    padding:15px;
+    overflow:hidden;
 }
     .draft-preview .row {
         border-bottom:1px solid #fff;
@@ -584,9 +583,7 @@ input.hide-ms-clear::-ms-clear {
         border-bottom:0;
     }
         .draft-preview .row > div {
-            padding-top:15px;
             border-right:1px solid #fff;
-            min-height:100%;
         }
 
         .draft-preview .row > div:last-of-type {
@@ -615,9 +612,10 @@ ul.data-list {
     list-style-type:none;
     padding:0;
     margin:0 0 15px;
+    box-sizing:border-box;
 }
     ul.data-list li {
-        padding:7px 15px;
+        padding:7px 7.5px;
         border-bottom:1px solid #eee;
     }
     ul.data-list li:first-of-type {

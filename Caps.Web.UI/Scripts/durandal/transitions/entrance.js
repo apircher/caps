@@ -1,5 +1,5 @@
 /**
- * Durandal 2.0.0 Copyright (c) 2012 Blue Spire Consulting, Inc. All Rights Reserved.
+ * Durandal 2.0.1 Copyright (c) 2012 Blue Spire Consulting, Inc. All Rights Reserved.
  * Available via the MIT license.
  * see: http://durandaljs.com or https://github.com/BlueSpire/Durandal for details.
  */
@@ -28,24 +28,10 @@ define(['durandal/system', 'durandal/composition', 'jquery'], function(system, c
      * @class EntranceModule
      * @constructor
      */
-    var entrance = function (context) {
-        var savedOverflowX,
-            $body = $('body');
-        
+    var entrance = function(context) {
         return system.defer(function(dfd) {
             function endTransition() {
-                restoreOverflowX();
                 dfd.resolve();
-            }
-
-            function hideOverflowX() {
-                savedOverflowX = $body.css('overflow-x');
-                $body.css('overflow-x', 'hidden');
-            }
-
-            function restoreOverflowX() {
-                if (savedOverflowX)
-                    $body.css('overflow-x', savedOverflowX);
             }
 
             function scrollIfNeeded() {
@@ -62,7 +48,6 @@ define(['durandal/system', 'durandal/composition', 'jquery'], function(system, c
 
                 function startTransition() {
                     scrollIfNeeded();
-                    hideOverflowX();
                     context.triggerAttach();
 
                     var startValues = {
@@ -75,14 +60,18 @@ define(['durandal/system', 'durandal/composition', 'jquery'], function(system, c
                     var $child = $(context.child);
 
                     $child.css(startValues);
-                    $child.animate(endValues, duration, 'swing', function () {
-                        $child.css(clearValues);
-                        endTransition();
+                    $child.animate(endValues, {
+                        duration: duration,
+                        easing: 'swing',
+                        always: function () {
+                            $child.css(clearValues);
+                            endTransition();
+                        }
                     });
                 }
 
                 if (context.activeView) {
-                    $(context.activeView).fadeOut(fadeOutDuration, startTransition);
+                    $(context.activeView).fadeOut({ duration: fadeOutDuration, always: startTransition });
                 } else {
                     startTransition();
                 }
