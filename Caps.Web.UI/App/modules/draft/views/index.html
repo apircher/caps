@@ -5,7 +5,7 @@
             <ul data-bind="foreach: drafts" class="data-list">
                 <li data-bind="css: { active: $data === $parent.selectedDraft() }, click: $parent.selectDraft">
                     <div class="pull-right">
-                        <span data-bind="text: $parent.formatDate(Modified.At)"></span>
+                        <span data-bind="text: $parent.formatDate($data.Modified().At())"></span>
                     </div>
                     <span data-bind="text: Name"></span>
                 </li>
