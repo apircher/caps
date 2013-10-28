@@ -608,6 +608,11 @@ input.hide-ms-clear::-ms-clear {
         margin-top:0;
     }
 
+    .template-preview-cell {
+        overflow:hidden;
+        padding:15px 0;
+    }
+
 ul.data-list {
     list-style-type:none;
     padding:0;

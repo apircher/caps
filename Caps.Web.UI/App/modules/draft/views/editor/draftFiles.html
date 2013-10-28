@@ -1,9 +1,11 @@
-﻿<h1>DraftFiles</h1>
-
-<ul data-bind="foreach: editor.entity().Files">
-    <li>
-        <span data-bind="text: Name"></span> <a href="#" data-bind="click: $parent.removeFile">Entfernen</a>
-    </li>
-</ul>
-
+﻿
 <p><a href="#" data-bind="click: selectFiles">Dateien hinzufügen</a></p>
+
+<div class="row" data-bind="foreach: editor.entity().Files">
+    <div class="col-xs-4 col-md-3 col-lg-2">
+        <div class="thumbnail-container">
+            <a class="thumbnail" href="#" data-bind="text:Name, click: $parent.createDraft"></a>
+            <a href="#" data-bind="click: $parent.removeFile">Entfernen</a>
+        </div>
+    </div>
+</div>

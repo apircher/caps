@@ -1,36 +1,38 @@
-﻿<h1>Eigenschaften</h1>
+﻿<form role="form" class="form-horizontal">
+    <div class="form-group">
+        <label for="draftName" class="col-md-3 col-lg-2">Name</label>
+        <div class="col-md-9 col-lg-10">
+            <input type="text" data-bind="value: editor.entity().Name" class="form-control" id="draftName" />
+        </div>
+    </div>
 
-<div>
-    <label>Name</label>
-    <input type="text" data-bind="value: editor.entity().Name" />
-</div>
+    <div class="form-group">
+        <label for="draftTitle" class="col-md-3 col-lg-2">Titel (Deutsch)</label>
+        <div class="col-md-9 col-lg-10">
+            <input type="text" data-bind="value: editor.entity().findResource('de').Title" class="form-control" id="draftTitle" />
+        </div>
+    </div>
 
-<div>
-    <label>Titel (Deutsch)</label>
-    <input type="text" data-bind="value: editor.entity().findResource('de').Title" />
-</div>
+    <div class="form-group">
+        <label class="col-md-3 col-lg-2">Id</label>
+        <p class="form-static-control col-md-3 col-lg-4"><span data-bind="text: editor.entity().Id"></span></p>
 
-<div>
-    <label>Id</label>
-    <span data-bind="text: editor.entity().Id"></span>
-</div>
+        <label class="col-md-3 col-lg-2">Version</label>
+        <p class="form-static-control col-md-3 col-lg-4"><span data-bind="text: editor.entity().Version"></span></p>
+    </div>
 
-<div>
-    <label>Version</label>
-    <span data-bind="text: editor.entity().Version"></span>
-</div>
+    <div class="form-group">
+        <label class="col-md-3 col-lg-2">Vorlage</label>
+        <p class="form-static-control col-md-9 col-lg-10"><span data-bind="text: editor.entity().Template"></span></p>
+    </div>
 
-<div>
-    <label>Vorlage</label>
-    <span data-bind="text: editor.entity().Template"></span>
-</div>
+    <div class="form-group">
+        <label class="col-md-3 col-lg-2">Erstellt von</label>
+        <p class="form-static-control col-md-9 col-lg-10"><span data-bind="text: editor.entity().Created().By"></span> <span data-bind="text: moment.utc(editor.entity().Created().At()).fromNow(), attr: { title: moment.utc(editor.entity().Created().At()).format('LLLL') }"></span></p>
+    </div>
 
-<div>
-    <label>Erstellt von</label>
-    <span data-bind="text: editor.entity().Created().By"></span> <span data-bind="text: moment.utc(editor.entity().Created().At()).format('LLLL')"></span>
-</div>
-
-<div>
-    <label>Letzte Änderung</label>
-    <span data-bind="text: editor.entity().Modified().By"></span> <span data-bind="text: moment.utc(editor.entity().Modified().At()).format('LLLL')"></span>
-</div>
+    <div class="form-group">
+        <label class="col-md-3 col-lg-2">Letzte Änderung</label>
+        <p class="form-static-control col-md-9 col-lg-10"><span data-bind="text: editor.entity().Modified().By"></span> <span data-bind="text: moment.utc(editor.entity().Modified().At()).fromNow(), attr: { title: moment.utc(editor.entity().Modified().At()).format('LLLL') }"></span></p>
+    </div>
+</form>

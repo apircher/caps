@@ -5,9 +5,16 @@
         template = ko.observable(),
         initialized = false;
 
-    app.on('caps:draft:saved', function (draft) {
+    app.on('caps:draft:saved', function (args) {
+        var draft = args.entity;
         if (selectedDraft() && draft.Id() === selectedDraft().Id())
             loadDraft(draft.Id());
+        if (args.isNewDraft) {
+            loadDrafts().
+                then(function () {
+                    vm.selectDraftById(draft.Id());
+                });            
+        }
     });
 
     var vm = {
@@ -18,7 +25,7 @@
         activate: function () {
             if (!initialized) {
                 initialized = true;
-                loadDrafts();
+                loadDrafts().then(selectFirstDraft);
             }
         },
 
@@ -38,6 +45,11 @@
             selectedDraft(draft);
             template(null);
             loadDraft(draft.Id());
+        },
+
+        selectDraftById: function(id) {
+            var draft = ko.utils.arrayFirst(drafts(), function (d) { return d.Id() === id; });
+            if (draft) vm.selectDraft(draft);
         },
 
         formatDate: function (date) {
@@ -78,13 +90,17 @@
     };
 
     function loadDrafts() {
-        datacontext.getDrafts().then(function (data) {
+        return datacontext.getDrafts().then(function (data) {
             drafts(data.results);
-            if (data.results.length) {
-                selectedDraft(data.results[0]);
-                loadDraft(selectedDraft().Id());
-            }
         });
+    }
+
+    function selectFirstDraft() {
+        if (drafts().length) {
+            var d = drafts()[0];
+            selectedDraft(d);
+            loadDraft(d.Id());
+        }
     }
 
     function loadDraft(id) {

@@ -17,7 +17,7 @@
             <div class="row">
                 <!-- ko foreach: { data:row.cells, as: 'cell' } -->
                 <div data-bind="draftTemplateClass: cell, click: $parents[1].editContentPart">
-                    <div data-bind="template: { name: $parents[1].getContentPartTemplate($data) }"></div>
+                    <div data-bind="template: { name: $parents[1].getContentPartTemplate($data) }" class="template-preview-cell"></div>
                 </div>
                 <!-- /ko -->
             </div>

@@ -18,6 +18,7 @@
         self.entity = ko.observable();
         self.entity.subscribe(onEntityChanged);
         self.template = ko.observable();
+        self.isNewDraft = ko.observable(false);
 
         self.activate = function (draftIdOrTemplateName) {
             var deferred = Q.defer();
@@ -29,6 +30,7 @@
                     });
             }
             else {
+                self.isNewDraft(true);
                 createEntity(draftIdOrTemplateName);
                 initViews();
                 deferred.resolve();
@@ -77,7 +79,7 @@
             self.entity().Modified().At(new Date());
             self.entity().Modified().By('me');
             manager.saveChanges().then(function () {
-                app.trigger('caps:draft:saved', self.entity());
+                app.trigger('caps:draft:saved', { entity: self.entity(), isNewDraft: self.isNewDraft() });
                 self.showDraftsIndex();
             });
         };
