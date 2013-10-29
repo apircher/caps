@@ -1,5 +1,5 @@
-﻿define(['plugins/fileSelection', 'plugins/dialog', 'ko', './fileListItem', 'durandal/system', '../datacontext', 'infrastructure/virtualListModel', './fileSearchControl'
-], function (fileSelection, dialog, ko, FileListItem, system, datacontext, VirtualListModel, FileSearchControl) {
+﻿define(['plugins/dialog', 'ko', './fileListItem', 'durandal/system', '../datacontext', 'infrastructure/virtualListModel', './fileSearchControl'
+], function (dialog, ko, FileListItem, system, datacontext, VirtualListModel, FileSearchControl) {
 
     function FileSelectionDialog(options) {
         var self = this;
@@ -82,7 +82,11 @@
         });
     };
 
-    fileSelection.registerDialog(FileSelectionDialog);
-    
+    FileSelectionDialog.install = function () {
+        require(['plugins/fileSelection'], function (fileSelection) {
+            fileSelection.registerDialog(FileSelectionDialog);
+        });
+    };
+        
     return FileSelectionDialog;
 });

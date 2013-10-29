@@ -1,9 +1,5 @@
-﻿define(function (require) {
-
-    var ko = require('knockout'),
-        moment = require('moment'),
-        authentication = require('authentication');
-
+﻿define(['require', 'ko', 'moment', 'authentication'], function (require, ko, moment, authentication) {
+    
     //
     // Class "User".
     //

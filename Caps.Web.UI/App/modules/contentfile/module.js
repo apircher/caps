@@ -1,4 +1,4 @@
-﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter', './entities', './viewmodels/fileSelectionDialog'], function (moduleFactory, routerFactory, model) {
+﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter', './entities', 'durandal/app'], function (moduleFactory, routerFactory, model, app) {
 
     var module = moduleFactory.createModule({
         route: 'files*details',
@@ -16,8 +16,14 @@
                 { route: '', moduleId: 'viewmodels/index', title: 'Dateien', nav: false },
                 { route: 'detail/:fileId', moduleId: 'viewmodels/detail', title: 'Details', nav: false }
             ])
-            .buildNavigationModel();
+            .buildNavigationModel();                
     };
 
+    app.on('caps:started', function () {
+        require(['modules/contentfile/viewmodels/fileSelectionDialog'], function (FileSelectionDialog) {
+            FileSelectionDialog.install();
+        });
+    });
+                
     return module;
 });

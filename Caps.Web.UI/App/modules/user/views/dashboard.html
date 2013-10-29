@@ -23,7 +23,7 @@
                     <a data-bind="text: fullName, attr: { href: '#users/detail/' + userName(), title: userName }"></a>
                     <div class="visible-xs">
                         <!-- ko if: hasEverLoggedIn -->
-                        <span data-bind="text: lastActivityDateFormatted, attr: { title: moment(lastActivityDate()).format('LLLL') }"></span> zuletzt aktiv
+                        <span data-bind="text: lastActivityDateFormatted, attr: { title: $parent.moment(lastActivityDate()).format('LLLL') }"></span> zuletzt aktiv
                         <!-- /ko -->
                         <!-- ko if: !hasEverLoggedIn() -->
                         noch nie aktiv
@@ -31,7 +31,7 @@
                     </div>
                 </td>
                 <td class="hidden-xs"><span data-bind="text: email"></span></td>
-                <td class="hidden-xs"><span data-bind="text: lastActivityDateFormatted, textTimeout: { interval: 30000, observable: lastActivityDate }, attr: { title: moment(lastActivityDate()).format('LLLL') }"></span></td>
+                <td class="hidden-xs"><span data-bind="text: lastActivityDateFormatted, textTimeout: { interval: 30000, observable: lastActivityDate }, attr: { title: $parent.moment(lastActivityDate()).format('LLLL') }"></span></td>
                 <td class="vertical-centered">
                     <a data-bind="attr: { href: '#users/edit/' + userName() }" title="Bearbeiten" class="no-underline"><i class="fa fa-edit fa-2x"></i></a>                     
                 </td>

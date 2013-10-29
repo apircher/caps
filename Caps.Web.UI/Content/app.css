@@ -749,6 +749,8 @@ ul.data-list {
 
 .input-group .twitter-typeahead {
     width:100%;
+    display:block;
+    float:left;
 }
 
 .twitter-typeahead .tt-query,
