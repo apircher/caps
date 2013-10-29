@@ -21,18 +21,18 @@
                             <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: FileName, alt: FileName }, lazyImage: true" />
                             <!-- /ko -->
                             <!-- ko if: !isImage() -->
-                            <span data-bind="attr: { title: FileName }"><i class="icon-file icon-4x"></i></span>
+                            <span data-bind="attr: { title: FileName }"><i class="fa fa-file fa-4x"></i></span>
                             <!-- /ko -->
                             <!-- /ko -->
                             <!-- /ko -->
                         </a>
                         <!-- ko if: data() -->
                         <div class="item-check" data-bind="click: toggleSelected, clickBubble: false, attr: { title: data().FileName() + ' auswählen' }">
-                            <i data-bind="css: { 'icon-check': isSelected, 'icon-check-empty': !isSelected() }"></i>
+                            <i class="fa" data-bind="css: { 'fa-check': isSelected, 'fa-square-o': !isSelected() }"></i>
                         </div>
                         <div class="thumbnail-controls">
                             <!--<a class="btn-link pull-right" data-bind="click: $parent.showDetail, clickBubble: false" title="Details anzeigen"><i class="icon-arrow-right icon-2x"></i></a>-->
-                            <a class="btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="icon-trash icon-2x"></i></a>
+                            <a class="btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="fa fa-trash-o fa-2x"></i></a>
                         </div>
                         <!-- /ko -->
                     </div>
@@ -45,10 +45,10 @@
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="#" data-bind="click: selectCancel"><span><i class="icon-fixed-width icon-arrow-left"></i> Abbrechen</span></a>
+                    <a href="#" data-bind="click: selectCancel"><span><i class="fa-fw fa-arrow-left"></i> Abbrechen</span></a>
                 </li>
                 <li>
-                    <a href="#" data-bind="click: selectOk"><span><i class="icon-fixed-width icon-save"></i> Hinzufügen</span></a>
+                    <a href="#" data-bind="click: selectOk"><span><i class="fa-fw fa-save"></i> Hinzufügen</span></a>
                 </li>
             </ul>
         </div>

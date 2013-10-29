@@ -1,4 +1,4 @@
-﻿define(['../module', '../datacontext', 'ko', 'durandal/app'], function (module, datacontext, ko, app) {
+﻿define(['../module', '../datacontext', 'ko', 'durandal/app', 'moment'], function (module, datacontext, ko, app, moment) {
 
     var drafts = ko.observableArray(),
         selectedDraft = ko.observable(),

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.AspNet.WebApi.Core.de</id>
+    <version>5.0.0</version>
+    <title>Deutsche Ressourcen für Microsoft ASP.NET Web API Core Libraries</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://www.microsoft.com/web/webpi/eula/aspnetcomponent_rtw_DEU.htm</licenseUrl>
+    <projectUrl>http://www.asp.net/web-api</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Dieses Paket enthält die deutschen Ressourcen für Microsoft ASP.NET Web API Core Libraries.</description>
+    <summary>Deutsche Ressourcen für das Microsoft.AspNet.WebApi.Core-Paket</summary>
+    <copyright>© Microsoft Corporation. Alle Rechte vorbehalten.</copyright>
+    <language>de</language>
+    <tags>Microsoft AspNet WebApi AspNetWebApi</tags>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.WebApi.Core" version="[5.0.0]" />
+    </dependencies>
+  </metadata>
+</package>

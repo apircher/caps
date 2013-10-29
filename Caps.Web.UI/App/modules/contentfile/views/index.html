@@ -9,7 +9,7 @@
                         <!-- Filter Dropdown -->
                         <div class="input-group-btn" data-bind="event: { 'show.bs.dropdown': beginSetFilter }">
                             <a id="A1" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn-dropdown">
-                                <span><i class="icon-filter"></i></span>
+                                <span><i class="fa fa-filter"></i></span>
                                 <b class="caret"/>
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="A1">
@@ -19,7 +19,7 @@
                                         <ul class="checkbox-list" role="menu">
                                             <li>
                                                 <a role="menuitem" tabindex="-1" href="#" class="checkable-item" data-bind="click: filterOptions().toggleAll, clickBubble: false">
-                                                    <span class="icon"><i data-bind="css: { 'icon-check-empty': !filterOptions().allSelected(), 'icon-check': filterOptions().allSelected() }"></i></span>
+                                                    <i class="fa fa-fw" data-bind="css: { 'fa-square-o': !filterOptions().allSelected(), 'fa-check-square-o': filterOptions().allSelected() }"></i>
                                                     <span class="mnu-label">Alle</span>
                                                 </a>
                                             </li>
@@ -31,7 +31,7 @@
                                         <ul class="checkbox-list" role="menu" data-bind="foreach: filterOptions().filters">
                                             <li>
                                                 <a role="menuitem" tabindex="-1" href="#" class="checkable-item" data-bind="click: toggleSelect, clickBubble: false">
-                                                    <span class="icon"><i data-bind="css: { 'icon-check-empty': !isSelected(), 'icon-check': isSelected() }"></i></span> 
+                                                    <i class="fa fa-fw" data-bind="css: { 'fa-square-o': !isSelected(), 'fa-check-square-o': isSelected() }"></i>
                                                     <span data-bind="text: title" class="mnu-label"></span>
                                                 </a>
                                             </li>
@@ -51,7 +51,7 @@
                         <!-- Sort Button/Dropdown -->
                         <div class="input-group-btn btn-group split-btn">
                             <a href="#" role="button" data-bind="click: sortOptions.toggleSortDirection">
-                                <span><i data-bind="css: { 'icon-sort-by-alphabet': sortOptions.sortDirection() == 'asc', 'icon-sort-by-alphabet-alt': sortOptions.sortDirection() != 'asc' }" class="icon-sort-by-alphabet"></i></span>
+                                <span><i data-bind="css: { 'fa-sort-alpha-asc': sortOptions.sortDirection() == 'asc', 'fa-sort-alpha-desc': sortOptions.sortDirection() != 'asc' }" class="fa"></i></span>
                             </a>
                             <a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn-dropdown">
                                 <b class="caret"/>
@@ -60,14 +60,14 @@
                                 <!-- ko foreach: sortOptions.columns -->
                                 <li role="presentation">
                                     <a role="menuitem" tabindex="-1" href="#" data-bind="click: sort">
-                                        <span class="pull-right" data-bind="visible: isSelected"><i class="icon-ok"></i></span> 
+                                        <span class="pull-right" data-bind="visible: isSelected"><i class="fa fa-check"></i></span> 
                                         <span data-bind="text: title" class="mnu-label"></span>
                                     </a>
                                 </li>
                                 <!-- /ko -->
                                 <li role="presentation" class="divider"></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortOptions.sortAsc"><span class="pull-right" data-bind="    visible: sortOptions.sortDirection() == 'asc'"><i class="icon-ok"></i></span> Aufsteigend</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortOptions.sortDesc"><span class="pull-right" data-bind="    visible: sortOptions.sortDirection() == 'desc'"><i class="icon-ok"></i></span> Absteigend</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortOptions.sortAsc"><span class="pull-right" data-bind="visible: sortOptions.sortDirection() == 'asc'"><i class="fa fa-check"></i></span> Aufsteigend</a></li>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortOptions.sortDesc"><span class="pull-right" data-bind="visible: sortOptions.sortDirection() == 'desc'"><i class="fa fa-check"></i></span> Absteigend</a></li>
                             </ul>
                         </div>
                     </div>
@@ -88,18 +88,17 @@
                         <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: FileName, alt: FileName }, lazyImage: true, click: function () { $parents[1].showDetail($parent); }" />
                         <!-- /ko -->
                         <!-- ko if: !isImage() -->
-                        <span data-bind="attr: { title: FileName }"><i class="icon-file icon-4x" data-bind="    click: function () { $parents[1].showDetail($parent); }"></i></span>
+                        <span data-bind="attr: { title: FileName }"><i class="fa fa-file fa-4x" data-bind="    click: function () { $parents[1].showDetail($parent); }"></i></span>
                         <!-- /ko -->
                         <!-- /ko -->
                         <!-- /ko -->
                     </a>
                     <!-- ko if: data() -->          
                         <div class="item-check" data-bind="click: toggleSelected, clickBubble: false, attr: { title: data().FileName() + ' auswählen' }">
-                            <i data-bind="css: { 'icon-check': isSelected, 'icon-check-empty': !isSelected() }"></i>
+                            <i class="fa" data-bind="css: { 'fa-check-square-o': isSelected, 'fa-square-o': !isSelected() }"></i>
                         </div>          
                         <div class="thumbnail-controls">
-                            <!--<a class="btn-link pull-right" data-bind="click: $parent.showDetail, clickBubble: false" title="Details anzeigen"><i class="icon-arrow-right icon-2x"></i></a>-->
-                            <a class="btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="icon-trash icon-2x"></i></a>
+                            <a class="btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="fa fa-trash-o fa-2x"></i></a>
                         </div>
                     <!-- /ko -->
                 </div>
@@ -124,7 +123,7 @@
             <ul class="nav navbar-nav">
                 <li>
                     <a class="fileinput-button">
-                        <span><i class="icon-fixed-width icon-plus"></i> Dateien hinzufügen</span>
+                        <span><i class="fa fa-plus"></i> Dateien hinzufügen</span>
                         <!-- ko with: uploadManager -->
                         <input type="file" name="files" data-url="api/DbFileUpload" 
                             data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: $('#drop-zone'), drop: filesDropped }" multiple>
@@ -133,12 +132,12 @@
                 </li>
                 <li>
                     <a href="#" data-bind="click: showSelectedFile, visible: selectedFile()">
-                        <i class="icon-arrow-right"></i> Details
+                        <i class="fa fa-arrow-right"></i> Details
                     </a>
                 </li>
                 <li data-bind="visible: selectedFiles().length > 0">
                     <a href="#" data-bind="click: deleteSelection">
-                        <i class="icon-remove"></i> Auswahl löschen
+                        <i class="fa fa-times"></i> Auswahl löschen
                     </a>
                 </li>
             </ul>
@@ -163,7 +162,7 @@
             </div>
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="icon-fixed-width icon-refresh" data-bind="css: { 'icon-spin': isLoading }"></i></a>
+                    <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="fa fa-refresh fa-fw" data-bind="css: { 'fa-spin': isLoading }"></i></a>
                 </li>
             </ul>
         </div>

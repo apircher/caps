@@ -47,7 +47,7 @@
                 <input type="text" class="form-control hide-ms-clear" data-bind="typeahead: tagNames, value: tagName, event: { 'typeahead:selected': updateTagName, 'typeahead:autocompleted': updateTagName }" />
                 <span class="input-group-btn">
                     <button data-bind="click: addTag" class="btn btn-default">
-                        <span><i class="icon-plus"></i></span>
+                        <span><i class="fa fa-plus"></i></span>
                     </button>
                 </span>
             </div>
@@ -58,9 +58,9 @@
         <ul data-bind="foreach: file().Tags" class="list-group">
             <li data-bind="if: Tag()" class="list-group-item">
                 <div class="pull-right">
-                    <button class="btn btn-link btn-xs" data-bind="click: $parent.removeTag"><i class="icon-remove"></i></button>
+                    <button class="btn btn-link btn-xs" data-bind="click: $parent.removeTag"><i class="fa fa-times"></i></button>
                 </div>
-                <i class="icon-tag"></i> <span data-bind="text: Tag().Name"></span>
+                <i class="fa fa-tag"></i> <span data-bind="text: Tag().Name"></span>
             </li>
         </ul>
 
@@ -73,14 +73,14 @@
             <ul class="nav navbar-nav">
                 <li>
                     <a href="#" data-bind="click: navigateBack">
-                        <i class="icon-fixed-width icon-arrow-left"></i> Zurück</a>
+                        <i class="fa fa-arrow-left"></i> Zurück</a>
                 </li>
             </ul>
         </div>
         <div class="navbar-panel pull-right">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="icon-fixed-width icon-refresh" data-bind="css: { 'icon-spin': isLoading }"></i></a>
+                    <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="fa fa-refresh fa-fw" data-bind="css: { 'fa-spin': isLoading }"></i></a>
                 </li>
             </ul>
         </div> 
@@ -93,7 +93,7 @@
     </script>
     <script type="text/html" id="file-preview-general">
         <div class="file-preview unknown-preview">
-            <span><i class="icon-file icon-4x"></i></span>
+            <span><i class="fa fa-file fa-4x"></i></span>
         </div>
     </script>
 </div>

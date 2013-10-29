@@ -276,7 +276,7 @@
             display: inline-block;
             vertical-align: middle;
         }
-        .thumbnails-fixed-size .thumbnail .thumbnail-content > i.icon-spin,
+        .thumbnails-fixed-size .thumbnail .thumbnail-content > i.fa-spin,
         .thumbnails-fixed-size .thumbnail .thumbnail-content > i.center-icon-h {
             position: relative;
             top: 50%;

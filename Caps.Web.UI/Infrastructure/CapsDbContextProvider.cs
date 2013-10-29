@@ -1,5 +1,5 @@
-﻿using Breeze.WebApi;
-using Breeze.WebApi.EF;
+﻿using Breeze.ContextProvider;
+using Breeze.ContextProvider.EF6;
 using Caps.Data;
 using Caps.Data.Model;
 using System;

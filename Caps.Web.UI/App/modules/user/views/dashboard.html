@@ -16,7 +16,7 @@
             <tr>
                 <td class="vertical-centered row-header-icon">
                     <a data-bind="attr: { href: '#users/detail/' + userName() }" class="no-underline">
-                        <i class="icon-user icon-2x" data-bind="css: { 'user-online': isOnline(), 'user-offline': !isOnline() }, attr: { title: isOnline() ? 'Online' : 'Offline' }"></i>
+                        <i class="fa fa-user fa-2x" data-bind="css: { 'user-online': isOnline(), 'user-offline': !isOnline() }, attr: { title: isOnline() ? 'Online' : 'Offline' }"></i>
                     </a>
                 </td>
                 <td>
@@ -33,10 +33,10 @@
                 <td class="hidden-xs"><span data-bind="text: email"></span></td>
                 <td class="hidden-xs"><span data-bind="text: lastActivityDateFormatted, textTimeout: { interval: 30000, observable: lastActivityDate }, attr: { title: moment(lastActivityDate()).format('LLLL') }"></span></td>
                 <td class="vertical-centered">
-                    <a data-bind="attr: { href: '#users/edit/' + userName() }" title="Bearbeiten" class="no-underline"><i class="icon-edit icon-2x"></i></a>                     
+                    <a data-bind="attr: { href: '#users/edit/' + userName() }" title="Bearbeiten" class="no-underline"><i class="fa fa-edit fa-2x"></i></a>                     
                 </td>
                 <td class="vertical-centered">
-                    <a href="#" data-bind="click: $parent.deleteUser" title="Löschen" class="no-underline"><i class="icon-remove icon-2x"></i></a>
+                    <a href="#" data-bind="click: $parent.deleteUser" title="Löschen" class="no-underline"><i class="fa fa-times fa-2x"></i></a>
                 </td>
             </tr>
         </tbody>
@@ -47,7 +47,7 @@
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="#" data-bind="click: addUser"><i class="icon-fixed-width icon-plus"></i> Neuer Benutzer</a>
+                    <a href="#" data-bind="click: addUser"><i class="fa fa-plus"></i> Neuer Benutzer</a>
                 </li>
             </ul>
         </div>
@@ -58,7 +58,7 @@
             </div>
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="icon-fixed-width icon-refresh" data-bind="css: { 'icon-spin': isLoading }"></i></a>
+                    <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="fa fa-refresh fa-fw" data-bind="css: { 'fa-spin': isLoading }"></i></a>
                 </li>
             </ul>
         </div>

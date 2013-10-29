@@ -2,7 +2,7 @@
     <!-- Filter Dropdown -->
     <div class="input-group-btn" data-bind="event: { 'show.bs.dropdown': beginSetFilter }">
         <a id="A1" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn-dropdown">
-            <span><i class="icon-filter"></i></span>
+            <span><i class="fa fa-filter"></i></span>
             <b class="caret" />
         </a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="A1">
@@ -12,7 +12,7 @@
                     <ul class="checkbox-list" role="menu">
                         <li>
                             <a role="menuitem" tabindex="-1" href="#" class="checkable-item" data-bind="click: filterOptions().toggleAll, clickBubble: false">
-                                <span class="icon"><i data-bind="css: { 'icon-check-empty': !filterOptions().allSelected(), 'icon-check': filterOptions().allSelected() }"></i></span>
+                                <span class="icon"><i data-bind="css: { 'fa-square': !filterOptions().allSelected(), 'fa-check': filterOptions().allSelected() }"></i></span>
                                 <span class="mnu-label">Alle</span>
                             </a>
                         </li>
@@ -24,7 +24,7 @@
                     <ul class="checkbox-list" role="menu" data-bind="foreach: filterOptions().filters">
                         <li>
                             <a role="menuitem" tabindex="-1" href="#" class="checkable-item" data-bind="click: toggleSelect, clickBubble: false">
-                                <span class="icon"><i data-bind="css: { 'icon-check-empty': !isSelected(), 'icon-check': isSelected() }"></i></span>
+                                <span class="icon"><i data-bind="css: { 'fa-square': !isSelected(), 'fa-check': isSelected() }"></i></span>
                                 <span data-bind="text: title" class="mnu-label"></span>
                             </a>
                         </li>
@@ -44,7 +44,7 @@
     <!-- Sort Button/Dropdown -->
     <div class="input-group-btn btn-group split-btn">
         <a href="#" role="button" data-bind="click: sortOptions.toggleSortDirection">
-            <span><i data-bind="css: { 'icon-sort-by-alphabet': sortOptions.sortDirection() == 'asc', 'icon-sort-by-alphabet-alt': sortOptions.sortDirection() != 'asc' }" class="icon-sort-by-alphabet"></i></span>
+            <span><i data-bind="css: { 'fa-sort-alpha-asc': sortOptions.sortDirection() == 'asc', 'fa-sort-alpha-desc': sortOptions.sortDirection() != 'asc' }" class="fa fa-sort-alpha-asc"></i></span>
         </a>
         <a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn-dropdown">
             <b class="caret" />
@@ -53,14 +53,14 @@
             <!-- ko foreach: sortOptions.columns -->
             <li role="presentation">
                 <a role="menuitem" tabindex="-1" href="#" data-bind="click: sort">
-                    <span class="pull-right" data-bind="visible: isSelected"><i class="icon-ok"></i></span>
+                    <span class="pull-right" data-bind="visible: isSelected"><i class="fa fa-check"></i></span>
                     <span data-bind="text: title" class="mnu-label"></span>
                 </a>
             </li>
             <!-- /ko -->
             <li role="presentation" class="divider"></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortOptions.sortAsc"><span class="pull-right" data-bind="    visible: sortOptions.sortDirection() == 'asc'"><i class="icon-ok"></i></span> Aufsteigend</a></li>
-            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortOptions.sortDesc"><span class="pull-right" data-bind="    visible: sortOptions.sortDirection() == 'desc'"><i class="icon-ok"></i></span> Absteigend</a></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortOptions.sortAsc"><span class="pull-right" data-bind="    visible: sortOptions.sortDirection() == 'asc'"><i class="fa fa-check"></i></span> Aufsteigend</a></li>
+            <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortOptions.sortDesc"><span class="pull-right" data-bind="    visible: sortOptions.sortDirection() == 'desc'"><i class="fa fa-check"></i></span> Absteigend</a></li>
         </ul>
     </div>
 </div>
