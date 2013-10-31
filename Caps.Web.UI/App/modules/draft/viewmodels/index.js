@@ -21,6 +21,7 @@
         drafts: drafts,
         selectedDraft: selectedDraft,
         template: template,
+        moment: moment,
 
         activate: function () {
             if (!initialized) {

@@ -76,6 +76,15 @@
     padding:0 25px 0 15px;
 }
 
+.panel-scroll-v {
+    overflow-x:hidden;
+    overflow-y:scroll;
+}
+.panel-scroll-vh {
+    overflow-x:auto;
+    overflow-y:scroll;
+}
+
 /** 
  *  Top Navbar
  */
@@ -574,7 +583,6 @@ input.hide-ms-clear::-ms-clear {
 .draft-preview {
     background:#eee;
     min-height:350px;
-    overflow:hidden;
 }
     .draft-preview .row {
         border-bottom:1px solid #fff;

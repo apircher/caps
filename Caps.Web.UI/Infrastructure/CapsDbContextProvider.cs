@@ -57,9 +57,9 @@ namespace Caps.Web.UI.Infrastructure
                 {
                     var resource = entry.Entity as DraftContentPartResource;
                     resource.Created.By = user.Identity.Name;
-                    resource.Created.At = DateTime.Now;
+                    resource.Created.At = DateTime.UtcNow;
                     resource.Modified.By = user.Identity.Name;
-                    resource.Modified.At = DateTime.Now;
+                    resource.Modified.At = DateTime.UtcNow;
                 }
 
                 var modifiedResources = saveMap[typeof(DraftContentPartResource)].Where(n => n.EntityState == EntityState.Modified);
@@ -67,7 +67,7 @@ namespace Caps.Web.UI.Infrastructure
                 {
                     var resource = entry.Entity as DraftContentPartResource;
                     resource.Modified.By = user.Identity.Name;
-                    resource.Modified.At = DateTime.Now;
+                    resource.Modified.At = DateTime.UtcNow;
                 }
             }
 
@@ -78,9 +78,9 @@ namespace Caps.Web.UI.Infrastructure
                 {
                     var draft = entry.Entity as Draft;
                     draft.Created.By = user.Identity.Name;
-                    draft.Created.At = DateTime.Now;
+                    draft.Created.At = DateTime.UtcNow;
                     draft.Modified.By = user.Identity.Name;
-                    draft.Modified.At = DateTime.Now;
+                    draft.Modified.At = DateTime.UtcNow;
                 }
 
                 var modifiedDrafts = saveMap[typeof(Draft)].Where(n => n.EntityState == EntityState.Modified);
@@ -90,7 +90,7 @@ namespace Caps.Web.UI.Infrastructure
 
                     var draft = entry.Entity as Draft;
                     draft.Modified.By = user.Identity.Name;
-                    draft.Modified.At = DateTime.Now;
+                    draft.Modified.At = DateTime.UtcNow;
                     draft.Version++;
                 }
             }

@@ -13,15 +13,7 @@
         </div>
         <div class="col-md-8 col-lg-9 draft-preview">
             <!-- ko if: selectedDraft() && template() -->
-            <!-- ko foreach: { data: template().rows, as: 'row' } -->
-            <div class="row">
-                <!-- ko foreach: { data:row.cells, as: 'cell' } -->
-                <div data-bind="draftTemplateClass: cell, click: $parents[1].editContentPart">
-                    <div data-bind="template: { name: $parents[1].getContentPartTemplate($data) }" class="template-preview-cell"></div>
-                </div>
-                <!-- /ko -->
-            </div>
-            <!-- /ko -->
+            <!-- ko template: 'DraftPreviewTemplate' --><!-- /ko -->
             <!-- /ko -->
         </div>
     </div>
@@ -50,4 +42,34 @@
 
 <script type="text/html" id="CT_TEXT">
     <pre data-bind="text: $parents[1].getContent($data)"></pre>
+</script>
+
+<script type="text/html" id="DraftPreviewTemplate">
+    <div class="row">
+        <div class="col-md-12">
+            <p data-bind="with: selectedDraft()">
+                <span data-bind="text: Name"></span> Version <span data-bind="text: Version" />
+                <br />Erstellt von: <span data-bind="text: Created().By"></span> <span data-bind="text: $parent.moment.utc(Created().At()).fromNow(), attr: { title: $parent.moment.utc(Created().At()).format('LLLL') }"></span>
+                <br />Letzte Änderung: <span data-bind="text: Modified().By"></span> <span data-bind="text: $parent.moment.utc(Modified().At()).fromNow(), attr: { title: $parent.moment.utc(Modified().At()).format('LLLL') }"></span>
+            </p>
+        </div>
+    </div>
+    <!-- ko foreach: { data: template().rows, as: 'row' } -->
+    <div class="row">
+        <!-- ko foreach: { data:row.cells, as: 'cell' } -->
+        <div data-bind="draftTemplateClass: cell, click: $parents[1].editContentPart">
+            <div data-bind="template: { name: $parents[1].getContentPartTemplate($data) }" class="template-preview-cell"></div>
+        </div>
+        <!-- /ko -->
+    </div>
+    <!-- /ko -->
+    <div class="row" data-bind="with: selectedDraft()">
+        <div class="col-md-12">
+            <ul data-bind="foreach: Files()">
+                <li>
+                    <span data-bind="text: Name" />
+                </li>
+            </ul>
+        </div>
+    </div>
 </script>
