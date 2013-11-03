@@ -1,4 +1,7 @@
-﻿define(function () {
+﻿/*
+ * moduleHistory.js
+ */
+define(function () {
 
     function ModuleHistory(module, router) {
         this.module = module;

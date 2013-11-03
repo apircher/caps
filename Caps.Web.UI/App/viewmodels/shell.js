@@ -1,7 +1,17 @@
-﻿define(['plugins/router', 'durandal/app', 'authentication', 'infrastructure/moduleRouter', 'infrastructure/moduleRegistry'], function (router, app, authentication, moduleRouter, moduleRegistry) {
+﻿/*
+ * shell.js
+ * Defines the view model for the application shell.
+ */
+define([
+    'plugins/router',
+    'durandal/app',
+    'authentication',
+    'infrastructure/moduleRouter',
+    'infrastructure/moduleRegistry',
+    'ko'
+],
+function (router, app, authentication, moduleRouter, moduleRegistry, ko) {
     
-    var ko = require('knockout');
-
     app.on('app:beforeunload', function (options) {
         ko.utils.arrayForEach(moduleRegistry.modules(), function (module) {
             if (module.routeConfig.hasUnsavedChanges()) {

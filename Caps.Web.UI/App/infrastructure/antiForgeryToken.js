@@ -1,29 +1,40 @@
-﻿define(function (require) {
-
-    var system = require('durandal/system'),
-        Q = require('Q'),
-        $ = require('jquery');
-
+﻿/*
+ * antiForgeryToken.js
+ * Provides functions to request anti forgery tokens and handles a global 
+ * ajax event to send the tokens back to the server.
+ */
+define([
+    'durandal/system',
+    'jquery'
+],
+function (system, $) {
+    
     var tokens = { c: '', f: '' },
         tokenServiceUrl = '/Caps/GetAntiForgeryToken';
         
+    /*
+     * Request tokens from the server.
+     */
     function initToken() {
-        var deferred = Q.defer();
-        $.ajax(tokenServiceUrl, { method: 'post' }).done(function (data) {
-            tokens = data;
-            deferred.resolve();
+        return system.defer(function (dfd) {
+            $.ajax(tokenServiceUrl, { method: 'post' }).done(function (data) {
+                tokens = data;
+                dfd.resolve();
+            })
+            .fail(dfd.reject);
         })
-        .fail(function (error) {
-            deferred.reject(error);
-        });
-        return deferred.promise;
+        .promise();
     }
 
+    /*
+     * Handles global ajax events to send the tokens back to the server.
+     */
     $(document).ajaxSend(function (event, request, settings) {
         if (settings.url !== tokenServiceUrl) {
             request.setRequestHeader('RequestVerificationToken', tokens.c + ':' + tokens.f);
         }
     });
+
 
     return {
         initToken: initToken

@@ -1,4 +1,11 @@
-﻿define(['require', 'knockout'], function (require, ko) {
+﻿/*
+ * filterModel.js
+ */
+define([
+    'require',
+    'ko'
+],
+function (require, ko) {
     
     /**
      * FilterItem Class

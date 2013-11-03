@@ -1,4 +1,11 @@
-﻿define(['breeze', 'infrastructure/moduleRegistry'], function (breeze, moduleRegistry) {
+﻿/*
+ * entityManagerProvider.js
+ */
+define([
+    'breeze',
+    'infrastructure/moduleRegistry'
+],
+function (breeze, moduleRegistry) {
 
     var serviceName = '/breeze/capsdata';
     var masterManager = new breeze.EntityManager(serviceName);

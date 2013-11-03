@@ -1,5 +1,12 @@
-﻿
-define(['require', 'knockout', 'jquery'], function (require, ko, $) {
+﻿/*
+ * virtualListModel.js
+ */
+define([
+    'require',
+    'ko',
+    'jquery'
+],
+function (require, ko, $) {
 
     /**
      * VirtualListItem Class

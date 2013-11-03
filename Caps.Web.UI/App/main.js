@@ -10,14 +10,14 @@ requirejs.config({
         'knockout.validation': '../Scripts/knockout.validation.min',
         'knockout.custom-bindings': '../Scripts/knockout.custom-bindings',
         'knockout.extenders': '../Scripts/knockout.extenders',
-
-        'bootstrap': '../Scripts/bootstrap.min',
-        'typeahead': '../Scripts/typeahead.min',
-
+        
         'jquery': '../Scripts/jquery-2.0.3.min',
         'jquery.fileupload': '../Scripts/jquery.fileupload',
         'jquery.ui.widget': '../Scripts/jquery.ui.widget',
 
+        'bootstrap': '../Scripts/bootstrap.min',
+        'typeahead': '../Scripts/typeahead.min',
+        'markdown': '../Scripts/Markdown.Converter',
         'moment': '../Scripts/moment.min',
         'breeze': '../Scripts/breeze.min',
         'Q': '../Scripts/q.min',
@@ -26,10 +26,7 @@ requirejs.config({
 
         'entityManagerProvider': 'infrastructure/entityManagerProvider',
         'authentication': 'infrastructure/authentication',
-        'localization': 'infrastructure/localization',
-
-        'markdown': '../Scripts/Markdown.Converter'
-
+        'localization': 'infrastructure/localization'
     },
     shim: {
         'bootstrap': {
@@ -94,12 +91,12 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
             .then(entityManagerProvider.initialize)
             .then(app.start)
             .then(function () {
-                //Replace 'viewmodels' in the moduleId with 'views' to locate the view.
-                //Look for partial views in a 'views' folder in the root.
+                // Replace 'viewmodels' in the moduleId with 'views' to locate the view.
+                // Look for partial views in a 'views' folder in the root.
                 viewLocator.useConvention();
                 // Override default MessageBox Template
                 setDefaultMessageBoxTemplate();
-                //Show the app by setting the root view model for our application with a transition.
+                // Show the app by setting the root view model for our application with a transition.
                 app.setRoot('viewmodels/shell', 'entrance');
 
                 app.trigger('caps:started');
@@ -116,7 +113,6 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
                 return options.message;
         }
 
-
         function setDefaultMessageBoxTemplate() {
             require(['plugins/dialog'], function (dialog) {
                 dialog.MessageBox.defaultViewMarkup = [
@@ -132,7 +128,6 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
                         '</div>',
                     '</div>'
                 ].join('\n');
-            }
-            );
+            });
         }
     });

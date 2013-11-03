@@ -1,9 +1,17 @@
-﻿define(function (require) {
+﻿/*
+ * moduleLoader.js
+ */
+define([
+    'durandal/system',
+    './moduleRegistry',
+    'Q'
+],
+function (system, registry, Q) {
 
-    var registry = require('./moduleRegistry'),
-        system = require('durandal/system'),
-        Q = require('Q');
-
+    function convertNameToModuleId(name) {
+        return 'modules/' + name + '/module';
+    }
+    
     return {
         loadModules: function (names) {
             var promises = [];
@@ -23,15 +31,10 @@
         loadModule: function (name) {
             if (!system.isString(name))
                 throw new Error('The parameter name has to be a string.');
-            var moduleId = this.convertNameToModuleId(name);
-            return require([moduleId], function (module) {
+            return require([convertNameToModuleId(name)], function (module) {
                 module.moduleName = name;
                 registry.registerModule(module);
             });
-        },
-
-        convertNameToModuleId: function (name) {
-            return 'modules/' + name + '/module';
         }
     };
 

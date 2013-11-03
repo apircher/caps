@@ -1,4 +1,11 @@
-﻿define(['knockout', 'plugins/dialog'], function (ko, dialog) {
+﻿/*
+ * moduleFactory.js
+ */
+define([
+    'ko',
+    'plugins/dialog'
+],
+function (ko, dialog) {
 
     function CapsModule (routeConfig) {
         this.routeConfig = routeConfig;

@@ -1,6 +1,12 @@
-﻿
-define(['knockout', 'knockout.validation', 'jquery'], function (ko, validation, $) {
-	
+﻿/*
+ * validation.js
+ */
+define([
+    'ko',
+    'knockout.validation',
+    'jquery'
+],
+function (ko, validation, $) {
 	ko.validation.rules['isUserNameUnique'] = {
 		validator: function (val, param) {
 			var isValid = true;
@@ -23,5 +29,4 @@ define(['knockout', 'knockout.validation', 'jquery'], function (ko, validation, 
 	};
 
 	return {};
-
 });

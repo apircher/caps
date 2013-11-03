@@ -1,4 +1,11 @@
-﻿define(['require', 'knockout'], function (require, ko) {
+﻿/*
+ * listSortModel.js
+ */
+define([
+    'require',
+    'ko'
+],
+function (require, ko) {
     
     /**
      * ListColumn Class

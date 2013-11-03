@@ -1,4 +1,15 @@
-﻿define(['plugins/router', 'durandal/system', 'infrastructure/moduleRegistry', 'infrastructure/moduleHistory', 'knockout', 'infrastructure/utils'], function (rootRouter, system, moduleRegistry, ModuleHistory, ko, utils) {
+﻿/*
+ * moduleRouter.js
+ */
+define([
+    'plugins/router',
+    'durandal/system',
+    'infrastructure/moduleRegistry',
+    'infrastructure/moduleHistory',
+    'ko',
+    'infrastructure/utils'
+],
+function (rootRouter, system, moduleRegistry, ModuleHistory, ko, utils) {
     
     function mapModuleRoutes(router) {
         ko.utils.arrayForEach(moduleRegistry.modules(), function (module) {

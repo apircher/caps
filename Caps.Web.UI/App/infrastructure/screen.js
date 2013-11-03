@@ -1,4 +1,10 @@
-﻿define(['jquery'], function ($) {
+﻿/*
+ * screen.js
+ */
+define([
+    'jquery'
+],
+function ($) {
 
     var $window = $(window);
 

@@ -1,4 +1,15 @@
-﻿define(['require', 'durandal/app', 'knockout', 'Q', 'infrastructure/datacontext', 'authentication'], function (require, app, ko, Q, datacontext, authentication) {
+﻿/*
+ * tagService.js
+ */
+define([
+    'require',
+    'durandal/app',
+    'knockout',
+    'Q',
+    'infrastructure/datacontext',
+    'authentication'
+],
+function (require, app, ko, Q, datacontext, authentication) {
 
     var tags = ko.observableArray([]);
 

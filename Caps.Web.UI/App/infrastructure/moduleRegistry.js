@@ -1,8 +1,11 @@
-﻿define(function (require) {
-
-    var system = require('durandal/system'),
-        ko = require('knockout');
-
+﻿/*
+ * moduleRegistry.js
+ */
+define([
+    'durandal/system',
+    'ko'
+],
+function (system, ko) {
     var modules = ko.observableArray();
 
     function registerModule(module) {

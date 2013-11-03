@@ -1,4 +1,10 @@
-﻿define(['ko'], function (ko) {
+﻿/*
+ * websiteMetadata.js
+ */
+define([
+    'ko'
+],
+function (ko) {
     
     /*
      * WebsiteInfo Class
