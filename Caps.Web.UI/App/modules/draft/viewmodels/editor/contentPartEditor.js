@@ -4,7 +4,7 @@
         this.name = 'ContentPartEditor';
         this.editor = editor;
         this.contentPart = contentPart;
-        this.resource = contentPart.findResource('de');
+        this.resource = contentPart.getResource('de');
         this.contentTypes = ko.observableArray([
             { title: 'HTML', value: 'html' },
             { title: 'Markdown', value: 'markdown' },

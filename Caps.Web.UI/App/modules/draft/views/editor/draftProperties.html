@@ -9,7 +9,21 @@
     <div class="form-group">
         <label for="draftTitle" class="col-md-3 col-lg-2">Titel (Deutsch)</label>
         <div class="col-md-9 col-lg-10">
-            <input type="text" data-bind="value: editor.entity().findResource('de').Title" class="form-control" id="draftTitle" />
+            <input type="text" data-bind="value: resource.Title" class="form-control" id="draftTitle" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="draftDescription" class="col-md-3 col-lg-2">Beschreibung (Deutsch)</label>
+        <div class="col-md-9 col-lg-10">
+            <textarea data-bind="value: resource.Description" class="form-control" id="draftDescription" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="draftKeywords" class="col-md-3 col-lg-2">Schlüsselwörter (Deutsch)</label>
+        <div class="col-md-9 col-lg-10">
+            <input type="text" data-bind="value: resource.Keywords" class="form-control" id="draftKeywords" />
         </div>
     </div>
 

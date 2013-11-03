@@ -1,6 +1,6 @@
-﻿define(['../module', '../datacontext', 'ko', 'Q', 'modules/draft/viewmodels/editor/navigation', 'modules/draft/viewmodels/editor/draftTemplate', 'modules/draft/viewmodels/editor/draftProperties', 'modules/draft/viewmodels/editor/draftFiles', 'modules/draft/viewmodels/editor/contentPartEditor',
-    'entityManagerProvider', 'breeze', 'durandal/app', 'durandal/system'
-], function (module, datacontext, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, entityManagerProvider, breeze, app, system) {
+﻿define(['../module', '../datacontext', 'ko', 'Q', './editor/navigation', './editor/draftTemplate', './editor/draftProperties', './editor/draftFiles', './editor/contentPartEditor',
+    'entityManagerProvider', 'breeze', 'durandal/app', 'durandal/system', './editorModel'
+], function (module, datacontext, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, entityManagerProvider, breeze, app, system, EditorModel) {
 
     // Editor Model
     function DraftEditor() {
@@ -17,6 +17,7 @@
         self.currentNavigation = ko.observable();
         self.entity = ko.observable();
         self.entity.subscribe(onEntityChanged);
+        self.files = ko.observableArray();
         self.template = ko.observable();
         self.isNewDraft = ko.observable(false);
 
@@ -125,6 +126,10 @@
 
             df.Resources.push(res);
             self.entity().Files.push(df);
+            self.files.push(new EditorModel.LocalizedDraftFile(df, df.getResource('de')));
+
+            var query = breeze.EntityQuery.from('Files').where('Id', '==', file.Id());
+            manager.executeQuery(query);
         };
 
         function createEntity(templateName) {
@@ -141,7 +146,7 @@
 
         function loadEntity(id) {
             var query = breeze.EntityQuery.from('Drafts').where('Id', '==', id)
-                .expand('Resources, ContentParts, ContentParts.Resources, Files, Files.Resources');
+                .expand('Resources, ContentParts, ContentParts.Resources, Files, Files.Resources, Files.Resources.File');
             return manager.executeQuery(query).then(function (data) {
                 self.entity(data.results[0]);
             });
@@ -178,6 +183,13 @@
         function onEntityChanged() {
             var e = self.entity();
             if (e) {
+                // Init Files.
+                var localizedFiles = ko.utils.arrayMap(e.Files(), function (file) {
+                    var resource = file.getOrCreateResource('de', manager);
+                    return new EditorModel.LocalizedDraftFile(file, resource);
+                });
+                self.files(localizedFiles);
+                // Init Template.
                 getTemplate();
                 e.entityAspect.propertyChanged.subscribe(trackChanges);
             }

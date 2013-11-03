@@ -1,4 +1,4 @@
-﻿define(['knockout', 'durandal/system', 'durandal/app', '../module', '../datacontext', 'infrastructure/virtualListModel', 'infrastructure/filterModel', 'infrastructure/listSortModel',
+﻿define(['ko', 'durandal/system', 'durandal/app', '../module', '../datacontext', 'infrastructure/virtualListModel', 'infrastructure/filterModel', 'infrastructure/listSortModel',
     'jquery', 'toastr', 'Q', 'doubleTap', 'jquery.fileupload', 'infrastructure/tagService', './fileListItem', './uploadManager'
 ], function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, SortModel, $, toastr, Q, doubleTap, fileupload, tagService, FileListItem, UploadManager) {
         

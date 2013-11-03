@@ -84,6 +84,10 @@
     <Compile Include="Migrations\201310150922418_AddDrafts.Designer.cs">
       <DependentUpon>201310150922418_AddDrafts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311022251256_AlterDraftFileResources.cs" />
+    <Compile Include="Migrations\201311022251256_AlterDraftFileResources.Designer.cs">
+      <DependentUpon>201311022251256_AlterDraftFileResources.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
@@ -126,6 +130,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201310150922418_AddDrafts.resx">
       <DependentUpon>201310150922418_AddDrafts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311022251256_AlterDraftFileResources.resx">
+      <DependentUpon>201311022251256_AlterDraftFileResources.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

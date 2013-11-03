@@ -7,11 +7,26 @@
         var self = this;
     }
 
-    Draft.prototype.findResource = function (language) {
+    Draft.prototype.getResource = function (language) {
         var key = language.toLowerCase();
         return ko.utils.arrayFirst(this.Resources(), function (res) {
             return res.Language().toLowerCase() === key;
         });
+    };
+    
+    Draft.prototype.getOrCreateResource = function (language, manager) {
+        var key = language.toLowerCase(),
+        resource = this.getResource(language);
+        if (resource)
+            return resource;
+
+        resource = manager.createEntity('DraftResource', {
+            DraftId: this.Id(),
+            Language: key
+        });
+        manager.addEntity(resource);
+        this.Resources.push(resource);
+        return resource;
     };
 
     Draft.prototype.findContentPart = function (partType) {
@@ -56,11 +71,27 @@
         var self = this;
     }
 
-    DraftContentPart.prototype.findResource = function (language) {
+    DraftContentPart.prototype.getResource = function (language) {
         var key = language.toLowerCase();
         return ko.utils.arrayFirst(this.Resources(), function (res) {
             return res.Language().toLowerCase() === key;
         });
+    };
+
+    DraftContentPart.prototype.getOrCreateResource = function (language, manager) {
+        var key = language.toLowerCase(),
+            resource = this.getResource(language);
+        if (resource)
+            return resource;
+
+        resource = manager.createEntity('DraftContentPartResource', {
+            DraftContentPartId: this.Draft().Id(),
+            Language: key,
+            Content: ''
+        });
+        manager.addEntity(resource);
+        this.Resources.push(resource);
+        return resource;
     };
 
     DraftContentPart.prototype.setDeleted = function () {
@@ -73,7 +104,7 @@
     DraftContentPart.prototype.previewText = function (language, length) {
         language = language || 'de';
         length = length || 80;
-        var res = this.findResource(language);
+        var res = this.getResource(language);
         if (res && res.Content()) {
             var content = res.Content();
             return content.length > length ? content.substr(0, length - 3) + '...' : content;
@@ -92,6 +123,28 @@
             this.Resources()[0].entityAspect.setDeleted();
         }
         this.entityAspect.setDeleted();
+    };
+
+    DraftFile.prototype.getResource = function (language) {
+        var key = language.toLowerCase();
+        return ko.utils.arrayFirst(this.Resources(), function (res) {
+            return res.Language().toLowerCase() === key;
+        });
+    };
+
+    DraftFile.prototype.getOrCreateResource = function (language, manager) {
+        var key = language.toLowerCase(),
+        resource = this.getResource(language);
+        if (resource)
+            return resource;
+
+        resource = manager.createEntity('DraftFileResource', {
+            DraftFileId: this.Id(),
+            Language: key
+        });
+        manager.addEntity(resource);
+        this.Resources.push(resource);
+        return resource;    
     };
 
 

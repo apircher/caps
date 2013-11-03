@@ -15,7 +15,7 @@ using System.Web.Http;
 
 namespace Caps.Web.UI.Controllers
 {
-    [Authorize, BreezeController, ValidateJsonAntiForgeryToken, SetUserActivity]
+    [Authorize, BreezeController, ValidateJsonAntiForgeryToken, SetUserActivity, BreezeQueryable(MaxExpansionDepth=3)]
     public class CapsDataController : ApiController
     {
         readonly CapsDbContextProvider _contextProvider;

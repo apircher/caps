@@ -85,6 +85,11 @@
     overflow-y:scroll;
 }
 
+.container-fullwidth {
+    padding: 0 15px;
+    overflow:hidden;
+}
+
 /** 
  *  Top Navbar
  */
@@ -131,8 +136,9 @@
  *  Navbar Loader
  */
 .loader {
-    margin: 6px 8px 4px 8px;
+    margin: 12px 10px 4px 10px;
     visibility: hidden;
+    color:#999;
 }
 .loader.active {
     visibility: visible;
@@ -365,6 +371,19 @@
 }
 .outof-view {
     background:red;
+}
+
+.thumbnail-list > .row > div {
+    padding-top:15px;
+}
+.thumbnail-list > .row:first-of-type > div {
+    padding-top:0;
+}
+.thumbnail-list .separator {
+    border-top:1px solid #eee;
+}
+.thumbnail-list .separator:last-of-type {
+    display:none;
 }
 
 /**

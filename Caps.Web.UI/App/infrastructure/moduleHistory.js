@@ -7,11 +7,19 @@
     }
 
     ModuleHistory.prototype.registerActivation = function (activation, instruction) {
+        if (activation === this.lastActivation())
+            return;
         this.activations.push({ activation: activation, instruction: instruction });
     };
 
+    ModuleHistory.prototype.lastActivation = function () {
+        if (!this.activations || !this.activations.length)
+            return undefined;
+        return this.activations[this.activations.length - 1];
+    };
+
     ModuleHistory.prototype.activateLast = function () {
-        var lastActivation = this.activations.length ? this.activations[this.activations.length - 1] : undefined;
+        var lastActivation = this.lastActivation();
         if (lastActivation)
             return navigateToActivation(this.router, lastActivation);
         else

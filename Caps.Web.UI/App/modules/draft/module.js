@@ -1,4 +1,4 @@
-﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter', './entities', 'ko', 'markdown'], function (moduleFactory, routerFactory, model, ko) {
+﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter', './entities', 'durandal/app'], function (moduleFactory, routerFactory, model, app) {
 
     var module = moduleFactory.createModule({
         route: 'drafts*details',
@@ -14,46 +14,54 @@
         module.router = routerFactory.createModuleRouter(module, 'modules/draft', 'drafts')
             .map([
                 { route: '', moduleId: 'viewmodels/index', title: 'Entwürfe', nav: false },
-                { route: 'create', moduleId: 'viewmodels/templateGallery', title: 'Vorlage', nav: false },
-                { route: 'create/:templateName', moduleId: 'viewmodels/editor', title: 'Editor', nav: false },
-                { route: 'edit/:draftId', moduleId: 'viewmodels/editor', title: 'Editor', nav: false }
+                { route: 'create', moduleId: 'viewmodels/templateGallery', title: 'Vorlage wählen', nav: false },
+                { route: 'create/:templateName', moduleId: 'viewmodels/editor', title: 'Neuer Entwurf', nav: false },
+                { route: 'edit/:draftId', moduleId: 'viewmodels/editor', title: 'Entwurf bearbeiten', nav: false },
+                { route: 'translate/:draftId/:language', moduleId: 'viewmodels/translator', title: 'Übersetzung', nav: false }
             ])
             .buildNavigationModel();
     };
     
+    app.on('caps:started', function () {
+        require(['ko', 'markdown'], function (ko, markdown) {
+            installKnockoutBindings(ko, markdown);
+        });
+    });
+    
+    function installKnockoutBindings(ko, markdown) {
+        //
+        // Custom knockout bindings
+        //
+        ko.bindingHandlers.draftTemplateClass = {
+            init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+                var value = ko.unwrap(valueAccessor()),
+                    $elem = $(elem);
+                $elem.addClass('col-md-' + value.colspan);
+            },
+            update: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+                var value = ko.unwrap(valueAccessor());
+                $(elem).addClass('col-md-' + value.colspan);
+            }
+        };
 
-    //
-    // Custom knockout bindings
-    //
-    ko.bindingHandlers.draftTemplateClass = {
-        init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var value = ko.unwrap(valueAccessor()),
-                $elem = $(elem);
-            $elem.addClass('col-md-' + value.colspan);
-        },
-        update: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var value = ko.unwrap(valueAccessor());
-            $(elem).addClass('col-md-' + value.colspan);
-        }
-    };
-
-    var markdown = new Markdown.Converter();
-    ko.bindingHandlers.markdown = {
-        init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var value = ko.unwrap(valueAccessor()),
-                $elem = $(elem);
-            ko.bindingHandlers.markdown.setText($elem, value);
-        },
-        update: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var value = ko.unwrap(valueAccessor()),
-                $elem = $(elem);
-            ko.bindingHandlers.markdown.setText($elem, value);
-        },
-        setText: function ($elem, value) {
-            var htmlContent = markdown.makeHtml(value);
-            $elem.html(htmlContent);
-        }
-    };
+        var converter = new Markdown.Converter();
+        ko.bindingHandlers.markdown = {
+            init: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+                var value = ko.unwrap(valueAccessor()),
+                    $elem = $(elem);
+                ko.bindingHandlers.markdown.setText($elem, value);
+            },
+            update: function (elem, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+                var value = ko.unwrap(valueAccessor()),
+                    $elem = $(elem);
+                ko.bindingHandlers.markdown.setText($elem, value);
+            },
+            setText: function ($elem, value) {
+                var htmlContent = converter.makeHtml(value);
+                $elem.html(htmlContent);
+            }
+        };
+    }
 
     return module;
 });

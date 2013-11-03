@@ -99,11 +99,10 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
                 viewLocator.useConvention();
                 // Override default MessageBox Template
                 setDefaultMessageBoxTemplate();
-
-                app.trigger('caps:started');
-
                 //Show the app by setting the root view model for our application with a transition.
                 app.setRoot('viewmodels/shell', 'entrance');
+
+                app.trigger('caps:started');
             })
             .done();
 

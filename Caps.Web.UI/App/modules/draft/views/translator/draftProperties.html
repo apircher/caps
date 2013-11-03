@@ -1,0 +1,57 @@
+﻿<div class="row editor-header">
+    <div class="col-md-6">
+        <span>de</span>
+    </div>
+    <div class="col-md-6">
+        <span data-bind="text:editor.language()"></span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        
+        <div class="form-group">
+            <label class="col-md-2">Titel</label>
+            <div class="col-md-10">
+                <input type="text" data-bind="value: fallbackResource().Title" class="form-control" disabled="disabled" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2">Beschreibung</label>
+            <div class="col-md-10">
+                <textarea data-bind="value: fallbackResource().Description" class="form-control" disabled="disabled" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2">Stichworte</label>
+            <div class="col-md-10">
+                <input type="text" data-bind="value: fallbackResource().Keywords" class="form-control" disabled="disabled" />
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="col-md-2">Titel</label>
+            <div class="col-md-10">
+                <input type="text" data-bind="value: resource.Title" class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2">Beschreibung</label>
+            <div class="col-md-10">
+                <textarea data-bind="value: resource.Description" class="form-control" />
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-md-2">Stichworte</label>
+            <div class="col-md-10">
+                <input type="text" data-bind="value: resource.Keywords" class="form-control" />
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-﻿define(['../module', '../datacontext', 'ko', 'durandal/app', 'moment'], function (module, datacontext, ko, app, moment) {
+﻿define(['../module', '../datacontext', 'ko', 'durandal/app', 'moment', 'infrastructure/websiteMetadata'], function (module, datacontext, ko, app, moment, website) {
 
     var drafts = ko.observableArray(),
         selectedDraft = ko.observable(),
@@ -22,6 +22,7 @@
         selectedDraft: selectedDraft,
         template: template,
         moment: moment,
+        siteInfo: website.getSiteInfo(),
 
         activate: function () {
             if (!initialized) {
@@ -53,6 +54,10 @@
             if (draft) vm.selectDraft(draft);
         },
 
+        translateDraft: function(language) {
+            module.router.navigate('#drafts/translate/' + selectedDraft().Id()+ '/' + language.culture );
+        },
+
         formatDate: function (date) {
             var now = moment();
             var d = moment.utc(date);
@@ -72,10 +77,10 @@
         getContent: function (templateCell) {
             var cp = selectedDraft().findContentPart(templateCell.name);
             if (cp) {
-                var res = cp.findResource('de');
+                var res = cp.getResource('de');
                 if (res) return res.Content();
             }
-            return '<i>[leer]</i>';
+            return '';
         },
 
         getContentPartTemplate: function (templateCell) {
@@ -97,15 +102,14 @@
     }
 
     function selectFirstDraft() {
-        if (drafts().length) {
-            var d = drafts()[0];
-            selectedDraft(d);
-            loadDraft(d.Id());
+        if (vm.drafts().length) {
+            var first = vm.drafts()[0];
+            vm.selectDraft(first);
         }
     }
 
     function loadDraft(id) {
-        datacontext.getDraft(id).then(function (data) {
+        return datacontext.getDraft(id).then(function (data) {
             var t = data.results[0].deserializeTemplate();
             template(t);
         });

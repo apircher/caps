@@ -8,7 +8,7 @@ require.config({
         'durandal': '../Scripts/durandal',
         'plugins': '../Scripts/durandal/plugins',
         'transitions': '../Scripts/durandal/transitions',
-        'knockout': '../Scripts/knockout-2.3.0',
+        'knockout': '../Scripts/knockout-3.0.0',
         'knockout.validation': '../Scripts/knockout.validation',
         'knockout.custom-bindings': '../Scripts/knockout.custom-bindings',
         'knockout.extenders': '../Scripts/knockout.extenders',

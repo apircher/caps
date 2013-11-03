@@ -1,11 +1,64 @@
 ﻿
-<p><a href="#" data-bind="click: selectFiles">Dateien hinzufügen</a></p>
-
-<div class="row" data-bind="foreach: editor.entity().Files">
-    <div class="col-xs-4 col-md-3 col-lg-2">
-        <div class="thumbnail-container">
-            <a class="thumbnail" href="#" data-bind="text:Name, click: $parent.createDraft"></a>
-            <a href="#" data-bind="click: $parent.removeFile">Entfernen</a>
-        </div>
+<div class="navbar navbar-default">
+    <div class="navbar-panel pull-left">
+        <ul class="nav navbar-nav">
+            <li>
+                <a href="#" data-bind="click: selectFiles"><span><i class="fa fa-plus"></i> Dateien hinzufügen</span></a>
+            </li>
+        </ul>
     </div>
 </div>
+
+<section data-bind="foreach: editor.files" class="thumbnail-list">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="thumbnail-container">
+                <a class="thumbnail">
+                    <!-- ko template: { name: 'dbfile-icon' } --><!-- /ko -->
+                </a>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <form role="form" class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-md-2">Titel</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" data-bind="value: resource.Title" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2">Beschreibung</label>
+                    <div class="col-md-10">
+                        <textarea data-bind="value: resource.Description" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2">Akkreditierung</label>
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" data-bind="value: resource.Credits" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-1">
+            <a href="#" data-bind="click: $parent.removeFile"><i class="fa fa-times"></i></a>
+        </div>
+    </div>
+    <div class="separator"></div>
+</section>
+
+<script type="text/html" id="dbfile-icon">
+    <!-- ko with: resource.File() -->
+    
+    <!-- ko if: isImage() -->
+    <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: FileName, alt: FileName }, lazyImage: true" />
+    <!-- /ko -->
+    <!-- ko if: !isImage() -->
+    <span data-bind="attr: { title: FileName }"><i class="fa fa-file fa-4x"></i></span>
+    <!-- /ko -->
+
+    <!-- /ko -->
+</script>
+

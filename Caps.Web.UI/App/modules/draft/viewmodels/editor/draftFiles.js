@@ -19,7 +19,8 @@
         };
 
         self.removeFile = function (file) {
-            file.setDeleted();
+            file.draftFile.setDeleted();
+            editor.files.remove(file);
             editor.entity().Files.valueHasMutated();
         };
     }

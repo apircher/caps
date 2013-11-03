@@ -1,12 +1,12 @@
 ﻿<div>
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="loader pull-right" data-bind="css: { active: router.isNavigating }">
-            <i class="fa-cog fa-2x fa-spin"></i>
+            <i class="fa fa-spinner fa-2x fa-spin"></i>
         </div>
 
         <ul id="nav-user" class="nav navbar-nav pull-right" data-bind="visible: authentication.isAuthenticated">
             <li><a href="/#profile"><strong data-bind="text: authentication.user().displayName()"></strong></a></li>
-            <li><a href="#" data-bind="click: logOff, clickBubble: false" title="Abmelden"><i class="fa-fw fa-power-off"></i></a></li>                    
+            <li><a href="#" data-bind="click: logOff, clickBubble: false" title="Abmelden"><i class="fa fa-power-off"></i></a></li>                    
         </ul>
 
         <div class="navbar-header">

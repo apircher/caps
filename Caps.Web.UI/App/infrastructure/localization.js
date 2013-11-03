@@ -63,18 +63,19 @@
             }
         }
     };
-
-    var validation = require('knockout.validation');
-    var moment = require('moment');
-
+    
     function localizeKnockoutValidation(culture) {
-        var resource = validationStrings[culture];
-        if (resource) validation.localize(resource);
+        require(['knockout.validation'], function (validation) {
+            var resource = validationStrings[culture];
+            if (resource) validation.localize(resource);
+        });
     }
 
     function localizeMoment(culture) {
-        var resource = momentLang[culture];
-        if (resource) moment.lang(culture, resource);
+        require(['moment'], function (moment) {
+            var resource = momentLang[culture];
+            if (resource) moment.lang(culture, resource);
+        });
     }
 
     return {

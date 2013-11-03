@@ -235,6 +235,7 @@
     <Content Include="App\infrastructure\screen.js" />
     <Content Include="App\infrastructure\tagService.js" />
     <Content Include="App\infrastructure\utils.js" />
+    <Content Include="App\infrastructure\websiteMetadata.js" />
     <Content Include="App\modules\contentfile\datacontext.js" />
     <Content Include="App\modules\contentfile\entities.js" />
     <Content Include="App\modules\contentfile\module.html" />
@@ -255,6 +256,7 @@
     <Content Include="App\modules\draft\module.html" />
     <Content Include="App\modules\draft\module.js" />
     <Content Include="App\modules\draft\viewmodels\editor.js" />
+    <Content Include="App\modules\draft\viewmodels\editorModel.js" />
     <Content Include="App\modules\draft\viewmodels\editor\contentPartEditor.js" />
     <Content Include="App\modules\draft\viewmodels\editor\draftFiles.js" />
     <Content Include="App\modules\draft\viewmodels\editor\draftProperties.js" />
@@ -262,6 +264,11 @@
     <Content Include="App\modules\draft\viewmodels\editor\draftTemplate.js" />
     <Content Include="App\modules\draft\viewmodels\index.js" />
     <Content Include="App\modules\draft\viewmodels\templateGallery.js" />
+    <Content Include="App\modules\draft\viewmodels\translator.js" />
+    <Content Include="App\modules\draft\viewmodels\translator\contentPartEditor.js" />
+    <Content Include="App\modules\draft\viewmodels\translator\draftFiles.js" />
+    <Content Include="App\modules\draft\viewmodels\translator\draftProperties.js" />
+    <Content Include="App\modules\draft\viewmodels\translator\navigation.js" />
     <Content Include="App\modules\draft\views\editor.html" />
     <Content Include="App\modules\draft\views\editor\contentPartEditor.html" />
     <Content Include="App\modules\draft\views\editor\draftFiles.html" />
@@ -269,6 +276,11 @@
     <Content Include="App\modules\draft\views\editor\navigation.html" />
     <Content Include="App\modules\draft\views\editor\draftTemplate.html" />
     <Content Include="App\modules\draft\views\templateGallery.html" />
+    <Content Include="App\modules\draft\views\translator.html" />
+    <Content Include="App\modules\draft\views\translator\contentPartEditor.html" />
+    <Content Include="App\modules\draft\views\translator\draftFiles.html" />
+    <Content Include="App\modules\draft\views\translator\draftProperties.html" />
+    <Content Include="App\modules\draft\views\translator\navigation.html" />
     <Content Include="App\modules\sitemap\module.html" />
     <Content Include="App\modules\sitemap\module.js" />
     <Content Include="App\modules\user\commands\deleteUser.js" />
