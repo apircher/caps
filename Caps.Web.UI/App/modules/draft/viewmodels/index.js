@@ -139,9 +139,10 @@ function (module, datacontext, ko, app, moment, website) {
                 var regex = /caps:\/\/draft-file\/([^\"'\s\?)]*)(\?[^\"'\s)]*)?/gi;
                 rawContent = rawContent.replace(regex, function (hit, p1, p2, offset, s) {
 
-                    var draftFile = self.entity().findDraftFile(p1),
+                    var draftFile = self.entity().findDraftFile(unescape(p1)),
                         resource = draftFile.getResource('de'),
                         file = resource != null ? resource.File() : undefined;
+
                     if (file) {
 
                         if (/(\?|&amp;|&)inline=1/i.test(p2))

@@ -6,6 +6,9 @@
         templates: templates,
         createDraft: function (template) {
             module.router.navigate('#drafts/create/' + template.name);
+        },
+        cancel: function () {
+            module.router.navigateBack();
         }
     };
 });

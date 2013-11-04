@@ -544,6 +544,10 @@ input.hide-ms-clear::-ms-clear {
     font-weight:normal;
 }
 
+img.clickable {
+    cursor:pointer;
+}
+
 /**
  * Draft
  */

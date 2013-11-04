@@ -1,13 +1,27 @@
-﻿<div class="app-page">
+﻿<div class="app-page bottom-fixed-navbar-container">
     <div class="page-content">
         <h1>Entwurfs-Vorlage wählen</h1>
 
         <div class="row" data-bind="foreach: templates">
             <div class="col-xs-4 col-md-3 col-lg-2">
-                <div class="thumbnail-container">
-                    <a class="thumbnail" href="#" data-bind="text:name, click: $parent.createDraft"></a>
+                <div class="thumbnail">
+                    <img data-bind="attr: { alt: name, src: '/App/modules/draft/images/' + name + '.png' }, click: $parent.createDraft" class="clickable" />
+                    <div class="caption">
+                        <h4 data-bind="text: name"></h4>
+                        <a href="#" data-bind="click: $parent.createDraft">Vorlage wählen</a>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="navbar navbar-default navbar-fixed-bottom">
+        <div class="navbar-panel pull-left">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#" data-bind="click: cancel"><span><i class="fa fa-arrow-left"></i> Abbrechen</span></a>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
