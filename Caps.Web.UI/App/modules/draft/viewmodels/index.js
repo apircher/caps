@@ -128,10 +128,36 @@ function (module, datacontext, ko, app, moment, website) {
     }
 
     DraftPreviewViewModel.prototype.getContent = function (templateCell) {
-        var cp = this.entity().findContentPart(templateCell.name);
+        var self = this,
+            cp = this.entity().findContentPart(templateCell.name);
+
         if (cp) {
             var res = cp.getResource('de');
-            if (res) return res.Content();
+            if (res) {
+                var rawContent = res.Content();
+
+                var regex = /caps:\/\/draft-file\/([^\"'\s\?)]*)(\?[^\"'\s)]*)?/gi;
+                rawContent = rawContent.replace(regex, function (hit, p1, p2, offset, s) {
+
+                    var draftFile = self.entity().findDraftFile(p1),
+                        resource = draftFile.getResource('de'),
+                        file = resource != null ? resource.File() : undefined;
+                    if (file) {
+
+                        if (/(\?|&amp;|&)inline=1/i.test(p2))
+                            return '/DbFileContent/Inline/' + file.Id();
+                        else if (/(\?|&amp;|&)download=1/i.test(p2) || !file.isImage())
+                            return '/DbFileContent/Download/' + file.Id();
+                        else if (file.isImage())
+                            return '/DbFileContent/Thumbnail/' + file.Id() + '?thumbnailName=220x160';
+                    }
+
+                    return '';
+                });
+
+
+                return rawContent;
+            }
         }
         return '';
     };

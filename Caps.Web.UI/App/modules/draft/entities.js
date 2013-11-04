@@ -43,6 +43,17 @@ function (require, ko) {
         return part;
     };
 
+    Draft.prototype.findDraftFile = function (fileName, language) {
+        language = language || 'de';
+        var key = fileName.toLowerCase(),
+            file = ko.utils.arrayFirst(this.Files(), function (f) {
+                var res = f.getResource(language);
+                if (!res) return false;
+                return res.File() && res.File().FileName().toLowerCase() === key;
+            });
+        return file;
+    };
+
     Draft.prototype.deserializeTemplate = function () {
         var t = JSON.parse(this.TemplateContent());
 

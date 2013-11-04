@@ -136,18 +136,19 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
         };
 
         self.createDraftFile = function (file) {
-            var df = manager.createEntity('DraftFile', { DraftId: this.entity().Id(), Name: file.FileName() });
-            manager.addEntity(df);
-
-            var res = manager.createEntity('DraftFileResource', { Language: 'de', DbFileId: file.Id() });
-            manager.addEntity(res);
-
-            df.Resources.push(res);
-            self.entity().Files.push(df);
-            self.files.push(new EditorModel.LocalizedDraftFile(df, df.getResource('de')));
-
             var query = breeze.EntityQuery.from('Files').where('Id', '==', file.Id());
-            manager.executeQuery(query);
+            manager.executeQuery(query)
+            .then(function (result) {
+                var df = manager.createEntity('DraftFile', { DraftId: self.entity().Id(), Name: file.FileName() });
+                manager.addEntity(df);
+
+                var res = manager.createEntity('DraftFileResource', { Language: 'de', DbFileId: file.Id() });
+                manager.addEntity(res);
+
+                df.Resources.push(res);
+                self.entity().Files.push(df);
+                self.files.push(new EditorModel.LocalizedDraftFile(df, df.getResource('de')));
+            });
         };
 
         function createEntity(templateName) {

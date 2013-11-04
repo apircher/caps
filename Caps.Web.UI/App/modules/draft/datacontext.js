@@ -17,7 +17,7 @@ function (entityManagerProvider, ko) {
 
     function getDraft(id) {
         var query = EntityQuery.from('Drafts').where('Id', '==', id)
-                .expand('Resources, ContentParts, ContentParts.Resources, Files, Files.Resources');
+                .expand('Resources, ContentParts, ContentParts.Resources, Files, Files.Resources, Files.Resources.File');
         return manager.executeQuery(query);
     }
 
