@@ -72,7 +72,7 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
         };
 
         self.showProperties = function () {
-            propertiesVM = propertiesVM || new DraftProperties(self);
+            propertiesVM = propertiesVM || new DraftProperties(self, self.entity().getOrCreateResource('de', manager));
             self.currentContent(propertiesVM);
         };
 
