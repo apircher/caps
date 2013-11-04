@@ -1,33 +1,62 @@
-﻿define(['../module', '../datacontext', 'ko', 'durandal/app', 'moment', 'infrastructure/websiteMetadata'], function (module, datacontext, ko, app, moment, website) {
+﻿/*
+ * draft/viewmodels/index.js
+ */
+define([
+    '../module',
+    '../datacontext',
+    'ko',
+    'durandal/app',
+    'moment',
+    'infrastructure/websiteMetadata'
+],
+function (module, datacontext, ko, app, moment, website) {
 
-    var drafts = ko.observableArray(),
-        selectedDraft = ko.observable(),
-        template = ko.observable(),
-        initialized = false;
+    var listItems = ko.observableArray(),
+        selectedItem = ko.observable(),
+        draftPreview = ko.observable(),
+        initialized = false,
+        siteInfo = website.getSiteInfo();
 
     app.on('caps:draft:saved', function (args) {
         var draft = args.entity;
-        if (selectedDraft() && draft.Id() === selectedDraft().Id())
-            loadDraft(draft.Id());
+        if (selectedItem() && selectedItem().draftId() === draft.Id())
+            showPreview(selectedItem().draftId());
+
         if (args.isNewDraft) {
-            loadDrafts().
-                then(function () {
-                    vm.selectDraftById(draft.Id());
-                });            
+            fetchListItems().then(function () { vm.selectDraftById(draft.Id()); });            
         }
     });
 
+    function fetchListItems() {
+        return datacontext.getDrafts().then(function (data) {
+            var items = ko.utils.arrayMap(data.results, function (draft) { return new DraftListItem(draft); });
+            listItems(items);
+        });
+    }
+
+    function showPreview(draftId) {
+        return datacontext.getDraft(draftId)
+            .then(function (data) {
+                var entity = data.results[0],
+                    template = data.results[0].deserializeTemplate();
+                draftPreview(new DraftPreviewViewModel(entity, template));
+            });
+    }
+
+    function selectFirstDraft() {
+        if (listItems().length) 
+            vm.selectDraft(listItems()[0]);
+    }
+
     var vm = {
-        drafts: drafts,
-        selectedDraft: selectedDraft,
-        template: template,
-        moment: moment,
-        siteInfo: website.getSiteInfo(),
+        items: listItems,
+        selectedItem: selectedItem,
+        draftPreview: draftPreview,
 
         activate: function () {
             if (!initialized) {
                 initialized = true;
-                loadDrafts().then(selectFirstDraft);
+                fetchListItems().then(selectFirstDraft);
             }
         },
 
@@ -35,56 +64,55 @@
             module.router.navigate('#drafts/create');
         },
 
-        editDraft: function (draft) {
-            module.router.navigate('#drafts/edit/' + draft.Id());
+        editDraft: function (listItem) {
+            module.router.navigate('#drafts/edit/' + listItem.draftId());
         },
 
         editSelectedDraft: function () {
-            vm.editDraft(selectedDraft());
+            vm.editDraft(selectedItem());
         },
 
-        selectDraft: function (draft) {
-            selectedDraft(draft);
-            template(null);
-            loadDraft(draft.Id());
+        selectDraft: function (listItem) {
+            selectedItem(listItem);
+            draftPreview(null);
+            showPreview(listItem.draftId());
         },
 
         selectDraftById: function(id) {
-            var draft = ko.utils.arrayFirst(drafts(), function (d) { return d.Id() === id; });
-            if (draft) vm.selectDraft(draft);
-        },
+            var listItem = ko.utils.arrayFirst(listItems(), function (d) { return d.draftId() === id; });
+            if (listItem) vm.selectDraft(listItem);
+        }
+    };
 
-        translateDraft: function(language) {
-            module.router.navigate('#drafts/translate/' + selectedDraft().Id()+ '/' + language.culture );
-        },
+    /*
+     * DraftPreviewViewModel class
+     */
+    function DraftPreviewViewModel(entity, template) {
+        var self = this;
+        self.entity = ko.observable(entity);
+        self.resource = ko.observable(entity.getResource('de'));
+        self.template = ko.observable(template);
+        self.defaultCulture = siteInfo.defaultCulture();
+        self.supportedTranslations = siteInfo.supportedTranslations();
 
-        formatDate: function (date) {
-            var now = moment();
-            var d = moment.utc(date);
+        self.createdAt = ko.computed(function () {
+            return moment.utc(entity.Created().At()).format('LLLL');
+        });
 
-            var diffDays = d.diff(now, 'days');
-            if (diffDays < 7) {
-                return d.format('dd HH:mm');
-            }
+        self.createdFromNow = ko.computed(function () {
+            return moment.utc(entity.Created().At()).fromNow();
+        });
 
-            if (d.year() == now.year()) {
-                return d.format('dd. D.MMM HH:mm');
-            }
+        self.modifiedAt = ko.computed(function () {
+            return moment.utc(entity.Modified().At()).format('LLLL');
+        });
 
-            return d.format('D.MMM YY HH:mm');            
-        },
+        self.modifiedFromNow = ko.computed(function () {
+            return moment.utc(entity.Modified().At()).fromNow();
+        });
 
-        getContent: function (templateCell) {
-            var cp = selectedDraft().findContentPart(templateCell.name);
-            if (cp) {
-                var res = cp.getResource('de');
-                if (res) return res.Content();
-            }
-            return '';
-        },
-
-        getContentPartTemplate: function (templateCell) {
-            var cp = selectedDraft().findContentPart(templateCell.name);
+        self.getContentTemplateName = function (templateCell) {
+            var cp = self.entity().findContentPart(templateCell.name);
             if (cp) {
                 if (cp.ContentType().toLowerCase() === 'html')
                     return 'CT_HTML';
@@ -92,28 +120,60 @@
                     return 'CT_MARKDOWN';
             }
             return 'CT_TEXT';
+        };
+
+        self.translateDraft = function (language) {
+            module.router.navigate('#drafts/translate/' + entity.Id() + '/' + language.culture);
+        };
+    }
+
+    DraftPreviewViewModel.prototype.getContent = function (templateCell) {
+        var cp = this.entity().findContentPart(templateCell.name);
+        if (cp) {
+            var res = cp.getResource('de');
+            if (res) return res.Content();
         }
+        return '';
     };
 
-    function loadDrafts() {
-        return datacontext.getDrafts().then(function (data) {
-            drafts(data.results);
+    /*
+     * DraftListItem class
+     */
+    function DraftListItem(entity) {
+        var self = this;
+
+        self.draftId = ko.computed(function () {
+            return entity.Id();
+        });
+
+        self.createdAt = ko.computed(function () {
+            return self.formatDate(entity.Created().At());
+        });
+
+        self.title = ko.computed(function () {
+            return entity.Name();
+        });
+
+        self.isSelected = ko.computed(function () {
+            return selectedItem() === self;
         });
     }
 
-    function selectFirstDraft() {
-        if (vm.drafts().length) {
-            var first = vm.drafts()[0];
-            vm.selectDraft(first);
+    DraftListItem.prototype.formatDate = function (date) {
+        var now = moment();
+        var d = moment.utc(date);
+
+        var diffDays = d.diff(now, 'days');
+        if (diffDays < 7) {
+            return d.format('dd HH:mm');
         }
-    }
 
-    function loadDraft(id) {
-        return datacontext.getDraft(id).then(function (data) {
-            var t = data.results[0].deserializeTemplate();
-            template(t);
-        });
-    }
+        if (d.year() == now.year()) {
+            return d.format('dd. D.MMM HH:mm');
+        }
+
+        return d.format('D.MMM YY HH:mm');
+    };
 
     return vm;
 });

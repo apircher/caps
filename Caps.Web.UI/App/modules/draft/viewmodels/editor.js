@@ -1,6 +1,23 @@
-﻿define(['../module', '../datacontext', 'ko', 'Q', './editor/navigation', './editor/draftTemplate', './editor/draftProperties', './editor/draftFiles', './editor/contentPartEditor',
-    'entityManagerProvider', 'breeze', 'durandal/app', 'durandal/system', './editorModel'
-], function (module, datacontext, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, entityManagerProvider, breeze, app, system, EditorModel) {
+﻿/*
+ * draft/editor.js
+ */
+define([
+    'durandal/app',
+    'durandal/system',
+    '../module',
+    '../datacontext',
+    'entityManagerProvider',
+    'breeze',
+    'ko',
+    'Q',
+    './editor/navigation',
+    './editor/draftTemplate',
+    './editor/draftProperties',
+    './editor/draftFiles',
+    './editor/contentPartEditor',
+    './editorModel'
+],
+function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, EditorModel) {
 
     // Editor Model
     function DraftEditor() {
@@ -22,21 +39,22 @@
         self.isNewDraft = ko.observable(false);
 
         self.activate = function (draftIdOrTemplateName) {
-            var deferred = Q.defer();
-            if (draftIdOrTemplateName && /^[0-9]+$/.test(draftIdOrTemplateName)) {
-                loadEntity(draftIdOrTemplateName)
-                    .then(function () {
-                        initViews();
-                        deferred.resolve();
-                    });
-            }
-            else {
-                self.isNewDraft(true);
-                createEntity(draftIdOrTemplateName);
-                initViews();
-                deferred.resolve();
-            }
-            return deferred.promise;
+            return system.defer(function (dfd) {
+                if (draftIdOrTemplateName && /^[0-9]+$/.test(draftIdOrTemplateName)) {
+                    loadEntity(draftIdOrTemplateName)
+                        .then(function () {
+                            initViews();
+                            dfd.resolve();
+                        });
+                }
+                else {
+                    self.isNewDraft(true);
+                    createEntity(draftIdOrTemplateName);
+                    initViews();
+                    dfd.resolve();
+                }
+            })
+            .promise();
         };
 
         self.shouldActivate = function (router, currentData, newData) {

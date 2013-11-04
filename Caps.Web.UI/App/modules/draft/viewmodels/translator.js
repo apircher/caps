@@ -1,4 +1,20 @@
-﻿define(['durandal/app', '../module', 'ko', 'entityManagerProvider', 'breeze', 'Q', './translator/navigation', './translator/contentPartEditor', './translator/draftFiles', './translator/draftProperties', './editorModel'], function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, ContentPartEditor, DraftFiles, DraftProperties, EditorModel) {
+﻿/* 
+ * draft/translator.js
+ */
+define([
+    'durandal/app',
+    '../module',
+    'ko',
+    'entityManagerProvider',
+    'breeze',
+    'Q',
+    './translator/navigation',
+    './translator/contentPartEditor',
+    './translator/draftFiles',
+    './translator/draftProperties',
+    './editorModel'
+],
+function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, ContentPartEditor, DraftFiles, DraftProperties, EditorModel) {
 
     function Translator() {
         var self = this,

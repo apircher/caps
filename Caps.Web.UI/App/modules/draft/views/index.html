@@ -1,20 +1,22 @@
 ﻿<div id="drafts-index" class="app-page bottom-fixed-navbar-container">
     
-    <div>
-        <div class="col-md-4 col-lg-3">
-            <ul data-bind="foreach: drafts" class="data-list">
-                <li data-bind="css: { active: $data === $parent.selectedDraft() }, click: $parent.selectDraft">
-                    <div class="pull-right">
-                        <span data-bind="text: $parent.formatDate($data.Modified().At())"></span>
-                    </div>
-                    <span data-bind="text: Name"></span>
-                </li>
-            </ul>
-        </div>
-        <div class="col-md-8 col-lg-9 draft-preview">
-            <!-- ko if: selectedDraft() && template() -->
-            <!-- ko template: 'DraftPreviewTemplate' --><!-- /ko -->
-            <!-- /ko -->
+    <div class="container-fullwidth">
+        <div class="row">
+            <div class="col-md-4 col-lg-3">
+                <ul data-bind="foreach: items" class="data-list">
+                    <li data-bind="css: { active: isSelected() }, click: $parent.selectDraft">
+                        <div class="pull-right">
+                            <span data-bind="text: createdAt"></span>
+                        </div>
+                        <span data-bind="text: title"></span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-8 col-lg-9 draft-preview">
+                <!-- ko if: draftPreview() -->
+                <!-- ko template: { name: 'DraftPreviewTemplate', data: draftPreview() } --><!-- /ko -->
+                <!-- /ko -->
+            </div>
         </div>
     </div>
         
@@ -24,7 +26,7 @@
                 <li>
                     <a href="#" data-bind="click:addDraft"><span><i class="fa fa-plus fa-fw"></i> Neuer Entwurf</span></a>
                 </li>
-                <li data-bind="visible: selectedDraft()">
+                <li data-bind="visible: selectedItem()">
                     <a href="#" data-bind="click:editSelectedDraft"><span><i class="fa fa-edit fa-fw"></i> Entwurf Bearbeiten</span></a>
                 </li>
             </ul>
@@ -35,41 +37,45 @@
 <script type="text/html" id="DraftPreviewTemplate">
     <div class="row">
         <div class="col-md-12">
-            <p data-bind="with: selectedDraft()">
-                <span data-bind="text: Name"></span> Version <span data-bind="text: Version" />
-                <br />Erstellt von: <span data-bind="text: Created().By"></span> <span data-bind="text: $parent.moment.utc(Created().At()).fromNow(), attr: { title: $parent.moment.utc(Created().At()).format('LLLL') }"></span>
-                <br />Letzte Änderung: <span data-bind="text: Modified().By"></span> <span data-bind="text: $parent.moment.utc(Modified().At()).fromNow(), attr: { title: $parent.moment.utc(Modified().At()).format('LLLL') }"></span>
+            <p>
+                <small data-bind="text: entity().Modified().By"></small> <small data-bind="text: modifiedFromNow(), attr: { title: modifiedAt() }"></small>
+            </p>
+            <h4><!-- ko text: resource().Title --><!-- /ko --> <small data-bind="text: entity().Name() + ' (v.' + entity().Version() + ')'"></small></h4>
+            <p>
+                Original: <span data-bind="text: defaultCulture.localeName('de')"></span>,
+
+                <span>Übersetzungen: </span>
+                <!-- ko foreach: supportedTranslations -->
+                <a data-bind="text: localeName('de'), click: $parent.translateDraft" href="#"></a>
+                <!-- /ko -->
             </p>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <span data-bind="text: siteInfo.defaultCulture().localeName('de')"></span>, 
-
-            <span>Übersetzungen: </span>
-            <!-- ko foreach: siteInfo.supportedTranslations() -->
-            <a data-bind="text: localeName('de'), click: $parent.translateDraft" href="#"></a>
+    <section class="draft-preview-content">
+        <!-- ko foreach: { data: template().rows, as: 'row' } -->
+        <div class="row">
+            <!-- ko foreach: { data:row.cells, as: 'cell' } -->
+            <div data-bind="draftTemplateClass: cell">
+                <div data-bind="template: { name: $parents[1].getContentTemplateName($data) }" class="template-preview-cell"></div>
+            </div>
             <!-- /ko -->
         </div>
-    </div>
-    <!-- ko foreach: { data: template().rows, as: 'row' } -->
-    <div class="row">
-        <!-- ko foreach: { data:row.cells, as: 'cell' } -->
-        <div data-bind="draftTemplateClass: cell, click: $parents[1].editContentPart">
-            <div data-bind="template: { name: $parents[1].getContentPartTemplate($data) }" class="template-preview-cell"></div>
-        </div>
         <!-- /ko -->
-    </div>
-    <!-- /ko -->
-    <div class="row" data-bind="with: selectedDraft()">
+    </section>
+    <!-- ko if: entity().Files().length > 0 -->
+    <div class="row draft-preview-panel" data-bind="with: entity()">
         <div class="col-md-12">
-            <ul data-bind="foreach: Files()">
+            <p>
+                Dateien (<!-- ko text: Files().length --><!-- /ko -->):
+            </p>
+            <ul data-bind="foreach: Files()" class="list-inline">
                 <li>
-                    <span data-bind="text: Name" />
+                    <i class="fa fa-file"></i> <span data-bind="text: Name" />
                 </li>
             </ul>
         </div>
     </div>
+    <!-- /ko -->
 </script>
 
 <script type="text/html" id="CT_HTML">

@@ -1,4 +1,13 @@
-﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter', './entities', 'durandal/app'], function (moduleFactory, routerFactory, model, app) {
+﻿/*
+ * draft/module.js
+ */
+define([
+    'infrastructure/moduleFactory',
+    'infrastructure/moduleRouter',
+    './entities',
+    'durandal/app'
+],
+function (moduleFactory, routerFactory, model, app) {
 
     var module = moduleFactory.createModule({
         route: 'drafts*details',

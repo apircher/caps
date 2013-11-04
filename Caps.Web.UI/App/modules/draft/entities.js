@@ -1,4 +1,11 @@
-﻿define(['require', 'ko'], function (require, ko) {
+﻿/*
+ * draft/entities.js
+ */
+define([
+    'require',
+    'ko'
+],
+function (require, ko) {
     
     /**
      * Draft Entity

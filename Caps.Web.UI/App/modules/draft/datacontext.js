@@ -1,4 +1,11 @@
-﻿define(['entityManagerProvider', 'ko'], function (entityManagerProvider, ko) {
+﻿/*
+ * draft/datacontext.js
+ */
+define([
+    'entityManagerProvider',
+    'ko'
+],
+function (entityManagerProvider, ko) {
     
     var manager = entityManagerProvider.createManager();
     var EntityQuery = breeze.EntityQuery;

@@ -600,9 +600,18 @@ input.hide-ms-clear::-ms-clear {
 }
 
 .draft-preview {
-    background:#eee;
-    min-height:350px;
+    min-height:300px;
 }
+
+.draft-preview-content {
+    border-top:1px solid #eee;
+    border-bottom:1px solid #eee;
+}
+
+.draft-preview-panel {
+    padding:15px 0;
+}
+
     .draft-preview .row {
         border-bottom:1px solid #fff;
     }
@@ -631,8 +640,8 @@ input.hide-ms-clear::-ms-clear {
     .draft-preview h2:first-of-type,
     .draft-preview h3:first-of-type,
     .draft-preview h4:first-of-type {
-        padding-top:0;
-        margin-top:0;
+        /*padding-top:0;
+        margin-top:0;*/
     }
 
     .template-preview-cell {
