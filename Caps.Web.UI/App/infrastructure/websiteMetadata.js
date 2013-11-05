@@ -58,6 +58,8 @@ function (ko) {
 
     var siteInfo = new websiteInfo();
     return {
+        Language: Language,
+
         getSiteInfo: function () {
             return siteInfo;
         }

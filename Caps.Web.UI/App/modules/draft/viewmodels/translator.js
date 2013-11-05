@@ -12,9 +12,10 @@ define([
     './translator/contentPartEditor',
     './translator/draftFiles',
     './translator/draftProperties',
-    './editorModel'
+    './editorModel',
+    'infrastructure/websiteMetadata'
 ],
-function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, ContentPartEditor, DraftFiles, DraftProperties, EditorModel) {
+function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, ContentPartEditor, DraftFiles, DraftProperties, EditorModel, WebsiteMetadata) {
 
     function Translator() {
         var self = this,
@@ -22,7 +23,8 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
             navigationVM,
             draftFilesVM,
             draftPropertiesVM,
-            contentPartEditors = [];
+            contentPartEditors = [],
+            websiteMetadata = WebsiteMetadata.getSiteInfo();
 
         self.manager = manager;
         self.draftId = ko.observable();
@@ -36,7 +38,7 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
 
         self.activate = function (draftId, language) {
             self.draftId(draftId);
-            self.language(language);
+            self.language(new WebsiteMetadata.Language(language));
 
             var deferred = Q.defer();
             loadEntity(draftId)
@@ -80,6 +82,11 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
             if (cpe) self.currentContent(cpe);
         };
 
+        self.fetchFile = function(id) {
+            var query = breeze.EntityQuery.from('Files').where('Id', '==', id);
+            return manager.executeQuery(query);
+        };
+
         function loadEntity(id) {
             var query = breeze.EntityQuery.from('Drafts').where('Id', '==', id)
                 .expand('Resources, ContentParts, ContentParts.Resources, Files, Files.Resources, Files.Resources.File');
@@ -105,7 +112,7 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
             });
 
             if (!cpe) {
-                cpe = new ContentPartEditor(self, contentPart, self.language());
+                cpe = new ContentPartEditor(self, contentPart, self.language().culture);
                 contentPartEditors.push(cpe);
             }
 
@@ -116,15 +123,54 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
             var e = self.entity();
             if (e) {
                 // Init Files.
-                var localizedFiles = ko.utils.arrayMap(e.Files(), function (file) {
-                    var resource = file.getOrCreateResource(self.language(), manager);
-                    return new EditorModel.LocalizedDraftFile(file, resource);
+                var fileTranslations = ko.utils.arrayMap(e.Files(), function (file) {
+                    var originalResource = file.getResource('de'),
+                        translationResource = file.getOrCreateResource(self.language().culture, manager);
+                    return new DraftFileTranslation(self, item, originalResource, translationResource);
                 });
-                self.files(localizedFiles);
+                self.files(fileTranslations);
 
                 // Init DraftResource
-                var r = e.getOrCreateResource(self.language(), manager);
+                var r = e.getOrCreateResource(self.language().culture, manager);
             }
+        }
+    }
+
+
+    function DraftFileTranslation(editor, draftFile, originalResource, translationResource) {
+        var self = this;
+        self.draftFile = draftFile;
+        self.original = originalResource;
+        self.translation = translationResource;
+
+        self.File = ko.computed(function () {
+            if (self.translation && self.translation.File())
+                return self.translation.File();
+            return self.original.File();
+        });
+
+        self.selectFile = function () {
+            app.selectFiles({
+                module: module,
+                title: 'Übersetzung für ' + originalResource.File().FileName() + ' wählen'
+            }).then(function (result) {
+                if (result.dialogResult) {
+                    if (result.selectedFiles.length > 0) {
+                        var file = result.selectedFiles[0];
+                        setTranslatedFile(file);
+                    }
+                }
+            });
+        };
+
+        self.resetFile = function () {
+            self.translation.DbFileId(null);
+        };
+
+        function setTranslatedFile(file) {
+            editor.fetchFile(file.Id()).then(function () {
+                self.translation.DbFileId(file.Id());
+            });
         }
     }
 

@@ -1,9 +1,9 @@
 ﻿<div class="row editor-header">
     <div class="col-md-6">
-        <span>de</span>
+        <span>Original (Deutsch)</span>
     </div>
     <div class="col-md-6">
-        <span data-bind="text:editor.language()"></span>
+        <span data-bind="text:editor.language().localeName('de')"></span>
     </div>
 </div>
 
@@ -36,21 +36,21 @@
         <div class="form-group">
             <label class="col-md-2">Titel</label>
             <div class="col-md-10">
-                <input type="text" data-bind="value: resource.Title" class="form-control" />
+                <input type="text" data-bind="value: resource.Title, attr: { lang: editor.language().culture }" class="form-control" />
             </div>
         </div>
 
         <div class="form-group">
             <label class="col-md-2">Beschreibung</label>
             <div class="col-md-10">
-                <textarea data-bind="value: resource.Description" class="form-control" />
+                <textarea data-bind="value: resource.Description, attr: { lang: editor.language().culture }" class="form-control" />
             </div>
         </div>
         
         <div class="form-group">
             <label class="col-md-2">Stichworte</label>
             <div class="col-md-10">
-                <input type="text" data-bind="value: resource.Keywords" class="form-control" />
+                <input type="text" data-bind="value: resource.Keywords, attr: { lang: editor.language().culture }" class="form-control" />
             </div>
         </div>
     </div>

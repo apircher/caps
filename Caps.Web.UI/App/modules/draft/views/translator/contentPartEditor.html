@@ -1,9 +1,9 @@
 ﻿<div class="row editor-header">
     <div class="col-md-6">
-        <span>de</span>
+        <span>Original (Deutsch)</span>
     </div>
     <div class="col-md-6">
-        <span data-bind="text:editor.language()"></span>
+        <span data-bind="text:editor.language().localeName('de')"></span>
     </div>
 </div>
 
@@ -12,6 +12,6 @@
         <textarea class="form-control" data-bind="value: originalContent" disabled="disabled" />
     </div>
     <div class="col-md-6 text-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .editor-header', minWidth: 979 }">
-        <textarea class="form-control" data-bind="value: resource.Content, attr: { lang: editor.language() }" />
+        <textarea class="form-control" data-bind="value: resource.Content, attr: { lang: editor.language().culture }" />
     </div>
 </div>

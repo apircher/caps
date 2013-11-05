@@ -1,9 +1,18 @@
-﻿<section data-bind="foreach: editor.files" class="thumbnail-list">
+﻿<div class="row editor-header">
+    <div class="col-md-6">
+        <span>Original (Deutsch)</span>
+    </div>
+    <div class="col-md-6">
+        <span data-bind="text:editor.language().localeName('de')"></span>
+    </div>
+</div>
+
+<section data-bind="foreach: editor.files" class="thumbnail-list">
     <div class="row">
         <div class="col-md-2">
             <div class="thumbnail-container">
                 <a class="thumbnail">
-                    <!-- ko template: { name: 'dbfile-icon', data: fallbackResource().File() } --><!-- /ko -->
+                    <!-- ko template: { name: 'dbfile-icon', data: original.File() } --><!-- /ko -->
                 </a>
             </div>
         </div>
@@ -12,21 +21,21 @@
                 <div class="form-group">
                     <label class="col-md-2">Titel</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" data-bind="value: fallbackResource().Title" disabled="disabled" />
+                        <input type="text" class="form-control" data-bind="value: original.Title" disabled="disabled" />
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-md-2">Beschreibung</label>
                     <div class="col-md-10">
-                        <textarea data-bind="value: fallbackResource().Description" class="form-control" disabled="disabled" />
+                        <textarea data-bind="value: original.Description" class="form-control" disabled="disabled" />
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-md-2">Akkreditierung</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" data-bind="value: fallbackResource().Credits" disabled="disabled" />
+                        <input type="text" class="form-control" data-bind="value: original.Credits" disabled="disabled" />
                     </div>
                 </div>
             </form>
@@ -35,11 +44,15 @@
 
         <div class="col-md-2">
             <div class="thumbnail-container">
-                <a class="thumbnail" href="#" data-bind="click: $parent.createDraft">
-                    <!-- ko if: resource.File() -->
-                    <!-- ko template: { name: 'dbfile-icon', data: resource.File() } --><!-- /ko -->
+                <a class="thumbnail" href="#">
+                    <!-- ko if: File() -->
+                    <!-- ko template: { name: 'dbfile-icon', data: File() } --><!-- /ko -->
                     <!-- /ko -->
                 </a>
+                <a href="#" data-bind="click: selectFile">Datei wählen...</a>
+                <!-- ko if: translation.File() -->
+                <a href="#" data-bind="click: resetFile"><i class="fa fa-times"></i></a>
+                <!-- /ko -->
             </div>
         </div>
         <div class="col-md-4">
@@ -47,21 +60,21 @@
                 <div class="form-group">
                     <label class="col-md-2">Titel</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" data-bind="value: resource.Title" />
+                        <input type="text" class="form-control" data-bind="value: translation.Title, attr: { lang: $parent.editor.language().culture }" />
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-md-2">Beschreibung</label>
                     <div class="col-md-10">
-                        <textarea data-bind="value: resource.Description" class="form-control" />
+                        <textarea data-bind="value: translation.Description, attr: { lang: $parent.editor.language().culture }" class="form-control" />
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-md-2">Akkreditierung</label>
                     <div class="col-md-10">
-                        <input type="text" class="form-control" data-bind="value: resource.Credits" />
+                        <input type="text" class="form-control" data-bind="value: translation.Credits, attr: { lang: $parent.editor.language().culture }" />
                     </div>
                 </div>
             </form>
