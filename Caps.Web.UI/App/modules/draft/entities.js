@@ -12,6 +12,13 @@ function (require, ko) {
      */
     function Draft() {
         var self = this;
+
+        self.template = ko.computed({
+            read: function () {
+                return self.deserializeTemplate();
+            },
+            deferEvaluation: true
+        });
     }
 
     Draft.prototype.getResource = function (language) {
@@ -56,6 +63,7 @@ function (require, ko) {
 
     Draft.prototype.deserializeTemplate = function () {
         var t = JSON.parse(this.TemplateContent());
+        if (!t) return undefined;
 
         t.findCell = function (cellName) {
             for (var r = 0; r < t.rows.length; r++) {

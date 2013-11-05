@@ -91,6 +91,12 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
         function initViews() {
             navigationVM = navigationVM || new Navigation(self);
             self.currentNavigation(navigationVM);
+
+            if (navigationVM.contentParts().length) {
+                var first = navigationVM.contentParts()[0];
+                var cpe = getOrCreateContentPartEditor(first.contentPart);
+                if (cpe) self.currentContent(cpe);
+            }
         }
 
         function getOrCreateContentPartEditor(contentPart) {

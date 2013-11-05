@@ -11,7 +11,9 @@
         });
 
         self.embedSrc = ko.computed(function () {
-            return 'caps://draft-file/' + escape(self.resource.File().FileName());
+            if (self.resource && self.resource.File())
+                return 'caps://draft-file/' + escape(self.resource.File().FileName());
+            return '';
         });
     }
 

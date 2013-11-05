@@ -8,16 +8,10 @@
 </div>
 
 <div class="row">
-    <div class="col-md-6 text-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .editor-footer, .editor-header', minWidth: 979 }">
+    <div class="col-md-6 text-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .editor-header', minWidth: 979 }">
         <textarea class="form-control" data-bind="value: originalContent" disabled="disabled" />
     </div>
-    <div class="col-md-6 text-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .editor-footer, .editor-header', minWidth: 979 }">
+    <div class="col-md-6 text-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .editor-header', minWidth: 979 }">
         <textarea class="form-control" data-bind="value: resource.Content, attr: { lang: editor.language() }" />
-    </div>
-</div>
-
-<div class="row editor-footer">
-    <div class="col-md-12">
-        Inhalt: <span data-bind="text: title"></span>
     </div>
 </div>
