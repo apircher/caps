@@ -1,0 +1,57 @@
+﻿<div id="sitemapnode-translator" class="app-page bottom-fixed-navbar-container">
+    <div class="container-fullwidth">
+        <div class="row" data-bind="if: entity()">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Titel (Deutsch)</label>
+                    <input type="text" data-bind="value: entity().getResource('de').Title" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Beschreibung (Deutsch)</label>
+                    <textarea data-bind="value: entity().getResource('de').Description" class="form-control" rows="5" />
+                </div>
+
+                <div class="form-group">
+                    <label>Stichworte (Deutsch)</label>
+                    <textarea data-bind="value: entity().getResource('de').Keywords" class="form-control" rows="5" />
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Externer Name</label>
+                    <input type="text" data-bind="value: entity().ExternalName" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Knotentyp</label>
+                    <input type="text" data-bind="value: entity().NodeType" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Weiterleitung</label>
+                    <input type="text" data-bind="value: entity().Redirect" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Weiterleitungstyp</label>
+                    <input type="text" data-bind="value: entity().RedirectType" class="form-control" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="navbar navbar-default navbar-fixed-bottom">
+        <div class="navbar-panel pull-left">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#" data-bind="click: navigateBack"><span><i class="fa fa-arrow-left"></i> Zurück</span></a>
+                </li>
+                <li>
+                    <a href="#" data-bind="click: saveChanges"><span><i class="fa fa-save"></i> Speichern</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

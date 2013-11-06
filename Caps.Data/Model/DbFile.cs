@@ -25,6 +25,8 @@ namespace Caps.Data.Model
         public ICollection<DbFileTag> Tags { get; set; }
         [InverseProperty("File")]
         public ICollection<DraftFileResource> DraftFileResources { get; set; }
+        [InverseProperty("File")]
+        public ICollection<SitemapNodeContentFileResource> SitemapNodeContentFileResources { get; set; }
 
         public ChangeInfo Created { get; set; }
         public ChangeInfo Modified { get; set; }

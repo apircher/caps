@@ -21,6 +21,7 @@ namespace Caps.Web.UI.Infrastructure
         {
             ProcessNewOrModifiedDbFileTags(saveMap);
             ProcessNewOrModifiedDrafts(saveMap);
+            ProcessNewOrModifiedSitemapNodes(saveMap);
 
             return saveMap;
         }
@@ -92,6 +93,30 @@ namespace Caps.Web.UI.Infrastructure
                     draft.Modified.By = user.Identity.Name;
                     draft.Modified.At = DateTime.UtcNow;
                     draft.Version++;
+                }
+            }
+        }
+
+        void ProcessNewOrModifiedSitemapNodes(Dictionary<Type, List<EntityInfo>> saveMap)
+        {
+            if (saveMap.ContainsKey(typeof(SitemapNode)))
+            {
+                var newSitemapNodes = saveMap[typeof(SitemapNode)].Where(n => n.EntityState == EntityState.Added);
+                foreach (var entry in newSitemapNodes)
+                {
+                    var sitemapNode = entry.Entity as SitemapNode;
+                    sitemapNode.Created.At = DateTime.UtcNow;
+                    sitemapNode.Created.By = user.Identity.Name;
+                    sitemapNode.Modified.At = DateTime.UtcNow;
+                    sitemapNode.Modified.By = user.Identity.Name;
+                }
+
+                var modifiedNodes = saveMap[typeof(SitemapNode)].Where(n => n.EntityState == EntityState.Modified);
+                foreach (var entry in modifiedNodes)
+                {
+                    var sitemapNode = entry.Entity as SitemapNode;
+                    sitemapNode.Modified.At = DateTime.UtcNow;
+                    sitemapNode.Modified.By = user.Identity.Name;
                 }
             }
         }

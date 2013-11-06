@@ -255,6 +255,22 @@
 .dropdown-menu > li > a.checkable-item {
     padding-left:10px;
 }
+/** 
+ *  Treeview
+ */
+
+ul.tree-branch ul {
+    margin:0 0 0 21px;
+}
+
+ul.tree-branch a,
+ul.tree-branch a:active,
+ul.tree-branch a:visited,
+ul.tree-branch a:hover {
+    color:#333;
+    text-decoration:none;
+}
+
 
 /** 
  *  Thumbnails 

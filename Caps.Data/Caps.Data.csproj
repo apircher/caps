@@ -88,6 +88,18 @@
     <Compile Include="Migrations\201311022251256_AlterDraftFileResources.Designer.cs">
       <DependentUpon>201311022251256_AlterDraftFileResources.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311051642481_AddSitemapNodes.cs" />
+    <Compile Include="Migrations\201311051642481_AddSitemapNodes.Designer.cs">
+      <DependentUpon>201311051642481_AddSitemapNodes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201311051956261_AlterWebsites.cs" />
+    <Compile Include="Migrations\201311051956261_AlterWebsites.Designer.cs">
+      <DependentUpon>201311051956261_AlterWebsites.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201311060006092_AlterSitemapNodes.cs" />
+    <Compile Include="Migrations\201311060006092_AlterSitemapNodes.Designer.cs">
+      <DependentUpon>201311060006092_AlterSitemapNodes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
@@ -104,6 +116,13 @@
     <Compile Include="Model\DraftFileResource.cs" />
     <Compile Include="Model\DraftResource.cs" />
     <Compile Include="Model\Sitemap.cs" />
+    <Compile Include="Model\SitemapNode.cs" />
+    <Compile Include="Model\SitemapNodeContent.cs" />
+    <Compile Include="Model\SitemapNodeContentFile.cs" />
+    <Compile Include="Model\SitemapNodeContentFileResource.cs" />
+    <Compile Include="Model\SitemapNodeContentPart.cs" />
+    <Compile Include="Model\SitemapNodeContentPartResource.cs" />
+    <Compile Include="Model\SitemapNodeResource.cs" />
     <Compile Include="Model\Tag.cs" />
     <Compile Include="Model\Website.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -133,6 +152,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201311022251256_AlterDraftFileResources.resx">
       <DependentUpon>201311022251256_AlterDraftFileResources.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311051642481_AddSitemapNodes.resx">
+      <DependentUpon>201311051642481_AddSitemapNodes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311051956261_AlterWebsites.resx">
+      <DependentUpon>201311051956261_AlterWebsites.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311060006092_AlterSitemapNodes.resx">
+      <DependentUpon>201311060006092_AlterSitemapNodes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -3,9 +3,10 @@
  */
 define([
     'breeze',
-    'infrastructure/moduleRegistry'
+    'infrastructure/moduleRegistry',
+    'infrastructure/entities'
 ],
-function (breeze, moduleRegistry) {
+function (breeze, moduleRegistry, globalModel) {
 
     var serviceName = '/breeze/capsdata';
     var masterManager = new breeze.EntityManager(serviceName);
@@ -36,6 +37,7 @@ function (breeze, moduleRegistry) {
                 func.call(modules[i], masterManager.metadataStore);            
         }
 
+        globalModel.extendModel(masterManager.metadataStore);
         return masterManager.fetchMetadata();
     }
 

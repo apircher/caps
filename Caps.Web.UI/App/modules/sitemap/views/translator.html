@@ -1,0 +1,66 @@
+﻿<div id="sitemapnode-translator" class="app-page bottom-fixed-navbar-container">
+    <div class="container-fullwidth">
+
+        <div class="row">
+            <div class="col-md-5 col-md-offset-2">
+                <p>Original (Deutsch)</p>
+            </div>
+            <div class="col-md-5">
+                <p>Übersetzung (<!-- ko text:language().localeName('de') --><!-- /ko -->)</p>
+            </div>
+        </div>
+
+        <!-- ko if: original() && translation() -->
+
+        <div class="row form-group">
+            <div class="col-md-2">
+                <label class="control-label">Titel</label>
+            </div>
+            <div class="col-md-5">
+                <input type="text" data-bind="value: original().Title" class="form-control" disabled="disabled" />
+            </div>
+            <div class="col-md-5">
+                <input type="text" data-bind="value: translation().Title, attr: { lang: language().culture }" class="form-control" />
+            </div>
+        </div>
+
+        <div class="row form-group">
+            <div class="col-md-2">
+                <label class="control-label">Beschreibung</label>
+            </div>
+            <div class="col-md-5">
+                <textarea data-bind="value: original().Description" class="form-control" disabled="disabled" rows="4" />
+            </div>
+            <div class="col-md-5">
+                <textarea data-bind="value: translation().Description, attr: { lang: language().culture }" class="form-control" rows="4" />
+            </div>
+        </div>
+
+        <div class="row form-group">
+            <div class="col-md-2">
+                <label class="control-label">Stichworte</label>
+            </div>
+            <div class="col-md-5">
+                <textarea data-bind="value: original().Keywords" class="form-control" disabled="disabled" rows="4" />
+            </div>
+            <div class="col-md-5">
+                <textarea data-bind="value: translation().Keywords, attr: { lang: language().culture }" class="form-control" rows="4" />
+            </div>
+        </div>
+
+        <!-- /ko -->
+
+        <div class="navbar navbar-default navbar-fixed-bottom">
+            <div class="navbar-panel pull-left">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#" data-bind="click: navigateBack"><span><i class="fa fa-arrow-left"></i> Zurück</span></a>
+                    </li>
+                    <li>
+                        <a href="#" data-bind="click: saveChanges"><span><i class="fa fa-save"></i> Speichern</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

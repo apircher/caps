@@ -1,5 +1,81 @@
-﻿<div class="app-page">
-    <div class="container">
-        <h1>Module Sitemap</h1>
+﻿<div id="sitemap-index" class="app-page bottom-fixed-navbar-container">
+
+    <div class="container-fullwidth">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="list-inline">
+                    <li>
+                        <a href="#" data-bind="click: editWebsite"><i class="fa fa-cog"></i> Website</a>
+                    </li>
+                    <li>
+                        <!-- ko if: website() && website().Sitemaps() -->
+                        <select data-bind="options: sitemaps, optionsCaption: 'Version wählen', optionsText: function(item) { return 'Version ' + item.Version(); }, value: selectedSitemap"></select>
+                        <!-- /ko -->
+                    </li>
+                    <li>
+                        <a href="#" data-bind="click: createSitemapVersion"><i class="fa fa-plus"></i> Neue Version</a>
+                    </li>
+                    <li data-bind="if: selectedSitemap()">
+                        <a href="#" data-bind="click: deleteSitemapVersion"><i class="fa fa-trash-o"></i> Version verwerfen</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-lg-3">
+                <!-- ko if: selectedSitemap() -->
+                <!-- ko template: { name: 'NodesTemplate', data: selectedSitemap().rootNodes() } --><!-- /ko -->
+                <!-- /ko -->
+            </div>
+
+            <div class="col-md-5 col-lg-7">
+                <!-- ko if: selectedNode() -->
+                <h4 data-bind="text: selectedNode().getResource('de').Title"></h4>
+                <!-- /ko -->
+            </div>
+
+            <div class="col-md-3 col-lg-2">
+                <!-- ko if: selectedNode() -->
+                <ul class="list-inline">
+                    <li>
+                        <a href="#" data-bind="click: editSitemapNode"><i class="fa fa-edit"></i> Seiten-Eigenschaften</a>
+                    </li>
+                </ul>  
+                <h5>Übersetzungen</h5>   
+                <ul data-bind="foreach: supportedTranslations" class="list-inline">
+                    <li>
+                        <a href="#" data-bind="click: $parent.editTranslation"><i class="fa fa-edit"></i> <!-- ko text: localeName('de') --><!-- /ko --></a>
+                    </li>
+                </ul>           
+                <!-- /ko -->
+            </div>
+        </div>
+    </div>
+
+    <div class="navbar navbar-default navbar-fixed-bottom">
+        <div class="navbar-panel pull-left">
+            <ul class="nav navbar-nav">
+                <li data-bind="if: selectedNode()">
+                    <a href="#" data-bind="click: createSitemapNode"><span><i class="fa fa-plus fa-fw"></i> Neue Seite</span></a>
+                </li>
+                <li data-bind="if: selectedNode()">
+                    <a href="#" data-bind="click: deleteSitemapNode"><span><i class="fa fa-trash-o fa-fw"></i> Seite löschen</span></a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
+
+<script type="text/html" id="NodesTemplate">
+    <ul data-bind="foreach: $data" class="list-unstyled tree-branch">        
+        <li data-bind="if: !entityAspect.entityState.isDeleted()">
+            <div>
+                <a href="#" data-bind="text: getResource('de').Title, click: $root.selectNode"></a>
+            </div>
+
+            <!-- ko if: childNodes && childNodes().length > 0 -->
+            <!-- ko template: { name: 'NodesTemplate', data: childNodes() } --><!-- /ko -->
+            <!-- /ko -->
+        </li>        
+    </ul>
+</script>

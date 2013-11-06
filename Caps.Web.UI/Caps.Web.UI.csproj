@@ -60,9 +60,9 @@
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\packages\EntityFramework.6.0.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="ImageResizer, Version=3.4.0.763, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ImageResizer, Version=3.4.1.897, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ImageResizer.3.4.0\lib\ImageResizer.dll</HintPath>
+      <HintPath>..\packages\ImageResizer.3.4.1\lib\ImageResizer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Data.Edm, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -125,7 +125,7 @@
     </Reference>
     <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.1\lib\net40\System.Web.Optimization.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.2\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -223,6 +223,7 @@
     <Content Include="App\infrastructure\antiForgeryToken.js" />
     <Content Include="App\infrastructure\authentication.js" />
     <Content Include="App\infrastructure\datacontext.js" />
+    <Content Include="App\infrastructure\entities.js" />
     <Content Include="App\infrastructure\entityManagerProvider.js" />
     <Content Include="App\infrastructure\filterModel.js" />
     <Content Include="App\infrastructure\listSortModel.js" />
@@ -286,6 +287,10 @@
     <Content Include="App\modules\draft\views\translator\navigation.html" />
     <Content Include="App\modules\sitemap\module.html" />
     <Content Include="App\modules\sitemap\module.js" />
+    <Content Include="App\modules\sitemap\viewmodels\editor.js" />
+    <Content Include="App\modules\sitemap\viewmodels\translator.js" />
+    <Content Include="App\modules\sitemap\views\editor.html" />
+    <Content Include="App\modules\sitemap\views\translator.html" />
     <Content Include="App\modules\user\commands\deleteUser.js" />
     <Content Include="App\modules\user\datacontext.js" />
     <Content Include="App\modules\user\entities.js" />
@@ -305,6 +310,7 @@
     <Content Include="App\viewmodels\forbidden.js" />
     <Content Include="App\viewmodels\login.js" />
     <Content Include="App\viewmodels\profile.js" />
+    <Content Include="App\viewmodels\websites.js" />
     <Content Include="App\views\changePasswordDialog.html" />
     <Content Include="App\views\editorTemplates\checkboxTemplate.html" />
     <Content Include="App\views\editorTemplates\inputTemplate.html" />
@@ -321,19 +327,19 @@
     <Content Include="App\views\profile.html" />
     <Content Include="App\views\shell.html" />
     <Content Include="App\viewmodels\shell.js" />
+    <Content Include="App\views\websites.html" />
     <Content Include="App\views\welcome.html" />
     <Content Include="App\viewmodels\welcome.js" />
     <Content Include="App\main.js" />
     <Content Include="Content\app.css" />
-    <Content Include="Content\bootstrap\bootstrap-theme.css" />
-    <Content Include="Content\bootstrap\bootstrap-theme.min.css" />
-    <Content Include="Content\bootstrap\bootstrap.css" />
-    <Content Include="Content\bootstrap\bootstrap.min.css" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\durandal.css" />
     <Content Include="Content\fontawesome\font-awesome.css" />
     <Content Include="Content\fontawesome\font-awesome.min.css" />
     <Content Include="Content\fonts\fontawesome-webfont.svg" />
-    <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\ie10mobile.css" />
     <Content Include="Content\images\blank.gif" />
     <Content Include="Content\images\CapsMan.svg" />
@@ -404,22 +410,23 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="Content\toastr.css" />
     <Content Include="Content\toastr.min.css" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Content\fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="Content\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
     <None Include="App\modules\contentfile\searchGrammer.jison" />
     <Content Include="Content\toastr.less" />
     <Content Include="Content\fonts\fontawesome-webfont.woff" />
     <Content Include="Content\fonts\fontawesome-webfont.ttf" />
     <Content Include="Content\fonts\fontawesome-webfont.eot" />
     <Content Include="Content\fonts\FontAwesome.otf" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="Properties\PublishProfiles\caps-dev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\caps-dev - Web Deploy.pubxml" />
     <Content Include="Scripts\almond-custom.js" />
+    <None Include="Scripts\breeze.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <None Include="Scripts\breeze.intellisense.js" />
     <Content Include="Scripts\breeze.debug.js" />
     <Content Include="Scripts\breeze.min.js" />
     <Content Include="Scripts\doubleTap.js" />

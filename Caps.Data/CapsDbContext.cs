@@ -28,6 +28,7 @@ namespace Caps.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Website> Websites { get; set; }
         public DbSet<Sitemap> Sitemaps { get; set; }
+        public DbSet<SitemapNode> SitemapNodes { get; set; }
 
         public DbSet<Draft> Drafts { get; set; }
         public DbSet<DraftResource> DraftResources { get; set; }
@@ -35,7 +36,7 @@ namespace Caps.Data
         public DbSet<DraftContentPartResource> DraftContentPartResources { get; set; }
         public DbSet<DraftFile> DraftFiles { get; set; }
         public DbSet<DraftFileResource> DraftFileResources { get; set; }
-
+        
         public Author GetAuthorByUserName(String userName)
         {
             return Authors.FirstOrDefault(a => a.UserName == userName);
