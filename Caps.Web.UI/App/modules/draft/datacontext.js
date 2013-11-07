@@ -2,13 +2,14 @@
  * draft/datacontext.js
  */
 define([
+    'durandal/system',
     'entityManagerProvider',
     'ko'
 ],
-function (entityManagerProvider, ko) {
+function (system, entityManagerProvider, ko) {
     
-    var manager = entityManagerProvider.createManager();
-    var EntityQuery = breeze.EntityQuery;
+    var manager = entityManagerProvider.createManager(),
+        EntityQuery = breeze.EntityQuery;
 
     function getDrafts() {
         var query = EntityQuery.from('Drafts');
@@ -94,10 +95,26 @@ function (entityManagerProvider, ko) {
         return t;
     }
 
+    function fetchPublications(draftId, mgr) {
+        mgr = mgr || manager;
+        return system.defer(function (dfd) {
+            var pr = new breeze.Predicate('Content.EntityType', '==', 'Draft').and('Content.EntityKey', '==', draftId);
+            var query = new EntityQuery().from('SitemapNodes')
+                .where(pr)
+                .expand('Content, Sitemap, Sitemap.Nodes, Sitemap.Nodes.Resources');
+            manager.executeQuery(query).then(function (data) {
+                dfd.resolve(data.results);
+            })
+            .fail(dfd.reject);
+        })
+        .promise();
+    }
+
     return {
         getDrafts: getDrafts,
         getDraft: getDraft,
         getTemplates: getTemplates,
-        getTemplate: getTemplate
+        getTemplate: getTemplate,
+        fetchPublications: fetchPublications
     };
 });

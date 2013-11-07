@@ -14,11 +14,14 @@ namespace Caps.Data.Model
         public int Id { get; set; }
 
         [MaxLength(50)]
+        public String EntityType { get; set; }
+
+        [MaxLength(50)]
         public String EntityKey { get; set; }
 
         public int ContentVersion { get; set; }
 
-        public String ContentDate { get; set; }
+        public DateTime ContentDate { get; set; }
 
         public String AuthorName { get; set; }
 

@@ -1,0 +1,46 @@
+﻿<div class="app-page bottom-fixed-navbar-container">
+    <div class="page-content">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Veröffentlichungs-Ziel wählen</h1>
+                <select data-bind="options: sitemaps, optionsText: 'Version', optionsCaption: 'Version wählen...', value: selectedSitemap"></select>
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="col-md-12">
+                <!-- ko if: selectedSitemap() -->
+                <!-- ko template: { name: 'NodesTemplate', data: selectedSitemap().rootNodes() } --><!-- /ko -->
+                <!-- /ko -->
+            </div>
+        </div>
+    </div>
+
+    <div class="navbar navbar-default navbar-fixed-bottom">
+        <div class="navbar-panel pull-left">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#" data-bind="click: selectCancel"><span><i class="fa fa-arrow-left fa-fw"></i> Abbrechen</span></a>
+                </li>
+                <li>
+                    <a href="#" data-bind="click: selectOk"><span><i class="fa fa-save fa-fw"></i> Veröffentlichen</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/html" id="NodesTemplate">
+    <ul data-bind="foreach: $data" class="list-unstyled tree-branch">
+        <li data-bind="if: !entityAspect.entityState.isDeleted()">
+            <div>
+                <a href="#" data-bind="text: getResource('de').Title, click: $root.selectNode"></a>
+            </div>
+
+            <!-- ko if: childNodes && childNodes().length > 0 -->
+            <!-- ko template: { name: 'NodesTemplate', data: childNodes() } --><!-- /ko -->
+            <!-- /ko -->
+        </li>
+    </ul>
+</script>

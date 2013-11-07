@@ -16,7 +16,8 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         selectedSitemap = ko.observable(),
         selectedNode = ko.observable(),
         EntityQuery = breeze.EntityQuery,
-        supportedTranslations = websiteMetadata.getSiteInfo().supportedTranslations();
+        supportedTranslations = websiteMetadata.getSiteInfo().supportedTranslations(),
+        isInitialized = false;
 
     function fetchWebsite() {
         var query = new EntityQuery().from('Websites').expand('Sitemaps, Sitemaps.Nodes, Sitemaps.Nodes.Resources').take(1);
@@ -30,6 +31,20 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
 
     selectedSitemap.subscribe(function () {
         selectedNode(null);
+    });
+
+    app.on('caps:sitemapnode:saved', function (sitemapNode) {
+        if (selectedSitemap() && sitemapNode && sitemapNode.SitemapId() === selectedSitemap().Id()) {
+            var query = new EntityQuery().from('SitemapNodes').where('Id', '==', sitemapNode.Id()).expand('Resources');
+            manager.executeQuery(query);
+        }
+    });
+
+    app.on('caps:publication:created', function (sitemapNode) {
+        if (selectedSitemap() && sitemapNode && sitemapNode.SitemapId() === selectedSitemap().Id()) {
+            var query = new EntityQuery().from('SitemapNodes').where('Id', '==', sitemapNode.Id()).expand('Resources');
+            manager.executeQuery(query);
+        }
     });
     
     var vm = {
@@ -51,15 +66,18 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         supportedTranslations: supportedTranslations,
 
         activate: function () {
-            fetchWebsite().then(function (data) {
-                website(data.results[0]);
-                var latest = website().latestSitemap();
-                if (latest) {
-                    selectedSitemap(latest);
-                    if (latest.rootNodes().length)
-                        selectedNode(latest.rootNodes()[0]);
-                }
-            });
+            if (!isInitialized) {
+                isInitialized = true;
+                fetchWebsite().then(function (data) {
+                    website(data.results[0]);
+                    var latest = website().latestSitemap();
+                    if (latest) {
+                        selectedSitemap(latest);
+                        if (latest.rootNodes().length)
+                            selectedNode(latest.rootNodes()[0]);
+                    }
+                });
+            }
         },
 
         editWebsite: function () {

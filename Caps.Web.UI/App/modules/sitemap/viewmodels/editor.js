@@ -2,9 +2,10 @@
     '../module',
     'ko',
     'entityManagerProvider',
-    'breeze'
+    'breeze',
+    'durandal/app'
 ],
-function (module, ko, entityManagerProvider, breeze) {
+function (module, ko, entityManagerProvider, breeze, app) {
 
     var EntityQuery = breeze.EntityQuery;
 
@@ -29,7 +30,10 @@ function (module, ko, entityManagerProvider, breeze) {
         };
 
         self.saveChanges = function () {
-            manager.saveChanges().then(self.showDraftsIndex);
+            manager.saveChanges().then(function () {
+                app.trigger('caps:sitemapnode:saved', self.entity());
+                self.showDraftsIndex();
+            });
         };
 
         function fetchNode(id) {

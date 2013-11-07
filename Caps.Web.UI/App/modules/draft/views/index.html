@@ -27,7 +27,10 @@
                     <a href="#" data-bind="click:addDraft"><span><i class="fa fa-plus fa-fw"></i> Neuer Entwurf</span></a>
                 </li>
                 <li data-bind="visible: selectedItem()">
-                    <a href="#" data-bind="click:editSelectedDraft"><span><i class="fa fa-edit fa-fw"></i> Entwurf Bearbeiten</span></a>
+                    <a href="#" data-bind="click:editSelectedDraft"><span><i class="fa fa-edit fa-fw"></i> Entwurf bearbeiten</span></a>
+                </li>
+                <li data-bind="visible: selectedItem()">
+                    <a href="#" data-bind="click:publishDraft"><span><i class="fa fa-share fa-fw"></i> Entwurf veröffentlichen</span></a>
                 </li>
             </ul>
         </div>
@@ -71,6 +74,24 @@
             <ul data-bind="foreach: Files()" class="list-inline">
                 <li>
                     <i class="fa fa-file"></i> <span data-bind="text: Name" />
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: publications().length > 0 -->
+    <div class="row draft-preview-panel">
+        <div class="col-md-12">
+            <p>
+                Veröffentlichungen (<!-- ko text: publications().length --><!-- /ko -->):
+            </p>
+            <ul data-bind="foreach: publications()" class="list-unstyled">
+                <li>
+                    <i class="fa fa-share-square-o"></i> <span data-bind="text: title" /> 
+                    (<em data-bind="text: createdBy"></em> <em data-bind="text: createdAt"></em>, <em data-bind="text: contentVersion"></em>)
+                    <!-- ko if: isOutdated -->
+                    &nbsp;<a href="#" data-bind="click: republish"><i class="fa fa-refresh"></i> Aktualisieren</a>
+                    <!-- /ko -->
                 </li>
             </ul>
         </div>

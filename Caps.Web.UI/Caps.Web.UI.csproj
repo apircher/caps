@@ -233,6 +233,7 @@
     <Content Include="App\infrastructure\moduleRouter.js" />
     <Content Include="App\infrastructure\moduleLoader.js" />
     <Content Include="App\infrastructure\moduleRegistry.js" />
+    <Content Include="App\infrastructure\publicationService.js" />
     <Content Include="App\infrastructure\screen.js" />
     <Content Include="App\infrastructure\tagService.js" />
     <Content Include="App\infrastructure\utils.js" />
@@ -288,8 +289,10 @@
     <Content Include="App\modules\sitemap\module.html" />
     <Content Include="App\modules\sitemap\module.js" />
     <Content Include="App\modules\sitemap\viewmodels\editor.js" />
+    <Content Include="App\modules\sitemap\viewmodels\sitemapNodeSelectionDialog.js" />
     <Content Include="App\modules\sitemap\viewmodels\translator.js" />
     <Content Include="App\modules\sitemap\views\editor.html" />
+    <Content Include="App\modules\sitemap\views\sitemapNodeSelectionDialog.html" />
     <Content Include="App\modules\sitemap\views\translator.html" />
     <Content Include="App\modules\user\commands\deleteUser.js" />
     <Content Include="App\modules\user\datacontext.js" />
@@ -442,6 +445,7 @@
     <Content Include="Scripts\durandal\plugins\observable.js" />
     <Content Include="Scripts\durandal\plugins\router.js" />
     <Content Include="Scripts\durandal\plugins\serializer.js" />
+    <Content Include="Scripts\durandal\plugins\sitemapNodeSelection.js" />
     <Content Include="Scripts\durandal\plugins\widget.js" />
     <Content Include="Scripts\durandal\system.js" />
     <Content Include="Scripts\durandal\transitions\entrance.js" />

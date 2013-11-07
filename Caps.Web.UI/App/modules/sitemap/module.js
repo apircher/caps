@@ -1,4 +1,4 @@
-﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter'], function (moduleFactory, routerFactory) {
+﻿define(['durandal/app', 'infrastructure/moduleFactory', 'infrastructure/moduleRouter'], function (app, moduleFactory, routerFactory) {
 
     var module = moduleFactory.createModule({
         route: 'sitemap*details',
@@ -17,6 +17,13 @@
             ])
             .buildNavigationModel();
     };
+
+
+    app.on('caps:started', function () {
+        require(['modules/sitemap/viewmodels/sitemapNodeSelectionDialog'], function (SitemapNodeSelectionDialog) {
+            SitemapNodeSelectionDialog.install();
+        });
+    });
 
     return module;
 });

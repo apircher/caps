@@ -59,7 +59,8 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
             router: true,
             dialog: true,
             widget: true,
-            fileSelection: true
+            fileSelection: true,
+            sitemapNodeSelection: true
         });
 
         // Plug Q´s promise mechanism into Durandal.

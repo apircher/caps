@@ -7,9 +7,10 @@ define([
     'ko',
     'durandal/app',
     'moment',
-    'infrastructure/websiteMetadata'
+    'infrastructure/websiteMetadata',
+    'infrastructure/publicationService'
 ],
-function (module, datacontext, ko, app, moment, website) {
+function (module, datacontext, ko, app, moment, website, publicationService) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
@@ -27,6 +28,16 @@ function (module, datacontext, ko, app, moment, website) {
         }
     });
 
+    app.on('caps:publication:created', refetchPublicationsWhenSelected);
+    app.on('caps:publication:refreshed', refetchPublicationsWhenSelected);
+
+    function refetchPublicationsWhenSelected(sitemapNode) {
+        if (!sitemapNode || !selectedItem()) return;
+        var content = sitemapNode.Content();
+        if (content && content.EntityKey() == selectedItem().draftId())
+            fetchPublications(selectedItem().draftId(), draftPreview());
+    }
+
     function fetchListItems() {
         return datacontext.getDrafts().then(function (data) {
             var items = ko.utils.arrayMap(data.results, function (draft) { return new DraftListItem(draft); });
@@ -38,9 +49,23 @@ function (module, datacontext, ko, app, moment, website) {
         return datacontext.getDraft(draftId)
             .then(function (data) {
                 var entity = data.results[0],
-                    template = data.results[0].deserializeTemplate();
-                draftPreview(new DraftPreviewViewModel(entity, template));
+                    template = data.results[0].deserializeTemplate(),
+                    preview = new DraftPreviewViewModel(entity, template);
+
+                draftPreview(preview);
+                fetchPublications(draftId, preview);
             });
+    }
+
+    function fetchPublications(draftId, preview) {
+        datacontext.fetchPublications(draftId).then(function (results) {
+            preview.publications(ko.utils.arrayMap(results, function(sn) {
+                return new PublicationViewModel(preview.entity(), sn);
+            }));
+        })
+        .fail(function(error) {
+            alert(error.message);
+        });
     }
 
     function selectFirstDraft() {
@@ -81,6 +106,10 @@ function (module, datacontext, ko, app, moment, website) {
         selectDraftById: function(id) {
             var listItem = ko.utils.arrayFirst(listItems(), function (d) { return d.draftId() === id; });
             if (listItem) vm.selectDraft(listItem);
+        },
+
+        publishDraft: function () {
+            publicationService.publish(module, draftPreview().entity().generateContent());
         }
     };
 
@@ -94,6 +123,7 @@ function (module, datacontext, ko, app, moment, website) {
         self.template = ko.observable(template);
         self.defaultCulture = siteInfo.defaultCulture();
         self.supportedTranslations = siteInfo.supportedTranslations();
+        self.publications = ko.observableArray();
 
         self.createdAt = ko.computed(function () {
             return moment.utc(entity.Created().At()).format('LLLL');
@@ -201,6 +231,40 @@ function (module, datacontext, ko, app, moment, website) {
 
         return d.format('D.MMM YY HH:mm');
     };
+    
+    /*
+     * PublicationViewModel class
+     */
+    function PublicationViewModel(draft, sitemapNode) {
+        var self = this;
+
+        self.draft = ko.observable(draft);
+        self.sitemapNode = ko.observable(sitemapNode);
+
+        self.title = ko.computed(function () {
+            return self.sitemapNode().path();
+        });
+
+        self.contentVersion = ko.computed(function () {
+            return 'v.' + self.sitemapNode().Content().ContentVersion();
+        });
+
+        self.createdAt = ko.computed(function () {
+            return moment.utc(self.sitemapNode().Created().At()).fromNow();
+        });
+
+        self.createdBy = ko.computed(function () {
+            return self.sitemapNode().Created().By();
+        });
+
+        self.isOutdated = ko.computed(function () {
+            return self.sitemapNode().Content().ContentVersion() < self.draft().Version();
+        });
+
+        self.republish = function () {
+            publicationService.republish(this.sitemapNode().Id(), this.draft().generateContent());
+        };
+    }
 
     return vm;
 });

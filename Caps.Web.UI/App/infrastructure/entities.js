@@ -117,6 +117,21 @@ function (ko) {
                 return index == 0 ? undefined : siblings[index - 1];
             }, deferEvaluation: true
         });
+
+        sitemapNode.path = ko.computed({
+            read: function () {
+                var parents = [],
+                    current = sitemapNode;
+                while (current) {
+                    var resource = current.getResource('de'),
+                        title = resource ? resource.Title() : 'no-res';
+                    parents.splice(0, 0, title);
+                    current = current.ParentNode();
+                }
+                return parents.join('/');
+            },
+            deferEvaluation: true
+        })
     }
 
     SitemapNode.prototype.getResource = function (language) {

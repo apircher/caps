@@ -47,6 +47,16 @@
                         <a href="#" data-bind="click: $parent.editTranslation"><i class="fa fa-edit"></i> <!-- ko text: localeName('de') --><!-- /ko --></a>
                     </li>
                 </ul>           
+                <h5>Inhalt</h5>
+                <p>
+                    <!-- ko if: !selectedNode().ContentId() -->
+                    <em>Kein Inhalt festgelegt</em>
+                    <!-- /ko -->
+
+                    <!-- ko if: selectedNode().ContentId() -->
+                    <em data-bind="text: selectedNode().ContentId()"></em>
+                    <!-- /ko -->
+                </p>
                 <!-- /ko -->
             </div>
         </div>

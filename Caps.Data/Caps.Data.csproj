@@ -100,6 +100,10 @@
     <Compile Include="Migrations\201311060006092_AlterSitemapNodes.Designer.cs">
       <DependentUpon>201311060006092_AlterSitemapNodes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311071232500_AlterSitemapNodeContent.cs" />
+    <Compile Include="Migrations\201311071232500_AlterSitemapNodeContent.Designer.cs">
+      <DependentUpon>201311071232500_AlterSitemapNodeContent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
@@ -161,6 +165,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201311060006092_AlterSitemapNodes.resx">
       <DependentUpon>201311060006092_AlterSitemapNodes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311071232500_AlterSitemapNodeContent.resx">
+      <DependentUpon>201311071232500_AlterSitemapNodeContent.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
