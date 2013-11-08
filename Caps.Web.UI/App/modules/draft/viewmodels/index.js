@@ -8,9 +8,10 @@ define([
     'durandal/app',
     'moment',
     'infrastructure/websiteMetadata',
-    'infrastructure/publicationService'
+    'infrastructure/publicationService',
+    '../contentGenerator'
 ],
-function (module, datacontext, ko, app, moment, website, publicationService) {
+function (module, datacontext, ko, app, moment, website, publicationService, contentGenerator) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
@@ -49,7 +50,7 @@ function (module, datacontext, ko, app, moment, website, publicationService) {
         return datacontext.getDraft(draftId)
             .then(function (data) {
                 var entity = data.results[0],
-                    template = data.results[0].deserializeTemplate(),
+                    template = contentGenerator.createTemplateContent(data.results[0], 'de'),
                     preview = new DraftPreviewViewModel(entity, template);
 
                 draftPreview(preview);
@@ -109,7 +110,13 @@ function (module, datacontext, ko, app, moment, website, publicationService) {
         },
 
         publishDraft: function () {
-            publicationService.publish(module, draftPreview().entity().generateContent());
+            try {
+                var cnt = contentGenerator.createPublicationContent(draftPreview().entity());
+                publicationService.publish(module, cnt);
+            }
+            catch (error) {
+                alert(error.message);
+            }
         }
     };
 
@@ -141,57 +148,10 @@ function (module, datacontext, ko, app, moment, website, publicationService) {
             return moment.utc(entity.Modified().At()).fromNow();
         });
 
-        self.getContentTemplateName = function (templateCell) {
-            var cp = self.entity().findContentPart(templateCell.name);
-            if (cp) {
-                if (cp.ContentType().toLowerCase() === 'html')
-                    return 'CT_HTML';
-                if (cp.ContentType().toLowerCase() === 'markdown')
-                    return 'CT_MARKDOWN';
-            }
-            return 'CT_TEXT';
-        };
-
         self.translateDraft = function (language) {
             module.router.navigate('#drafts/translate/' + entity.Id() + '/' + language.culture);
         };
     }
-
-    DraftPreviewViewModel.prototype.getContent = function (templateCell) {
-        var self = this,
-            cp = this.entity().findContentPart(templateCell.name);
-
-        if (cp) {
-            var res = cp.getResource('de');
-            if (res) {
-                var rawContent = res.Content();
-
-                var regex = /caps:\/\/draft-file\/([^\"'\s\?)]*)(\?[^\"'\s)]*)?/gi;
-                rawContent = rawContent.replace(regex, function (hit, p1, p2, offset, s) {
-
-                    var draftFile = self.entity().findDraftFile(unescape(p1)),
-                        resource = draftFile.getResource('de'),
-                        file = resource != null ? resource.File() : undefined;
-
-                    if (file) {
-
-                        if (/(\?|&amp;|&)inline=1/i.test(p2))
-                            return '/DbFileContent/Inline/' + file.Id();
-                        else if (/(\?|&amp;|&)download=1/i.test(p2) || !file.isImage())
-                            return '/DbFileContent/Download/' + file.Id();
-                        else if (file.isImage())
-                            return '/DbFileContent/Thumbnail/' + file.Id() + '?thumbnailName=220x160';
-                    }
-
-                    return '';
-                });
-
-
-                return rawContent;
-            }
-        }
-        return '';
-    };
 
     /*
      * DraftListItem class
@@ -246,7 +206,9 @@ function (module, datacontext, ko, app, moment, website, publicationService) {
         });
 
         self.contentVersion = ko.computed(function () {
-            return 'v.' + self.sitemapNode().Content().ContentVersion();
+            if (self.sitemapNode().Content())
+                return 'v.' + self.sitemapNode().Content().ContentVersion();
+            return '';
         });
 
         self.createdAt = ko.computed(function () {
@@ -258,11 +220,14 @@ function (module, datacontext, ko, app, moment, website, publicationService) {
         });
 
         self.isOutdated = ko.computed(function () {
-            return self.sitemapNode().Content().ContentVersion() < self.draft().Version();
+            if (self.sitemapNode().Content())
+                return self.sitemapNode().Content().ContentVersion() < self.draft().Version();
+            return false;
         });
 
         self.republish = function () {
-            publicationService.republish(this.sitemapNode().Id(), this.draft().generateContent());
+            var content = contentGenerator.createPublicationContent(this.draft());
+            publicationService.republish(this.sitemapNode().Id(), content);
         };
     }
 

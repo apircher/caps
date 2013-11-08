@@ -29,6 +29,7 @@ namespace Caps.Data
         public DbSet<Website> Websites { get; set; }
         public DbSet<Sitemap> Sitemaps { get; set; }
         public DbSet<SitemapNode> SitemapNodes { get; set; }
+        public DbSet<SitemapNodeContent> SitemapNodeContents { get; set; }
 
         public DbSet<Draft> Drafts { get; set; }
         public DbSet<DraftResource> DraftResources { get; set; }

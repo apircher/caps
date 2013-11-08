@@ -23,7 +23,10 @@ namespace Caps.Data.Model
 
         public DateTime ContentDate { get; set; }
 
+        [MaxLength(50)]
         public String AuthorName { get; set; }
+
+        public String TemplateData { get; set; }
 
         [InverseProperty("Content")]
         public ICollection<SitemapNode> SitemapNodes { get; set; }

@@ -25,5 +25,8 @@ namespace Caps.Data.Model
         public String ContentType { get; set; }
 
         public int Ranking { get; set; }
+
+        [InverseProperty("ContentPart")]
+        public ICollection<SitemapNodeContentPartResource> Resources { get; set; }
     }
 }

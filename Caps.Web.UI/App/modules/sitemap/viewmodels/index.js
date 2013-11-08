@@ -15,6 +15,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         website = ko.observable(),
         selectedSitemap = ko.observable(),
         selectedNode = ko.observable(),
+        contentPreview = ko.observable(),
         EntityQuery = breeze.EntityQuery,
         supportedTranslations = websiteMetadata.getSiteInfo().supportedTranslations(),
         isInitialized = false;
@@ -33,6 +34,8 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         selectedNode(null);
     });
 
+    selectedNode.subscribe(refreshPreview);
+
     app.on('caps:sitemapnode:saved', function (sitemapNode) {
         if (selectedSitemap() && sitemapNode && sitemapNode.SitemapId() === selectedSitemap().Id()) {
             var query = new EntityQuery().from('SitemapNodes').where('Id', '==', sitemapNode.Id()).expand('Resources');
@@ -40,12 +43,31 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         }
     });
 
-    app.on('caps:publication:created', function (sitemapNode) {
+    app.on('caps:publication:created', refreshNodeIfSelected);
+    app.on('caps:publication:refreshed', refreshNodeIfSelected);
+
+    function refreshNodeIfSelected(sitemapNode) {
         if (selectedSitemap() && sitemapNode && sitemapNode.SitemapId() === selectedSitemap().Id()) {
             var query = new EntityQuery().from('SitemapNodes').where('Id', '==', sitemapNode.Id()).expand('Resources');
-            manager.executeQuery(query);
+            manager.executeQuery(query).then(refreshPreview);
         }
-    });
+    }
+
+    function refreshPreview() {
+        contentPreview(null);
+        if (selectedNode() && selectedNode().ContentId()) {
+            var query = new EntityQuery().from('SitemapNodeContents').where('Id', '==', selectedNode().ContentId())
+                .expand("ContentParts, ContentParts.Resources, Files, Files.Resources, Files.Resources.File");
+            manager.executeQuery(query).then(function (data) {
+                // Show preview
+                var cp = new ContentPreviewViewModel(selectedNode());
+                contentPreview(cp);
+            })
+            .fail(function (error) {
+                alert(error.message);
+            });
+        }
+    }
     
     var vm = {
         website: website,
@@ -64,6 +86,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         selectedSitemap: selectedSitemap,
         selectedNode: selectedNode,
         supportedTranslations: supportedTranslations,
+        contentPreview: contentPreview,
 
         activate: function () {
             if (!isInitialized) {
@@ -174,8 +197,27 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
                         }
                     });
             }
+        },
+        
+        findContentPart: function (templateCell) {
+            if (selectedNode()) {
+                var cp = selectedNode().Content().getContentPart(templateCell.name);
+                if (cp) return cp.getResource('de').Content();
+            }
+            return '';
         }
     };
+
+    function ContentPreviewViewModel(sitemapNode) {
+        var self = this;
+
+        self.sitemapNode = sitemapNode;
+        self.template = ko.observable();
+
+        if (sitemapNode && sitemapNode.Content()) {
+            self.template(sitemapNode.Content().template());
+        }
+    }
 
     return vm;
 });

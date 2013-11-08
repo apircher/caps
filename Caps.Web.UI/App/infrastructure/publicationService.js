@@ -7,29 +7,27 @@
 ],
 function (system, app, entityManagerProvider, breeze, ko) {
 
-    var manager = entityManagerProvider.createManager(),
-        EntityQuery = breeze.EntityQuery;
+    var EntityQuery = breeze.EntityQuery;
 
     /*
-     * Publish content.
+     * Class Publisher
      */
-    function publishContent(sitemapId, parentId, content) {
+    function Publisher() {
+        var self = this;
+        self.manager = entityManagerProvider.createManager();
+    }
+
+    Publisher.prototype.createPublication = function (sitemapId, parentId, contentData) {
+        var self = this;
         return system.defer(function (dfd) {
-            var sitemapNode = manager.createEntity('SitemapNode', { NodeType: 'PAGE' });
-            manager.addEntity(sitemapNode);
+            var sitemapNode = self.manager.createEntity('SitemapNode', { NodeType: 'PAGE' });
+            self.manager.addEntity(sitemapNode);
             sitemapNode.ParentNodeId(parentId);
             sitemapNode.SitemapId(sitemapId);
 
-            updateSitemapNodeResources(sitemapNode, content);
+            self.createResources(sitemapNode, contentData);
 
-            var publicationContent = manager.createEntity('SitemapNodeContent', {
-                EntityType: content.entityType,
-                EntityKey: content.entityId,
-                ContentVersion: content.version,
-                ContentDate: content.modified.at,
-                AuthorName: content.created.by
-            });
-            manager.addEntity(publicationContent);
+            var publicationContent = self.createPublicationContent(contentData, manager);
             sitemapNode.ContentId(publicationContent.Id());
 
             manager.saveChanges().then(function () {
@@ -39,35 +37,80 @@ function (system, app, entityManagerProvider, breeze, ko) {
             .fail(dfd.reject);
         })
         .promse();
-    }
+    };
 
-    function updateSitemapNodeResources(sitemapNode, content) {
-        ko.utils.arrayForEach(content.resources, function (res) {
-            var nodeResource = sitemapNode.getOrCreateResource(res.language, manager);
+    Publisher.prototype.createResources = function (sitemapNode, contentData) {
+        var self = this;
+        ko.utils.arrayForEach(contentData.resources, function (res) {
+            var nodeResource = sitemapNode.getOrCreateResource(res.language, self.manager);
             nodeResource.Title(res.title);
             nodeResource.Description(res.description);
             nodeResource.Keywords(res.keywords);
         });
-    }
+    };
 
-    /*
-     * Refresh publication
-     */
-    function refreshContent(sitemapNodeId, content) {
+    Publisher.prototype.createPublicationContent = function (contentData) {
+        var self = this;
+        var sitemapNodeContent = self.manager.createEntity('SitemapNodeContent', {
+            EntityType: contentData.entityType,
+            EntityKey: contentData.entityId,
+            ContentVersion: contentData.version,
+            ContentDate: contentData.modified.at,
+            AuthorName: contentData.created.by,
+            TemplateData: contentData.templateContent
+        });
+        self.manager.addEntity(sitemapNodeContent);
+
+        // ContentParts
+        ko.utils.arrayForEach(contentData.contentParts, function (contentPartData) {
+            var cp = sitemapNodeContent.getOrCreateContentPart(contentPartData.partType, self.manager);
+            cp.ContentType(contentPartData.contentType);
+            cp.Ranking(contentPartData.ranking);
+
+            ko.utils.arrayForEach(contentPartData.resources, function (res) {
+                var cpr = cp.getOrCreateResource(res.language, self.manager);
+                cpr.Content(res.content);
+            });
+        });
+        
+        // ContentFiles
+        ko.utils.arrayForEach(contentData.files, function (file) {
+            var cf = self.manager.createEntity('SitemapNodeContentFile', { SitemapNodeContentId: sitemapNodeContent.Id() });
+            self.manager.addEntity(cf);
+
+            cf.Name(file.name);
+            cf.IsEmbedded(file.isEmbedded);
+            cf.Determination(file.determination);
+            cf.Group(file.group);
+            cf.Ranking(file.ranking);
+            
+            ko.utils.arrayForEach(file.resources, function (res) {
+                var cfr = cf.getOrCreateResource(res.language, self.manager);
+                cfr.DbFileId(res.dbFileId);
+                cfr.Title(res.title);
+                cfr.Description(res.description);
+                cfr.Credits(res.credits);
+            });
+        });
+
+        return sitemapNodeContent;
+    };
+
+    Publisher.prototype.refreshPublication = function (sitemapNodeId, contentData) {
+        var self = this;
         return system.defer(function (dfd) {
-            // Fetch Node
+            // Fetch node
             fetchNode(sitemapNodeId).then(function (sitemapNode) {
 
-                // Update Resources
-                updateSitemapNodeResources(sitemapNode, content);
+                // Update resources
+                self.createResources(sitemapNode, contentData);
 
-                // Update Content
-                var smnc = sitemapNode.Content();
-                smnc.ContentVersion(content.version);
-                smnc.ContentDate(content.modified.at);
-                smnc.AuthorName(content.created.by);
+                // Update content
+                sitemapNode.Content().setDeleted();
+                var smnc =  self.createPublicationContent(contentData);
+                sitemapNode.ContentId(smnc.Id());
 
-                manager.saveChanges().then(function () {
+                self.manager.saveChanges().then(function () {
                     app.trigger('caps:publication:refreshed', sitemapNode);
                     dfd.resolve(sitemapNode);
                 })
@@ -75,26 +118,28 @@ function (system, app, entityManagerProvider, breeze, ko) {
             });
         })
         .promse();
-    }
 
-    function fetchNode(sitemapNodeId) {
-        return system.defer(function (dfd) {
-            var query = new EntityQuery().from('SitemapNodes').where('Id', '==', sitemapNodeId)
-                .expand('Resources, Content');
-            manager.executeQuery(query).then(function (data) {
-                dfd.resolve(data.results[0]);
+        function fetchNode(sitemapNodeId) {
+            return system.defer(function (dfd) {
+                var query = new EntityQuery().from('SitemapNodes').where('Id', '==', sitemapNodeId)
+                    .expand('Resources, Content');
+                self.manager.executeQuery(query).then(function (data) {
+                    dfd.resolve(data.results[0]);
+                })
+                .fail(dfd.reject);
             })
-            .fail(dfd.reject);
-        })
-        .promise();
-    }
+            .promise();
+        }
+    };
+    
 
     return {
-        publish: function (module, content) {
+        publish: function (module, contentData) {
             return system.defer(function (dfd) {
                 app.selectSitemapNode({ module: module }).then(function (result) {
                     if (result.dialogResult) {
-                        publishContent(result.selectedSitemapNode.SitemapId(), result.selectedSitemapNode.Id(), content)
+                        var publisher = new Publisher();
+                        publisher.createPublication(result.selectedSitemapNode.SitemapId(), result.selectedSitemapNode.Id(), contentData)
                             .then(dfd.resolve)
                             .fail(dfd.reject);
                     }
@@ -103,9 +148,10 @@ function (system, app, entityManagerProvider, breeze, ko) {
             .promise();
         },
 
-        republish: function (sitemapNodeId, content) {
+        republish: function (sitemapNodeId, contentData) {
             return system.defer(function (dfd) {
-                refreshContent(sitemapNodeId, content)
+                var publisher = new Publisher();
+                publisher.refreshPublication(sitemapNodeId, contentData)
                     .then(dfd.resolve)
                     .fail(dfd.reject);
             })

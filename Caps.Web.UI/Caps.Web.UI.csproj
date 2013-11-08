@@ -253,6 +253,7 @@
     <Content Include="App\modules\contentfile\views\detail.html" />
     <Content Include="App\modules\contentfile\views\fileSearchControl.html" />
     <Content Include="App\modules\contentfile\views\fileSelectionDialog.html" />
+    <Content Include="App\modules\draft\contentGenerator.js" />
     <Content Include="App\modules\draft\datacontext.js" />
     <Content Include="App\modules\draft\entities.js" />
     <Content Include="App\modules\draft\images\Template 1.png" />

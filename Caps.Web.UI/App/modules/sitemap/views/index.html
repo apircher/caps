@@ -22,20 +22,44 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4 col-lg-3">
+            <div class="col-md-3 col-lg-2">
                 <!-- ko if: selectedSitemap() -->
                 <!-- ko template: { name: 'NodesTemplate', data: selectedSitemap().rootNodes() } --><!-- /ko -->
                 <!-- /ko -->
             </div>
 
-            <div class="col-md-5 col-lg-7">
-                <!-- ko if: selectedNode() -->
-                <h4 data-bind="text: selectedNode().getResource('de').Title"></h4>
+            <div class="col-md-6 col-lg-8">
+
+                <section class="draft-preview-content" data-bind="if: contentPreview()">
+                    <!-- ko with: contentPreview() -->
+                    <!-- ko foreach: { data: template().rows, as: 'row' } -->
+                    <div class="row">
+                        <!-- ko foreach: { data:row.cells, as: 'cell' } -->
+                        <div data-bind="draftTemplateClass: cell">
+                            <div class="template-preview-cell" data-bind="html: $root.findContentPart(cell)"></div>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                    <!-- /ko -->
+                    <!-- /ko -->
+                </section>
+
+                <!-- ko if: contentPreview() && contentPreview().sitemapNode.Content() && contentPreview().sitemapNode.Content().Files().length -->
+                <div data-bind="with: contentPreview().sitemapNode.Content()">
+                    <h5>Dateien (<!-- ko text: Files().length --><!-- /ko -->)</h5>
+                    <ul class="list-inline" data-bind="foreach: Files()">
+                        <li>
+                            <i class="fa fa-file"></i> <!-- ko text: getResource('de').File().FileName --><!-- /ko -->
+                        </li>
+                    </ul>
+                </div>
                 <!-- /ko -->
+
             </div>
 
             <div class="col-md-3 col-lg-2">
                 <!-- ko if: selectedNode() -->
+                <h5 data-bind="text: selectedNode().getResource('de').Title"></h5>
                 <ul class="list-inline">
                     <li>
                         <a href="#" data-bind="click: editSitemapNode"><i class="fa fa-edit"></i> Seiten-Eigenschaften</a>

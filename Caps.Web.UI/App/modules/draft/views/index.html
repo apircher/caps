@@ -59,7 +59,7 @@
         <div class="row">
             <!-- ko foreach: { data:row.cells, as: 'cell' } -->
             <div data-bind="draftTemplateClass: cell">
-                <div data-bind="template: { name: $parents[1].getContentTemplateName($data) }" class="template-preview-cell"></div>
+                <div class="template-preview-cell" data-bind="html: content"></div>
             </div>
             <!-- /ko -->
         </div>
@@ -97,16 +97,4 @@
         </div>
     </div>
     <!-- /ko -->
-</script>
-
-<script type="text/html" id="CT_HTML">
-    <div data-bind="html: $parents[1].getContent($data)"></div>
-</script>
-
-<script type="text/html" id="CT_MARKDOWN">
-    <div data-bind="markdown: $parents[1].getContent($data)"></div>
-</script>
-
-<script type="text/html" id="CT_TEXT">
-    <pre data-bind="text: $parents[1].getContent($data)"></pre>
 </script>

@@ -97,6 +97,12 @@ namespace Caps.Web.UI.Controllers
         {
             return _contextProvider.Context.SitemapNodes;
         }
+        // ~/breeze/capsdata/SitemapNodeContents
+        [HttpGet]
+        public IQueryable<SitemapNodeContent> SitemapNodeContents()
+        {
+            return _contextProvider.Context.SitemapNodeContents;
+        }
 
         // ~/breeze/capsdata/SaveChanges
         public SaveResult SaveChanges(JObject saveBundle)

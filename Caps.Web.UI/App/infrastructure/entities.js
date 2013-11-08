@@ -168,12 +168,144 @@ function (ko) {
         if (rankingA == rankingB) return a.Id() < b.Id() ? -1 : 1;
         return rankingA < rankingB ? -1 : 1;
     }
+    
+    /**
+     * SitemapNodeContent Entity
+     */
+    function SitemapNodeContent() {
+        var self = this;
+        self.template = ko.computed({
+            read: function () {
+                return self.deserializeTemplate();
+            },
+            deferEvaluation: true
+        });
+    }
+
+    SitemapNodeContent.prototype.getContentPart = function (partType) {
+        var key = partType.toLowerCase();
+        return ko.utils.arrayFirst(this.ContentParts(), function (pt) {
+            return pt.PartType().toLowerCase() === key;
+        });
+    }
+
+    SitemapNodeContent.prototype.getOrCreateContentPart = function (partType, manager) {
+        var key = partType.toLowerCase(),
+        pt = this.getContentPart(key);
+        if (pt) return pt;
+
+        pt = manager.createEntity('SitemapNodeContentPart', {
+            SitemapNodeContentId: this.Id(),
+            PartType: key,
+            ContentType: 'html',
+            Ranking: 0
+        });
+        manager.addEntity(pt);
+        this.ContentParts.push(pt);
+        return pt;
+    };
+
+    SitemapNodeContent.prototype.deserializeTemplate = function () {
+        var t = JSON.parse(this.TemplateData());
+        if (!t) return undefined;
+
+        t.findCell = function (cellName) {
+            for (var r = 0; r < t.rows.length; r++) {
+                var row = t.rows[r];
+                for (var c = 0; c < row.cells.length; c++) {
+                    var cell = row.cells[c];
+                    if (cell.name.toLowerCase() === cellName.toLowerCase())
+                        return cell;
+                }
+            }
+            return undefined;
+        };
+
+        return t;
+    };
+
+    SitemapNodeContent.prototype.setDeleted = function () {
+        ko.utils.arrayForEach(this.ContentParts(), function (cp) { cp.setDeleted(); });
+        ko.utils.arrayForEach(this.Files(), function (cf) { cf.setDeleted(); });
+        this.entityAspect.setDeleted();
+    };
+
+    /**
+     * SitemapNodeContentPart Entity
+     */
+    function SitemapNodeContentPart() {
+
+    }
+
+    SitemapNodeContentPart.prototype.getResource = function (language) {
+        var key = language.toLowerCase();
+        return ko.utils.arrayFirst(this.Resources(), function (res) {
+            return res.Language().toLowerCase() === key;
+        });
+    };
+
+    SitemapNodeContentPart.prototype.getOrCreateResource = function (language, manager) {
+        var key = language.toLowerCase(),
+        resource = this.getResource(language);
+        if (resource)
+            return resource;
+
+        resource = manager.createEntity('SitemapNodeContentPartResource', {
+            SitemapNodeContentPartId: this.Id(),
+            Language: key
+        });
+        manager.addEntity(resource);
+        this.Resources.push(resource);
+        return resource;
+    };
+
+    SitemapNodeContentPart.prototype.setDeleted = function () {
+        ko.utils.arrayForEach(this.Resources(), function (res) { res.entityAspect.setDeleted(); });
+        this.entityAspect.setDeleted();
+    };
+
+    /**
+     * SitemapNodeContentFile Entity
+     */
+    function SitemapNodeContentFile() {
+
+    }
+
+    SitemapNodeContentFile.prototype.getResource = function (language) {
+        var key = language.toLowerCase();
+        return ko.utils.arrayFirst(this.Resources(), function (res) {
+            return res.Language().toLowerCase() === key;
+        });
+    };
+
+    SitemapNodeContentFile.prototype.getOrCreateResource = function (language, manager) {
+        var key = language.toLowerCase(),
+        resource = this.getResource(language);
+        if (resource)
+            return resource;
+
+        resource = manager.createEntity('SitemapNodeContentFileResource', {
+            SitemapNodeContentFileId: this.Id(),
+            Language: key
+        });
+        manager.addEntity(resource);
+        this.Resources.push(resource);
+        return resource;
+    };
+
+    SitemapNodeContentFile.prototype.setDeleted = function () {
+        ko.utils.arrayForEach(this.Resources(), function (res) { res.entityAspect.setDeleted(); });
+        this.entityAspect.setDeleted();
+    };
 
     return {
         extendModel: function (metadataStore) {
             metadataStore.registerEntityTypeCtor('Website', Website);
             metadataStore.registerEntityTypeCtor('Sitemap', Sitemap, SitemapInitializer);
             metadataStore.registerEntityTypeCtor('SitemapNode', SitemapNode, SitemapNodeInitializer);
+            metadataStore.registerEntityTypeCtor('SitemapNodeContent', SitemapNodeContent);
+            metadataStore.registerEntityTypeCtor('SitemapNodeContentPart', SitemapNodeContentPart);
+            metadataStore.registerEntityTypeCtor('SitemapNodeContentFile', SitemapNodeContentFile);
         }
     };
 });

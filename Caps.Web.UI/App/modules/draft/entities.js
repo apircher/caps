@@ -90,48 +90,6 @@ function (require, ko) {
         this.entityAspect.setDeleted();
     };
 
-    Draft.prototype.generateContent = function () {
-        return {
-            entityType: 'Draft',
-            entityId: this.Id(),
-            version: this.Version(),
-
-            name: this.Name(),
-            template: this.Template(),
-            templateContent: this.TemplateContent(),
-
-            created: {
-                at: this.Created().At(),
-                by: this.Created().By()
-            },
-            modified: {
-                at: this.Modified().At(),
-                by: this.Modified().By()
-            },
-
-            resources: this.generateContentResources()
-        };
-    };
-
-    Draft.prototype.generateContentResources = function () {
-        return ko.utils.arrayMap(this.Resources(), function (resource) {
-            return {
-                language: resource.Language(),
-                title: resource.Title(),
-                keywords: resource.Keywords(),
-                description: resource.Description(),
-                created: {
-                    at: resource.Created().At(),
-                    by: resource.Created().By()
-                },
-                modified: {
-                    at: resource.Modified().At(),
-                    by: resource.Modified().By()
-                }
-            };
-        });
-    };
-
     /**
      * DraftContentPart Entity
      */
