@@ -27,10 +27,10 @@ function (system, app, entityManagerProvider, breeze, ko) {
 
             self.createResources(sitemapNode, contentData);
 
-            var publicationContent = self.createPublicationContent(contentData, manager);
+            var publicationContent = self.createPublicationContent(contentData, self.manager);
             sitemapNode.ContentId(publicationContent.Id());
 
-            manager.saveChanges().then(function () {
+            self.manager.saveChanges().then(function () {
                 app.trigger('caps:publication:created', sitemapNode);
                 dfd.resolve(sitemapNode);
             })
