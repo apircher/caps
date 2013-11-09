@@ -8,25 +8,26 @@ using System.Threading.Tasks;
 
 namespace Caps.Data.Model
 {
-    public class SitemapNodeContentPart
+    public class PublicationContentPart
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
-        public int SitemapNodeContentId { get; set; }
+        public int PublicationId { get; set; }
 
-        [InverseProperty("ContentParts"), ForeignKey("SitemapNodeContentId")]
-        public SitemapNodeContent SitemapNodeContent { get; set; }
+        [InverseProperty("ContentParts"), ForeignKey("PublicationId")]
+        public Publication Publication { get; set; }
         
         [MaxLength(50)]
         public String PartType { get; set; }
+
         [MaxLength(50)]
         public String ContentType { get; set; }
 
         public int Ranking { get; set; }
 
         [InverseProperty("ContentPart")]
-        public ICollection<SitemapNodeContentPartResource> Resources { get; set; }
+        public ICollection<PublicationContentPartResource> Resources { get; set; }
     }
 }

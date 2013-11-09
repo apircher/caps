@@ -39,6 +39,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -60,6 +61,9 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CapsDbContext.cs" />
+    <Compile Include="Localization\ILocalizableEntity.cs" />
+    <Compile Include="Localization\Language.cs" />
+    <Compile Include="Localization\LocalizationHelpers.cs" />
     <Compile Include="Migrations\201307231135187_InitialCreate.cs" />
     <Compile Include="Migrations\201307231135187_InitialCreate.Designer.cs">
       <DependentUpon>201307231135187_InitialCreate.cs</DependentUpon>
@@ -112,6 +116,14 @@
     <Compile Include="Migrations\201311081441319_AlterSitemapNodeContent1.Designer.cs">
       <DependentUpon>201311081441319_AlterSitemapNodeContent1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311091457225_RenameSitemapEntityBranch.cs" />
+    <Compile Include="Migrations\201311091457225_RenameSitemapEntityBranch.Designer.cs">
+      <DependentUpon>201311091457225_RenameSitemapEntityBranch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201311091748510_AddDbSiteMapPublishedFromAndBy.cs" />
+    <Compile Include="Migrations\201311091748510_AddDbSiteMapPublishedFromAndBy.Designer.cs">
+      <DependentUpon>201311091748510_AddDbSiteMapPublishedFromAndBy.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
@@ -120,6 +132,7 @@
     <Compile Include="Model\DbFileProperty.cs" />
     <Compile Include="Model\DbFileTag.cs" />
     <Compile Include="Model\DbFileVersion.cs" />
+    <Compile Include="Model\DbSiteMapNodeType.cs" />
     <Compile Include="Model\DbThumbnail.cs" />
     <Compile Include="Model\Draft.cs" />
     <Compile Include="Model\DraftContentPart.cs" />
@@ -127,17 +140,19 @@
     <Compile Include="Model\DraftFile.cs" />
     <Compile Include="Model\DraftFileResource.cs" />
     <Compile Include="Model\DraftResource.cs" />
-    <Compile Include="Model\Sitemap.cs" />
-    <Compile Include="Model\SitemapNode.cs" />
-    <Compile Include="Model\SitemapNodeContent.cs" />
-    <Compile Include="Model\SitemapNodeContentFile.cs" />
-    <Compile Include="Model\SitemapNodeContentFileResource.cs" />
-    <Compile Include="Model\SitemapNodeContentPart.cs" />
-    <Compile Include="Model\SitemapNodeContentPartResource.cs" />
-    <Compile Include="Model\SitemapNodeResource.cs" />
+    <Compile Include="Model\DbSiteMap.cs" />
+    <Compile Include="Model\DbSiteMapNode.cs" />
+    <Compile Include="Model\Publication.cs" />
+    <Compile Include="Model\PublicationFile.cs" />
+    <Compile Include="Model\PublicationFileResource.cs" />
+    <Compile Include="Model\PublicationContentPart.cs" />
+    <Compile Include="Model\PublicationContentPartResource.cs" />
+    <Compile Include="Model\DbSiteMapNodeResource.cs" />
     <Compile Include="Model\Tag.cs" />
     <Compile Include="Model\Website.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\PollingCacheDependency.cs" />
+    <Compile Include="Utils\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -182,6 +197,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201311081441319_AlterSitemapNodeContent1.resx">
       <DependentUpon>201311081441319_AlterSitemapNodeContent1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311091457225_RenameSitemapEntityBranch.resx">
+      <DependentUpon>201311091457225_RenameSitemapEntityBranch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311091748510_AddDbSiteMapPublishedFromAndBy.resx">
+      <DependentUpon>201311091748510_AddDbSiteMapPublishedFromAndBy.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

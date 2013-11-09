@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace Caps.Data.Model
 {
-    public class SitemapNode
+    public class DbSiteMapNode
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
-        public int SitemapId { get; set; }
+        public int SiteMapId { get; set; }
 
         public int? ParentNodeId { get; set; }
 
@@ -39,21 +39,22 @@ namespace Caps.Data.Model
         public String RedirectType { get; set; }
                 
         public ChangeInfo Created { get; set; }
+
         public ChangeInfo Modified { get; set; }
 
-        [InverseProperty("Nodes"), ForeignKey("SitemapId")]
-        public Sitemap Sitemap { get; set; }
+        [InverseProperty("SiteMapNodes"), ForeignKey("SiteMapId")]
+        public DbSiteMap SiteMap { get; set; }
 
         [InverseProperty("ParentNode")]
-        public ICollection<SitemapNode> ChildNodes { get; set; }
+        public ICollection<DbSiteMapNode> ChildNodes { get; set; }
 
         [InverseProperty("ChildNodes"), ForeignKey("ParentNodeId")]
-        public SitemapNode ParentNode { get; set; }
+        public DbSiteMapNode ParentNode { get; set; }
 
-        [InverseProperty("SitemapNode")]
-        public ICollection<SitemapNodeResource> Resources { get; set; }
+        [InverseProperty("SiteMapNode")]
+        public ICollection<DbSiteMapNodeResource> Resources { get; set; }
 
-        [InverseProperty("SitemapNodes"), ForeignKey("ContentId")]
-        public SitemapNodeContent Content { get; set; }
+        [InverseProperty("SiteMapNodes"), ForeignKey("ContentId")]
+        public Publication Content { get; set; }
     }
 }

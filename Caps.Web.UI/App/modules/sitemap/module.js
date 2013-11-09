@@ -14,16 +14,15 @@
         module.router = routerFactory.createModuleRouter(module, 'modules/sitemap', 'sitemap')
             .map([
                 { route: '', moduleId: 'viewmodels/index', title: 'Sitemap', nav: false },
-                { route: 'edit/:sitemapNodeId', moduleId: 'viewmodels/editor', title: 'Knoten bearbeiten', nav: false },
-                { route: 'translate/:sitemapNodeId/:language', moduleId: 'viewmodels/translator', title: 'Übersetzung', nav: false }
+                { route: 'edit/:siteMapNodeId', moduleId: 'viewmodels/editor', title: 'Knoten bearbeiten', nav: false },
+                { route: 'translate/:siteMapNodeId/:language', moduleId: 'viewmodels/translator', title: 'Übersetzung', nav: false }
             ])
             .buildNavigationModel();
     };
 
-
     app.on('caps:started', function () {
-        require(['modules/sitemap/viewmodels/sitemapNodeSelectionDialog'], function (SitemapNodeSelectionDialog) {
-            SitemapNodeSelectionDialog.install();
+        require(['modules/sitemap/viewmodels/siteMapNodeSelectionDialog'], function (SiteMapNodeSelectionDialog) {
+            SiteMapNodeSelectionDialog.install();
         });
     });
 

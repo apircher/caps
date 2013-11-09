@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace Caps.Data.Model
 {
-    public class SitemapNodeContentPartResource
+    public class PublicationContentPartResource
     {
         [Key, Column(Order = 1)]
-        public int SitemapNodeContentPartId { get; set; }
+        public int PublicationContentPartId { get; set; }
+        
         [Key, Column(Order = 2)]
         [MaxLength(10)]
         public String Language { get; set; }
@@ -19,12 +20,14 @@ namespace Caps.Data.Model
         public String Content { get; set; }
 
         public String TranslationAuthor { get; set; }
+
         public DateTime TranslationDate { get; set; }
 
         public ChangeInfo Created { get; set; }
+        
         public ChangeInfo Modified { get; set; }
 
-        [InverseProperty("Resources"), ForeignKey("SitemapNodeContentPartId")]
-        public SitemapNodeContentPart ContentPart { get; set; }
+        [InverseProperty("Resources"), ForeignKey("PublicationContentPartId")]
+        public PublicationContentPart ContentPart { get; set; }
     }
 }

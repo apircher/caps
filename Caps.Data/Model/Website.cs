@@ -15,10 +15,11 @@ namespace Caps.Data.Model
 
         [MaxLength(50)]
         public String Name { get; set; }
+
         [MaxLength(250)]
         public String Url { get; set; }
 
         [InverseProperty("Website")]
-        public ICollection<Sitemap> Sitemaps { get; set; }
+        public ICollection<DbSiteMap> SiteMapVersions { get; set; }
     }
 }

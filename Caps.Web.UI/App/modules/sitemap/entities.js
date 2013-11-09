@@ -9,8 +9,8 @@ define(['ko'], function (ko) {
     }
 
     Website.prototype.latestSitemap = function () {
-        var maxVersion = Math.max.apply(null, ko.utils.arrayMap(this.Sitemaps(), function (sitemap) { return sitemap.Version(); }));
-        return ko.utils.arrayFirst(this.Sitemaps(), function (sitemap) {
+        var maxVersion = Math.max.apply(null, ko.utils.arrayMap(this.SiteMapVersions(), function (sitemap) { return sitemap.Version(); }));
+        return ko.utils.arrayFirst(this.SiteMapVersions(), function (sitemap) {
             return sitemap.Version() === maxVersion;
         });
     };
@@ -25,14 +25,14 @@ define(['ko'], function (ko) {
     function SitemapInitializer(sitemap) {
         sitemap.rootNodes = ko.computed({
             read: function () {
-                return ko.utils.arrayFilter(sitemap.Nodes(), function (node) { return !node.ParentNodeId(); });
+                return ko.utils.arrayFilter(sitemap.SiteMapNodes(), function (node) { return !node.ParentNodeId(); });
             },
             deferEvaluation: true
         });
 
         sitemap.siblings = ko.computed(function() {
             if (!sitemap.Website()) return [];
-            return sitemap.Website().Sitemaps();
+            return sitemap.Website().SiteMapVersions();
         });
     };
 
@@ -81,9 +81,9 @@ define(['ko'], function (ko) {
 
         sitemapNode.childNodes = ko.computed({
             read: function () {
-                if (!sitemapNode.Sitemap() || !sitemapNode.Sitemap().Nodes())
+                if (!sitemapNode.SiteMap() || !sitemapNode.SiteMap().SiteMapNodes())
                     return [];
-                var result = ko.utils.arrayFilter(sitemapNode.Sitemap().Nodes(), function (node) {
+                var result = ko.utils.arrayFilter(sitemapNode.SiteMap().SiteMapNodes(), function (node) {
                     return node.ParentNodeId() === sitemapNode.Id();
                 });
 
@@ -145,8 +145,8 @@ define(['ko'], function (ko) {
         if (resource)
             return resource;
 
-        resource = manager.createEntity('SitemapNodeResource', {
-            SitemapNodeId: this.Id(),
+        resource = manager.createEntity('DbSiteMapNodeResource', {
+            SiteMapNodeId: this.Id(),
             Language: key
         });
         manager.addEntity(resource);
@@ -170,7 +170,7 @@ define(['ko'], function (ko) {
     /**
      * SitemapNodeContent Entity
      */
-    function SitemapNodeContent() {
+    function Publication() {
         var self = this;
         self.template = ko.computed({
             read: function () {
@@ -180,20 +180,20 @@ define(['ko'], function (ko) {
         });
     }
 
-    SitemapNodeContent.prototype.getContentPart = function (partType) {
+    Publication.prototype.getContentPart = function (partType) {
         var key = partType.toLowerCase();
         return ko.utils.arrayFirst(this.ContentParts(), function (pt) {
             return pt.PartType().toLowerCase() === key;
         });
     }
 
-    SitemapNodeContent.prototype.getOrCreateContentPart = function (partType, manager) {
+    Publication.prototype.getOrCreateContentPart = function (partType, manager) {
         var key = partType.toLowerCase(),
         pt = this.getContentPart(key);
         if (pt) return pt;
 
-        pt = manager.createEntity('SitemapNodeContentPart', {
-            SitemapNodeContentId: this.Id(),
+        pt = manager.createEntity('PublicationContentPart', {
+            PublicationId: this.Id(),
             PartType: key,
             ContentType: 'html',
             Ranking: 0
@@ -203,7 +203,7 @@ define(['ko'], function (ko) {
         return pt;
     };
 
-    SitemapNodeContent.prototype.deserializeTemplate = function () {
+    Publication.prototype.deserializeTemplate = function () {
         var t = JSON.parse(this.TemplateData());
         if (!t) return undefined;
 
@@ -222,34 +222,34 @@ define(['ko'], function (ko) {
         return t;
     };
 
-    SitemapNodeContent.prototype.setDeleted = function () {
+    Publication.prototype.setDeleted = function () {
         ko.utils.arrayForEach(this.ContentParts(), function (cp) { cp.setDeleted(); });
         ko.utils.arrayForEach(this.Files(), function (cf) { cf.setDeleted(); });
         this.entityAspect.setDeleted();
     };
 
     /**
-     * SitemapNodeContentPart Entity
+     * PublicationContentPart Entity
      */
-    function SitemapNodeContentPart() {
+    function PublicationContentPart() {
 
     }
 
-    SitemapNodeContentPart.prototype.getResource = function (language) {
+    PublicationContentPart.prototype.getResource = function (language) {
         var key = language.toLowerCase();
         return ko.utils.arrayFirst(this.Resources(), function (res) {
             return res.Language().toLowerCase() === key;
         });
     };
 
-    SitemapNodeContentPart.prototype.getOrCreateResource = function (language, manager) {
+    PublicationContentPart.prototype.getOrCreateResource = function (language, manager) {
         var key = language.toLowerCase(),
         resource = this.getResource(language);
         if (resource)
             return resource;
 
-        resource = manager.createEntity('SitemapNodeContentPartResource', {
-            SitemapNodeContentPartId: this.Id(),
+        resource = manager.createEntity('PublicationContentPartResource', {
+            PublicationContentPartId: this.Id(),
             Language: key
         });
         manager.addEntity(resource);
@@ -257,33 +257,33 @@ define(['ko'], function (ko) {
         return resource;
     };
 
-    SitemapNodeContentPart.prototype.setDeleted = function () {
+    PublicationContentPart.prototype.setDeleted = function () {
         ko.utils.arrayForEach(this.Resources(), function (res) { res.entityAspect.setDeleted(); });
         this.entityAspect.setDeleted();
     };
 
     /**
-     * SitemapNodeContentFile Entity
+     * PublicationFile Entity
      */
-    function SitemapNodeContentFile() {
+    function PublicationFile() {
 
     }
 
-    SitemapNodeContentFile.prototype.getResource = function (language) {
+    PublicationFile.prototype.getResource = function (language) {
         var key = language.toLowerCase();
         return ko.utils.arrayFirst(this.Resources(), function (res) {
             return res.Language().toLowerCase() === key;
         });
     };
 
-    SitemapNodeContentFile.prototype.getOrCreateResource = function (language, manager) {
+    PublicationFile.prototype.getOrCreateResource = function (language, manager) {
         var key = language.toLowerCase(),
         resource = this.getResource(language);
         if (resource)
             return resource;
 
-        resource = manager.createEntity('SitemapNodeContentFileResource', {
-            SitemapNodeContentFileId: this.Id(),
+        resource = manager.createEntity('PublicationFileResource', {
+            PublicationFileId: this.Id(),
             Language: key
         });
         manager.addEntity(resource);
@@ -291,7 +291,7 @@ define(['ko'], function (ko) {
         return resource;
     };
 
-    SitemapNodeContentFile.prototype.setDeleted = function () {
+    PublicationFile.prototype.setDeleted = function () {
         ko.utils.arrayForEach(this.Resources(), function (res) { res.entityAspect.setDeleted(); });
         this.entityAspect.setDeleted();
     };
@@ -299,11 +299,11 @@ define(['ko'], function (ko) {
     return {
         extendModel: function (metadataStore) {
             metadataStore.registerEntityTypeCtor('Website', Website);
-            metadataStore.registerEntityTypeCtor('Sitemap', Sitemap, SitemapInitializer);
-            metadataStore.registerEntityTypeCtor('SitemapNode', SitemapNode, SitemapNodeInitializer);
-            metadataStore.registerEntityTypeCtor('SitemapNodeContent', SitemapNodeContent);
-            metadataStore.registerEntityTypeCtor('SitemapNodeContentPart', SitemapNodeContentPart);
-            metadataStore.registerEntityTypeCtor('SitemapNodeContentFile', SitemapNodeContentFile);
+            metadataStore.registerEntityTypeCtor('DbSiteMap', Sitemap, SitemapInitializer);
+            metadataStore.registerEntityTypeCtor('DbSiteMapNode', SitemapNode, SitemapNodeInitializer);
+            metadataStore.registerEntityTypeCtor('Publication', Publication);
+            metadataStore.registerEntityTypeCtor('PublicationContentPart', PublicationContentPart);
+            metadataStore.registerEntityTypeCtor('PublicationFile', PublicationFile);
         }
     };
 });

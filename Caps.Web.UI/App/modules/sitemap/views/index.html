@@ -8,7 +8,7 @@
                         <a href="#" data-bind="click: editWebsite"><i class="fa fa-cog"></i> Website</a>
                     </li>
                     <li>
-                        <!-- ko if: website() && website().Sitemaps() -->
+                        <!-- ko if: sitemaps() -->
                         <select data-bind="options: sitemaps, optionsCaption: 'Version wählen', optionsText: function(item) { return 'Version ' + item.Version(); }, value: selectedSitemap"></select>
                         <!-- /ko -->
                     </li>

@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace Caps.Data.Model
 {
-    public class SitemapNodeContentFile
+    public class PublicationFile
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
-        public int SitemapNodeContentId { get; set; }
+        public int PublicationId { get; set; }
 
-        [InverseProperty("Files"), ForeignKey("SitemapNodeContentId")]
-        public SitemapNodeContent SitemapNodeContent { get; set; }
+        [InverseProperty("Files"), ForeignKey("PublicationId")]
+        public Publication Publication { get; set; }
         
         [MaxLength(50)]
         public String Name { get; set; }
@@ -32,7 +32,7 @@ namespace Caps.Data.Model
 
         public int Ranking { get; set; }
 
-        [InverseProperty("ContentFile")]
-        public ICollection<SitemapNodeContentFileResource> Resources { get; set; }
+        [InverseProperty("PublicationFile")]
+        public ICollection<PublicationFileResource> Resources { get; set; }
     }
 }

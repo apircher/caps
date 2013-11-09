@@ -100,9 +100,9 @@ function (system, entityManagerProvider, ko) {
         return system.defer(function (dfd) {
             clearCachedPublications(draftId, mgr);
             var pr = new breeze.Predicate('Content.EntityType', '==', 'Draft').and('Content.EntityKey', '==', draftId);
-            var query = new EntityQuery().from('SitemapNodes')
+            var query = new EntityQuery().from('SiteMapNodes')
                 .where(pr)
-                .expand('Content, Sitemap, Sitemap.Nodes, Sitemap.Nodes.Resources');
+                .expand('Content, SiteMap, SiteMap.SiteMapNodes, SiteMap.SiteMapNodes.Resources');
             mgr.executeQuery(query).then(function (data) {
                 dfd.resolve(data.results);
             })
@@ -114,8 +114,7 @@ function (system, entityManagerProvider, ko) {
     function clearCachedPublications(draftId, mgr) {
         mgr = mgr || manager;
         var pr = new breeze.Predicate('Content.EntityType', '==', 'Draft').and('Content.EntityKey', '==', draftId);
-        var query = new EntityQuery().from('SitemapNodes').where(pr)
-                .expand('Content, Sitemap, Sitemap.Nodes, Sitemap.Nodes.Resources');
+        var query = new EntityQuery().from('SiteMapNodes').where(pr);
         var cachedEntities = mgr.executeQueryLocally(query);
         cachedEntities.forEach(function (entity) { mgr.detachEntity(entity); });
     }

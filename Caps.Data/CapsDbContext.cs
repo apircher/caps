@@ -27,9 +27,9 @@ namespace Caps.Data
 
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Website> Websites { get; set; }
-        public DbSet<Sitemap> Sitemaps { get; set; }
-        public DbSet<SitemapNode> SitemapNodes { get; set; }
-        public DbSet<SitemapNodeContent> SitemapNodeContents { get; set; }
+        public DbSet<DbSiteMap> SiteMaps { get; set; }
+        public DbSet<DbSiteMapNode> SiteMapNodes { get; set; }
+        public DbSet<Publication> Publications { get; set; }
 
         public DbSet<Draft> Drafts { get; set; }
         public DbSet<DraftResource> DraftResources { get; set; }
@@ -38,12 +38,19 @@ namespace Caps.Data
         public DbSet<DraftFile> DraftFiles { get; set; }
         public DbSet<DraftFileResource> DraftFileResources { get; set; }
         
-        public Author GetAuthorByUserName(String userName)
+        public Author GetAuthorByUserName(String userName) 
         {
             return Authors.FirstOrDefault(a => a.UserName == userName);
         }
+        public DbSiteMap GetCurrentSiteMap(int websiteId)
+        {
+            return SiteMaps
+                .Where(m => m.PublishedFrom.HasValue && m.PublishedFrom.Value <= DateTime.UtcNow)
+                .OrderByDescending(m => m.Version).ThenByDescending(m => m.PublishedFrom)
+                .FirstOrDefault();
+        }
 
-        public Tag GetOrCreateTag(String name)
+        public Tag GetOrCreateTag(String name) 
         {
             var tag = Tags.FirstOrDefault(t => t.Name.ToLower() == name.ToLower());
             if (tag == null)

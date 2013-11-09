@@ -3,14 +3,16 @@
         <div class="row">
             <div class="col-md-12">
                 <h1>Veröffentlichungs-Ziel wählen</h1>
-                <select data-bind="options: sitemaps, optionsText: 'Version', optionsCaption: 'Version wählen...', value: selectedSitemap"></select>
+                <!-- ko if: website() -->
+                <select data-bind="options: website().SiteMapVersions(), optionsText: 'Version', optionsCaption: 'Version wählen...', value: selectedSiteMapVersion"></select>
+                <!-- /ko -->
             </div>
         </div>
     
         <div class="row">
             <div class="col-md-12">
-                <!-- ko if: selectedSitemap() -->
-                <!-- ko template: { name: 'NodesTemplate', data: selectedSitemap().rootNodes() } --><!-- /ko -->
+                <!-- ko if: selectedSiteMapVersion() -->
+                <!-- ko template: { name: 'NodesTemplate', data: selectedSiteMapVersion().rootNodes() } --><!-- /ko -->
                 <!-- /ko -->
             </div>
         </div>

@@ -83,25 +83,25 @@ namespace Caps.Web.UI.Controllers
             return _contextProvider.Context.Websites;
         }
 
-        // ~/breeze/capsdata/Sitemaps
+        // ~/breeze/capsdata/SiteMaps
         [HttpGet]
-        public IQueryable<Sitemap> Sitemaps()
+        public IQueryable<DbSiteMap> SiteMaps()
         {
-            return _contextProvider.Context.Sitemaps;
+            return _contextProvider.Context.SiteMaps;
         }
 
 
-        // ~/breeze/capsdata/SitemapNodes
+        // ~/breeze/capsdata/SiteMapNodes
         [HttpGet]
-        public IQueryable<SitemapNode> SitemapNodes()
+        public IQueryable<DbSiteMapNode> SiteMapNodes()
         {
-            return _contextProvider.Context.SitemapNodes;
+            return _contextProvider.Context.SiteMapNodes;
         }
-        // ~/breeze/capsdata/SitemapNodeContents
+        // ~/breeze/capsdata/Publications
         [HttpGet]
-        public IQueryable<SitemapNodeContent> SitemapNodeContents()
+        public IQueryable<Publication> Publications()
         {
-            return _contextProvider.Context.SitemapNodeContents;
+            return _contextProvider.Context.Publications;
         }
 
         // ~/breeze/capsdata/SaveChanges

@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace Caps.Data.Model
 {
-    public class SitemapNodeContentFileResource
+    public class PublicationFileResource
     {
         [Key, Column(Order = 1)]
-        public int SitemapNodeContentFileId { get; set; }
+        public int PublicationFileId { get; set; }
+
         [Key, Column(Order = 2)]
         [MaxLength(10)]
         public String Language { get; set; }
@@ -26,10 +27,10 @@ namespace Caps.Data.Model
         [MaxLength(250)]
         public String Credits { get; set; }
 
-        [InverseProperty("Resources"), ForeignKey("SitemapNodeContentFileId")]
-        public SitemapNodeContentFile ContentFile { get; set; }
+        [InverseProperty("Resources"), ForeignKey("PublicationFileId")]
+        public PublicationFile PublicationFile { get; set; }
 
-        [InverseProperty("SitemapNodeContentFileResources"), ForeignKey("DbFileId")]
+        [InverseProperty("PublicationFileResources"), ForeignKey("DbFileId")]
         public DbFile File { get; set; }
     }
 }

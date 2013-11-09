@@ -60,7 +60,7 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
             dialog: true,
             widget: true,
             fileSelection: true,
-            sitemapNodeSelection: true
+            siteMapNodeSelection: true
         });
 
         // Plug Q´s promise mechanism into Durandal.
@@ -99,7 +99,6 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
                 setDefaultMessageBoxTemplate();
                 // Show the app by setting the root view model for our application with a transition.
                 app.setRoot('viewmodels/shell', 'entrance');
-
                 app.trigger('caps:started');
             })
             .done();

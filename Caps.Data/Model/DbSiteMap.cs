@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Caps.Data.Model
 {
-    public class Sitemap
+    public class DbSiteMap
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -19,10 +19,14 @@ namespace Caps.Data.Model
         [Required]
         public int Version { get; set; }
 
-        [InverseProperty("Sitemaps"), ForeignKey("WebsiteId")]
+        [InverseProperty("SiteMapVersions"), ForeignKey("WebsiteId")]
         public Website Website { get; set; }
 
-        [InverseProperty("Sitemap")]
-        public ICollection<SitemapNode> Nodes { get; set; }
+        public DateTime? PublishedFrom { get; set; }
+
+        public String PublishedBy { get; set; }
+
+        [InverseProperty("SiteMap")]
+        public ICollection<DbSiteMapNode> SiteMapNodes { get; set; }
     }
 }

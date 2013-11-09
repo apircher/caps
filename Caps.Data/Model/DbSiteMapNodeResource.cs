@@ -8,22 +8,25 @@ using System.Threading.Tasks;
 
 namespace Caps.Data.Model
 {
-    public class SitemapNodeResource
+    public class DbSiteMapNodeResource
     {
         [Key, Column(Order = 1)]
-        public int SitemapNodeId { get; set; }
+        public int SiteMapNodeId { get; set; }
+
         [Key, Column(Order = 2)]
         [MaxLength(10)]
         public String Language { get; set; }
 
         [MaxLength(50)]
         public String Title { get; set; }
+
         [MaxLength(500)]
         public String Keywords { get; set; }
+
         [MaxLength(500)]
         public String Description { get; set; }
 
-        [InverseProperty("Resources"), ForeignKey("SitemapNodeId")]
-        public SitemapNode SitemapNode { get; set; }
+        [InverseProperty("Resources"), ForeignKey("SiteMapNodeId")]
+        public DbSiteMapNode SiteMapNode { get; set; }
     }
 }

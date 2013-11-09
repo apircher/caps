@@ -22,10 +22,10 @@ function (breeze, provider, system, app) {
     }
 
     /*
-     * Fetch all Sitemap-Entities for a given Website.
+     * Fetch all SiteMap-Entities for a given Website.
      */
-    function getSitemaps(websiteId) {
-        var query = new EntityQuery().from('Sitemaps').where('WebsiteId', '==', websiteId);
+    function getSiteMaps(websiteId) {
+        var query = new EntityQuery().from('SiteMaps').where('WebsiteId', '==', websiteId);
         return manager.executeQuery(query);
     }
 
@@ -67,7 +67,7 @@ function (breeze, provider, system, app) {
     
     return {
         getWebsites: getWebsites,
-        getSitemaps: getSitemaps,
+        getSiteMaps: getSiteMaps,
         getTags: getTags,
         getOrCreateTag: getOrCreateTag
     };

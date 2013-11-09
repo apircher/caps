@@ -8,19 +8,18 @@ function (dialog, ko, entityManagerProvider, breeze) {
 
     var EntityQuery = breeze.EntityQuery;
 
-    function SitemapNodeSelectionDialog(options) {
+    function SiteMapNodeSelectionDialog(options) {
         var self = this,
             manager = entityManagerProvider.createManager();
 
-        self._manager = manager;
+        self.manager = manager;
         self.website = ko.observable();
-        self.sitemaps = ko.observableArray();
-        self.selectedSitemap = ko.observable();
+        self.selectedSiteMapVersion = ko.observable();
         self.selectedNode = ko.observable();
 
         options = options || {};
 
-        self.selectedSitemap.subscribe(function () {
+        self.selectedSiteMapVersion.subscribe(function () {
             self.selectedNode(null);
             self.fetchNodes();
         });
@@ -30,34 +29,29 @@ function (dialog, ko, entityManagerProvider, breeze) {
         };
     }
 
-    SitemapNodeSelectionDialog.prototype.activate = function () {
-        this.fetchSitemaps();
+    SiteMapNodeSelectionDialog.prototype.activate = function () {
+        this.fetchSiteMapVersions();
     };
 
-    SitemapNodeSelectionDialog.prototype.fetchSitemaps = function() {
+    SiteMapNodeSelectionDialog.prototype.fetchSiteMapVersions = function () {
         var self = this,
-            manager = self._manager,
-            query = new EntityQuery().from('Websites').expand('Sitemaps');
+            query = new EntityQuery().from('Websites').expand('SiteMapVersions');
 
-        return manager.executeQuery(query).then(function (data) {
+        return self.manager.executeQuery(query).then(function (data) {
             self.website(data.results[0]);
-            self.sitemaps(self.website().Sitemaps());
-            self.selectedSitemap(self.website().latestSitemap());
+            self.selectedSiteMapVersion(self.website().latestSitemap());
         });
     };
 
-    SitemapNodeSelectionDialog.prototype.fetchNodes = function () {
-        var self = this,
-            manager = self._manager,
-            query = new EntityQuery().from('SitemapNodes').where('SitemapId', '==', self.selectedSitemap().Id())
+    SiteMapNodeSelectionDialog.prototype.fetchNodes = function () {
+        var query = new EntityQuery().from('SiteMapNodes').where('SiteMapId', '==', this.selectedSiteMapVersion().Id())
                 .expand('Resources, ChildNodes, ChildNodes.Resources');
-
-        return manager.executeQuery(query).fail(function(error) {
+        return this.manager.executeQuery(query).fail(function(error) {
             alert(error.message);
         });
     };
     
-    SitemapNodeSelectionDialog.prototype.selectOk = function () {
+    SiteMapNodeSelectionDialog.prototype.selectOk = function () {
         if (!this.selectedNode()) {
             //Todo: Show message...
             return;
@@ -65,21 +59,21 @@ function (dialog, ko, entityManagerProvider, breeze) {
 
         dialog.close(this, {
             dialogResult: true,
-            selectedSitemapNode: this.selectedNode()
+            selectedNode: this.selectedNode()
         });
     };
 
-    SitemapNodeSelectionDialog.prototype.selectCancel = function () {
+    SiteMapNodeSelectionDialog.prototype.selectCancel = function () {
         dialog.close(this, {
             dialogResult: false
         });
     };
 
-    SitemapNodeSelectionDialog.install = function () {
-        require(['plugins/sitemapNodeSelection'], function (sitemapNodeSelection) {
-            sitemapNodeSelection.registerDialog(SitemapNodeSelectionDialog);
+    SiteMapNodeSelectionDialog.install = function () {
+        require(['plugins/siteMapNodeSelection'], function (siteMapNodeSelection) {
+            siteMapNodeSelection.registerDialog(SiteMapNodeSelectionDialog);
         });
     };
 
-    return SitemapNodeSelectionDialog;
+    return SiteMapNodeSelectionDialog;
 });

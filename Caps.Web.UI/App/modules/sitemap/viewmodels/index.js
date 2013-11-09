@@ -20,16 +20,6 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         supportedTranslations = localization.website.supportedTranslations(),
         isInitialized = false;
 
-    function fetchWebsite() {
-        var query = new EntityQuery().from('Websites').expand('Sitemaps, Sitemaps.Nodes, Sitemaps.Nodes.Resources').take(1);
-        return manager.executeQuery(query);
-    }
-
-    function deleteSitemapNode(node) {
-        node.setDeleted();
-        return manager.saveChanges();
-    }
-
     selectedSitemap.subscribe(function () {
         selectedNode(null);
     });
@@ -38,7 +28,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
 
     app.on('caps:sitemapnode:saved', function (sitemapNode) {
         if (selectedSitemap() && sitemapNode && sitemapNode.SitemapId() === selectedSitemap().Id()) {
-            var query = new EntityQuery().from('SitemapNodes').where('Id', '==', sitemapNode.Id()).expand('Resources');
+            var query = new EntityQuery().from('SiteMapNodes').where('Id', '==', sitemapNode.Id()).expand('Resources');
             manager.executeQuery(query);
         }
     });
@@ -47,8 +37,8 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
     app.on('caps:publication:refreshed', refreshNodeIfSelected);
 
     function refreshNodeIfSelected(sitemapNode) {
-        if (selectedSitemap() && sitemapNode && sitemapNode.SitemapId() === selectedSitemap().Id()) {
-            var query = new EntityQuery().from('SitemapNodes').where('Id', '==', sitemapNode.Id()).expand('Resources');
+        if (selectedSitemap() && sitemapNode && sitemapNode.SiteMapId() === selectedSitemap().Id()) {
+            var query = new EntityQuery().from('SiteMapNodes').where('Id', '==', sitemapNode.Id()).expand('Resources');
             manager.executeQuery(query).then(refreshPreview);
         }
     }
@@ -56,7 +46,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
     function refreshPreview() {
         contentPreview(null);
         if (selectedNode() && selectedNode().ContentId()) {
-            var query = new EntityQuery().from('SitemapNodeContents').where('Id', '==', selectedNode().ContentId())
+            var query = new EntityQuery().from('Publications').where('Id', '==', selectedNode().ContentId())
                 .expand("ContentParts, ContentParts.Resources, Files, Files.Resources, Files.Resources.File");
             manager.executeQuery(query).then(function (data) {
                 // Show preview
@@ -68,6 +58,24 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             });
         }
     }
+
+    function fetchWebsite() {
+        var query = new EntityQuery().from('Websites').expand('SiteMapVersions, SiteMapVersions.SiteMapNodes, SiteMapVersions.SiteMapNodes.Resources').take(1);
+        return manager.executeQuery(query);
+    }
+
+    function deleteSitemapNode(node) {
+        node.setDeleted();
+        return manager.saveChanges();
+    }
+
+    function selectLatestSitemap() {
+        var latest = website().latestSitemap();
+        if (latest)
+            selectedSitemap(latest);
+        if (latest && latest.rootNodes().length)
+            selectedNode(latest.rootNodes()[0]);
+    }
     
     var vm = {
         website: website,
@@ -75,7 +83,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             var items = [],
                 w = website();
             if (w) {
-                items = w.Sitemaps().slice(0);
+                items = w.SiteMapVersions().slice(0);
                 items.sort(function (a, b) {
                     var vA = a.Version(), vB = b.Version();
                     return vA == vB ? 0 : vA > vB ? -1 : 1;
@@ -93,12 +101,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
                 isInitialized = true;
                 fetchWebsite().then(function (data) {
                     website(data.results[0]);
-                    var latest = website().latestSitemap();
-                    if (latest) {
-                        selectedSitemap(latest);
-                        if (latest.rootNodes().length)
-                            selectedNode(latest.rootNodes()[0]);
-                    }
+                    selectLatestSitemap();
                 });
             }
         },
@@ -108,23 +111,29 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         },
 
         createSitemapVersion: function () {
-            if (website()) {
-                var latestVersion = website().latestSitemap(),
-                    nextVersion = latestVersion ? latestVersion.Version() + 1 : 1;
+            try {
+                if (website()) {
+                    var latestVersion = website().latestSitemap(),
+                        nextVersion = latestVersion ? latestVersion.Version() + 1 : 1;
 
-                var sitemapVersion = manager.createEntity('Sitemap', { WebsiteId: website().Id(), Version: nextVersion }),
-                    rootNode = manager.createEntity('SitemapNode', { NodeType: 'ROOT', ExternalName: 'HOME' }),
-                    rootNodeResource = rootNode.getOrCreateResource('de', manager);
-                rootNode.SitemapId(sitemapVersion.Id());
-                rootNodeResource.Title('Startseite');
-                manager.addEntity(rootNode);
+                    var sitemapVersion = manager.createEntity('DbSiteMap', { WebsiteId: website().Id(), Version: nextVersion }),
+                        rootNode = manager.createEntity('DbSiteMapNode', { NodeType: 'ROOT', ExternalName: 'HOME' }),
+                        rootNodeResource = rootNode.getOrCreateResource('de', manager);
 
-                manager.saveChanges().then(function () {
-                    selectedSitemap(sitemapVersion);
-                })
-                .fail(function(error) {
-                    system.log(error);
-                });
+                    rootNode.SiteMapId(sitemapVersion.Id());
+                    rootNodeResource.Title('Startseite');
+                    manager.addEntity(rootNode);
+
+                    manager.saveChanges().then(function () {
+                        selectedSitemap(sitemapVersion);
+                    })
+                    .fail(function(error) {
+                        system.log(error);
+                    });
+                }
+            }
+            catch (error) {
+                alert(error.message);
             }
         },
 
@@ -152,7 +161,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
 
         createSitemapNode: function () {
             if (selectedNode()) {
-                var node = manager.createEntity('SitemapNode', { NodeType: 'PAGE' });
+                var node = manager.createEntity('SiteMapNode', { NodeType: 'PAGE' });
                 manager.addEntity(node);
                 node.ParentNodeId(selectedNode().Id());
                 node.SitemapId(selectedSitemap().Id());
@@ -170,15 +179,11 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         },
 
         editTranslation: function (language) {
-            if (selectedNode()) {
-                module.router.navigate('#sitemap/translate/' + selectedNode().Id() + '/' + language.culture);
-            }
+            if (selectedNode()) module.router.navigate('#sitemap/translate/' + selectedNode().Id() + '/' + language.culture);
         },
 
         editSitemapNode: function () {
-            if (selectedNode()) {
-                module.router.navigate('#sitemap/edit/' + selectedNode().Id());
-            }
+            if (selectedNode()) module.router.navigate('#sitemap/edit/' + selectedNode().Id());
         },
 
         deleteSitemapNode: function () {

@@ -17,41 +17,42 @@ function (system, app, entityManagerProvider, breeze, ko) {
         self.manager = entityManagerProvider.createManager();
     }
 
-    Publisher.prototype.createPublication = function (sitemapId, parentId, contentData) {
+    Publisher.prototype.publish = function (siteMapId, parentNodeId, contentData) {
         var self = this;
         return system.defer(function (dfd) {
-            var sitemapNode = self.manager.createEntity('SitemapNode', { NodeType: 'PAGE' });
-            self.manager.addEntity(sitemapNode);
-            sitemapNode.ParentNodeId(parentId);
-            sitemapNode.SitemapId(sitemapId);
+            var node = self.manager.createEntity('DbSiteMapNode', { NodeType: 'PAGE' });
+            self.manager.addEntity(node);
 
-            self.createResources(sitemapNode, contentData);
+            node.SiteMapId(siteMapId);
+            node.ParentNodeId(parentNodeId);
 
-            var publicationContent = self.createPublicationContent(contentData, self.manager);
-            sitemapNode.ContentId(publicationContent.Id());
+            self.createResources(node, contentData);
+
+            var publication = self.createPublication(contentData, self.manager);
+            node.ContentId(publication.Id());
 
             self.manager.saveChanges().then(function () {
-                app.trigger('caps:publication:created', sitemapNode);
-                dfd.resolve(sitemapNode);
+                app.trigger('caps:publication:created', node);
+                dfd.resolve(node);
             })
             .fail(dfd.reject);
         })
-        .promse();
+        .promise();
     };
 
-    Publisher.prototype.createResources = function (sitemapNode, contentData) {
+    Publisher.prototype.createResources = function (node, contentData) {
         var self = this;
         ko.utils.arrayForEach(contentData.resources, function (res) {
-            var nodeResource = sitemapNode.getOrCreateResource(res.language, self.manager);
+            var nodeResource = node.getOrCreateResource(res.language, self.manager);
             nodeResource.Title(res.title);
             nodeResource.Description(res.description);
             nodeResource.Keywords(res.keywords);
         });
     };
 
-    Publisher.prototype.createPublicationContent = function (contentData) {
+    Publisher.prototype.createPublication = function (contentData) {
         var self = this;
-        var sitemapNodeContent = self.manager.createEntity('SitemapNodeContent', {
+        var publication = self.manager.createEntity('Publication', {
             EntityType: contentData.entityType,
             EntityKey: contentData.entityId,
             ContentVersion: contentData.version,
@@ -59,69 +60,69 @@ function (system, app, entityManagerProvider, breeze, ko) {
             AuthorName: contentData.created.by,
             TemplateData: contentData.templateContent
         });
-        self.manager.addEntity(sitemapNodeContent);
+        self.manager.addEntity(publication);
 
         // ContentParts
         ko.utils.arrayForEach(contentData.contentParts, function (contentPartData) {
-            var cp = sitemapNodeContent.getOrCreateContentPart(contentPartData.partType, self.manager);
-            cp.ContentType(contentPartData.contentType);
-            cp.Ranking(contentPartData.ranking);
+            var part = publication.getOrCreateContentPart(contentPartData.partType, self.manager);
+            part.ContentType(contentPartData.contentType);
+            part.Ranking(contentPartData.ranking);
 
-            ko.utils.arrayForEach(contentPartData.resources, function (res) {
-                var cpr = cp.getOrCreateResource(res.language, self.manager);
-                cpr.Content(res.content);
+            ko.utils.arrayForEach(contentPartData.resources, function (resourceData) {
+                var resource = part.getOrCreateResource(resourceData.language, self.manager);
+                resource.Content(resourceData.content);
             });
         });
         
         // ContentFiles
-        ko.utils.arrayForEach(contentData.files, function (file) {
-            var cf = self.manager.createEntity('SitemapNodeContentFile', { SitemapNodeContentId: sitemapNodeContent.Id() });
-            self.manager.addEntity(cf);
+        ko.utils.arrayForEach(contentData.files, function (fileData) {
+            var file = self.manager.createEntity('PublicationFile', { PublicationId: publication.Id() });
+            self.manager.addEntity(file);
 
-            cf.Name(file.name);
-            cf.IsEmbedded(file.isEmbedded);
-            cf.Determination(file.determination);
-            cf.Group(file.group);
-            cf.Ranking(file.ranking);
+            file.Name(fileData.name);
+            file.IsEmbedded(fileData.isEmbedded);
+            file.Determination(fileData.determination);
+            file.Group(fileData.group);
+            file.Ranking(fileData.ranking);
             
-            ko.utils.arrayForEach(file.resources, function (res) {
-                var cfr = cf.getOrCreateResource(res.language, self.manager);
-                cfr.DbFileId(res.dbFileId);
-                cfr.Title(res.title);
-                cfr.Description(res.description);
-                cfr.Credits(res.credits);
+            ko.utils.arrayForEach(fileData.resources, function (resourceData) {
+                var resource = file.getOrCreateResource(resourceData.language, self.manager);
+                resource.DbFileId(resourceData.dbFileId);
+                resource.Title(resourceData.title);
+                resource.Description(resourceData.description);
+                resource.Credits(resourceData.credits);
             });
         });
 
-        return sitemapNodeContent;
+        return publication;
     };
 
-    Publisher.prototype.refreshPublication = function (sitemapNodeId, contentData) {
+    Publisher.prototype.republish = function (siteMapNodeId, contentData) {
         var self = this;
         return system.defer(function (dfd) {
             // Fetch node
-            fetchNode(sitemapNodeId).then(function (sitemapNode) {
+            fetchNode().then(function (node) {
 
                 // Update resources
-                self.createResources(sitemapNode, contentData);
+                self.createResources(node, contentData);
 
                 // Update content
-                sitemapNode.Content().setDeleted();
-                var smnc =  self.createPublicationContent(contentData);
-                sitemapNode.ContentId(smnc.Id());
+                node.Content().setDeleted();
+                var publication =  self.createPublication(contentData);
+                node.ContentId(publication.Id());
 
                 self.manager.saveChanges().then(function () {
-                    app.trigger('caps:publication:refreshed', sitemapNode);
-                    dfd.resolve(sitemapNode);
+                    app.trigger('caps:publication:refreshed', node);
+                    dfd.resolve(node);
                 })
                 .fail(dfd.reject);
             });
         })
         .promse();
 
-        function fetchNode(sitemapNodeId) {
+        function fetchNode() {
             return system.defer(function (dfd) {
-                var query = new EntityQuery().from('SitemapNodes').where('Id', '==', sitemapNodeId)
+                var query = new EntityQuery().from('SiteMapNodes').where('Id', '==', siteMapNodeId)
                     .expand('Resources, Content');
                 self.manager.executeQuery(query).then(function (data) {
                     dfd.resolve(data.results[0]);
@@ -136,10 +137,10 @@ function (system, app, entityManagerProvider, breeze, ko) {
     return {
         publish: function (module, contentData) {
             return system.defer(function (dfd) {
-                app.selectSitemapNode({ module: module }).then(function (result) {
+                app.selectSiteMapNode({ module: module }).then(function (result) {
                     if (result.dialogResult) {
                         var publisher = new Publisher();
-                        publisher.createPublication(result.selectedSitemapNode.SitemapId(), result.selectedSitemapNode.Id(), contentData)
+                        publisher.publish(result.selectedNode.SiteMapId(), result.selectedNode.Id(), contentData)
                             .then(dfd.resolve)
                             .fail(dfd.reject);
                     }
@@ -148,10 +149,10 @@ function (system, app, entityManagerProvider, breeze, ko) {
             .promise();
         },
 
-        republish: function (sitemapNodeId, contentData) {
+        republish: function (siteMapNodeId, contentData) {
             return system.defer(function (dfd) {
                 var publisher = new Publisher();
-                publisher.refreshPublication(sitemapNodeId, contentData)
+                publisher.republish(siteMapNodeId, contentData)
                     .then(dfd.resolve)
                     .fail(dfd.reject);
             })

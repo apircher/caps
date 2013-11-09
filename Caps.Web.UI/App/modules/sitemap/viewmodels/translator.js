@@ -43,7 +43,7 @@ function (module, ko, localization, entityManagerProvider, breeze) {
         };
 
         function fetchNode(id) {
-            var query = new EntityQuery().from('SitemapNodes').where('Id', '==', id).expand('Resources');
+            var query = new EntityQuery().from('SiteMapNodes').where('Id', '==', id).expand('Resources');
             return manager.executeQuery(query);
         }
     }

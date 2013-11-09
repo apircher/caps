@@ -99,22 +99,22 @@ namespace Caps.Web.UI.Infrastructure
 
         void ProcessNewOrModifiedSitemapNodes(Dictionary<Type, List<EntityInfo>> saveMap)
         {
-            if (saveMap.ContainsKey(typeof(SitemapNode)))
+            if (saveMap.ContainsKey(typeof(DbSiteMapNode)))
             {
-                var newSitemapNodes = saveMap[typeof(SitemapNode)].Where(n => n.EntityState == EntityState.Added);
+                var newSitemapNodes = saveMap[typeof(DbSiteMapNode)].Where(n => n.EntityState == EntityState.Added);
                 foreach (var entry in newSitemapNodes)
                 {
-                    var sitemapNode = entry.Entity as SitemapNode;
+                    var sitemapNode = entry.Entity as DbSiteMapNode;
                     sitemapNode.Created.At = DateTime.UtcNow;
                     sitemapNode.Created.By = user.Identity.Name;
                     sitemapNode.Modified.At = DateTime.UtcNow;
                     sitemapNode.Modified.By = user.Identity.Name;
                 }
 
-                var modifiedNodes = saveMap[typeof(SitemapNode)].Where(n => n.EntityState == EntityState.Modified);
+                var modifiedNodes = saveMap[typeof(DbSiteMapNode)].Where(n => n.EntityState == EntityState.Modified);
                 foreach (var entry in modifiedNodes)
                 {
-                    var sitemapNode = entry.Entity as SitemapNode;
+                    var sitemapNode = entry.Entity as DbSiteMapNode;
                     sitemapNode.Modified.At = DateTime.UtcNow;
                     sitemapNode.Modified.By = user.Identity.Name;
                 }
