@@ -1,4 +1,4 @@
-﻿define(function (require) {
+﻿define(['ko'], function (ko) {
 
     var validationStrings = {
         'de': {
@@ -77,12 +77,57 @@
             if (resource) moment.lang(culture, resource);
         });
     }
+    
+    /*
+     * Language Class
+     */
+    var languageNames = {
+
+        'de': {
+            'de': 'Deutsch',
+            'en': 'German'
+        },
+        'en': {
+            'de': 'Englisch',
+            'en': 'English'
+        }
+    };
+
+    function Language(culture) {
+        this.culture = culture;
+    }
+
+    Language.prototype.localeName = function (culture) {
+        culture = culture || this.culture;
+        var resourceSet = languageNames[this.culture];
+        return resourceSet[culture];
+    };
+
+    /*
+     * WebsiteLocalization Class
+     */
+    function WebsiteLocalization() {
+        this.languages = [new Language('de'), new Language('en')];
+        this.defaultLanguage = this.languages[0];
+    }
+
+    WebsiteLocalization.prototype.supportedTranslations = function () {
+        var defaultLanguage = this.defaultLanguage.culture.toLowerCase();
+        return ko.utils.arrayFilter(this.languages, function (language) {
+            return language.culture.toLowerCase() !== defaultLanguage;
+        });
+    };
+
+    var wl = new WebsiteLocalization();
 
     return {
+        Language: Language,
         localize: function (culture) {
             localizeKnockoutValidation(culture);
             localizeMoment(culture);
-        }
+        },
+
+        website: wl
     };
 
 });

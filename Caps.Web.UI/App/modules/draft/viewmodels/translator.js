@@ -13,9 +13,9 @@ define([
     './translator/draftFiles',
     './translator/draftProperties',
     './editorModel',
-    'infrastructure/websiteMetadata'
+    'localization'
 ],
-function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, ContentPartEditor, DraftFiles, DraftProperties, EditorModel, WebsiteMetadata) {
+function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, ContentPartEditor, DraftFiles, DraftProperties, EditorModel, localization) {
 
     function Translator() {
         var self = this,
@@ -23,8 +23,7 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
             navigationVM,
             draftFilesVM,
             draftPropertiesVM,
-            contentPartEditors = [],
-            websiteMetadata = WebsiteMetadata.getSiteInfo();
+            contentPartEditors = [];
 
         self.manager = manager;
         self.draftId = ko.observable();
@@ -38,7 +37,7 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
 
         self.activate = function (draftId, language) {
             self.draftId(draftId);
-            self.language(new WebsiteMetadata.Language(language));
+            self.language(new localization.Language(language));
 
             var deferred = Q.defer();
             loadEntity(draftId)

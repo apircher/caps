@@ -223,7 +223,7 @@
     <Content Include="App\infrastructure\antiForgeryToken.js" />
     <Content Include="App\infrastructure\authentication.js" />
     <Content Include="App\infrastructure\datacontext.js" />
-    <Content Include="App\infrastructure\entities.js" />
+    <Content Include="App\modules\sitemap\entities.js" />
     <Content Include="App\infrastructure\entityManagerProvider.js" />
     <Content Include="App\infrastructure\filterModel.js" />
     <Content Include="App\infrastructure\listSortModel.js" />
@@ -237,7 +237,6 @@
     <Content Include="App\infrastructure\screen.js" />
     <Content Include="App\infrastructure\tagService.js" />
     <Content Include="App\infrastructure\utils.js" />
-    <Content Include="App\infrastructure\websiteMetadata.js" />
     <Content Include="App\modules\contentfile\datacontext.js" />
     <Content Include="App\modules\contentfile\entities.js" />
     <Content Include="App\modules\contentfile\module.html" />

@@ -7,17 +7,16 @@ define([
     'ko',
     'durandal/app',
     'moment',
-    'infrastructure/websiteMetadata',
+    'localization',
     'infrastructure/publicationService',
     '../contentGenerator'
 ],
-function (module, datacontext, ko, app, moment, website, publicationService, contentGenerator) {
+function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
         draftPreview = ko.observable(),
-        initialized = false,
-        siteInfo = website.getSiteInfo();
+        initialized = false;
 
     app.on('caps:draft:saved', function (args) {
         var draft = args.entity;
@@ -128,8 +127,8 @@ function (module, datacontext, ko, app, moment, website, publicationService, con
         self.entity = ko.observable(entity);
         self.resource = ko.observable(entity.getResource('de'));
         self.template = ko.observable(template);
-        self.defaultCulture = siteInfo.defaultCulture();
-        self.supportedTranslations = siteInfo.supportedTranslations();
+        self.defaultCulture = localization.website.defaultLanguage;
+        self.supportedTranslations = localization.website.supportedTranslations();
         self.publications = ko.observableArray();
 
         self.createdAt = ko.computed(function () {

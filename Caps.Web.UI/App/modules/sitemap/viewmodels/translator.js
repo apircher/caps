@@ -1,11 +1,11 @@
 ﻿define([
     '../module',
     'ko',
-    'infrastructure/websiteMetadata',
+    'localization',
     'entityManagerProvider',
     'breeze'
 ],
-function (module, ko, WebsiteMetadata, entityManagerProvider, breeze) {
+function (module, ko, localization, entityManagerProvider, breeze) {
 
     var EntityQuery = breeze.EntityQuery;
 
@@ -19,11 +19,10 @@ function (module, ko, WebsiteMetadata, entityManagerProvider, breeze) {
         self.translation = ko.observable();
 
         self.activate = function (sitemapNodeId, language) {
-            self.language(new WebsiteMetadata.Language(language));
+            self.language(new localization.Language(language));
             fetchNode(sitemapNodeId).then(function (data) {
                 if (data.results.length) {
                     var n = data.results[0];
-
                     self.entity(n);
                     self.original(n.getOrCreateResource('de', manager));
                     self.translation(n.getOrCreateResource(language, manager));

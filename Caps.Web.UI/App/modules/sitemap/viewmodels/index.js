@@ -7,9 +7,9 @@
     'breeze',
     'durandal/system',
     'durandal/app',
-    'infrastructure/websiteMetadata'
+    'localization'
 ],
-function (module, ko, datacontext, router, entityManagerProvider, breeze, system, app, websiteMetadata) {
+function (module, ko, datacontext, router, entityManagerProvider, breeze, system, app, localization) {
     
     var manager = entityManagerProvider.createManager(),
         website = ko.observable(),
@@ -17,7 +17,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         selectedNode = ko.observable(),
         contentPreview = ko.observable(),
         EntityQuery = breeze.EntityQuery,
-        supportedTranslations = websiteMetadata.getSiteInfo().supportedTranslations(),
+        supportedTranslations = localization.website.supportedTranslations(),
         isInitialized = false;
 
     function fetchWebsite() {

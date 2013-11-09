@@ -1,4 +1,4 @@
-﻿define(['durandal/app', 'infrastructure/moduleFactory', 'infrastructure/moduleRouter'], function (app, moduleFactory, routerFactory) {
+﻿define(['durandal/app', 'infrastructure/moduleFactory', 'infrastructure/moduleRouter', './entities'], function (app, moduleFactory, routerFactory, model) {
 
     var module = moduleFactory.createModule({
         route: 'sitemap*details',
@@ -7,6 +7,8 @@
         nav: 10,
         hash: '#sitemap'
     });
+    
+    module.extendModel = model.extendModel;
 
     module.initializeRouter = function () {
         module.router = routerFactory.createModuleRouter(module, 'modules/sitemap', 'sitemap')

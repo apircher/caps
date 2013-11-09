@@ -1,7 +1,5 @@
-﻿define([
-    'ko'
-],
-function (ko) {
+﻿
+define(['ko'], function (ko) {
 
     /**
      * Website Entity
