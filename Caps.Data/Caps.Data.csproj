@@ -61,6 +61,14 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CapsDbContext.cs" />
+    <Compile Include="ContentControls\ContentControl.cs" />
+    <Compile Include="ContentControls\ContentControlRegistry.cs" />
+    <Compile Include="ContentControls\ContentControlRegistryConfig.cs" />
+    <Compile Include="ContentControls\ContentPreprocessor.cs" />
+    <Compile Include="ContentControls\ContentScriptManager.cs" />
+    <Compile Include="ContentControls\HtmlToXmlHelpers.cs" />
+    <Compile Include="ContentControls\IContentControl.cs" />
+    <Compile Include="ContentControls\Slideshow.cs" />
     <Compile Include="Localization\ILocalizableEntity.cs" />
     <Compile Include="Localization\Language.cs" />
     <Compile Include="Localization\LocalizationHelpers.cs" />
@@ -124,6 +132,10 @@
     <Compile Include="Migrations\201311091748510_AddDbSiteMapPublishedFromAndBy.Designer.cs">
       <DependentUpon>201311091748510_AddDbSiteMapPublishedFromAndBy.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311101040172_AddDbSiteMapNodePermanentId.cs" />
+    <Compile Include="Migrations\201311101040172_AddDbSiteMapNodePermanentId.Designer.cs">
+      <DependentUpon>201311101040172_AddDbSiteMapNodePermanentId.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
@@ -137,6 +149,7 @@
     <Compile Include="Model\Draft.cs" />
     <Compile Include="Model\DraftContentPart.cs" />
     <Compile Include="Model\DraftContentPartResource.cs" />
+    <Compile Include="Model\DraftContentTypes.cs" />
     <Compile Include="Model\DraftFile.cs" />
     <Compile Include="Model\DraftFileResource.cs" />
     <Compile Include="Model\DraftResource.cs" />
@@ -203,6 +216,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201311091748510_AddDbSiteMapPublishedFromAndBy.resx">
       <DependentUpon>201311091748510_AddDbSiteMapPublishedFromAndBy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311101040172_AddDbSiteMapNodePermanentId.resx">
+      <DependentUpon>201311101040172_AddDbSiteMapNodePermanentId.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

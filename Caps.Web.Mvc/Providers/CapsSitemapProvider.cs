@@ -85,15 +85,29 @@ namespace Caps.Web.Mvc.Providers
                 using (CapsSiteMapBuilder builder = new CapsSiteMapBuilder())
                 {
                     var result = builder.BuildSitemap(this, (n1, n2) => AddNode(n1, n2));
-                    rootNode = result.RootNode;
-                    siteMapExpiration = result.SiteMapExpiration;
-                    nodeIdIndex = result.IndexIdToNode;
-                    nodeNameIndex = result.IndexNameToNode;
+                    if (result != null)
+                    {
+                        rootNode = result.RootNode;
+                        siteMapExpiration = result.SiteMapExpiration;
+                        nodeIdIndex = result.IndexIdToNode;
+                        nodeNameIndex = result.IndexNameToNode;
+                    }
+                    else
+                    {
+                        rootNode = new CapsSiteMapNode(this, "root");
+                        rootNode.Title = "Home";
+                        rootNode.Url = "~/";
+                        AddNode(rootNode);
+
+                        siteMapExpiration = DateTime.UtcNow.AddMinutes(1);
+                        nodeIdIndex = new Dictionary<int, SiteMapNode>();
+                        nodeNameIndex = new Dictionary<String, SiteMapNode>();
+                    }
                 }
 
                 // Add SqlCacheDependency
                 // Auf Sql Azure nicht verfügbar.
-                using (CacheDependency dependency = new PollingCacheDependency(10000, "DefaultConnection", "DbSiteMaps", "DbSiteMapNodes", "DbSiteMapNodeResources"))
+                using (CacheDependency dependency = new PollingCacheDependency(10000, "CapsDbContext", "DbSiteMaps", "DbSiteMapNodes", "DbSiteMapNodeResources"))
                 {
                     HttpRuntime.Cache.Insert(cacheKey, "", dependency, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable,
                         (key, item, reason) => ResetSiteMap());

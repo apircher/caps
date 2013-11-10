@@ -15,9 +15,10 @@ define([
     './editor/draftProperties',
     './editor/draftFiles',
     './editor/contentPartEditor',
+    './editor/templateEditor',
     './editorModel'
 ],
-function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, EditorModel) {
+function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, TemplateEditor, EditorModel) {
 
     // Editor Model
     function DraftEditor() {
@@ -27,6 +28,7 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
             draftTemplateVM,
             draftFilesVM,
             propertiesVM,
+            templateEditorVM,
             contentPartEditors = [],
             router = module.router;
 
@@ -81,8 +83,13 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
             if (cpe) self.currentContent(cpe);
         };
 
+        self.showTemplateEditor = function () {
+            templateEditorVM = templateEditorVM || new TemplateEditor(self);
+            self.currentContent(templateEditorVM);
+        };
+
         self.navigateBack = function () {
-            if (self.currentContent() && self.currentContent().name === 'ContentPartEditor') {
+            if (self.currentContent() && (self.currentContent().name === 'ContentPartEditor' || self.currentContent().name === 'TemplateEditor')) {
                 self.showEditorMain();
                 return;
             }

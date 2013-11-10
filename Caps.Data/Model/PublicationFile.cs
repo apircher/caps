@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caps.Data.Localization;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Caps.Data.Model
 {
-    public class PublicationFile
+    public class PublicationFile : ILocalizableEntity<PublicationFileResource>
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -34,5 +35,14 @@ namespace Caps.Data.Model
 
         [InverseProperty("PublicationFile")]
         public ICollection<PublicationFileResource> Resources { get; set; }
+
+        public DbFile FileForLanguage(String language)
+        {
+            return this.GetValueForLanguage(language, r => r.File, null);
+        }
+        public DbFile FileForLanguage(String language, params String[] fallbackLanguages)
+        {
+            return this.GetValueForLanguage(language, r => r.File, null, fallbackLanguages);
+        }
     }
 }

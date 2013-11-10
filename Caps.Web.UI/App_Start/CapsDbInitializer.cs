@@ -12,10 +12,6 @@ namespace Caps.Web.UI.App_Start
     {
         static void InitializeDatabase()
         {
-#if DEBUG
-            System.Data.Entity.Database.SetInitializer<Caps.Data.CapsDbContext>(
-                new System.Data.Entity.DropCreateDatabaseIfModelChanges<Caps.Data.CapsDbContext>());
-#endif
             try
             {
                 using (var context = new Caps.Data.CapsDbContext())

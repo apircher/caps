@@ -223,6 +223,8 @@
     <Content Include="App\infrastructure\antiForgeryToken.js" />
     <Content Include="App\infrastructure\authentication.js" />
     <Content Include="App\infrastructure\datacontext.js" />
+    <Content Include="App\modules\draft\viewmodels\editor\templateEditor.js" />
+    <Content Include="App\modules\draft\views\editor\templateEditor.html" />
     <Content Include="App\modules\sitemap\entities.js" />
     <Content Include="App\infrastructure\entityManagerProvider.js" />
     <Content Include="App\infrastructure\filterModel.js" />

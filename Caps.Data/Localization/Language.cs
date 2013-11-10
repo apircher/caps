@@ -60,22 +60,6 @@ namespace Caps.Data.Localization
                 throw new ArgumentNullException("resource");
             return LanguageTitle(resource.Language);
         }
-        //public static String LocalizeAction(this UrlHelper helper, String language)
-        //{
-        //    return helper.LocalizeAction(helper.RequestContext.RouteData.Values["action"].ToString(), language);
-        //}
-        //public static String LocalizeAction(this UrlHelper helper, String actionName, String language)
-        //{
-        //    var routeValues = helper.RequestContext.RouteData.Values;
-
-        //    if (routeValues.ContainsKey("language"))
-        //        routeValues["language"] = language;
-        //    else
-        //        routeValues.Add("language", language);
-
-        //    return helper.Action(actionName, routeValues);
-
-        //}
 
         public static String CultureToLanguage(String cultureCode)
         {

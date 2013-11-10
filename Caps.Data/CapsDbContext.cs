@@ -44,7 +44,7 @@ namespace Caps.Data
         }
         public DbSiteMap GetCurrentSiteMap(int websiteId)
         {
-            return SiteMaps
+            return SiteMaps.Include("SiteMapNodes").Include("SiteMapNodes.Resources")
                 .Where(m => m.PublishedFrom.HasValue && m.PublishedFrom.Value <= DateTime.UtcNow)
                 .OrderByDescending(m => m.Version).ThenByDescending(m => m.PublishedFrom)
                 .FirstOrDefault();

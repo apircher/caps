@@ -27,7 +27,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
     selectedNode.subscribe(refreshPreview);
 
     app.on('caps:sitemapnode:saved', function (sitemapNode) {
-        if (selectedSitemap() && sitemapNode && sitemapNode.SitemapId() === selectedSitemap().Id()) {
+        if (selectedSitemap() && sitemapNode && sitemapNode.SiteMapId() === selectedSitemap().Id()) {
             var query = new EntityQuery().from('SiteMapNodes').where('Id', '==', sitemapNode.Id()).expand('Resources');
             manager.executeQuery(query);
         }
@@ -153,6 +153,13 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
                     alert(error.message);
                 });
             }
+        },
+
+        publishSitemapVersion: function() {
+            selectedSitemap().PublishedFrom(new Date());
+            selectedSitemap().PublishedBy('me');
+
+            manager.saveChanges();
         },
 
         selectNode: function (node) {

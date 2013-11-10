@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caps.Web.Mvc.Sitemap;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -12,6 +13,13 @@ namespace DemoWebsite
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            
+            routes.MapRoute(
+                name: "CapsContentRoute",
+                url: "{name}/{id}-{language}",
+                defaults: new { controller = "CapsContent", action = "Index", language = "de" },
+                constraints: new { language = @"^(en|de|es|" + CapsSiteMapNode.LanguagePlaceHolder + ")$", id = @"^[a-fA-F0-9]+$" }
+            );
 
             routes.MapRoute(
                 name: "Default",

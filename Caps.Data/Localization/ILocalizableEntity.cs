@@ -8,7 +8,7 @@ namespace Caps.Data.Localization
 {
     public interface ILocalizableEntity<T> where T : ILocalizedResource
     {
-        IEnumerable<T> Resources { get; }
+        ICollection<T> Resources { get; }
     }
 
     public interface ILocalizedResource

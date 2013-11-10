@@ -21,8 +21,11 @@ namespace Caps.Data.Model
 
         public int? ContentId { get; set; }
 
+        [Required]
+        public int PermanentId { get; set; }
+
         [MaxLength(50)]
-        public String ExternalName { get; set; }
+        public String Name { get; set; }
 
         public int Ranking { get; set; }
 

@@ -3,7 +3,7 @@
     <div class="container-fullwidth">
         <div class="row">
             <div class="col-md-12">
-                <ul class="list-inline">
+                <ul class="list-inline pull-left">
                     <li>
                         <a href="#" data-bind="click: editWebsite"><i class="fa fa-cog"></i> Website</a>
                     </li>
@@ -19,6 +19,17 @@
                         <a href="#" data-bind="click: deleteSitemapVersion"><i class="fa fa-trash-o"></i> Version verwerfen</a>
                     </li>
                 </ul>
+
+                <div class="pull-left">
+                    <!-- ko if: selectedSitemap() -->
+                    <span data-bind="visible: !selectedSitemap().PublishedFrom()">
+                        Nicht veröffentlicht <a href="#" data-bind="click: publishSitemapVersion"><i class="fa fa-share-square-o"></i> Jetzt veröffentlichen</a>
+                    </span>
+                    <span data-bind="visible: selectedSitemap().PublishedFrom()">
+                        Veröffentlicht <span data-bind="text: selectedSitemap().PublishedFrom()"></span>
+                    </span>
+                    <!-- /ko -->
+                </div>
             </div>
         </div>
         <div class="row">

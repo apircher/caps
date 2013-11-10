@@ -34,7 +34,8 @@ namespace Caps.Web.Mvc.Providers
             if (website != null)
             {
                 currentSiteMap = db.GetCurrentSiteMap(website.Id);
-                nodeList = currentSiteMap.SiteMapNodes.ToList();
+                nodeList = currentSiteMap != null && currentSiteMap.SiteMapNodes != null ? 
+                    currentSiteMap.SiteMapNodes.ToList() : new List<DbSiteMapNode>();
             }
         }
 
@@ -53,6 +54,8 @@ namespace Caps.Web.Mvc.Providers
 
             var rootNodeEntity = nodeList.Where(n => !n.ParentNodeId.HasValue && String.Equals(n.NodeType, "ROOT"))
                 .FirstOrDefault();
+            if (rootNodeEntity == null)
+                return null;
 
             foreach (var entity in rootNodeEntity.ChildNodes.OrderBy(n => n.Ranking))
                 MapNode(entity, provider, rootNode, addNodeAction);
@@ -75,7 +78,7 @@ namespace Caps.Web.Mvc.Providers
                 if (String.IsNullOrWhiteSpace(url))
                     return;
 
-                siteMapNode = new CapsSiteMapNode(provider, entity.Id.ToString("x", CultureInfo.InvariantCulture), GetUrl(entity), entity.ExternalName);
+                siteMapNode = new CapsSiteMapNode(provider, entity.Id.ToString("x", CultureInfo.InvariantCulture), GetUrl(entity), entity.Name);
                 if (addNodeAction != null)
                     addNodeAction(siteMapNode, parentNode);
                 Index(entity, siteMapNode);
@@ -84,8 +87,11 @@ namespace Caps.Web.Mvc.Providers
                     new Tuple<String, CapsSiteMapNodeResource>(r.Language, new CapsSiteMapNodeResource { Title = r.Title })));
                 siteMapNode.NodeType = entity.NodeType;
 
-                foreach (var childEntity in entity.ChildNodes.OrderBy(n => n.Ranking))
-                    MapNode(childEntity, provider, siteMapNode, addNodeAction);
+                if (entity.ChildNodes != null)
+                {
+                    foreach (var childEntity in entity.ChildNodes.OrderBy(n => n.Ranking))
+                        MapNode(childEntity, provider, siteMapNode, addNodeAction);
+                }
             }
         }
 
@@ -101,9 +107,10 @@ namespace Caps.Web.Mvc.Providers
             var routeData = new RouteValueDictionary();
             if (entity.IsNodeTypeIn("Article", "Page", "Publication", "Draft"))
             {
-                routeData.Add("id", entity.ExternalName);
+                routeData.Add("id", entity.PermanentId.ToString("x"));
+                routeData.Add("name", entity.Name);
                 routeData.Add("language", CapsSiteMapNode.LanguagePlaceHolder);
-                return helper.Action("ShowContent", "Home", routeData);
+                return helper.Action("Index", "CapsContent", routeData);
             }
 
             if (entity.IsNodeType("Action"))
@@ -118,9 +125,9 @@ namespace Caps.Web.Mvc.Providers
 
             if (entity.IsNodeType("Teaser"))
             {
-                var linkedNode = nodeList.FirstOrDefault(n => n.ExternalName == entity.Redirect);
+                var linkedNode = nodeList.FirstOrDefault(n => n.Name == entity.Redirect);
                 if (linkedNode != null)
-                    return GetUrl(linkedNode) + String.Format("?ref={0}", entity.ExternalName);
+                    return GetUrl(linkedNode) + String.Format("?ref={0}", entity.Name);
             }
 
             return helper.Action("Index", "Home", routeData);
@@ -137,7 +144,7 @@ namespace Caps.Web.Mvc.Providers
 
         void Index(DbSiteMapNode entity, SiteMapNode node)
         {
-            String nameKey = entity.ExternalName.UrlEncode();
+            String nameKey = entity.Name.UrlEncode();
             if (!indexNameToSiteMapNode.ContainsKey(nameKey))
                 indexNameToSiteMapNode.Add(nameKey, node);
         }
