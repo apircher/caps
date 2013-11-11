@@ -27,8 +27,8 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             var publication = fileReference.context,
                 publicationFile = publication.findFile(fileReference.fileName),
                 resource = publicationFile.getResource(language),
-                file = resource != null ? resource.File() : undefined;
-            return urlHelper.getFileUrl(fileReference.fileName, file, fileReference.query);
+                fileVersion = resource != null ? resource.FileVersion() : undefined;
+            return urlHelper.getFileUrl(fileReference.fileName, fileVersion, fileReference.query);
         }
     });
 
@@ -59,7 +59,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         contentPreview(null);
         if (selectedNode() && selectedNode().ContentId()) {
             var query = new EntityQuery().from('Publications').where('Id', '==', selectedNode().ContentId())
-                .expand("ContentParts, ContentParts.Resources, Files, Files.Resources, Files.Resources.File");
+                .expand("ContentParts.Resources, Files.Resources.FileVersion.File");
             manager.executeQuery(query).then(function (data) {
                 // Show preview
                 var cp = new ContentPreviewViewModel(selectedNode());
@@ -72,7 +72,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
     }
 
     function fetchWebsite() {
-        var query = new EntityQuery().from('Websites').expand('SiteMapVersions, SiteMapVersions.SiteMapNodes, SiteMapVersions.SiteMapNodes.Resources').take(1);
+        var query = new EntityQuery().from('Websites').expand('SiteMapVersions.SiteMapNodes.Resources').take(1);
         return manager.executeQuery(query);
     }
 
@@ -129,7 +129,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
                         nextVersion = latestVersion ? latestVersion.Version() + 1 : 1;
 
                     var sitemapVersion = manager.createEntity('DbSiteMap', { WebsiteId: website().Id(), Version: nextVersion }),
-                        rootNode = manager.createEntity('DbSiteMapNode', { NodeType: 'ROOT', ExternalName: 'HOME' }),
+                        rootNode = manager.createEntity('DbSiteMapNode', { NodeType: 'ROOT', Name: 'HOME' }),
                         rootNodeResource = rootNode.getOrCreateResource('de', manager);
 
                     rootNode.SiteMapId(sitemapVersion.Id());

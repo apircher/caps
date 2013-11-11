@@ -23,7 +23,7 @@ namespace Caps.Web.UI.Controllers
 
         public ActionResult Inline(int id)
         {
-            var latestVersion = GetLatestVersion(id);
+            var latestVersion = GetFileVersion(id);
             if (latestVersion == null)
                 return HttpNotFound();
             return File(latestVersion.Content.Data, latestVersion.File.ContentType);
@@ -31,7 +31,7 @@ namespace Caps.Web.UI.Controllers
 
         public ActionResult Download(int id)
         {
-            var latestVersion = GetLatestVersion(id);
+            var latestVersion = GetFileVersion(id);
             if (latestVersion == null)
                 return HttpNotFound();
             var file = latestVersion.File;
@@ -40,7 +40,7 @@ namespace Caps.Web.UI.Controllers
 
         public ActionResult Thumbnail(int id, String thumbnailName)
         {
-            var latestVersion = GetLatestVersion(id);
+            var latestVersion = GetFileVersion(id);
             if (latestVersion == null)
                 return HttpNotFound();
 
@@ -65,10 +65,18 @@ namespace Caps.Web.UI.Controllers
             {
                 var latest = file.GetLatestVersion();
                 if (latest != null)
-                    return db.FileVersions.Include("Content").Include("Thumbnails").FirstOrDefault(v => v.Id == latest.Id);
+                    return GetFileVersion(latest.Id);
             }
-
             return null;
+        }
+
+        DbFileVersion GetFileVersion(int fileVersionId)
+        {
+            return db.FileVersions
+                .Include("Content")
+                .Include("Thumbnails")
+                .Include("File")
+                .FirstOrDefault(v => v.Id == fileVersionId);
         }
     }
 }

@@ -87,7 +87,7 @@ function (system, app, entityManagerProvider, breeze, ko) {
             
             ko.utils.arrayForEach(fileData.resources, function (resourceData) {
                 var resource = file.getOrCreateResource(resourceData.language, self.manager);
-                resource.DbFileId(resourceData.dbFileId);
+                resource.DbFileVersionId(resourceData.dbFileVersionId);
                 resource.Title(resourceData.title);
                 resource.Description(resourceData.description);
                 resource.Credits(resourceData.credits);

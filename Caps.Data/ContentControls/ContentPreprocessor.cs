@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
+using Caps.Data.Utils;
 
 namespace Caps.Data.ContentControls
 {
@@ -163,11 +164,17 @@ namespace Caps.Data.ContentControls
             if (file == null)
                 return String.Empty;
 
-            var sqlFile = file.FileForLanguage(language, "de", "en");
+            var sqlFile = file.FileVersionForLanguage(language, "de", "en");
             if (sqlFile == null)
                 return String.Empty;
 
-            return urlHelper.Action("ContentFile", "CapsContent", new { area = "", id = sqlFile.Id, name = sqlFile.FileName, inline = inline });
+            return urlHelper.Action("ContentFile", "CapsContent", new
+            {
+                area = "",
+                id = sqlFile.Id,
+                name = System.Web.HttpUtility.UrlEncode(sqlFile.File.FileName),
+                inline = inline
+            });
         }
 
         String GetThumbnailSrc(String key, String language, String size)
@@ -180,11 +187,17 @@ namespace Caps.Data.ContentControls
             if (file == null)
                 return String.Empty;
 
-            var sqlFile = file.FileForLanguage(language, "de", "en");
+            var sqlFile = file.FileVersionForLanguage(language, "de", "en");
             if (sqlFile == null)
                 return String.Empty;
 
-            return urlHelper.Action("Thumbnail", "CapsContent", new { area = "", id = sqlFile.Id, name = sqlFile.FileName, size = size });
+            return urlHelper.Action("Thumbnail", "CapsContent", new
+            {
+                area = "",
+                id = sqlFile.Id,
+                name = System.Web.HttpUtility.UrlEncode(sqlFile.File.FileName),
+                size = size
+            });
         }
     }
 }

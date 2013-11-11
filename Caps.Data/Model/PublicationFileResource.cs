@@ -18,7 +18,7 @@ namespace Caps.Data.Model
         [MaxLength(10)]
         public String Language { get; set; }
                 
-        public int? DbFileId { get; set; }
+        public int? DbFileVersionId { get; set; }
 
         [MaxLength(50)]
         public String Title { get; set; }
@@ -31,7 +31,7 @@ namespace Caps.Data.Model
         [InverseProperty("Resources"), ForeignKey("PublicationFileId")]
         public PublicationFile PublicationFile { get; set; }
 
-        [InverseProperty("PublicationFileResources"), ForeignKey("DbFileId")]
-        public DbFile File { get; set; }
+        [InverseProperty("PublicationFileResources"), ForeignKey("DbFileVersionId")]
+        public DbFileVersion FileVersion { get; set; }
     }
 }

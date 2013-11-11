@@ -15,8 +15,8 @@ function (ko, markdown, urlHelper, ContentReferenceManager) {
                 var draft = fileReference.context,
                     draftFile = draft.findDraftFile(fileReference.fileName),
                     resource = draftFile.getResource(language),
-                    file = resource != null ? resource.File() : undefined;
-                return urlHelper.getFileUrl(fileReference.fileName, file, fileReference.query);
+                    fileVersion = resource != null ? resource.FileVersion() : undefined;
+                return urlHelper.getFileUrl(fileReference.fileName, fileVersion, fileReference.query);
             }
         });
 
@@ -170,7 +170,7 @@ function (ko, markdown, urlHelper, ContentReferenceManager) {
         return ko.utils.arrayMap(resources, function (resource) {
             return {
                 language: resource.Language(),
-                dbFileId: resource.DbFileId(),
+                dbFileVersionId: resource.DbFileVersionId(),
                 title: resource.Title(),
                 description: resource.Description(),
                 credits: resource.Credits()

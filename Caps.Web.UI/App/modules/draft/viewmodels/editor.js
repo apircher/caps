@@ -143,18 +143,20 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
         };
 
         self.createDraftFile = function (file) {
-            var query = breeze.EntityQuery.from('Files').where('Id', '==', file.Id());
+            var query = breeze.EntityQuery.from('Files').where('Id', '==', file.Id()).expand('Versions.File');
             manager.executeQuery(query)
-            .then(function (result) {
-                var df = manager.createEntity('DraftFile', { DraftId: self.entity().Id(), Name: file.FileName() });
-                manager.addEntity(df);
+            .then(function (data) {
+                var dbFile = data.results[0];
 
-                var res = manager.createEntity('DraftFileResource', { Language: 'de', DbFileId: file.Id() });
-                manager.addEntity(res);
+                var draftFile = manager.createEntity('DraftFile', { DraftId: self.entity().Id(), Name: file.FileName() });
+                manager.addEntity(draftFile);
 
-                df.Resources.push(res);
-                self.entity().Files.push(df);
-                self.files.push(new EditorModel.LocalizedDraftFile(df, df.getResource('de')));
+                var resource = manager.createEntity('DraftFileResource', { Language: 'de', DbFileVersionId: dbFile.latestVersion().Id() });
+                manager.addEntity(resource);
+                draftFile.Resources.push(resource);
+
+                self.entity().Files.push(draftFile);
+                self.files.push(new EditorModel.LocalizedDraftFile(draftFile, draftFile.getResource('de')));
             });
         };
 
@@ -172,7 +174,7 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
 
         function loadEntity(id) {
             var query = breeze.EntityQuery.from('Drafts').where('Id', '==', id)
-                .expand('Resources, ContentParts, ContentParts.Resources, Files, Files.Resources, Files.Resources.File');
+                .expand('Resources, ContentParts.Resources, Files.Resources.FileVersion.File');
             return manager.executeQuery(query).then(function (data) {
                 self.entity(data.results[0]);
             });

@@ -34,24 +34,27 @@ namespace DemoWebsite.Controllers
         public ActionResult ContentFile(int id, String name, bool inline)
         {
             var db = DependencyResolver.Current.GetService<CapsDbContext>();
-            var dbFile = db.Files.Include("Versions").Include("Versions.Content").FirstOrDefault(d => d.Id == id);
+            var fileVersion = GetFileVersion(id, db);
+            if (fileVersion == null)
+                return HttpNotFound();
 
-            if (dbFile == null || !String.Equals(name, dbFile.FileName, StringComparison.OrdinalIgnoreCase))
+            var file = fileVersion.File;
+            if (file == null || !String.Equals(name, file.FileName, StringComparison.OrdinalIgnoreCase))
                 return HttpNotFound();
 
             if (inline)
             {
-                Response.AddHeader("Content-Disposition", "inline; filename=" + dbFile.FileName);
-                return new FileContentResult(dbFile.GetLatestVersion().Content.Data, dbFile.ContentType);
+                Response.AddHeader("Content-Disposition", "inline; filename=" + file.FileName);
+                return new FileContentResult(fileVersion.Content.Data, file.ContentType);
             }
             else
-                return new FileContentResult(dbFile.GetLatestVersion().Content.Data, dbFile.ContentType) { FileDownloadName = dbFile.FileName };
+                return new FileContentResult(fileVersion.Content.Data, file.ContentType) { FileDownloadName = file.FileName };
         }
 
         public ActionResult Thumbnail(int id, String name, String size)
         {
             var db = DependencyResolver.Current.GetService<CapsDbContext>();
-            var latestVersion = GetLatestVersion(id, db);
+            var latestVersion = GetFileVersion(id, db);
             if (latestVersion == null)
                 return HttpNotFound();
 
@@ -74,17 +77,14 @@ namespace DemoWebsite.Controllers
             ViewEngineResult result = ViewEngines.Engines.FindView(ControllerContext, name, null);
             return (result.View != null);
         }
-        
-        DbFileVersion GetLatestVersion(int fileId, CapsDbContext db)
+                
+        DbFileVersion GetFileVersion(int fileVersionId, CapsDbContext db)
         {
-            var file = db.Files.Include("Versions").FirstOrDefault(f => f.Id == fileId);
-            if (file != null)
-            {
-                var latest = file.GetLatestVersion();
-                if (latest != null)
-                    return db.FileVersions.Include("Content").Include("Thumbnails").FirstOrDefault(v => v.Id == latest.Id);
-            }
-            return null;
+            return db.FileVersions
+                .Include("Content")
+                .Include("Thumbnails")
+                .Include("File")
+                .FirstOrDefault(v => v.Id == fileVersionId);
         }
 	}
 }

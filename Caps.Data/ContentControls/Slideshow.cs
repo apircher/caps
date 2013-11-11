@@ -58,11 +58,11 @@ namespace Caps.Data.ContentControls
     {
         public static XmlNode CreateSlideImage(this XmlDocument document, IUrlHelper urlHelper, PublicationFile file, String language, String cssClass)
         {
-            var sqlFile = file.FileForLanguage(language, "de", "en");
+            var sqlFile = file.FileVersionForLanguage(language, "de", "en");
             if (sqlFile == null)
                 return document.CreateComment("Caps Slideshow: File not found.");
 
-            var src = urlHelper.Action("PageContentFile", "Home", new { area = "", id = sqlFile.Id, name = sqlFile.FileName });
+            var src = urlHelper.Action("PageContentFile", "Home", new { area = "", id = sqlFile.Id, name = sqlFile.File.FileName });
             return document.CreateImage(src, "", cssClass);
         }
     }

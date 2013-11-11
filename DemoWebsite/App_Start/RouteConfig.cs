@@ -25,21 +25,21 @@ namespace DemoWebsite
                 name: "ContentFileInline",
                 url: "file/{id}/{name}",
                 defaults: new { controller = "CapsContent", action = "ContentFile", name = UrlParameter.Optional, inline = true },
-                constraints: new { id = @"^\d+$", name = @"^([a-zA-Z_0-9]+).([a-zA-Z0-9]+)$" }
+                constraints: new { id = @"^\d+$", name = @"^([a-zA-Z_%\+0-9]+)\.([a-zA-Z0-9]+)$" }
             );
 
             routes.MapRoute(
                 name: "ContentFileDownload",
                 url: "download/{id}/{name}",
                 defaults: new { controller = "CapsContent", action = "ContentFile", name = UrlParameter.Optional, inline = false },
-                constraints: new { id = @"^\d+$", name = @"^([a-zA-Z_0-9]+).([a-zA-Z0-9]+)$" }
+                constraints: new { id = @"^\d+$", name = @"^([a-zA-Z_%\+0-9]+)\.([a-zA-Z0-9]+)$" }
             );
 
             routes.MapRoute(
                 name: "ContentFileThumbnail",
                 url: "thumbnail/{id}/{name}",
-                defaults: new { controller = "CapsContent", action = "Thumbnail", name = UrlParameter.Optional },
-                constraints: new { id = @"^\d+$", name = @"^([a-zA-Z_0-9]+).([a-zA-Z0-9]+)$" }
+                defaults: new { controller = "CapsContent", action = "Thumbnail", name = UrlParameter.Optional, size = "250x250" },
+                constraints: new { id = @"^\d+$", name = @"^([a-zA-Z_%\+0-9]+)\.([a-zA-Z0-9]+)$" }
             );
 
             routes.MapRoute(

@@ -28,7 +28,7 @@ namespace Caps.Web.Mvc
             var entity = db.SiteMapNodes
                 .Include("Resources")
                 .Include("Content.ContentParts.Resources")
-                .Include("Content.Files.Resources.File")
+                .Include("Content.Files.Resources.FileVersion.File")
                 .FirstOrDefault(n => n.SiteMap.Id == currentSiteMap.Id && n.PermanentId == id);
 
             if (entity == null)

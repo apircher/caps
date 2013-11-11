@@ -36,13 +36,13 @@ namespace Caps.Data.Model
         [InverseProperty("PublicationFile")]
         public ICollection<PublicationFileResource> Resources { get; set; }
 
-        public DbFile FileForLanguage(String language)
+        public DbFileVersion FileVersionForLanguage(String language)
         {
-            return this.GetValueForLanguage(language, r => r.File, null);
+            return this.GetValueForLanguage(language, r => r.FileVersion, null);
         }
-        public DbFile FileForLanguage(String language, params String[] fallbackLanguages)
+        public DbFileVersion FileVersionForLanguage(String language, params String[] fallbackLanguages)
         {
-            return this.GetValueForLanguage(language, r => r.File, null, fallbackLanguages);
+            return this.GetValueForLanguage(language, r => r.FileVersion, null, fallbackLanguages);
         }
     }
 }

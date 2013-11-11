@@ -31,6 +31,10 @@ namespace Caps.Data.Model
         public ICollection<DbFileProperty> Properties { get; set; }
         [InverseProperty("FileVersion")]
         public ICollection<DbThumbnail> Thumbnails { get; set; }
+        [InverseProperty("FileVersion")]
+        public ICollection<PublicationFileResource> PublicationFileResources { get; set; }
+        [InverseProperty("FileVersion")]
+        public ICollection<DraftFileResource> DraftFileResources { get; set; }
 
         public ChangeInfo Created { get; set; }
         public ChangeInfo Modified { get; set; }

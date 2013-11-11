@@ -56,7 +56,7 @@ function (require, ko) {
             file = ko.utils.arrayFirst(this.Files(), function (f) {
                 var res = f.getResource(language);
                 if (!res) return false;
-                return res.File() && res.File().FileName().toLowerCase() === key;
+                return res.FileVersion() && res.FileVersion().File().FileName().toLowerCase() === key;
             });
         return file;
     };

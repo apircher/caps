@@ -36,8 +36,7 @@ namespace Caps.Data.Model
 
         [InverseProperty("Publication")]
         public ICollection<PublicationFile> Files { get; set; }
-
-
+        
         public IEnumerable<PublicationContentPart> GetContentParts(String partType)
         {
             return ContentParts.Where(p => String.Equals(partType, p.PartType, StringComparison.OrdinalIgnoreCase));

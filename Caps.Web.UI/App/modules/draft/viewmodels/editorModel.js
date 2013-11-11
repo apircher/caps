@@ -11,8 +11,8 @@
         });
 
         self.embedSrc = ko.computed(function () {
-            if (self.resource && self.resource.File())
-                return 'caps://content-file/' + escape(self.resource.File().FileName());
+            if (self.resource && self.resource.FileVersion())
+                return 'caps://content-file/' + escape(self.resource.FileVersion().File().FileName());
             return '';
         });
     }
