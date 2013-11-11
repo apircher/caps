@@ -108,7 +108,7 @@ namespace Caps.Web.Mvc.Providers
             if (entity.IsNodeTypeIn("Article", "Page", "Publication", "Draft"))
             {
                 routeData.Add("id", entity.PermanentId.ToString("x"));
-                routeData.Add("name", entity.Name);
+                routeData.Add("name", entity.Name.UrlEncode());
                 routeData.Add("language", CapsSiteMapNode.LanguagePlaceHolder);
                 return helper.Action("Index", "CapsContent", routeData);
             }

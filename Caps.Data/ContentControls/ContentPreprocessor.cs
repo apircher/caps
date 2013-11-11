@@ -20,26 +20,28 @@ namespace Caps.Data.ContentControls
             this.siteMapNode = siteMapNode;
             this.controlsRegistry = controlsRegistry;
         }
-        public String Transform(String content, String contentType)
-        {
-            var result = ReplacePlaceholders(content);
+        //public String Transform(String content, String contentType)
+        //{
+        //    var result = ReplacePlaceholders(content);
 
-            // Inhalts-Typ-spezifische Verarbeitung.
-            if (String.Equals(contentType, DraftContentTypes.Markdown, StringComparison.OrdinalIgnoreCase))
-                return ProcessMarkdown(result);
-            else if (String.Equals(contentType, DraftContentTypes.Text, StringComparison.OrdinalIgnoreCase))
-                return ProcessText(result);
-            else
-                return result;
-        }
+        //    // Inhalts-Typ-spezifische Verarbeitung.
+        //    if (String.Equals(contentType, DraftContentTypes.Markdown, StringComparison.OrdinalIgnoreCase))
+        //        return ProcessMarkdown(result);
+        //    else if (String.Equals(contentType, DraftContentTypes.Text, StringComparison.OrdinalIgnoreCase))
+        //        return ProcessText(result);
+        //    else
+        //        return result;
+        //}
         public String PrepareDisplay(String content, String language, IUrlHelper urlHelper, ContentScriptManager scriptManager)
         {
             this.urlHelper = urlHelper;
 
-            // Caps-XML verarbeiten.
+            // Process Caps-XML.
             var result = TransformCapsControls(content, language, scriptManager);
-            // Platzhalter ersetzen.
-            return ReplacePlaceholders(result, language);
+            // Replace placeholders
+            result = ReplacePlaceholders(result, language);
+            // Replace content references
+            return ReplaceContentReferences(content, language);
         }
 
         String TransformCapsControls(String content, String language, ContentScriptManager scriptManager)
@@ -118,6 +120,39 @@ namespace Caps.Data.ContentControls
 
             return content;
         }
+
+        String ReplaceContentReferences(String content, String language = null)
+        {
+            var rx = new Regex(@"caps:\/\/content-file\/(?'fileName'[^""'\s\?)]*)(?'query'\?[^""'\s)]*)?", RegexOptions.IgnoreCase);
+            if (rx.IsMatch(content))
+            {
+                content = rx.Replace(content, new MatchEvaluator(m =>
+                {
+                    var fileName = System.Web.HttpUtility.UrlDecode(m.Groups["fileName"].Value);
+                    var query = m.Groups["query"].Value;
+
+                    if (Regex.IsMatch(query, @"(\?|&amp;|&)download=1"))
+                        return GetFileSrc(fileName, language, false);
+                    else
+                    {
+                        if (Regex.IsMatch(query, @"(\?|&amp;|&)thumbnail=1", RegexOptions.IgnoreCase))
+                        {
+                            var sizeRegex = new Regex(@"(\?|&amp;|&)size=(?'size'[0-9]+x[0-9]+)", RegexOptions.IgnoreCase);
+                            var size = "200x160";
+                            MatchCollection sizeMatches = sizeRegex.Matches(query);
+                            if (sizeMatches.Count > 0)
+                                size = sizeMatches[0].Groups["size"].Value;
+                            return GetThumbnailSrc(fileName, language, size);
+                        }
+
+                        return GetFileSrc(fileName, language, true);
+                    }
+                }));
+            }
+
+            return content;
+        }
+
         String GetFileSrc(String key, String language, bool inline = true)
         {
             var content = siteMapNode.Content;
@@ -132,7 +167,24 @@ namespace Caps.Data.ContentControls
             if (sqlFile == null)
                 return String.Empty;
 
-            return urlHelper.Action("PageContentFile", "Home", new { area = "", id = sqlFile.Id, name = sqlFile.FileName, inline = inline });
+            return urlHelper.Action("ContentFile", "CapsContent", new { area = "", id = sqlFile.Id, name = sqlFile.FileName, inline = inline });
+        }
+
+        String GetThumbnailSrc(String key, String language, String size)
+        {
+            var content = siteMapNode.Content;
+            if (content == null)
+                return String.Empty;
+
+            var file = content.Files.FirstOrDefault(f => String.Equals(f.Name, key, StringComparison.OrdinalIgnoreCase));
+            if (file == null)
+                return String.Empty;
+
+            var sqlFile = file.FileForLanguage(language, "de", "en");
+            if (sqlFile == null)
+                return String.Empty;
+
+            return urlHelper.Action("Thumbnail", "CapsContent", new { area = "", id = sqlFile.Id, name = sqlFile.FileName, size = size });
         }
     }
 }

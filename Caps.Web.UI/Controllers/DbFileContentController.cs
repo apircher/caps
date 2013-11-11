@@ -1,5 +1,6 @@
 ﻿using Caps.Data;
 using Caps.Data.Model;
+using Caps.Web.Mvc;
 using Caps.Web.UI.Infrastructure;
 using Caps.Web.UI.Infrastructure.Mvc;
 using System;

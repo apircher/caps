@@ -60,10 +60,6 @@
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\packages\EntityFramework.6.0.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="ImageResizer, Version=3.4.1.897, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ImageResizer.3.4.1\lib\ImageResizer.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Data.Edm, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Data.Edm.5.6.0\lib\net40\Microsoft.Data.Edm.dll</HintPath>
@@ -205,7 +201,6 @@
     <Compile Include="Infrastructure\DbContextExtensions.cs" />
     <Compile Include="Infrastructure\Mvc\SetUserActivityAttribute.cs" />
     <Compile Include="Infrastructure\Mvc\ValidateJsonAntiForgeryTokenAttribute.cs" />
-    <Compile Include="Infrastructure\ThumbnailHelpers.cs" />
     <Compile Include="Infrastructure\WebApi\IDependencyScopeExtensions.cs" />
     <Compile Include="Infrastructure\WebApi\SetUserActivityAttribute.cs" />
     <Compile Include="Infrastructure\WebApi\ValidateJsonAntiForgeryTokenAttribute.cs" />
@@ -222,7 +217,9 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Content Include="App\infrastructure\antiForgeryToken.js" />
     <Content Include="App\infrastructure\authentication.js" />
+    <Content Include="App\infrastructure\contentReferences.js" />
     <Content Include="App\infrastructure\datacontext.js" />
+    <Content Include="App\infrastructure\urlHelper.js" />
     <Content Include="App\modules\draft\viewmodels\editor\templateEditor.js" />
     <Content Include="App\modules\draft\views\editor\templateEditor.html" />
     <Content Include="App\modules\sitemap\entities.js" />
@@ -507,6 +504,10 @@
     <ProjectReference Include="..\Caps.Data\Caps.Data.csproj">
       <Project>{156683f3-9173-47bc-928f-1d31b7fcd45f}</Project>
       <Name>Caps.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Caps.Web.Mvc\Caps.Web.Mvc.csproj">
+      <Project>{a988693b-d4bc-4b62-a345-a166b9fc66cc}</Project>
+      <Name>Caps.Web.Mvc</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

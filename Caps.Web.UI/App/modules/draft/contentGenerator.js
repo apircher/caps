@@ -4,9 +4,21 @@
  */
 define([
     'ko',
-    'markdown'
+    'markdown',
+    'infrastructure/urlHelper',
+    'infrastructure/contentReferences'
 ],
-function (ko, markdown) {
+function (ko, markdown, urlHelper, ContentReferenceManager) {
+
+    var crmgr = new ContentReferenceManager({
+            replaceFileReference: function (fileReference, language, context) {
+                var draft = fileReference.context,
+                    draftFile = draft.findDraftFile(fileReference.fileName),
+                    resource = draftFile.getResource(language),
+                    file = resource != null ? resource.File() : undefined;
+                return urlHelper.getFileUrl(fileReference.fileName, file, fileReference.query);
+            }
+        });
 
     /*
      * Template Content
@@ -39,6 +51,7 @@ function (ko, markdown) {
         return new TemplateContent(template.name, ko.utils.arrayMap(template.rows, function (row) {
             return new TemplateContentRow(ko.utils.arrayMap(row.cells, function (cell) {
                 var content = generateLocalizedContentForTemplateCell(draft, cell, language);
+                content = crmgr.replaceReferences(draft, content, language);
                 return new TemplateContentCell(cell.name, cell.title, cell.colspan, content);
             }));
         }));
@@ -59,34 +72,10 @@ function (ko, markdown) {
     function generateContent(resource, language) {
         var result = resource.Content(),
             contentPart = resource.ContentPart();
-        result = prepareContentReferences(contentPart.Draft(), result, language);
         result = transformContent(contentPart.ContentType(), result);
         return result;
     }
-
-    function prepareContentReferences(draft, rawContent, language) {
-        var regex = /caps:\/\/draft-file\/([^\"'\s\?)]*)(\?[^\"'\s)]*)?/gi;
-        rawContent = rawContent.replace(regex, function (hit, p1, p2, offset, s) {
-            var draftFile = draft.findDraftFile(unescape(p1)),
-                resource = draftFile.getResource(language),
-                file = resource != null ? resource.File() : undefined;
-
-            if (file) {
-
-                if (/(\?|&amp;|&)inline=1/i.test(p2))
-                    return '/DbFileContent/Inline/' + file.Id();
-                else if (/(\?|&amp;|&)download=1/i.test(p2) || !file.isImage())
-                    return '/DbFileContent/Download/' + file.Id();
-                else if (file.isImage())
-                    return '/DbFileContent/Thumbnail/' + file.Id() + '?thumbnailName=220x160';
-            }
-
-            return '';
-        });
-
-        return rawContent;
-    }
-
+    
     var markdownConverter = undefined;
     function transformContent(contentType, content) {
         if (contentType.toLowerCase() === 'markdown') {
@@ -147,16 +136,17 @@ function (ko, markdown) {
                 partType: contentPart.PartType(),
                 contentType: contentPart.ContentType(),
                 ranking: contentPart.Ranking(),
-                resources: prepareContentPartResources(contentPart.Resources())
+                resources: prepareContentPartResources(draft, contentPart.Resources())
             };
         });
     }
 
-    function prepareContentPartResources(resources) {
+    function prepareContentPartResources(draft, resources) {
         return ko.utils.arrayMap(resources, function (resource) {
+            var transformedContent = generateContent(resource, resource.Language());
             return {
                 language: resource.Language(),
-                content: generateContent(resource, resource.Language()),
+                content: transformedContent,
                 created: prepareChangeInfo(resource.Created()),
                 modified: prepareChangeInfo(resource.Modified())
             };

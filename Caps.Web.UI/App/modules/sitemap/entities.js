@@ -228,6 +228,17 @@ define(['ko'], function (ko) {
         this.entityAspect.setDeleted();
     };
 
+    Publication.prototype.findFile = function (fileName, language) {
+        language = language || 'de';
+        var key = fileName.toLowerCase(),
+            file = ko.utils.arrayFirst(this.Files(), function (f) {
+                var res = f.getResource(language);
+                if (!res) return false;
+                return res.File() && res.File().FileName().toLowerCase() === key;
+            });
+        return file;
+    };
+
     /**
      * PublicationContentPart Entity
      */

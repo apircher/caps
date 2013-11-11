@@ -7,9 +7,11 @@
     'breeze',
     'durandal/system',
     'durandal/app',
-    'localization'
+    'localization',
+    'infrastructure/contentReferences',
+    'infrastructure/urlHelper',
 ],
-function (module, ko, datacontext, router, entityManagerProvider, breeze, system, app, localization) {
+function (module, ko, datacontext, router, entityManagerProvider, breeze, system, app, localization, ContentReferenceManager, urlHelper) {
     
     var manager = entityManagerProvider.createManager(),
         website = ko.observable(),
@@ -19,6 +21,16 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         EntityQuery = breeze.EntityQuery,
         supportedTranslations = localization.website.supportedTranslations(),
         isInitialized = false;
+
+    var crmgr = new ContentReferenceManager({
+        replaceFileReference: function (fileReference, language, context) {
+            var publication = fileReference.context,
+                publicationFile = publication.findFile(fileReference.fileName),
+                resource = publicationFile.getResource(language),
+                file = resource != null ? resource.File() : undefined;
+            return urlHelper.getFileUrl(fileReference.fileName, file, fileReference.query);
+        }
+    });
 
     selectedSitemap.subscribe(function () {
         selectedNode(null);
@@ -214,7 +226,11 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         findContentPart: function (templateCell) {
             if (selectedNode()) {
                 var cp = selectedNode().Content().getContentPart(templateCell.name);
-                if (cp) return cp.getResource('de').Content();
+                if (cp) {
+                    var context = selectedNode().Content(),
+                        content = cp.getResource('de').Content();
+                    return crmgr.replaceReferences(context, content, 'de');
+                }
             }
             return '';
         }

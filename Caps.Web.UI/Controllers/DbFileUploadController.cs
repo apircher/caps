@@ -9,6 +9,7 @@ using System.Web.Http;
 using Caps.Web.UI.Infrastructure;
 using Caps.Web.UI.Infrastructure.WebApi;
 using Caps.Data.Model;
+using Caps.Web.Mvc;
 
 namespace Caps.Web.UI.Controllers
 {

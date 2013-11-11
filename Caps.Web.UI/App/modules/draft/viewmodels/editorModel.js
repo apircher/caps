@@ -12,7 +12,7 @@
 
         self.embedSrc = ko.computed(function () {
             if (self.resource && self.resource.File())
-                return 'caps://draft-file/' + escape(self.resource.File().FileName());
+                return 'caps://content-file/' + escape(self.resource.File().FileName());
             return '';
         });
     }

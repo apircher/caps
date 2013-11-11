@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
-namespace Caps.Web.UI.Infrastructure
+namespace Caps.Web.Mvc
 {
     public static class ThumbnailHelpers
     {
@@ -106,6 +107,9 @@ namespace Caps.Web.UI.Infrastructure
         {
             width = 0;
             height = 0;
+
+            if (String.IsNullOrWhiteSpace(s)) 
+                return false;
 
             var match = Regex.Match(s, @"^(?<width>\d{1,4})x(?<height>\d{1,4})$");
             if (match.Success)
