@@ -23,12 +23,16 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         isInitialized = false;
 
     var crmgr = new ContentReferenceManager({
-        replaceFileReference: function (fileReference, language, context) {
-            var publication = fileReference.context,
-                publicationFile = publication.findFile(fileReference.fileName),
+        replaceFileReference: function (reference, language, context) {
+            var publication = reference.context,
+                publicationFile = publication.findFile(reference.fileName),
                 resource = publicationFile.getResource(language),
                 fileVersion = resource != null ? resource.FileVersion() : undefined;
-            return urlHelper.getFileUrl(fileReference.fileName, fileVersion, fileReference.query);
+            return urlHelper.getFileUrl(reference.fileName, fileVersion, reference.query);
+        },
+
+        replacePublicationReference: function (reference, language, context) {
+            return urlHelper.getPublicationUrl(reference.id, language, reference.query);
         }
     });
 
@@ -180,10 +184,10 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
 
         createSitemapNode: function () {
             if (selectedNode()) {
-                var node = manager.createEntity('SiteMapNode', { NodeType: 'PAGE' });
+                var node = manager.createEntity('DbSiteMapNode', { NodeType: 'PAGE' });
                 manager.addEntity(node);
                 node.ParentNodeId(selectedNode().Id());
-                node.SitemapId(selectedSitemap().Id());
+                node.SiteMapId(selectedSitemap().Id());
 
                 var nodeResource = node.getOrCreateResource('de', manager);
                 nodeResource.Title('Seite ' + (new Date()).toLocaleTimeString());

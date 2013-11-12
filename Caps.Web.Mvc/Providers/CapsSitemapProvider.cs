@@ -152,6 +152,13 @@ namespace Caps.Web.Mvc.Providers
             }
             return null;
         }
+        public SiteMapNode FindSitemapNode(int permanentId)
+        {
+            EnsureSiteMapBuilt();
+            if (nodeIdIndex.ContainsKey(permanentId))
+                return nodeIdIndex[permanentId];
+            return null;
+        }
 
         protected override SiteMapNode GetRootNodeCore()
         {

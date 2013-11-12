@@ -16,5 +16,6 @@ namespace Caps.Data.ContentControls
     public interface IUrlHelper
     {
         String Action(String action, String controller, object routeData);
+        String Publication(int permanentId);
     }
 }

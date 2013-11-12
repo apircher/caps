@@ -1,5 +1,6 @@
 namespace Caps.Data.Migrations
 {
+    using Caps.Data.Utils;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
@@ -33,6 +34,8 @@ namespace Caps.Data.Migrations
             //      new Person { FullName = "Rowan Miller" }
             //    );
             //
+
+            SqlTableChangeTracking.InitializeChangeTracking(context);
 
 #if DEBUG
             //WebSecurity.InitializeDatabaseConnection("CapsDbContext", "Author", "Id", "UserName", true);

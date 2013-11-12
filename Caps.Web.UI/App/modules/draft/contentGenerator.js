@@ -11,12 +11,16 @@ define([
 function (ko, markdown, urlHelper, ContentReferenceManager) {
 
     var crmgr = new ContentReferenceManager({
-            replaceFileReference: function (fileReference, language, context) {
-                var draft = fileReference.context,
-                    draftFile = draft.findDraftFile(fileReference.fileName),
+            replaceFileReference: function (reference, language, context) {
+                var draft = reference.context,
+                    draftFile = draft.findDraftFile(reference.fileName),
                     resource = draftFile.getResource(language),
                     fileVersion = resource != null ? resource.FileVersion() : undefined;
-                return urlHelper.getFileUrl(fileReference.fileName, fileVersion, fileReference.query);
+                return urlHelper.getFileUrl(reference.fileName, fileVersion, reference.query);
+            },
+
+            replacePublicationReference: function (reference, language, context) {
+                return urlHelper.getPublicationUrl(reference.id, language, reference.query);
             }
         });
 

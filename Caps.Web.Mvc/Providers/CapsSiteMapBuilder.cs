@@ -25,6 +25,7 @@ namespace Caps.Web.Mvc.Providers
         IList<DbSiteMapNode> nodeList;
 
         Dictionary<String, SiteMapNode> indexNameToSiteMapNode;
+        Dictionary<int, SiteMapNode> indexIdToSiteMapNode;
 
         public CapsSiteMapBuilder()
         {
@@ -47,6 +48,7 @@ namespace Caps.Web.Mvc.Providers
         public CapsSiteMapBuilderResult BuildSitemap(StaticSiteMapProvider provider, Action<System.Web.SiteMapNode, System.Web.SiteMapNode> addNodeAction)
         {
             indexNameToSiteMapNode = new Dictionary<string, SiteMapNode>();
+            indexIdToSiteMapNode = new Dictionary<int, SiteMapNode>();
 
             var rootNode = new CapsSiteMapNode(provider, "root");
             rootNode.Title = "Home";
@@ -64,6 +66,7 @@ namespace Caps.Web.Mvc.Providers
             {
                 RootNode = rootNode,
                 IndexNameToNode = indexNameToSiteMapNode,
+                IndexIdToNode = indexIdToSiteMapNode,
                 SiteMapExpiration = GetSiteMapExpiration()
             };
         }
@@ -147,6 +150,9 @@ namespace Caps.Web.Mvc.Providers
             String nameKey = entity.Name.UrlEncode();
             if (!indexNameToSiteMapNode.ContainsKey(nameKey))
                 indexNameToSiteMapNode.Add(nameKey, node);
+
+            if (!indexIdToSiteMapNode.ContainsKey(entity.PermanentId))
+                indexIdToSiteMapNode.Add(entity.PermanentId, node);
         }
 
         public void Dispose()

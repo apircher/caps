@@ -82,13 +82,13 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
         };
 
         self.fetchFile = function(id) {
-            var query = breeze.EntityQuery.from('Files').where('Id', '==', id);
+            var query = breeze.EntityQuery.from('Files').where('Id', '==', id).expand('Versions');
             return manager.executeQuery(query);
         };
 
         function loadEntity(id) {
             var query = breeze.EntityQuery.from('Drafts').where('Id', '==', id)
-                .expand('Resources, ContentParts, ContentParts.Resources, Files, Files.Resources, Files.Resources.File');
+                .expand('Resources, ContentParts.Resources, Files.Resources.FileVersion.File');
             return manager.executeQuery(query).then(function (data) {
                 self.entity(data.results[0]);
             });
@@ -142,16 +142,16 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
         self.original = originalResource;
         self.translation = translationResource;
 
-        self.File = ko.computed(function () {
-            if (self.translation && self.translation.File())
-                return self.translation.File();
-            return self.original.File();
+        self.FileVersion = ko.computed(function () {
+            if (self.translation && self.translation.FileVersion())
+                return self.translation.FileVersion();
+            return self.original.FileVersion();
         });
 
         self.selectFile = function () {
             app.selectFiles({
                 module: module,
-                title: 'Übersetzung für ' + originalResource.File().FileName() + ' wählen'
+                title: 'Übersetzung für ' + originalResource.FileVersion().File().FileName() + ' wählen'
             }).then(function (result) {
                 if (result.dialogResult) {
                     if (result.selectedFiles.length > 0) {
@@ -163,12 +163,13 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
         };
 
         self.resetFile = function () {
-            self.translation.DbFileId(null);
+            self.translation.DbFileVersionId(null);
         };
 
         function setTranslatedFile(file) {
-            editor.fetchFile(file.Id()).then(function () {
-                self.translation.DbFileId(file.Id());
+            editor.fetchFile(file.Id()).then(function (data) {
+                var latestVersion = data.results[0].latestVersion();
+                self.translation.DbFileVersionId(latestVersion.Id());
             });
         }
     }

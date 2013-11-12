@@ -76,6 +76,18 @@ namespace Caps.Web.Mvc.Model
         public CapsUrlHelper(System.Web.Routing.RequestContext context)
             : base(context)
         {
-        }        
+        }
+
+
+        public string Publication(int permanentId)
+        {
+            var capsSiteMapProvider = SiteMap.Provider as Caps.Web.Mvc.Providers.CapsSitemapProvider;
+            if (capsSiteMapProvider != null)
+            {
+                var node = capsSiteMapProvider.FindSitemapNode(permanentId);
+                if (node != null) return node.Url;
+            }
+            return String.Empty;
+        }
     }
 }

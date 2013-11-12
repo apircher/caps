@@ -29,6 +29,10 @@
         return '';
     };
 
+    UrlHelper.prototype.getPublicationUrl = function (externalId, language, querystring) {
+        return '#sitemap?p=' + externalId;
+    };
+
     var instance = new UrlHelper();
     return instance;
 });

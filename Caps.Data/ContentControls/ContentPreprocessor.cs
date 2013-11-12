@@ -126,32 +126,39 @@ namespace Caps.Data.ContentControls
         {
             var rx = new Regex(@"caps:\/\/content-file\/(?'fileName'[^""'\s\?)]*)(?'query'\?[^""'\s)]*)?", RegexOptions.IgnoreCase);
             if (rx.IsMatch(content))
-            {
-                content = rx.Replace(content, new MatchEvaluator(m =>
-                {
-                    var fileName = System.Web.HttpUtility.UrlDecode(m.Groups["fileName"].Value);
-                    var query = m.Groups["query"].Value;
+                content = rx.Replace(content, new MatchEvaluator(m => ReplaceFileReference(m, language)));
 
-                    if (Regex.IsMatch(query, @"(\?|&amp;|&)download=1"))
-                        return GetFileSrc(fileName, language, false);
-                    else
-                    {
-                        if (Regex.IsMatch(query, @"(\?|&amp;|&)thumbnail=1", RegexOptions.IgnoreCase))
-                        {
-                            var sizeRegex = new Regex(@"(\?|&amp;|&)size=(?'size'[0-9]+x[0-9]+)", RegexOptions.IgnoreCase);
-                            var size = "200x160";
-                            MatchCollection sizeMatches = sizeRegex.Matches(query);
-                            if (sizeMatches.Count > 0)
-                                size = sizeMatches[0].Groups["size"].Value;
-                            return GetThumbnailSrc(fileName, language, size);
-                        }
-
-                        return GetFileSrc(fileName, language, true);
-                    }
-                }));
-            }
+            rx = new Regex(@"caps:\/\/publication\/(?'id'\d+)(-([a-zA-Z]{2,5}))?(\?[^""'\s)]*)?", RegexOptions.IgnoreCase);
+            if (rx.IsMatch(content))
+                content = rx.Replace(content, new MatchEvaluator(m => ReplacePublicationReference(m, language)));
 
             return content;
+        }
+
+        String ReplaceFileReference(Match match, String language)
+        {
+            var fileName = System.Web.HttpUtility.UrlDecode(match.Groups["fileName"].Value);
+            var query = match.Groups["query"].Value;
+
+            if (Regex.IsMatch(query, @"(\?|&amp;|&)download=1"))
+                return GetFileSrc(fileName, language, false);
+            
+            if (Regex.IsMatch(query, @"(\?|&amp;|&)thumbnail=1", RegexOptions.IgnoreCase))
+            {
+                var sizeRegex = new Regex(@"(\?|&amp;|&)size=(?'size'[0-9]+x[0-9]+)", RegexOptions.IgnoreCase);
+                var size = "200x160";
+                MatchCollection sizeMatches = sizeRegex.Matches(query);
+                if (sizeMatches.Count > 0)
+                    size = sizeMatches[0].Groups["size"].Value;
+                return GetThumbnailSrc(fileName, language, size);
+            }
+            return GetFileSrc(fileName, language, true);
+        }
+
+        String ReplacePublicationReference(Match match, String language)
+        {
+            int permanentId = int.Parse(match.Groups["id"].Value);
+            return urlHelper.Publication(permanentId);
         }
 
         String GetFileSrc(String key, String language, bool inline = true)
