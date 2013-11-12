@@ -219,6 +219,7 @@
     <Content Include="App\infrastructure\authentication.js" />
     <Content Include="App\infrastructure\contentReferences.js" />
     <Content Include="App\infrastructure\datacontext.js" />
+    <Content Include="App\infrastructure\treeViewModel.js" />
     <Content Include="App\infrastructure\urlHelper.js" />
     <Content Include="App\modules\draft\viewmodels\editor\templateEditor.js" />
     <Content Include="App\modules\draft\views\editor\templateEditor.html" />

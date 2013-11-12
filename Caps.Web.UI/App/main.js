@@ -6,7 +6,7 @@ requirejs.config({
         'plugins': '../Scripts/durandal/plugins',
         'transitions': '../Scripts/durandal/transitions',
 
-        'knockout': '../Scripts/knockout-3.0.0',
+        'knockout': '../Scripts/knockout-3.0.0.debug',
         'knockout.validation': '../Scripts/knockout.validation.min',
         'knockout.custom-bindings': '../Scripts/knockout.custom-bindings',
         'knockout.extenders': '../Scripts/knockout.extenders',

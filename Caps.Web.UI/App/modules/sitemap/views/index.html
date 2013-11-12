@@ -9,7 +9,7 @@
                     </li>
                     <li>
                         <!-- ko if: sitemaps() -->
-                        <select data-bind="options: sitemaps, optionsCaption: 'Version wählen', optionsText: function(item) { return 'Version ' + item.Version(); }, value: selectedSitemap"></select>
+                        <select data-bind="options: sitemaps, optionsCaption: 'Version wählen', optionsText: function(item) { return 'Version ' + item.entity().Version(); }, value: selectedSitemap"></select>
                         <!-- /ko -->
                     </li>
                     <li>
@@ -22,11 +22,11 @@
 
                 <div class="pull-left">
                     <!-- ko if: selectedSitemap() -->
-                    <span data-bind="visible: !selectedSitemap().PublishedFrom()">
+                    <span data-bind="visible: !selectedSitemap().entity().PublishedFrom()">
                         Nicht veröffentlicht <a href="#" data-bind="click: publishSitemapVersion"><i class="fa fa-share-square-o"></i> Jetzt veröffentlichen</a>
                     </span>
-                    <span data-bind="visible: selectedSitemap().PublishedFrom()">
-                        Veröffentlicht <span data-bind="text: selectedSitemap().PublishedFrom()"></span>
+                    <span data-bind="visible: selectedSitemap().entity().PublishedFrom()">
+                        Veröffentlicht <span data-bind="text: selectedSitemap().publishedFromNow()"></span>
                     </span>
                     <!-- /ko -->
                 </div>
@@ -34,8 +34,8 @@
         </div>
         <div class="row">
             <div class="col-md-3 col-lg-2">
-                <!-- ko if: selectedSitemap() -->
-                <!-- ko template: { name: 'NodesTemplate', data: selectedSitemap().rootNodes() } --><!-- /ko -->
+                <!-- ko if: selectedSitemap() && selectedSitemap().tree() -->
+                <!-- ko template: { name: 'NodesTemplate', data: selectedSitemap().tree().rootNodes() } --><!-- /ko -->
                 <!-- /ko -->
             </div>
 
@@ -43,14 +43,16 @@
 
                 <section class="draft-preview-content" data-bind="if: contentPreview()">
                     <!-- ko with: contentPreview() -->
+                    <!-- ko if: template() -->
                     <!-- ko foreach: { data: template().rows, as: 'row' } -->
                     <div class="row">
                         <!-- ko foreach: { data:row.cells, as: 'cell' } -->
                         <div data-bind="draftTemplateClass: cell">
-                            <div class="template-preview-cell" data-bind="html: $root.findContentPart(cell)"></div>
+                            <div class="template-preview-cell" data-bind="html: $parents[1].findContentPart(cell)"></div>
                         </div>
                         <!-- /ko -->
                     </div>
+                    <!-- /ko -->
                     <!-- /ko -->
                     <!-- /ko -->
                 </section>
@@ -113,12 +115,19 @@
 
 <script type="text/html" id="NodesTemplate">
     <ul data-bind="foreach: $data" class="list-unstyled tree-branch">        
-        <li data-bind="if: !entityAspect.entityState.isDeleted()">
-            <div>
-                <a href="#" data-bind="text: getResource('de').Title, click: $root.selectNode"></a>
+        <li data-bind="if: !entity().entityAspect.entityState.isDeleted()">
+            <div class="tree-node" data-bind="css: { 'tree-node-selected': isSelected }">
+                <div class="tree-node-toggle pull-left">
+                    <a href="#" data-bind="click: toggleIsExpanded">
+                        <i class="fa fa-fw" data-bind="css: { 'fa-plus': !isExpanded() && hasChildNodes(), 'fa-minus': isExpanded() && hasChildNodes() }"></i>
+                    </a>
+                </div>
+                <div class="tree-node-label" data-bind="click: selectNode">
+                    <i class="fa fa-file-text fa-fw"></i> <span data-bind="text: entity().getResource('de').Title"></span>
+                </div>
             </div>
 
-            <!-- ko if: childNodes && childNodes().length > 0 -->
+            <!-- ko if: isExpanded() && hasChildNodes() -->
             <!-- ko template: { name: 'NodesTemplate', data: childNodes() } --><!-- /ko -->
             <!-- /ko -->
         </li>        

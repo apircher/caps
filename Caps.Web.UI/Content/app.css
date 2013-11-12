@@ -260,7 +260,7 @@
  */
 
 ul.tree-branch ul {
-    margin:0 0 0 21px;
+    margin:0 0 0 15px;
 }
 
 ul.tree-branch a,
@@ -269,6 +269,29 @@ ul.tree-branch a:visited,
 ul.tree-branch a:hover {
     color:#333;
     text-decoration:none;
+}
+
+.tree-node {
+    padding:2px;
+}
+
+.tree-node-toggle {
+    width:18px;
+    padding:3px 0;
+}
+
+.tree-node-label {
+    margin-left:18px;
+    padding:3px;
+    cursor:pointer;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+}
+
+.tree-node-selected > .tree-node-label {
+    background:#0088cc;
+    color:#fff;
 }
 
 
