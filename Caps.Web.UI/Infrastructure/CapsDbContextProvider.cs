@@ -109,6 +109,10 @@ namespace Caps.Web.UI.Infrastructure
                     sitemapNode.Created.By = user.Identity.Name;
                     sitemapNode.Modified.At = DateTime.UtcNow;
                     sitemapNode.Modified.By = user.Identity.Name;
+
+                    // Ensure a unique PermanentId.
+                    if (sitemapNode.PermanentId == 0 || Context.SiteMapNodes.Any(n => n.SiteMapId == sitemapNode.SiteMapId && n.PermanentId == sitemapNode.PermanentId))
+                        sitemapNode.PermanentId = Context.SiteMapNodes.Select(n => (int?)n.PermanentId).Max().GetValueOrDefault() + 1;
                 }
 
                 var modifiedNodes = saveMap[typeof(DbSiteMapNode)].Where(n => n.EntityState == EntityState.Modified);

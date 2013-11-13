@@ -111,7 +111,13 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         publishDraft: function () {
             try {
                 var cnt = contentGenerator.createPublicationContent(draftPreview().entity());
-                publicationService.publish(module, cnt);
+                app.selectSiteMapNode({ module: module }).then(function (result) {
+                    if (result.dialogResult) {
+                        publicationService.publish(cnt, result.selectedNode).fail(function (error) {
+                            alert(error.message);
+                        });
+                    }
+                });
             }
             catch (error) {
                 alert(error.message);

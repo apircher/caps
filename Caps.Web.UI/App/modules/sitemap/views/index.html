@@ -9,7 +9,7 @@
                     </li>
                     <li>
                         <!-- ko if: sitemaps() -->
-                        <select data-bind="options: sitemaps, optionsCaption: 'Version wählen', optionsText: function(item) { return 'Version ' + item.entity().Version(); }, value: selectedSitemap"></select>
+                        <select data-bind="options: sitemaps, optionsCaption: 'Version wählen', optionsText: 'title', value: selectedSitemap"></select>
                         <!-- /ko -->
                     </li>
                     <li>
@@ -72,7 +72,7 @@
 
             <div class="col-md-3 col-lg-2">
                 <!-- ko if: selectedNode() -->
-                <h5 data-bind="text: selectedNode().getResource('de').Title"></h5>
+                <h5 data-bind="text: selectedNode().localeTitle('de')"></h5>
                 <ul class="list-inline">
                     <li>
                         <a href="#" data-bind="click: editSitemapNode"><i class="fa fa-edit"></i> Seiten-Eigenschaften</a>
@@ -94,6 +94,16 @@
                     <em data-bind="text: selectedNode().ContentId()"></em>
                     <!-- /ko -->
                 </p>
+
+                <h5>Position</h5>
+                <ul class="list-unstyled">
+                    <li>
+                        <a href="#" data-bind="click: moveSelectedNodeUp"><i class="fa fa-arrow-up"></i> Nach oben</a>
+                    </li>
+                    <li>
+                        <a href="#" data-bind="click: moveSelectedNodeDown"><i class="fa fa-arrow-down"></i> Nach unten</a>
+                    </li>
+                </ul>
                 <!-- /ko -->
             </div>
         </div>
@@ -123,7 +133,7 @@
                     </a>
                 </div>
                 <div class="tree-node-label" data-bind="click: selectNode">
-                    <i class="fa fa-file-text fa-fw"></i> <span data-bind="text: entity().getResource('de').Title"></span>
+                    <i class="fa fa-file-text fa-fw"></i> <span data-bind="text: entity().localeTitle('de')"></span>
                 </div>
             </div>
 

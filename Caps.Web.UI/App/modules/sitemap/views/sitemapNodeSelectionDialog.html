@@ -2,18 +2,25 @@
     <div class="page-content">
         <div class="row">
             <div class="col-md-12">
-                <h1>Veröffentlichungs-Ziel wählen</h1>
-                <!-- ko if: website() -->
-                <select data-bind="options: website().SiteMapVersions(), optionsText: 'Version', optionsCaption: 'Version wählen...', value: selectedSiteMapVersion"></select>
-                <!-- /ko -->
+                <h1>Seite wählen</h1>
+                <form class="form-inline" role="form">                    
+                    <!-- ko if: website() -->
+                    <div class="form-group">
+                        <label for="siteMapVersion" class="control-label">Sitemap</label>
+                        <select id="siteMapVersion" data-bind="options: siteMaps, optionsText: 'title', optionsCaption: 'Version wählen...', value: selectedSiteMap" class="form-control" style="width:auto"></select>
+                    </div>                    
+                    <!-- /ko -->
+                </form>
             </div>
         </div>
     
         <div class="row">
             <div class="col-md-12">
-                <!-- ko if: selectedSiteMapVersion() -->
-                <!-- ko template: { name: 'NodesTemplate', data: selectedSiteMapVersion().rootNodes() } --><!-- /ko -->
-                <!-- /ko -->
+                <div class="panel-padding">
+                    <!-- ko if: selectedSiteMap() && selectedSiteMap().tree() -->
+                    <!-- ko template: { name: 'NodesTemplate2', data: selectedSiteMap().tree().rootNodes() } --><!-- /ko -->
+                    <!-- /ko -->
+                </div>
             </div>
         </div>
     </div>
@@ -33,15 +40,22 @@
 </div>
 
 
-<script type="text/html" id="NodesTemplate">
+<script type="text/html" id="NodesTemplate2">
     <ul data-bind="foreach: $data" class="list-unstyled tree-branch">
-        <li data-bind="if: !entityAspect.entityState.isDeleted()">
-            <div>
-                <a href="#" data-bind="text: getResource('de').Title, click: $root.selectNode"></a>
+        <li data-bind="if: !entity().entityAspect.entityState.isDeleted()">
+            <div class="tree-node" data-bind="css: { 'tree-node-selected': isSelected }">
+                <div class="tree-node-toggle pull-left">
+                    <a href="#" data-bind="click: toggleIsExpanded">
+                        <i class="fa fa-fw" data-bind="css: { 'fa-plus': !isExpanded() && hasChildNodes(), 'fa-minus': isExpanded() && hasChildNodes() }"></i>
+                    </a>
+                </div>
+                <div class="tree-node-label" data-bind="click: selectNode">
+                    <i class="fa fa-file-text fa-fw"></i> <span data-bind="text: entity().getResource('de').Title"></span>
+                </div>
             </div>
 
-            <!-- ko if: childNodes && childNodes().length > 0 -->
-            <!-- ko template: { name: 'NodesTemplate', data: childNodes() } --><!-- /ko -->
+            <!-- ko if: isExpanded() && hasChildNodes() -->
+            <!-- ko template: { name: 'NodesTemplate2', data: childNodes() } --><!-- /ko -->
             <!-- /ko -->
         </li>
     </ul>

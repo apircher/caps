@@ -5,7 +5,19 @@ define(['ko'], function (ko) {
      * Website Entity
      */
     function Website() {
+        var self = this;
 
+        self.sortedSiteMapVersions = ko.computed({
+            read: function () {
+                items = self.SiteMapVersions().slice(0);
+                items.sort(function (a, b) {
+                    var vA = a.Version(), vB = b.Version();
+                    return vA == vB ? 0 : vA > vB ? -1 : 1;
+                });
+                return items;
+            },
+            deferEvaluation: true
+        });
     }
 
     Website.prototype.latestSitemap = function () {
@@ -53,9 +65,17 @@ define(['ko'], function (ko) {
     };
     
     Sitemap.prototype.setDeleted = function () {
-        var n = this.rootNodes().slice(0);
-        ko.utils.arrayForEach(n, function (node) { node.setDeleted(); });
+        this.rootNodes().slice(0).forEach(function (n) { n.setDeleted(); });
         this.entityAspect.setDeleted();
+    };
+
+    Sitemap.prototype.createNewVersion = function (versionNumber, manager) {
+        var siteMapVersion = manager.createEntity('DbSiteMap', { WebsiteId: this.WebsiteId(), Version: versionNumber });
+        ko.utils.arrayForEach(this.rootNodes(), function (node) {
+            var copy = node.clone(manager, siteMapVersion, null);
+        });
+        manager.addEntity(siteMapVersion);
+        return siteMapVersion;
     };
 
     function sortSitemapsByVersionAsc(a, b) {
@@ -63,6 +83,7 @@ define(['ko'], function (ko) {
             vB = b && b.Version ? b.Version() : 0;
         return vA == vB ? 0 : vA > vB ? 1 : -1;
     }
+
     function sortSitemapsByVersionDesc(a, b) {
         var vA = a && a.Version ? a.Version() : 0,
             vB = b && b.Version ? b.Version() : 0;
@@ -153,12 +174,98 @@ define(['ko'], function (ko) {
         this.Resources.push(resource);
         return resource;
     };
+
+    SitemapNode.prototype.localeTitle = function (language) {
+        var res = this.getResource('de');
+        return res ? res.Title() : '';
+    };
     
     SitemapNode.prototype.setDeleted = function () {
-        ko.utils.arrayForEach(this.childNodes().slice(0), function (childNode) { childNode.setDeleted(); });
-        ko.utils.arrayForEach(this.Resources().slice(0), function (resource) { resource.entityAspect.setDeleted(); });
+        var childNodes = this.childNodes().slice(0),
+            resources = this.Resources().slice(0);
+        
+        for (var i = 0; i < childNodes.length; i++)
+            childNodes[i].setDeleted();
+        for (var i = 0; i < resources.length; i++)
+            resources[i].entityAspect.setDeleted();
+
         this.entityAspect.setDeleted();
     };
+
+    SitemapNode.prototype.clone = function (manager, siteMapVersion, parentNodeId) {
+        var args = {
+            SiteMapId: siteMapVersion.Id(),
+            ParentNodeId: parentNodeId,
+            ContentId: this.ContentId(),
+            PermanentId: this.PermanentId(),
+            Name: this.Name(),
+            Ranking: this.Ranking(),
+            NodeType: this.NodeType(),
+            IsDeleted: this.IsDeleted(),
+            Redirect: this.Redirect(),
+            RedirectType: this.RedirectType()
+        };
+        
+        var copy = manager.createEntity('DbSiteMapNode', args);
+        copy.Created().At(this.Created().At());
+        copy.Created().By(this.Created().By());
+        copy.Modified().At(this.Modified().At());
+        copy.Modified().By(this.Modified().By());
+
+        ko.utils.arrayForEach(this.Resources(), function (resource) {
+            var resourceCopy = copy.getOrCreateResource(resource.Language(), manager);
+            resourceCopy.Title(resource.Title());
+            resourceCopy.Keywords(resource.Keywords());
+            resourceCopy.Description(resource.Description());
+        });
+
+        ko.utils.arrayForEach(this.ChildNodes(), function (node) {
+            var childCopy = node.clone(manager, siteMapVersion, copy.Id());
+        });
+        manager.addEntity(copy);
+        return copy;
+    };
+
+    SitemapNode.prototype.maxChildNodeRanking = function () {
+        var childNodes = this.childNodes();
+        if (childNodes.length == 0) return 0;
+        if (childNodes.length == 1) return childNodes[0].Ranking();
+
+        return Math.max.apply(null, ko.utils.arrayMap(childNodes, function (n) { return n.Ranking(); }));
+    };
+
+    SitemapNode.prototype.moveUp = function () {
+        var siblings = this.siblings().slice(0),
+            index = siblings.indexOf(this);
+
+        if (index <= 0)
+            return;
+
+        siblings.splice(index, 1);
+        siblings.splice(index - 1, 0, this);
+
+        setRankings(siblings);
+    };
+
+    SitemapNode.prototype.moveDown = function () {
+        var siblings = this.siblings().slice(0),
+            index = siblings.indexOf(this);
+
+        if (index >= siblings.length - 1)
+            return;
+
+        siblings.splice(index, 1);
+        siblings.splice(index + 1, 0, this);
+
+        setRankings(siblings);
+    };
+
+    function setRankings(nodeArray) {
+        for (var i = 0; i < nodeArray.length; i++) {
+            if (nodeArray[i].Ranking() !== i + 1)
+                nodeArray[i].Ranking(i + 1);
+        }
+    }
 
     function sortSitemapNodesByRankingAsc(a, b) {
         var rankingA = a.Ranking(),

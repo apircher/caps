@@ -14,8 +14,13 @@ namespace Caps.Data.Utils
             context.Database.ExecuteSqlCommand(@"
 CREATE TABLE [dbo].[ChangeTracking] (
     [TableName]  VARCHAR (150) NOT NULL,
-    [ModifiedAt] DATETIME      NOT NULL
+    [ModifiedAt] DATETIME      NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[TableName] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
 )");
+            context.Database.ExecuteSqlCommand("ALTER TABLE [dbo].[ChangeTracking] ADD  DEFAULT (getdate()) FOR [ModifiedAt]");
             context.CreateChangeTrackingTrigger("DbSiteMaps");
             context.CreateChangeTrackingTrigger("DbSiteMapNodes");
             context.CreateChangeTrackingTrigger("DbSiteMapNodeResources");

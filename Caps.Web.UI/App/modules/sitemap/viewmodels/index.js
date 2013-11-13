@@ -11,9 +11,10 @@
     'infrastructure/contentReferences',
     'infrastructure/urlHelper',
     'infrastructure/treeViewModel',
-    'moment'
+    'moment',
+    './siteMapViewModel'
 ],
-function (module, ko, datacontext, router, entityManagerProvider, breeze, system, app, localization, ContentReferenceManager, urlHelper, TreeModel, moment) {
+function (module, ko, datacontext, router, entityManagerProvider, breeze, system, app, localization, ContentReferenceManager, urlHelper, TreeModel, moment, SiteMapViewModel) {
     
     var manager = entityManagerProvider.createManager(),
         EntityQuery = breeze.EntityQuery,
@@ -58,17 +59,11 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
     var vm = {
         website: website,
         sitemaps: ko.computed(function() {
-            var items = [],
-                w = website();
-            if (w) {
-                items = w.SiteMapVersions().slice(0);
-                items.sort(function (a, b) {
-                    var vA = a.Version(), vB = b.Version();
-                    return vA == vB ? 0 : vA > vB ? -1 : 1;
-                });
-            }
+            var items = website() ? website().sortedSiteMapVersions() : []
             return ko.utils.arrayMap(items, function(siteMap) {
-                return new SiteMapViewModel(siteMap);
+                var smvm = new SiteMapViewModel(siteMap, manager);
+                smvm.selectedNodeChanged = function (node) { if (node) selectedNode(node.entity()); };
+                return smvm;
             });
         }),
         selectedSitemap: selectedSitemap,
@@ -92,13 +87,8 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
                     var latestVersion = website().latestSitemap(),
                         nextVersion = latestVersion ? latestVersion.Version() + 1 : 1;
 
-                    var sitemapVersion = manager.createEntity('DbSiteMap', { WebsiteId: website().Id(), Version: nextVersion }),
-                        rootNode = manager.createEntity('DbSiteMapNode', { NodeType: 'ROOT', Name: 'HOME' }),
-                        rootNodeResource = rootNode.getOrCreateResource('de', manager);
-
-                    rootNode.SiteMapId(sitemapVersion.Id());
-                    rootNodeResource.Title('Startseite');
-                    manager.addEntity(rootNode);
+                    var sitemapVersion = latestVersion ? latestVersion.createNewVersion(nextVersion, manager)
+                        : createInitialVersion(manager);
 
                     manager.saveChanges().then(function () {
                         selectedSitemap(getSiteMapVM(sitemapVersion));
@@ -110,6 +100,16 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             }
             catch (error) {
                 alert(error.message);
+            }
+
+            function createInitialVersion(manager) {
+                var sitemapVersion = manager.createEntity('DbSiteMap', { WebsiteId: website().Id(), Version: nextVersion }),
+                    rootNode = manager.createEntity('DbSiteMapNode', { NodeType: 'ROOT', Name: 'HOME' }),
+                    rootNodeResource = rootNode.getOrCreateResource('de', manager);
+                rootNode.SiteMapId(sitemapVersion.Id());
+                rootNodeResource.Title('Startseite');
+                manager.addEntity(rootNode);
+                return sitemapVersion;
             }
         },
 
@@ -196,11 +196,32 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
 
         editSitemapNode: function () {
             if (selectedNode()) module.router.navigate('#sitemap/edit/' + selectedNode().Id());
+        },
+
+        moveSelectedNodeUp: function () {
+            if (selectedNode()) {
+                selectedNode().moveUp();
+                manager.saveChanges().then(function () {
+                    if (selectedSitemap()) selectedSitemap().refreshTree();
+                });
+            }
+        },
+
+        moveSelectedNodeDown: function () {
+            if (selectedNode()) {
+                selectedNode().moveDown();
+                manager.saveChanges().then(function () {
+                    if (selectedSitemap()) selectedSitemap().refreshTree();
+                });
+            }
         }
     };
 
-    function refreshNodeIfSelected(sitemapNode) {
-        if (isInSelectedSiteMap(siteMapNode)) refetchNode(siteMapNode.Id()).then(refreshPreview);
+    function refreshNodeIfSelected(siteMapNode) {
+        if (isInSelectedSiteMap(siteMapNode)) refetchNode(siteMapNode.Id()).then(function () {
+            if (selectedSitemap()) selectedSitemap().refreshTree();
+            refreshPreview();
+        });
     }
 
     function refreshPreview() {
@@ -227,7 +248,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
 
     function isInSelectedSiteMap(node) {
         var siteMap = selectedSitemap();
-        return node && siteMap && node.SiteMapId() === siteMap.entity().Id()
+        return node && siteMap && node.SiteMapId() === siteMap.entity().Id();
     }
 
     function fetchWebsite() {
@@ -254,7 +275,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         }
 
         self.findContentPart = function (templateCell) {
-            if (selectedNode()) {
+            if (selectedNode() && selectedNode().Content()) {
                 var cp = selectedNode().Content().getContentPart(templateCell.name);
                 if (cp) {
                     var context = selectedNode().Content(),
@@ -265,74 +286,6 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             return '';
         };
     }
-
-    /*
-     * SiteMapViewModel class
-     */
-    function SiteMapViewModel(siteMap) {
-        var self = this;
-
-        self.entity = ko.observable(siteMap);
-        self.tree = ko.observable();
-        
-        self.publishedFromNow = ko.computed(function () {
-            return moment.utc(self.entity().PublishedFrom()).fromNow();
-        });
-    }
-
-    SiteMapViewModel.prototype.fetchTree = function () {
-        var self = this;
-        return system.defer(function (dfd) {
-            var query = new EntityQuery('SiteMapNodes').where('SiteMapId', '==', self.entity().Id()).expand('Resources');
-            manager.executeQuery(query).then(function (data) {
-                self.buildTree();
-                dfd.resolve();
-            }).fail(dfd.reject);
-        })
-        .promise();
-    }
-
-    SiteMapViewModel.prototype.buildTree = function () {
-        var self = this,
-            siteMap = self.entity(),
-            tree = new TreeModel.TreeViewModel();
-
-        tree.keyName('Id');
-        appendTreeNodes(tree.root, siteMap.rootNodes());
-        tree.expandRootNodes();
-
-        tree.selectedNode.subscribe(function () {
-            if (tree.selectedNode()) selectedNode(tree.selectedNode().entity());
-        });
-
-        function appendTreeNodes(parentNode, siteMapNodes) {
-            ko.utils.arrayForEach(siteMapNodes, function (siteMapNode) {
-                var node = tree.createNode();
-                node.entity(siteMapNode);
-                parentNode.addChildNode(node);
-                appendTreeNodes(node, siteMapNode.childNodes());
-            });
-        }
-
-        self.tree(tree);
-    };
-
-    SiteMapViewModel.prototype.refreshTree = function () {
-        var siteMap = this.entity(),
-            state = [];
-
-        if (this.tree())
-            state = this.tree().saveState();
-
-        this.buildTree(siteMap);
-
-        if (this.tree() && state)
-            this.tree().restoreState(state);
-    };
-
-    SiteMapViewModel.prototype.selectNodeByKey = function (key) {
-        if (this.tree()) this.tree().selectNodeByKey(key);
-    };
-
+    
     return vm;
 });

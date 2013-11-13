@@ -20,24 +20,32 @@ function (system, app, entityManagerProvider, breeze, ko) {
     Publisher.prototype.publish = function (siteMapId, parentNodeId, contentData) {
         var self = this;
         return system.defer(function (dfd) {
-            var node = self.manager.createEntity('DbSiteMapNode', { NodeType: 'PAGE' });
-            self.manager.addEntity(node);
+            var query = new EntityQuery().from('SiteMaps').where('Id', '==', siteMapId).expand('SiteMapNodes');
+            self.manager.executeQuery(query).then(function (data) {
+                var siteMap = data.results[0],
+                    parentNode = ko.utils.arrayFirst(siteMap.SiteMapNodes(), function(n) { return n.Id() === parentNodeId; }),
+                    nextRanking = parentNode ? parentNode.maxChildNodeRanking() + 1 : 0;
 
-            node.SiteMapId(siteMapId);
-            node.ParentNodeId(parentNodeId);
+                var node = self.manager.createEntity('DbSiteMapNode', { NodeType: 'PAGE', Name: contentData.name, Ranking: nextRanking });
+                self.manager.addEntity(node);
 
-            self.createResources(node, contentData);
+                node.SiteMapId(siteMapId);
+                if (parentNode) node.ParentNodeId(parentNode.Id());
 
-            var publication = self.createPublication(contentData, self.manager);
-            node.ContentId(publication.Id());
+                self.createResources(node, contentData);
 
-            self.manager.saveChanges().then(function () {
-                app.trigger('caps:publication:created', node);
-                dfd.resolve(node);
-            })
-            .fail(dfd.reject);
+                var publication = self.createPublication(contentData, self.manager);
+                node.ContentId(publication.Id());
+
+                self.manager.saveChanges().then(function () {
+                    app.trigger('caps:publication:created', node);
+                    dfd.resolve(node);
+                })
+                .fail(dfd.reject);
+            });
         })
         .promise();
+
     };
 
     Publisher.prototype.createResources = function (node, contentData) {
@@ -135,28 +143,14 @@ function (system, app, entityManagerProvider, breeze, ko) {
     
 
     return {
-        publish: function (module, contentData) {
-            return system.defer(function (dfd) {
-                app.selectSiteMapNode({ module: module }).then(function (result) {
-                    if (result.dialogResult) {
-                        var publisher = new Publisher();
-                        publisher.publish(result.selectedNode.SiteMapId(), result.selectedNode.Id(), contentData)
-                            .then(dfd.resolve)
-                            .fail(dfd.reject);
-                    }
-                });
-            })
-            .promise();
+        publish: function (contentData, parentNode) {
+            var publisher = new Publisher();
+            return publisher.publish(parentNode.SiteMapId(), parentNode.Id(), contentData);
         },
 
         republish: function (siteMapNodeId, contentData) {
-            return system.defer(function (dfd) {
-                var publisher = new Publisher();
-                publisher.republish(siteMapNodeId, contentData)
-                    .then(dfd.resolve)
-                    .fail(dfd.reject);
-            })
-            .promse();
+            var publisher = new Publisher();
+            return publisher.republish(siteMapNodeId, contentData);
         }
     };
 });

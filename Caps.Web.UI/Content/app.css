@@ -90,6 +90,10 @@
     overflow:hidden;
 }
 
+.panel-padding {
+    padding:15px 0;
+}
+
 /** 
  *  Top Navbar
  */
