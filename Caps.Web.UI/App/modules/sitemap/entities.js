@@ -260,6 +260,13 @@ define(['ko'], function (ko) {
         setRankings(siblings);
     };
 
+    SitemapNode.prototype.reparent = function (newParentNode) {
+        if (newParentNode) {
+            this.ParentNodeId(newParentNode.Id());
+            this.Ranking(newParentNode.maxChildNodeRanking() + 1)
+        }
+    };
+
     function setRankings(nodeArray) {
         for (var i = 0; i < nodeArray.length; i++) {
             if (nodeArray[i].Ranking() !== i + 1)

@@ -214,6 +214,26 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
                     if (selectedSitemap()) selectedSitemap().refreshTree();
                 });
             }
+        },
+
+        moveSelectedNode: function () {
+            if (selectedSitemap()) {
+                var siteMap = selectedSitemap(),
+                    node = selectedNode();
+                app.selectSiteMapNode({ module: module, nodeFilter: filterSelection, siteMapId: siteMap.entity().Id(), canSelectSiteMap: false }).then(function (result) {
+                    if (result.dialogResult && result.selectedNode && result.selectedNode.Id() !== node.ParentNodeId()) {
+                        node.reparent(result.selectedNode);
+                        manager.saveChanges().then(function () {
+                            siteMap.refreshTree();
+                            siteMap.tree().selectedNode().ensureVisible();
+                        });
+                    }
+                });
+            }
+
+            function filterSelection(item) {
+                return item.Id() !== selectedNode().Id();
+            }
         }
     };
 

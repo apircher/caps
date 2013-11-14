@@ -94,16 +94,6 @@
                     <em data-bind="text: selectedNode().ContentId()"></em>
                     <!-- /ko -->
                 </p>
-
-                <h5>Position</h5>
-                <ul class="list-unstyled">
-                    <li>
-                        <a href="#" data-bind="click: moveSelectedNodeUp"><i class="fa fa-arrow-up"></i> Nach oben</a>
-                    </li>
-                    <li>
-                        <a href="#" data-bind="click: moveSelectedNodeDown"><i class="fa fa-arrow-down"></i> Nach unten</a>
-                    </li>
-                </ul>
                 <!-- /ko -->
             </div>
         </div>
@@ -114,6 +104,15 @@
             <ul class="nav navbar-nav">
                 <li data-bind="if: selectedNode()">
                     <a href="#" data-bind="click: createSitemapNode"><span><i class="fa fa-plus fa-fw"></i> Neue Seite</span></a>
+                </li>
+                <li data-bind="if: selectedNode()">
+                    <a href="#" data-bind="click: moveSelectedNode"><span><i class="fa fa-arrows fa-fw"></i> Seite verschieben</span></a>
+                </li>
+                <li data-bind="if: selectedNode()">
+                    <a href="#" data-bind="click: moveSelectedNodeUp" title="Nach oben"><span><i class="fa fa-arrow-up fa-fw"></i></span></a>
+                </li>
+                <li data-bind="if: selectedNode()">
+                    <a href="#" data-bind="click: moveSelectedNodeDown" title="Nach unten"><span><i class="fa fa-arrow-down fa-fw"></i></span></a>
                 </li>
                 <li data-bind="if: selectedNode()">
                     <a href="#" data-bind="click: deleteSitemapNode"><span><i class="fa fa-trash-o fa-fw"></i> Seite löschen</span></a>

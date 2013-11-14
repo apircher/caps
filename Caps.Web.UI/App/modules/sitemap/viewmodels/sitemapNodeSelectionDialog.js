@@ -3,9 +3,10 @@
     'ko',
     'entityManagerProvider',
     'breeze',
-    './siteMapViewModel'
+    './siteMapViewModel',
+    'durandal/system'
 ],
-function (dialog, ko, entityManagerProvider, breeze, SiteMapViewModel) {
+function (dialog, ko, entityManagerProvider, breeze, SiteMapViewModel, system) {
 
     var EntityQuery = breeze.EntityQuery,
         lastSelectedSiteMapId = undefined;
@@ -18,6 +19,14 @@ function (dialog, ko, entityManagerProvider, breeze, SiteMapViewModel) {
         self.website = ko.observable();
         self.selectedSiteMap = ko.observable();
         self.selectedNode = ko.observable();
+        self.okTitle = ko.observable(options.okTitle || 'Weiter');
+        self.siteMapSelectionEnabled = ko.observable(options.canSelectSiteMap !== false);
+
+        self.isNodeEnabled = function (node) {
+            if (options.nodeFilter && system.isFunction(options.nodeFilter))
+                return options.nodeFilter.call(self, node);
+            return true;
+        }
 
         options = options || {};
 

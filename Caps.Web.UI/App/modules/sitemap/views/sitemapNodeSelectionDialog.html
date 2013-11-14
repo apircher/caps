@@ -7,7 +7,7 @@
                     <!-- ko if: website() -->
                     <div class="form-group">
                         <label for="siteMapVersion" class="control-label">Sitemap</label>
-                        <select id="siteMapVersion" data-bind="options: siteMaps, optionsText: 'title', optionsCaption: 'Version wählen...', value: selectedSiteMap" class="form-control" style="width:auto"></select>
+                        <select id="siteMapVersion" data-bind="options: siteMaps, optionsText: 'title', optionsCaption: 'Version wählen...', value: selectedSiteMap, enable: siteMapSelectionEnabled" class="form-control" style="width:auto"></select>
                     </div>                    
                     <!-- /ko -->
                 </form>
@@ -32,7 +32,7 @@
                     <a href="#" data-bind="click: selectCancel"><span><i class="fa fa-arrow-left fa-fw"></i> Abbrechen</span></a>
                 </li>
                 <li>
-                    <a href="#" data-bind="click: selectOk"><span><i class="fa fa-save fa-fw"></i> Veröffentlichen</span></a>
+                    <a href="#" data-bind="click: selectOk"><span><i class="fa fa-save fa-fw"></i> <!-- ko text: okTitle --><!-- /ko --></span></a>
                 </li>
             </ul>
         </div>
@@ -42,7 +42,7 @@
 
 <script type="text/html" id="NodesTemplate2">
     <ul data-bind="foreach: $data" class="list-unstyled tree-branch">
-        <li data-bind="if: !entity().entityAspect.entityState.isDeleted()">
+        <li data-bind="if: $root.isNodeEnabled(entity()) && !entity().entityAspect.entityState.isDeleted()">
             <div class="tree-node" data-bind="css: { 'tree-node-selected': isSelected }">
                 <div class="tree-node-toggle pull-left">
                     <a href="#" data-bind="click: toggleIsExpanded">
