@@ -13,6 +13,9 @@ namespace DemoWebsite
         {
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+
+            var contentControlRegistry = DependencyResolver.Current.GetService<Caps.Data.ContentControls.ContentControlRegistry>();
+            contentControlRegistry.RegisterControl("slideshow", new Caps.Data.ContentControls.Slideshow());
         }
     }
 }

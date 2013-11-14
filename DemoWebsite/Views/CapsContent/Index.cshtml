@@ -17,7 +17,7 @@
                     SiteMap.CurrentNode.ChildNodes : breadCrumbs.Skip(1).First().ChildNodes;
             }
         }
-        @foreach (var node in nodes.Cast<CapsSiteMapNode>().Where(n => n.IsNodeTypeIn("Page", "Draft")))
+        @foreach (var node in nodes.Cast<CapsSiteMapNode>().Where(n => n.IsNodeTypeIn("Page", "Draft", "Action")))
         {
             <section>
                 <h4><a href="@node.Url">@node.Title</a></h4>

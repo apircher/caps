@@ -16,7 +16,7 @@ namespace Caps.Web.Mvc.Providers
 {
     public class CapsSiteMapBuilder : IDisposable
     {
-        static String[] supportedNodeTypes = new String[] { "ROOT", "Page", "Article", "Publication", "Draft", "Action", "Teaser" };
+        static String[] supportedNodeTypes = new String[] { "ROOT", "Page", "Action", "Teaser" };
 
         bool disposed;
         CapsDbContext db;
@@ -108,7 +108,7 @@ namespace Caps.Web.Mvc.Providers
 
             UrlHelper helper = new UrlHelper(ctx);
             var routeData = new RouteValueDictionary();
-            if (entity.IsNodeTypeIn("Article", "Page", "Publication", "Draft"))
+            if (entity.IsNodeTypeIn("Page"))
             {
                 routeData.Add("id", entity.PermanentId.ToString("x"));
                 routeData.Add("name", entity.Name.UrlEncode());
@@ -118,7 +118,7 @@ namespace Caps.Web.Mvc.Providers
 
             if (entity.IsNodeType("Action"))
             {
-                var routeValueDict = RouteUtils.GetRouteDataByUrl("~/"); //TODO: Provide a URL
+                var routeValueDict = RouteUtils.GetRouteDataByUrl(entity.ActionUrl);
                 var routeValues = routeValueDict.Values;
                 if (routeValues.ContainsKey("language")) routeValues["language"] = CapsSiteMapNode.LanguagePlaceHolder;
                 VirtualPathData vpd = routeValueDict.Route.GetVirtualPath(new RequestContext(ctx.HttpContext, routeValueDict), routeValues);

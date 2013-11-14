@@ -62,7 +62,13 @@ namespace Caps.Data.ContentControls
             if (sqlFile == null)
                 return document.CreateComment("Caps Slideshow: File not found.");
 
-            var src = urlHelper.Action("PageContentFile", "Home", new { area = "", id = sqlFile.Id, name = sqlFile.File.FileName });
+            var src = urlHelper.Action("Thumbnail", "CapsContent", new
+            {
+                area = "",
+                id = sqlFile.Id,
+                name = System.Web.HttpUtility.UrlEncode(sqlFile.File.FileName),
+                size = "300x300"
+            });
             return document.CreateImage(src, "", cssClass);
         }
     }

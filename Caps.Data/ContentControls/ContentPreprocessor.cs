@@ -42,7 +42,7 @@ namespace Caps.Data.ContentControls
             // Replace placeholders
             result = ReplacePlaceholders(result, language);
             // Replace content references
-            return ReplaceContentReferences(content, language);
+            return ReplaceContentReferences(result, language);
         }
 
         String TransformCapsControls(String content, String language, ContentScriptManager scriptManager)

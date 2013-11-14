@@ -40,6 +40,9 @@ namespace Caps.Data.Model
 
         [MaxLength(50)]
         public String RedirectType { get; set; }
+
+        [MaxLength(250)]
+        public String ActionUrl { get; set; }
                 
         public ChangeInfo Created { get; set; }
 

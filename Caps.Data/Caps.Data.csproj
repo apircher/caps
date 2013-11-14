@@ -144,6 +144,10 @@
     <Compile Include="Migrations\201311110930454_AlterDraftFileResource.Designer.cs">
       <DependentUpon>201311110930454_AlterDraftFileResource.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311141131251_AddDbSiteMapNodeActionUrl.cs" />
+    <Compile Include="Migrations\201311141131251_AddDbSiteMapNodeActionUrl.Designer.cs">
+      <DependentUpon>201311141131251_AddDbSiteMapNodeActionUrl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
@@ -234,6 +238,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201311110930454_AlterDraftFileResource.resx">
       <DependentUpon>201311110930454_AlterDraftFileResource.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311141131251_AddDbSiteMapNodeActionUrl.resx">
+      <DependentUpon>201311141131251_AddDbSiteMapNodeActionUrl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

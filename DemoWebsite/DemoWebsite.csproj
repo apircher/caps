@@ -140,6 +140,7 @@
     <Content Include="Views\web.config" />
     <Content Include="packages.config" />
     <Content Include="Views\CapsContent\Index.cshtml" />
+    <Content Include="Views\Home\MyAction.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -149,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="ContentControls\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
