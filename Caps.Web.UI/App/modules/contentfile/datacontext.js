@@ -1,7 +1,23 @@
-﻿define(['breeze', 'entityManagerProvider', 'Q', 'jquery', 'knockout', './searchGrammerModule'], function (breeze, entityManagerProvider, Q, $, ko, searchGrammer) {
+﻿define([
+    'breeze',
+    'entityManagerProvider',
+    'Q',
+    'jquery',
+    'knockout',
+    'infrastructure/userQueryParser'
+],
+function (breeze, entityManagerProvider, Q, $, ko, UserQueryParser) {
 
     var manager = entityManagerProvider.createManager();
     var EntityQuery = breeze.EntityQuery;
+    var parser = new UserQueryParser();
+
+    parser.translateColumnName = function (col) {
+        if (col && col.length) {
+            if (/autor/i.test(col)) return 'Created.By';
+        }
+        return 'FileName';
+    };
 
     function getFiles() {
         var query = EntityQuery.from('Files');
@@ -21,11 +37,8 @@
 
     function filterQuery(query, searchWords) {
         if (searchWords && searchWords.length) {
-            var ast = searchGrammer.parseUserQuery(searchWords);
-            if (ast) {
-                var predicates = ast.getPredicates();
-                if (predicates) return query.where(predicates);
-            }            
+            var p = parser.getBreezePredicate(searchWords);
+            if (p) return query.where(p);
         }
         return query;
     }
@@ -83,7 +96,7 @@
         addFileTag: addFileTag,
         removeFileTag: removeFileTag,
         isValidUserQuery: function (searchWords) {
-            return searchGrammer.isValidUserQuery(searchWords);
+            return parser.validate(searchWords);
         }
     };
 

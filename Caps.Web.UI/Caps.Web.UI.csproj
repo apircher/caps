@@ -241,9 +241,9 @@
     <Content Include="App\modules\contentfile\datacontext.js" />
     <Content Include="App\modules\contentfile\entities.js" />
     <Content Include="App\modules\contentfile\module.html" />
-    <Content Include="App\modules\contentfile\searchGrammerModule.js" />
+    <Content Include="App\infrastructure\userQueryParser.js" />
     <Content Include="App\modules\contentfile\viewmodels\detail.js" />
-    <Content Include="App\modules\contentfile\searchGrammer.js" />
+    <Content Include="App\infrastructure\searchGrammer.js" />
     <Content Include="App\modules\contentfile\viewmodels\fileListItem.js" />
     <Content Include="App\modules\contentfile\viewmodels\fileSearchControl.js" />
     <Content Include="App\modules\contentfile\viewmodels\index.js" />
@@ -417,7 +417,7 @@
     <Content Include="Content\toastr.min.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <None Include="App\modules\contentfile\searchGrammer.jison" />
+    <None Include="App\infrastructure\searchGrammer.jison" />
     <Content Include="Content\toastr.less" />
     <Content Include="Content\fonts\fontawesome-webfont.woff" />
     <Content Include="Content\fonts\fontawesome-webfont.ttf" />

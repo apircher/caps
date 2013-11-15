@@ -4,15 +4,31 @@
 define([
     'durandal/system',
     'entityManagerProvider',
-    'ko'
+    'ko',
+    'infrastructure/userQueryParser'
 ],
-function (system, entityManagerProvider, ko) {
+function (system, entityManagerProvider, ko, UserQueryParser) {
     
     var manager = entityManagerProvider.createManager(),
-        EntityQuery = breeze.EntityQuery;
+        EntityQuery = breeze.EntityQuery,
+        parser = new UserQueryParser();
+
+    parser.translateColumnName = function (col) {
+        return 'Name';
+    };
 
     function getDrafts() {
         var query = EntityQuery.from('Drafts');
+        return manager.executeQuery(query);
+    }
+
+    function searchDrafts(searchWords, orderBy) {
+        var query = EntityQuery.from('Drafts');
+        if (searchWords && searchWords.length) {
+            var p = parser.getBreezePredicate(searchWords);
+            if (p) query = query.where(p);
+        }
+        query = query.orderBy(orderBy || 'Created.At desc');
         return manager.executeQuery(query);
     }
 
@@ -124,6 +140,7 @@ function (system, entityManagerProvider, ko) {
         getDraft: getDraft,
         getTemplates: getTemplates,
         getTemplate: getTemplate,
-        fetchPublications: fetchPublications
+        fetchPublications: fetchPublications,
+        searchDrafts: searchDrafts
     };
 });

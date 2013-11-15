@@ -9,13 +9,16 @@ define([
     'moment',
     'localization',
     'infrastructure/publicationService',
-    '../contentGenerator'
+    '../contentGenerator',
+    'infrastructure/listSortModel'
 ],
-function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator) {
+function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
         draftPreview = ko.observable(),
+        searchWords = ko.observable(''),
+        sortOptions = createSortOptions(),
         initialized = false;
 
     app.on('caps:draft:saved', function (args) {
@@ -39,7 +42,7 @@ function (module, datacontext, ko, app, moment, localization, publicationService
     }
 
     function fetchListItems() {
-        return datacontext.getDrafts().then(function (data) {
+        return datacontext.searchDrafts(searchWords(), sortOptions.getOrderBy()).then(function (data) {
             var items = ko.utils.arrayMap(data.results, function (draft) { return new DraftListItem(draft); });
             listItems(items);
         });
@@ -77,6 +80,11 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         items: listItems,
         selectedItem: selectedItem,
         draftPreview: draftPreview,
+        searchWords: searchWords,
+        search: function() {
+            fetchListItems().then(selectFirstDraft);
+        },
+        sortOptions: sortOptions,
 
         activate: function () {
             if (!initialized) {
@@ -111,7 +119,7 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         publishDraft: function () {
             try {
                 var cnt = contentGenerator.createPublicationContent(draftPreview().entity());
-                app.selectSiteMapNode({ module: module }).then(function (result) {
+                app.selectSiteMapNode({ module: module, okTitle: 'Veröffentlichen' }).then(function (result) {
                     if (result.dialogResult) {
                         publicationService.publish(cnt, result.selectedNode).fail(function (error) {
                             alert(error.message);
@@ -122,8 +130,25 @@ function (module, datacontext, ko, app, moment, localization, publicationService
             catch (error) {
                 alert(error.message);
             }
+        },
+
+        refresh: function () {
+            fetchListItems();
         }
     };
+
+    function createSortOptions() {
+        var columns = [
+            new SortModel.ListColumn('Created.At', 'Erstellt am'),
+            new SortModel.ListColumn('Created.By', 'Erstellt von'),
+            new SortModel.ListColumn('Modified.At', 'Letzte Änderung'),
+            new SortModel.ListColumn('Modified.By', 'Letzte Änderung von'),
+            new SortModel.ListColumn('Name', 'Name')
+        ];
+        return new SortModel.SortOptions(columns, function () {
+            vm.refresh();
+        });
+    }
 
     /*
      * DraftPreviewViewModel class

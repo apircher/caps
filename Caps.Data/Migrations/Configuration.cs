@@ -35,6 +35,10 @@ namespace Caps.Data.Migrations
             //    );
             //
 
+            context.Websites.AddOrUpdate(
+                new Caps.Data.Model.Website { Name = "Caps Website", Url = "http://caps.luxbox.net" }
+            );
+
             SqlTableChangeTracking.InitializeChangeTracking(context);
 
 #if DEBUG
