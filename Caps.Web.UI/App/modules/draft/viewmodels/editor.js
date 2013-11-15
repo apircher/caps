@@ -16,9 +16,10 @@ define([
     './editor/draftFiles',
     './editor/contentPartEditor',
     './editor/templateEditor',
-    './editorModel'
+    './editorModel',
+    'authentication'
 ],
-function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, TemplateEditor, EditorModel) {
+function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, TemplateEditor, EditorModel, authentication) {
 
     // Editor Model
     function DraftEditor() {
@@ -163,8 +164,12 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
         function createEntity(templateName) {
             var template = datacontext.getTemplate(templateName);
 
-            var d = manager.createEntity('Draft', { Name: 'Entwurf', Template: templateName });
+            var d = manager.createEntity('Draft', { Name: 'Entwurf', Template: templateName, Version: 1 });
             d.TemplateContent(JSON.stringify(template));
+            d.Created().At(new Date());
+            d.Created().By(authentication.user().userName());
+            d.Modified().At(new Date());
+            d.Modified().By(authentication.user().userName());
 
             var res = manager.createEntity('DraftResource', { Language: 'de', Title: 'Neuer Entwurf' });
             d.Resources.push(res);

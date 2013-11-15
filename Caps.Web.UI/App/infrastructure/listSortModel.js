@@ -31,17 +31,22 @@ function (require, ko) {
     /**
      * SortOptions Class
      */
-    function SortOptions(columns, changeHandler) {
+    function SortOptions(columns, changeHandler, defaultSortColumn, defaultSortDirection) {
         var self = this;
+
+        self.defaultSortColumn = defaultSortColumn || 'Created.At';
+        self.defaultSortDirection = defaultSortDirection || 'desc';
 
         if (columns && columns.length)
             ko.utils.arrayForEach(columns, function (c) { c.owner = self; });
         self.columns = columns || [];
 
         self.selectedColumn = ko.observable();
-        self.sortDirection = ko.observable('desc');
+        self.sortDirection = ko.observable(self.defaultSortDirection);
         
-        self.selectedColumn(self.columns[0]);
+        var initialColumn = self.columns.length ? 
+            ko.utils.arrayFirst(self.columns, function (c) { return c.name === self.defaultSortColumn; }) || self.columns[0] : null;
+        self.selectedColumn(initialColumn);
         
         self.toggleSortDirection = function () {
             self.setSortDirection(self.sortDirection() == 'desc' ? 'asc' : 'desc');
@@ -69,7 +74,7 @@ function (require, ko) {
     SortOptions.prototype.getOrderBy = function () {
         var col = this.selectedColumn();
         if (col) {
-            var result = col.name || 'Created.At';
+            var result = col.name || this.defaultSortColumn;
             if (this.sortDirection() && this.sortDirection().toLowerCase() === 'desc')
                 result += ' desc';
         }

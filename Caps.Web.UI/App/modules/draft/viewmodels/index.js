@@ -145,9 +145,10 @@ function (module, datacontext, ko, app, moment, localization, publicationService
             new SortModel.ListColumn('Modified.By', 'Letzte Änderung von'),
             new SortModel.ListColumn('Name', 'Name')
         ];
-        return new SortModel.SortOptions(columns, function () {
+        var so = new SortModel.SortOptions(columns, function () {
             vm.refresh();
-        });
+        }, 'Modified.At');
+        return so;
     }
 
     /*
@@ -163,19 +164,19 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         self.publications = ko.observableArray();
 
         self.createdAt = ko.computed(function () {
-            return moment.utc(entity.Created().At()).format('LLLL');
+            return moment(entity.Created().At()).format('LLLL');
         });
 
         self.createdFromNow = ko.computed(function () {
-            return moment.utc(entity.Created().At()).fromNow();
+            return moment(entity.Created().At()).fromNow();
         });
 
         self.modifiedAt = ko.computed(function () {
-            return moment.utc(entity.Modified().At()).format('LLLL');
+            return moment(entity.Modified().At()).format('LLLL');
         });
 
         self.modifiedFromNow = ko.computed(function () {
-            return moment.utc(entity.Modified().At()).fromNow();
+            return moment(entity.Modified().At()).fromNow();
         });
 
         self.translateDraft = function (language) {
@@ -197,6 +198,10 @@ function (module, datacontext, ko, app, moment, localization, publicationService
             return self.formatDate(entity.Created().At());
         });
 
+        self.modifiedAt = ko.computed(function () {
+            return self.formatDate(entity.Modified().At());
+        });
+
         self.title = ko.computed(function () {
             return entity.Name();
         });
@@ -207,19 +212,7 @@ function (module, datacontext, ko, app, moment, localization, publicationService
     }
 
     DraftListItem.prototype.formatDate = function (date) {
-        var now = moment();
-        var d = moment.utc(date);
-
-        var diffDays = d.diff(now, 'days');
-        if (diffDays < 7) {
-            return d.format('dd HH:mm');
-        }
-
-        if (d.year() == now.year()) {
-            return d.format('dd. D.MMM HH:mm');
-        }
-
-        return d.format('D.MMM YY HH:mm');
+        return moment(date).calendar();
     };
     
     /*

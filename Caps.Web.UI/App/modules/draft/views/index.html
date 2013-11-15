@@ -8,11 +8,8 @@
                         <input type="text" class="form-control" placeholder="Entwürfe durchsuchen..." data-bind="delayedSearch: { searchObservable: searchWords, searchHandler: search }" />
                         <div class="input-group-btn btn-group split-btn">
                             <a href="#" role="button" data-bind="click: sortOptions.toggleSortDirection">
-                                <span><i data-bind="css: { 'fa-sort-alpha-asc': sortOptions.sortDirection() == 'asc', 'fa-sort-alpha-desc': sortOptions.sortDirection() != 'asc' }" class="fa"></i></span>
-                            </a>
-                            <a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn-dropdown">
-                                <b class="caret" />
-                            </a>
+                                <span><i data-bind="css: { 'fa-sort-alpha-asc': sortOptions.sortDirection() == 'asc', 'fa-sort-alpha-desc': sortOptions.sortDirection() != 'asc' }" class="fa fa-fw"></i></span></a>
+                            <a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn-dropdown"><b class="caret" /></a>
                             <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">
                                 <!-- ko foreach: sortOptions.columns -->
                                 <li role="presentation">
@@ -32,7 +29,7 @@
                 <ul data-bind="foreach: items" class="data-list">
                     <li data-bind="css: { active: isSelected() }, click: $parent.selectDraft">
                         <div class="pull-right">
-                            <span data-bind="text: createdAt"></span>
+                            <small data-bind="text: modifiedAt"></small>
                         </div>
                         <span data-bind="text: title"></span>
                     </li>

@@ -42,11 +42,11 @@
 
     <div class="form-group">
         <label class="col-md-3 col-lg-2">Erstellt von</label>
-        <p class="form-static-control col-md-9 col-lg-10"><span data-bind="text: editor.entity().Created().By"></span> <span data-bind="text: moment.utc(editor.entity().Created().At()).fromNow(), attr: { title: moment.utc(editor.entity().Created().At()).format('LLLL') }"></span></p>
+        <p class="form-static-control col-md-9 col-lg-10"><span data-bind="text: editor.entity().Created().By"></span> <span data-bind="text: moment(editor.entity().Created().At()).fromNow(), attr: { title: moment(editor.entity().Created().At()).format('LLLL') }"></span></p>
     </div>
 
     <div class="form-group">
         <label class="col-md-3 col-lg-2">Letzte Änderung</label>
-        <p class="form-static-control col-md-9 col-lg-10"><span data-bind="text: editor.entity().Modified().By"></span> <span data-bind="text: moment.utc(editor.entity().Modified().At()).fromNow(), attr: { title: moment.utc(editor.entity().Modified().At()).format('LLLL') }"></span></p>
+        <p class="form-static-control col-md-9 col-lg-10"><span data-bind="text: editor.entity().Modified().By"></span> <span data-bind="text: moment(editor.entity().Modified().At()).fromNow(), attr: { title: moment(editor.entity().Modified().At()).format('LLLL') }"></span></p>
     </div>
 </form>
