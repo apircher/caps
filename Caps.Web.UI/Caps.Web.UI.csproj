@@ -348,6 +348,13 @@
     <Content Include="Content\fontawesome\font-awesome.min.css" />
     <Content Include="Content\fonts\fontawesome-webfont.svg" />
     <Content Include="Content\ie10mobile.css" />
+    <Content Include="Content\images\apple-touch-startup-image-1024x748.png" />
+    <Content Include="Content\images\apple-touch-startup-image-1536x2008.png" />
+    <Content Include="Content\images\apple-touch-startup-image-2048x1496.png" />
+    <Content Include="Content\images\apple-touch-startup-image-320x460.png" />
+    <Content Include="Content\images\apple-touch-startup-image-640x1096.png" />
+    <Content Include="Content\images\apple-touch-startup-image-640x920.png" />
+    <Content Include="Content\images\apple-touch-startup-image-768x1004.png" />
     <Content Include="Content\images\blank.gif" />
     <Content Include="Content\images\CapsMan.svg" />
     <Content Include="Content\images\icon-1.png" />
