@@ -58,7 +58,7 @@ function (require, ko) {
         self._callChangeHandler = function () {
             if (changeHandler && typeof changeHandler === 'function')
                 changeHandler.apply(this);
-        }
+        };
 
         self.selectedColumn.subscribe(self._callChangeHandler);
         self.sortDirection.subscribe(self._callChangeHandler);
@@ -72,9 +72,10 @@ function (require, ko) {
     };
     
     SortOptions.prototype.getOrderBy = function () {
-        var col = this.selectedColumn();
+        var col = this.selectedColumn(),
+            result;
         if (col) {
-            var result = col.name || this.defaultSortColumn;
+            result = col.name || this.defaultSortColumn;
             if (this.sortDirection() && this.sortDirection().toLowerCase() === 'desc')
                 result += ' desc';
         }

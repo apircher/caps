@@ -78,9 +78,9 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
 
         deleteSelection: function () {
             var sel = this.selectedFiles();
-            if (sel.length == 0)
+            if (sel.length === 0)
                 return;
-            if (sel.length == 1)
+            if (sel.length === 1)
                 return this.deleteFile(sel[0]);
 
             var btnOk = 'Auswahl löschen';
@@ -144,8 +144,8 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
         },
 
         loadHandler: function (element, e) {
-            console.log('loadHandler called. First visible: ' + e.firstVisible.index + ' (Page #' + e.firstVisible.page + '); Last visible: '
-                + e.lastVisible.index + ' (Page #' + e.lastVisible.page + ')');
+            console.log('loadHandler called. First visible: ' + e.firstVisible.index + ' (Page #' + e.firstVisible.page + '); Last visible: ' +
+                e.lastVisible.index + ' (Page #' + e.lastVisible.page + ')');
 
             if (!isInteractive()) return;
 

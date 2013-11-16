@@ -10,7 +10,7 @@ function (ko, dialog) {
     function CapsModule (routeConfig) {
         this.routeConfig = routeConfig;
         this.dialogContext = undefined;
-    };
+    }
 
     CapsModule.prototype.initializeRouter = function () {
     };

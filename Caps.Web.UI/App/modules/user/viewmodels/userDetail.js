@@ -26,7 +26,7 @@
 
     function refreshUser() {
         var deferred = Q.defer();
-        if (!vm.userName() || vm.userName().length == 0) {
+        if (!vm.userName() || vm.userName().length === 0) {
             vm.user(new model.User());
             deferred.resolve();
         }

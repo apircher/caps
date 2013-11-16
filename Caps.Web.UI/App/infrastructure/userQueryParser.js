@@ -89,7 +89,7 @@
     };
 
     UserQueryParser.prototype.validate = function (searchWords) {
-        return parseUserQuery(searchWords) != null
+        return parseUserQuery(searchWords) !== null;
     };
     
 

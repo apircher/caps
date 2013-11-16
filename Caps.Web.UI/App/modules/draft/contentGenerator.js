@@ -15,7 +15,7 @@ function (ko, markdown, urlHelper, ContentReferenceManager) {
                 var draft = reference.context,
                     draftFile = draft.findDraftFile(reference.fileName),
                     resource = draftFile.getResource(language),
-                    fileVersion = resource != null ? resource.FileVersion() : undefined;
+                    fileVersion = resource !== null ? resource.FileVersion() : undefined;
                 return urlHelper.getFileUrl(reference.fileName, fileVersion, reference.query);
             },
 
@@ -80,7 +80,7 @@ function (ko, markdown, urlHelper, ContentReferenceManager) {
         return result;
     }
     
-    var markdownConverter = undefined;
+    var markdownConverter;
     function transformContent(contentType, content) {
         if (contentType.toLowerCase() === 'markdown') {
             markdownConverter = markdownConverter || new Markdown.Converter();

@@ -9,7 +9,7 @@
 function (dialog, ko, entityManagerProvider, breeze, SiteMapViewModel, system) {
 
     var EntityQuery = breeze.EntityQuery,
-        lastSelectedSiteMapId = undefined;
+        lastSelectedSiteMapId;
 
     function SiteMapNodeSelectionDialog(options) {
         var self = this,
@@ -26,7 +26,7 @@ function (dialog, ko, entityManagerProvider, breeze, SiteMapViewModel, system) {
             if (options.nodeFilter && system.isFunction(options.nodeFilter))
                 return options.nodeFilter.call(self, node);
             return true;
-        }
+        };
 
         options = options || {};
 
@@ -42,7 +42,7 @@ function (dialog, ko, entityManagerProvider, breeze, SiteMapViewModel, system) {
         });
 
         self.siteMaps = ko.computed(function () {
-            var items = self.website() ? self.website().sortedSiteMapVersions() : []
+            var items = self.website() ? self.website().sortedSiteMapVersions() : [];
             return ko.utils.arrayMap(items, function (siteMap) {
                 var smvm = new SiteMapViewModel(siteMap, manager);
                 smvm.selectedNodeChanged = function (node) { if (node) self.selectedNode(node.entity()); };
@@ -68,7 +68,7 @@ function (dialog, ko, entityManagerProvider, breeze, SiteMapViewModel, system) {
         return self.manager.executeQuery(query).then(function (data) {
             self.website(data.results[0]);
 
-            var siteMap = undefined;
+            var siteMap;
             if (lastSelectedSiteMapId) 
                 siteMap = ko.utils.arrayFirst(self.website().SiteMapVersions(), function(smv) { return smv.Id() === lastSelectedSiteMapId; }); 
             self.selectedSiteMap(self.findSiteMap(siteMap || self.website().latestSitemap()));

@@ -41,7 +41,7 @@ function (require, ko, $) {
 
         self.ListItemType = VirtualListItem;
         if (ListItemType && typeof ListItemType === 'function') {
-            function surrogateCtor() { }
+            var surrogateCtor = function () { };
             surrogateCtor.prototype = VirtualListItem.prototype;
             ListItemType.prototype = new surrogateCtor();
             ListItemType.prototype.constructor = ListItemType;

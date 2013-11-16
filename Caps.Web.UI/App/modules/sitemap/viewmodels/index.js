@@ -30,7 +30,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             var publication = reference.context,
                 publicationFile = publication.findFile(reference.fileName),
                 resource = publicationFile.getResource(language),
-                fileVersion = resource != null ? resource.FileVersion() : undefined;
+                fileVersion = resource !== null ? resource.FileVersion() : undefined;
             return urlHelper.getFileUrl(reference.fileName, fileVersion, reference.query);
         },
         replacePublicationReference: function (reference, language, context) {
@@ -59,7 +59,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
     var vm = {
         website: website,
         sitemaps: ko.computed(function() {
-            var items = website() ? website().sortedSiteMapVersions() : []
+            var items = website() ? website().sortedSiteMapVersions() : [];
             return ko.utils.arrayMap(items, function(siteMap) {
                 var smvm = new SiteMapViewModel(siteMap, manager);
                 smvm.selectedNodeChanged = function (node) { if (node) selectedNode(node.entity()); };

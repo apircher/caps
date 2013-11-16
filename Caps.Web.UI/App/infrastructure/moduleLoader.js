@@ -14,16 +14,17 @@ function (system, registry, Q) {
     
     return {
         loadModules: function (names) {
-            var promises = [];
+            var promises = [],
+                promise;
             if (system.isArray(names)) {
                 for (var i = 0; i < names.length; i++) {
-                    var p = this.loadModule(names[i]);
-                    if (p) promises.push(p);
+                    promise = this.loadModule(names[i]);
+                    if (promise) promises.push(promise);
                 }
             }
             else if (system.isString(names)) {
-                var p = this.loadModule(names);
-                if (p) promises.push(p);
+                promise = this.loadModule(names);
+                if (promise) promises.push(promise);
             }
             return Q.all(promises);
         },

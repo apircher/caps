@@ -230,7 +230,7 @@ define([
         };
 
         this.isInAnyRole = function (roleNames) {
-            if (!roleNames || roleNames.length == 0)
+            if (!roleNames || roleNames.length === 0)
                 return true;
             for (var i = 0; i < roleNames.length; i++) {
                 if (this.isInRole(roleNames[i])) return true;

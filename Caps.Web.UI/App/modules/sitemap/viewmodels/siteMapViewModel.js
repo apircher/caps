@@ -38,7 +38,7 @@ function (ko, moment, breeze, system, TreeModel) {
             }).fail(dfd.reject);
         })
         .promise();
-    }
+    };
 
     SiteMapViewModel.prototype.buildTree = function () {
         var self = this,

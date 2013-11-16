@@ -46,7 +46,7 @@ define(['ko'], function (ko) {
             if (!sitemap.Website()) return [];
             return sitemap.Website().SiteMapVersions();
         });
-    };
+    }
 
     Sitemap.prototype.previousVersion = function () {        
         var self = this,
@@ -133,7 +133,7 @@ define(['ko'], function (ko) {
             read: function () {
                 var siblings = sitemapNode.siblings(),
                     index = siblings.indexOf(sitemapNode);
-                return index == 0 ? undefined : siblings[index - 1];
+                return index === 0 ? undefined : siblings[index - 1];
             }, deferEvaluation: true
         });
 
@@ -150,7 +150,7 @@ define(['ko'], function (ko) {
                 return parents.join('/');
             },
             deferEvaluation: true
-        })
+        });
     }
 
     SitemapNode.prototype.getResource = function (language) {
@@ -186,7 +186,7 @@ define(['ko'], function (ko) {
         
         for (var i = 0; i < childNodes.length; i++)
             childNodes[i].setDeleted();
-        for (var i = 0; i < resources.length; i++)
+        for (i = 0; i < resources.length; i++)
             resources[i].entityAspect.setDeleted();
 
         this.entityAspect.setDeleted();
@@ -228,8 +228,8 @@ define(['ko'], function (ko) {
 
     SitemapNode.prototype.maxChildNodeRanking = function () {
         var childNodes = this.childNodes();
-        if (childNodes.length == 0) return 0;
-        if (childNodes.length == 1) return childNodes[0].Ranking();
+        if (childNodes.length === 0) return 0;
+        if (childNodes.length === 1) return childNodes[0].Ranking();
 
         return Math.max.apply(null, ko.utils.arrayMap(childNodes, function (n) { return n.Ranking(); }));
     };
@@ -263,7 +263,7 @@ define(['ko'], function (ko) {
     SitemapNode.prototype.reparent = function (newParentNode) {
         if (newParentNode) {
             this.ParentNodeId(newParentNode.Id());
-            this.Ranking(newParentNode.maxChildNodeRanking() + 1)
+            this.Ranking(newParentNode.maxChildNodeRanking() + 1);
         }
     };
 
@@ -299,7 +299,7 @@ define(['ko'], function (ko) {
         return ko.utils.arrayFirst(this.ContentParts(), function (pt) {
             return pt.PartType().toLowerCase() === key;
         });
-    }
+    };
 
     Publication.prototype.getOrCreateContentPart = function (partType, manager) {
         var key = partType.toLowerCase(),
