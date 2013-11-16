@@ -5,66 +5,47 @@
             <li>
                 <a href="#" data-bind="click: selectFiles"><span><i class="fa fa-plus"></i> Dateien hinzufügen</span></a>
             </li>
+            <li>
+                <a href="#" data-bind="click: addGroup"><span><i class="fa fa-plus"></i> Gruppe hinzufügen</span></a>
+            </li>
         </ul>
     </div>
 </div>
 
-<section data-bind="foreach: editor.files" class="thumbnail-list">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="thumbnail-container">
-                <a class="thumbnail" data-bind="if: resource.FileVersion()">
-                    <!-- ko template: { name: 'dbfile-icon' } --><!-- /ko -->
-                </a>
+<section>
+    <div data-bind="foreach: groups">
+        <label>Gruppe</label>
+        <div class="form-group">
+            <input type="text" data-bind="value: groupName" class="form-control input-lg" />
+        </div>
+        <div>
+            <p>
+                <a href="#" data-bind="click: toggleIsExpanded, text: isExpanded() ? 'Dateien ausblenden' : 'Dateien einblenden'">Dateien anzeigen</a>
+            </p>
+        </div>
+        <!-- ko if: isExpanded -->
+        <!-- ko foreach: sortedFiles -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="thumbnail-container">
+                    <a class="thumbnail" data-bind="if: resource.FileVersion()">
+                        <!-- ko template: { name: 'dbfile-icon' } --><!-- /ko -->
+                    </a>
+                    <div class="thumbnail-remove">
+                        <a href="#" data-bind="click: selectGroup"><i class="fa fa-arrows"></i></a>
+                        <a href="#" data-bind="click: moveUp"><i class="fa fa-arrow-up"></i></a>
+                        <a href="#" data-bind="click: moveDown"><i class="fa fa-arrow-down"></i></a>
+                        <a href="#" data-bind="click: $parents[1].removeFile"><i class="fa fa-times"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <!-- ko template: { name: 'dbfile-controls' } --><!-- /ko -->
             </div>
         </div>
-        <div class="col-md-8">
-            <form role="form" class="form-horizontal">
-                <div class="form-group">
-                    <label class="col-md-2">Titel</label>
-                    <div class="col-md-10">
-                        <input type="text" class="form-control" data-bind="value: resource.Title" />
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-2">Beschreibung</label>
-                    <div class="col-md-10">
-                        <textarea data-bind="value: resource.Description" class="form-control" />
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-2">Akkreditierung</label>
-                    <div class="col-md-10">
-                        <input type="text" class="form-control" data-bind="value: resource.Credits" />
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="col-md-2">Gruppe</label>
-                    <div class="col-md-10">
-                        <input type="text" class="form-control" data-bind="value: draftFile.Group" />
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-2">Bestimmung</label>
-                    <div class="col-md-10">
-                        <input type="text" class="form-control" data-bind="value: draftFile.Determination" />
-                    </div>
-                </div>
-
-                <div>
-                    <span data-bind="text:embedSrc"></span>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-1">
-            <a href="#" data-bind="click: $parent.removeFile"><i class="fa fa-times"></i></a>
-        </div>
+        <!-- /ko -->
+        <!-- /ko -->
     </div>
-    <div class="separator"></div>
 </section>
 
 <script type="text/html" id="dbfile-icon">
@@ -80,3 +61,48 @@
     <!-- /ko -->
 </script>
 
+<script type="text/html" id="dbfile-controls">
+    <form role="form" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-md-2 control-label">Titel</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" data-bind="value: resource.Title" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label">Beschreibung</label>
+            <div class="col-md-10">
+                <textarea data-bind="value: resource.Description" class="form-control" />
+            </div>
+        </div>
+
+        <!--<div class="form-group">
+            <label class="col-md-2">Akkreditierung</label>
+            <div class="col-md-10">
+                <input type="text" class="form-control" data-bind="value: resource.Credits" />
+            </div>
+        </div>-->
+
+        <div class="form-group">
+            <label class="col-md-2 control-label">Bestimmung</label>
+            <div class="col-md-4">
+                <select class="form-control" data-bind="options: $parents[1].determinations, optionsText: 'title', optionsValue: 'name', value: draftFile.Determination, optionsCaption: 'Bitte wählen...'"></select>
+            </div>
+            <!--<label class="col-md-2 control-label">Gruppe</label>
+            <div class="col-md-4">
+                <input type="text" class="form-control" data-bind="value: draftFile.Group" />
+            </div>-->
+            <div class="col-md-6">
+                <p class="form-control-static" data-bind="text:embedSrc"></p>
+            </div>
+        </div>
+
+        <div class="form-group" data-bind="if: showGroup">
+            <label class="col-md-2 control-label">Gruppe</label>
+            <div class="col-md-4">
+                <select class="form-control" data-bind="options: $parents[1].editor.entity().distinctFileGroupNames, value: draftFile.Group, optionsCaption: 'Bitte wählen...'"></select>
+            </div>
+        </div>
+    </form>
+</script>

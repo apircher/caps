@@ -409,13 +409,6 @@ ul.tree-branch a:hover {
         padding-right: 1px;
     }
 
-.in-view {
-    background:green;
-}
-.outof-view {
-    background:red;
-}
-
 .thumbnail-list > .row > div {
     padding-top:15px;
 }
@@ -427,6 +420,13 @@ ul.tree-branch a:hover {
 }
 .thumbnail-list .separator:last-of-type {
     display:none;
+}
+
+
+.thumbnail-remove {
+    position:absolute;
+    bottom:15px; 
+    left:5px;
 }
 
 /**

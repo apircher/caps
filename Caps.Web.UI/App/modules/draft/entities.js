@@ -21,6 +21,15 @@ function (require, ko) {
         });
     }
 
+    function InitializeDraft(draft) {
+        draft.fileGroupNames = ko.computed(function () {
+            return ko.utils.arrayMap(draft.Files(), function (f) { return f.Group() || ''; });
+        });
+        draft.distinctFileGroupNames = ko.computed(function () {
+            return ko.utils.arrayGetDistinctValues(draft.fileGroupNames());
+        });
+    }
+
     Draft.prototype.getResource = function (language) {
         var key = language.toLowerCase();
         return ko.utils.arrayFirst(this.Resources(), function (res) {
@@ -88,6 +97,14 @@ function (require, ko) {
             this.ContentParts()[0].setDeleted();
         }                
         this.entityAspect.setDeleted();
+    };
+
+    Draft.prototype.filesByGroupName = function (groupName) {
+        var files = ko.utils.arrayFilter(this.Files(), function (file) {
+            var gn = file.Group() || '';
+            return gn.toLowerCase() === groupName.toLowerCase();
+        });
+        return files;
     };
 
     /**
@@ -179,7 +196,7 @@ function (require, ko) {
         DraftContentPart: DraftContentPart,
 
         extendModel: function (metadataStore) {
-            metadataStore.registerEntityTypeCtor('Draft', Draft);
+            metadataStore.registerEntityTypeCtor('Draft', Draft, InitializeDraft);
             metadataStore.registerEntityTypeCtor('DraftContentPart', DraftContentPart);
             metadataStore.registerEntityTypeCtor('DraftFile', DraftFile);
         }

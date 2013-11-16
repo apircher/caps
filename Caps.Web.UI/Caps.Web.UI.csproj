@@ -222,6 +222,7 @@
     <Content Include="App\infrastructure\datacontext.js" />
     <Content Include="App\infrastructure\treeViewModel.js" />
     <Content Include="App\infrastructure\urlHelper.js" />
+    <Content Include="App\modules\draft\commands\deleteDraft.js" />
     <Content Include="App\modules\draft\viewmodels\editor\templateEditor.js" />
     <Content Include="App\modules\draft\views\editor\templateEditor.html" />
     <Content Include="App\modules\sitemap\entities.js" />

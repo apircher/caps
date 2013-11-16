@@ -11,6 +11,11 @@
                 return self.editor.currentContent().name;
             return undefined;
         });
+
+        this.numberOfFiles = ko.computed(function () {
+            if (self.editor.entity()) return self.editor.entity().Files().length;
+            return 0;
+        });
     }
 
     return Navigation;

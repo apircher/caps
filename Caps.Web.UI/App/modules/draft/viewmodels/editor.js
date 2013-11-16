@@ -37,7 +37,6 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
         self.currentNavigation = ko.observable();
         self.entity = ko.observable();
         self.entity.subscribe(onEntityChanged);
-        self.files = ko.observableArray();
         self.template = ko.observable();
         self.isNewDraft = ko.observable(false);
 
@@ -104,7 +103,7 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
 
         self.saveChanges = function () {
             self.entity().Modified().At(new Date());
-            self.entity().Modified().By('me');
+            self.entity().Modified().By(authentication.user().userName());
             manager.saveChanges().then(function () {
                 app.trigger('caps:draft:saved', { entity: self.entity(), isNewDraft: self.isNewDraft() });
                 self.showDraftsIndex();
@@ -157,21 +156,20 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
                 draftFile.Resources.push(resource);
 
                 self.entity().Files.push(draftFile);
-                self.files.push(new EditorModel.LocalizedDraftFile(draftFile, draftFile.getResource('de')));
             });
         };
 
         function createEntity(templateName) {
             var template = datacontext.getTemplate(templateName);
 
-            var d = manager.createEntity('Draft', { Name: 'Entwurf', Template: templateName, Version: 1 });
+            var d = manager.createEntity('Draft', { Template: templateName, Version: 1 });
             d.TemplateContent(JSON.stringify(template));
             d.Created().At(new Date());
             d.Created().By(authentication.user().userName());
             d.Modified().At(new Date());
             d.Modified().By(authentication.user().userName());
 
-            var res = manager.createEntity('DraftResource', { Language: 'de', Title: 'Neuer Entwurf' });
+            var res = manager.createEntity('DraftResource', { Language: 'de' });
             d.Resources.push(res);
 
             self.entity(d);
@@ -216,12 +214,6 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
         function onEntityChanged() {
             var e = self.entity();
             if (e) {
-                // Init Files.
-                var localizedFiles = ko.utils.arrayMap(e.Files(), function (file) {
-                    var resource = file.getOrCreateResource('de', manager);
-                    return new EditorModel.LocalizedDraftFile(file, resource);
-                });
-                self.files(localizedFiles);
                 // Init Template.
                 getTemplate();
                 e.entityAspect.propertyChanged.subscribe(trackChanges);

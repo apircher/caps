@@ -10,16 +10,18 @@ define([
     'localization',
     'infrastructure/publicationService',
     '../contentGenerator',
-    'infrastructure/listSortModel'
+    'infrastructure/listSortModel',
+    '../commands/deleteDraft'
 ],
-function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel) {
+function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel, DeleteDraftCommand) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
         draftPreview = ko.observable(),
         searchWords = ko.observable(''),
         sortOptions = createSortOptions(),
-        initialized = false;
+        initialized = false,
+        deleteDraftCommand = new DeleteDraftCommand();
 
     app.on('caps:draft:saved', function (args) {
         var draft = args.entity;
@@ -29,6 +31,9 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         if (args.isNewDraft) {
             fetchListItems().then(function () { vm.selectDraftById(draft.Id()); });            
         }
+    });
+    app.on('caps:draft:deleted', function (args) {
+        fetchListItems().then(selectFirstDraft);
     });
 
     app.on('caps:publication:created', refetchPublicationsWhenSelected);
@@ -134,6 +139,10 @@ function (module, datacontext, ko, app, moment, localization, publicationService
 
         refresh: function () {
             fetchListItems();
+        },
+
+        deleteDraft: function () {
+            deleteDraftCommand.execute(selectedItem().draftId());
         }
     };
 
