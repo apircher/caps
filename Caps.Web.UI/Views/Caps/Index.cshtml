@@ -9,10 +9,27 @@
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
         <meta name="format-detection" content="telephone=no"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         
         <link rel="apple-touch-startup-image" href="~/Content/images/ios-startup-image-landscape-1.png" media="(orientation:landscape)" />
         <link rel="apple-touch-startup-image" href="~/Content/images/ios-startup-image-portrait-1.png" media="(orientation:portrait)" />
+        
+        <!-- iPhone 3 and 4 Non-Retina -->
+        <link rel="apple-touch-startup-image" media="(device-width: 320px)" href="~/Content/images/apple-touch-startup-image-320x460.png">
+        <!-- iPhone 4 Retina -->
+        <link rel="apple-touch-startup-image" media="(device-width: 320px) and (-webkit-device-pixel-ratio: 2)" href="~/Content/images/apple-touch-startup-image-640x920.png">
+        <!-- iPhone 5 Retina -->
+        <link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="~/Content/images/apple-touch-startup-image-640x1096.png">
+
+        <!-- iPad Non-Retina Portrait -->
+        <link rel="apple-touch-startup-image" media="(device-width: 768px) and (orientation: portrait)" href="~/Content/images/apple-touch-startup-image-768x1004.png">
+        <!-- iPad Non-Retina Landscape -->
+        <link rel="apple-touch-startup-image" media="(device-width: 768px) and (orientation: landscape)" href="~/Content/images/apple-touch-startup-image-748x1024.png">
+        <!-- iPad Retina Portrait -->
+        <link rel="apple-touch-startup-image" media="(device-width: 1536px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" href="~/Content/images/apple-touch-startup-image-1536x2008.png">
+        <!-- iPad Retina Landscape -->
+        <link rel="apple-touch-startup-image" media="(device-width: 1536px)  and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)" href="~/Content/images/apple-touch-startup-image-2048x1496.png">
+
         <link rel="apple-touch-icon" href="~/Content/images/icon-1.png"/>
 
         <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
