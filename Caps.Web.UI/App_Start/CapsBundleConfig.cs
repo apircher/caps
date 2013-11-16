@@ -21,6 +21,21 @@ namespace Caps.Web.UI.App_Start
                 .Include("~/Content/toastr.css")
               );
 
+            bundles.Add(
+              new ScriptBundle("~/Scripts/vendor")
+                .Include("~/Scripts/jquery-2.0.3.js")
+                .Include("~/Scripts/jquery.fileupload.js")
+                .Include("~/Scripts/jquery.ui.widget.js")
+                .Include("~/Scripts/knockout-3.0.0.js")
+                .Include("~/Scripts/knockout.validation.js")
+                .Include("~/Scripts/bootstrap.js")
+                .Include("~/Scripts/q.js")
+                .Include("~/Scripts/breeze.min.js")
+                .Include("~/Scripts/toastr.js")
+                .Include("~/Scripts/Markdown.Converter.js")
+                .Include("~/Scripts/typeahead.js")
+                .Include("~/Scripts/knockout.custom-bindings.js")
+            );
         }
 
         public static void AddDefaultIgnorePatterns(IgnoreList ignoreList)

@@ -6,36 +6,14 @@ requirejs.config({
         'plugins': '../Scripts/durandal/plugins',
         'transitions': '../Scripts/durandal/transitions',
 
-        'knockout': '../Scripts/knockout-3.0.0.debug',
-        'knockout.validation': '../Scripts/knockout.validation.min',
-        'knockout.custom-bindings': '../Scripts/knockout.custom-bindings',
-        'knockout.extenders': '../Scripts/knockout.extenders',
-        
-        'jquery': '../Scripts/jquery-2.0.3.min',
-        'jquery.fileupload': '../Scripts/jquery.fileupload',
-        'jquery.ui.widget': '../Scripts/jquery.ui.widget',
-
-        'bootstrap': '../Scripts/bootstrap.min',
-        'typeahead': '../Scripts/typeahead.min',
-        'markdown': '../Scripts/Markdown.Converter',
-        'moment': '../Scripts/moment.min',
-        'breeze': '../Scripts/breeze.min',
-        'Q': '../Scripts/q.min',
-        'toastr': '../Scripts/toastr.min',
-        'doubleTap': '../Scripts/doubleTap',
-
         'entityManagerProvider': 'infrastructure/entityManagerProvider',
         'authentication': 'infrastructure/authentication',
-        'localization': 'infrastructure/localization'
-    },
-    shim: {
-        'bootstrap': {
-            deps: ['jquery'],
-            exports: 'jQuery'
-        },
-        
-        'jquery.ui.widget': ['jquery'],
-        'jquery.fileupload': ['jquery.ui.widget']
+        'localization': 'infrastructure/localization',
+
+        'knockout.extenders': '../Scripts/knockout.extenders',        
+        'typeahead': '../Scripts/typeahead',
+        'moment': '../Scripts/moment',
+        'doubleTap': '../Scripts/doubleTap'
     },
     map: {
         '*': {
@@ -44,9 +22,17 @@ requirejs.config({
     }
 });
 
+define('jquery', function () { return jQuery; });
+define('knockout', ko);
+define('knockout.validation', ko.validation);
+define('Q', function () { return Q; });
+define('breeze', function () { return breeze; });
+define('markdown', function () { return Markdown; });
+define('toastr', function () { return toastr; });
+
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authentication', 'infrastructure/antiForgeryToken',
     'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider',
-    'knockout.custom-bindings', 'knockout.extenders', 'infrastructure/validation', '../Scripts/safari.cancelZoom'],
+    'knockout.extenders', 'infrastructure/validation', '../Scripts/safari.cancelZoom'],
     function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider) {
 
         //>>excludeStart("build", true);

@@ -222,6 +222,7 @@
     <Content Include="App\infrastructure\datacontext.js" />
     <Content Include="App\infrastructure\treeViewModel.js" />
     <Content Include="App\infrastructure\urlHelper.js" />
+    <Content Include="App\main-built.js" />
     <Content Include="App\modules\draft\commands\deleteDraft.js" />
     <Content Include="App\modules\draft\viewmodels\editor\templateEditor.js" />
     <Content Include="App\modules\draft\views\editor\templateEditor.html" />
@@ -418,6 +419,7 @@
     <Content Include="Content\toastr.min.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="weyland-config.js" />
     <None Include="App\infrastructure\searchGrammer.jison" />
     <Content Include="Content\toastr.less" />
     <Content Include="Content\fonts\fontawesome-webfont.woff" />
@@ -484,7 +486,9 @@
     <Content Include="Scripts\toastr.min.js" />
     <Content Include="Scripts\typeahead.js" />
     <Content Include="Scripts\typeahead.min.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -543,6 +547,12 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>if '$(Configuration)'=='Release' (
+    cd $(ProjectDir)
+    weyland build
+)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

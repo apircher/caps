@@ -11,12 +11,11 @@
     'toastr',
     'Q',
     'doubleTap',
-    'jquery.fileupload',
     'infrastructure/tagService',
     './fileListItem',
     './uploadManager'
 ],
-function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, SortModel, $, toastr, Q, doubleTap, fileupload, tagService, FileListItem, UploadManager) {
+function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, SortModel, $, toastr, Q, doubleTap, tagService, FileListItem, UploadManager) {
         
     var vm,
         initialized = false,

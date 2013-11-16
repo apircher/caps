@@ -1,5 +1,5 @@
 ﻿
-define(['knockout', 'jquery', 'bootstrap', 'typeahead'], function (ko, $) {
+(function(ko, $) {
     
     var $window = $(window),
         $html = $('html'),
@@ -635,4 +635,4 @@ define(['knockout', 'jquery', 'bootstrap', 'typeahead'], function (ko, $) {
         UniqueIdProvider: UniqueIdProvider
     };
 
-});
+})(ko, jQuery);
