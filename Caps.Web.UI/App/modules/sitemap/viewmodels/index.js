@@ -234,6 +234,10 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             function filterSelection(item) {
                 return item.Id() !== selectedNode().Id();
             }
+        },
+
+        doTest1: function () {
+            module.router.navigate('#sitemap/test1');
         }
     };
 

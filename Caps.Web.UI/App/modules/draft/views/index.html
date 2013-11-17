@@ -60,6 +60,17 @@
                 </li>
             </ul>
         </div>
+
+        <div class="navbar-panel pull-right">
+            <div class="navbar-text">
+                <span data-bind="text: items().length"></span> Entwürfe
+            </div>
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="fa fa-refresh fa-fw" data-bind="css: { 'fa-spin': isLoading }"></i></a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 

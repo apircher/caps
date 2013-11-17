@@ -29,7 +29,7 @@ function (module, ko, entityManagerProvider, breeze, app) {
 
     function SitemapNodeEditor() {
         var self = this,
-            manager = entityManagerProvider.createManager();
+            manager;
 
         self.entity = ko.observable();
         self.nodeTypes = nodeTypes;
@@ -51,23 +51,20 @@ function (module, ko, entityManagerProvider, breeze, app) {
         });
 
         self.activate = function (sitemapNodeId) {
+            manager = entityManagerProvider.createManager();
             fetchNode(sitemapNodeId).then(function (data) {
                 self.entity(data.results[0]);
             });
         };
 
         self.navigateBack = function () {
-            self.showDraftsIndex();
-        };
-
-        self.showDraftsIndex = function () {
             module.router.navigate(module.routeConfig.hash);
         };
 
         self.saveChanges = function () {
             manager.saveChanges().then(function () {
                 app.trigger('caps:sitemapnode:saved', self.entity());
-                self.showDraftsIndex();
+                self.navigateBack();
             });
         };
 

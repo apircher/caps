@@ -37,6 +37,7 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
     app.on('caps:tags:added', function (data) {
         if (tagFilterOptions) tagFilterOptions.add(createTagFilterItem(data));
     });
+
     app.on('caps:tag:deleted', function (data) {
         if (tagFilterOptions) {
             var filter = tagFilterOptions.findFilter(data.Id());
@@ -80,7 +81,7 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
             var sel = this.selectedFiles();
             if (sel.length === 0)
                 return;
-            if (sel.length === 1)
+            if (sel.length == 1)
                 return this.deleteFile(sel[0]);
 
             var btnOk = 'Auswahl löschen';

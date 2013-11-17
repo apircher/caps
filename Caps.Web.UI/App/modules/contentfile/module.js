@@ -1,4 +1,10 @@
-﻿define(['infrastructure/moduleFactory', 'infrastructure/moduleRouter', './entities', 'durandal/app'], function (moduleFactory, routerFactory, model, app) {
+﻿define([
+    'infrastructure/moduleFactory',
+    'infrastructure/moduleRouter',
+    './entities',
+    'durandal/app'
+],
+function (moduleFactory, routerFactory, model, app) {
 
     var module = moduleFactory.createModule({
         route: 'files*details',

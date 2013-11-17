@@ -5,11 +5,10 @@ define([
     'plugins/router',
     'durandal/system',
     'infrastructure/moduleRegistry',
-    'infrastructure/moduleHistory',
     'ko',
     'infrastructure/utils'
 ],
-function (rootRouter, system, moduleRegistry, ModuleHistory, ko, utils) {
+function (rootRouter, system, moduleRegistry, ko, utils) {
     
     function mapModuleRoutes(router) {
         ko.utils.arrayForEach(moduleRegistry.modules(), function (module) {
@@ -45,7 +44,6 @@ function (rootRouter, system, moduleRegistry, ModuleHistory, ko, utils) {
     }
 
     function extendRouter(router, module) {
-        router.moduleHistory = new ModuleHistory(module, router);
 
         router.activeItem.settings.areSameItem = function (currentItem, newItem, currentActivationData, newActivationData) {
             if (currentItem == newItem || system.getModuleId(currentItem) == system.getModuleId(newItem)) {
@@ -56,12 +54,14 @@ function (rootRouter, system, moduleRegistry, ModuleHistory, ko, utils) {
             return false;
         };
 
-        router.on('router:navigation:composition-complete', function (activation, instruction, r) {
-            router.moduleHistory.registerActivation(activation, instruction);
-        });
-
         router.navigateToModule = function () {
-            router.moduleHistory.activateLast();
+            var ai = router.activeInstruction();
+            if (ai == null) {
+                router.navigate(module.routeConfig.hash);
+            }
+            else {
+                router.navigate(ai.fragment);
+            }
         };
     }
 

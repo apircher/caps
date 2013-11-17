@@ -1,6 +1,6 @@
 ﻿define(['ko'], function (ko) {
 
-    /**
+    /*
      * FileListItem Class
      */
     function FileListItem(data, list) {
@@ -26,5 +26,4 @@
     }
 
     return FileListItem;
-
 });

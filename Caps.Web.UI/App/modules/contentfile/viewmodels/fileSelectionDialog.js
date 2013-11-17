@@ -1,5 +1,13 @@
-﻿define(['plugins/dialog', 'ko', './fileListItem', 'durandal/system', '../datacontext', 'infrastructure/virtualListModel', './fileSearchControl'
-], function (dialog, ko, FileListItem, system, datacontext, VirtualListModel, FileSearchControl) {
+﻿define([
+    'plugins/dialog',
+    'ko',
+    './fileListItem',
+    'durandal/system',
+    '../datacontext',
+    'infrastructure/virtualListModel',
+    './fileSearchControl'
+],
+function (dialog, ko, FileListItem, system, datacontext, VirtualListModel, FileSearchControl) {
 
     function FileSelectionDialog(options) {
         var self = this;

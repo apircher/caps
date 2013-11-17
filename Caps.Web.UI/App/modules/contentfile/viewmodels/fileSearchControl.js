@@ -1,4 +1,11 @@
-﻿define(['ko', 'infrastructure/filterModel', 'infrastructure/listSortModel', 'infrastructure/tagService', '../datacontext'], function (ko, FilterModel, SortModel, tagService, datacontext) {
+﻿define([
+    'ko',
+    'infrastructure/filterModel',
+    'infrastructure/listSortModel',
+    'infrastructure/tagService',
+    '../datacontext'
+],
+function (ko, FilterModel, SortModel, tagService, datacontext) {
 
     function FileSearchControl() {
         var self = this;
@@ -8,8 +15,7 @@
         self.tagFilterOptions = null;
         self.filterOptions = ko.observable();
         self.currentFilter = '';
-
-        
+                
         self.beginSetFilter = function () {
             self.tagFilterOptions = self.tagFilterOptions || self.createTagFilterOptions();
             self.filterOptions(self.tagFilterOptions.clone());
@@ -57,12 +63,10 @@
     FileSearchControl.prototype.refreshResults = function () {
         //TODO: Refresh list...
     };
-
-
+    
     function createTagFilterItem(tag) {
         return new FilterModel.FilterItem('DbFileTag', tag.Name(), tag.Id());
     }
-
 
     return FileSearchControl;
 });

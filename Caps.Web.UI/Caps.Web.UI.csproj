@@ -232,7 +232,6 @@
     <Content Include="App\infrastructure\listSortModel.js" />
     <Content Include="App\infrastructure\localization.js" />
     <Content Include="App\infrastructure\moduleFactory.js" />
-    <Content Include="App\infrastructure\moduleHistory.js" />
     <Content Include="App\infrastructure\moduleRouter.js" />
     <Content Include="App\infrastructure\moduleLoader.js" />
     <Content Include="App\infrastructure\moduleRegistry.js" />

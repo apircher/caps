@@ -1,8 +1,16 @@
-﻿define(['require', 'knockout', '../module', '../datacontext', 'Q', 'moment', 'infrastructure/utils', 'infrastructure/tagService'
-], function (require, ko, module, datacontext, Q, moment, utils, tagService) {
+﻿define([
+    'durandal/system',
+    'durandal/app',
+    'knockout',
+    '../module',
+    '../datacontext',
+    'moment',
+    'infrastructure/utils',
+    'infrastructure/tagService'
+],
+function (system, app, ko, module, datacontext, moment, utils, tagService) {
 
-    var app = require('durandal/app'),
-        currentFileId = ko.observable(0),
+    var currentFileId = ko.observable(0),
         currentFile = ko.observable(),
         isLoading = ko.observable(false),
         tagName = ko.observable(),
@@ -11,7 +19,6 @@
     var vm = {
         fileId: currentFileId,
         file: currentFile,
-
         isLoading: isLoading,
 
         activate: function (fileId) {
@@ -91,18 +98,18 @@
     };
 
     function getFile() {
-        var deferred = Q.defer();
-        isLoading(true);
-        datacontext.fetchFile(currentFileId())
-            .then(function () {
+        return system.defer(function (dfd) {
+            isLoading(true);
+            datacontext.fetchFile(currentFileId()).then(function () {
                 currentFile(datacontext.localGetFile(currentFileId()));
-                deferred.resolve(currentFile());
+                dfd.resolve(currentFile());
             })
-            .fail(deferred.fail)
+            .fail(dfd.fail)
             .done(function () {
                 isLoading(false);
             });
-        return deferred.promise;
+        })
+        .promise();
     }
 
     return vm;

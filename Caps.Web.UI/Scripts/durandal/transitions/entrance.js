@@ -1,5 +1,5 @@
 /**
- * Durandal 2.0.1 Copyright (c) 2012 Blue Spire Consulting, Inc. All Rights Reserved.
+ * Durandal 2.1.0 Copyright (c) 2012 Blue Spire Consulting, Inc. All Rights Reserved.
  * Available via the MIT license.
  * see: http://durandaljs.com or https://github.com/BlueSpire/Durandal for details.
  */
@@ -28,24 +28,10 @@ define(['durandal/system', 'durandal/composition', 'jquery'], function(system, c
      * @class EntranceModule
      * @constructor
      */
-    var entrance = function (context) {
-        return system.defer(function (dfd) {
-            var savedOverflowX,
-                $body = $('body');
-
+    var entrance = function(context) {
+        return system.defer(function(dfd) {
             function endTransition() {
-                restoreHorizontalScrollbar();
                 dfd.resolve();
-            }
-
-            function hideHorizontalScrollbar() {
-                savedOverflowX = $body.css('overflow-x');
-                $body.css('overflow-x', 'hidden');
-            }
-            
-            function restoreHorizontalScrollbar() {
-                if (savedOverflowX)
-                    $body.css('overflow-x', savedOverflowX);
             }
 
             function scrollIfNeeded() {
@@ -62,7 +48,6 @@ define(['durandal/system', 'durandal/composition', 'jquery'], function(system, c
 
                 function startTransition() {
                     scrollIfNeeded();
-                    hideHorizontalScrollbar();
                     context.triggerAttach();
 
                     var startValues = {

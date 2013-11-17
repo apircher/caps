@@ -159,8 +159,7 @@
     }
 
     function navigateBack() {
-        var router = module.router;
-        router.moduleHistory.navigateBack();
+        module.router.navigateBack();
     }
 
     var UserRoleItem = function (role, user) {

@@ -1,5 +1,5 @@
 /**
- * Durandal 2.0.1 Copyright (c) 2012 Blue Spire Consulting, Inc. All Rights Reserved.
+ * Durandal 2.1.0 Copyright (c) 2012 Blue Spire Consulting, Inc. All Rights Reserved.
  * Available via the MIT license.
  * see: http://durandaljs.com or https://github.com/BlueSpire/Durandal for details.
  */
@@ -22,6 +22,7 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
     var escapeRegExp = /[\-{}\[\]+?.,\\\^$|#\s]/g;
     var startDeferred, rootRouter;
     var trailingSlash = /\/$/;
+    var routesAreCaseSensitive = false;
 
     function routeStringToRegExp(routeString) {
         routeString = routeString.replace(escapeRegExp, '\\$&')
@@ -31,7 +32,7 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
             })
             .replace(splatParam, '(.*?)');
 
-        return new RegExp('^' + routeString + '$');
+        return new RegExp('^' + routeString + '$', routesAreCaseSensitive ? undefined : 'i');
     }
 
     function stripParametersFromRoute(route) {
@@ -60,6 +61,14 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
         }
 
         return true;
+    }
+
+    function reconstructUrl(instruction){
+        if(!instruction.queryString){
+            return instruction.fragment;
+        }
+
+        return instruction.fragment + '?' + instruction.queryString;
     }
 
     /**
@@ -188,8 +197,8 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
             return false;
         };
 
-        function hasChildRouter(instance) {
-            return instance.router && instance.router.parent == router;
+        function hasChildRouter(instance, parentRouter) {
+            return instance.router && instance.router.parent == parentRouter;
         }
 
         function setCurrentInstructionRouteIsActive(flag) {
@@ -217,10 +226,11 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
                 router.trigger('router:navigation:to:' + toModuleId);
             }
 
-            if (!hasChildRouter(instance)) {
+            if (!hasChildRouter(instance, router)) {
                 router.updateDocumentTitle(instance, instruction);
             }
 
+            isProcessing(false);
             rootRouter.explicitNavigation = false;
             rootRouter.navigatingBack = false;
             router.trigger('router:navigation:complete', instance, instruction, router);
@@ -232,7 +242,7 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
             router.activeInstruction(currentInstruction);
 
             if (currentInstruction) {
-                router.navigate(currentInstruction.fragment, false);
+                router.navigate(reconstructUrl(currentInstruction), false);
             }
 
             isProcessing(false);
@@ -259,7 +269,7 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
                     var previousActivation = currentActivation;
                     completeNavigation(instance, instruction);
 
-                    if (hasChildRouter(instance)) {
+                    if (hasChildRouter(instance, router)) {
                         var fullFragment = instruction.fragment;
                         if (instruction.queryString) {
                             fullFragment += "?" + instruction.queryString;
@@ -532,7 +542,7 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
             router.trigger('router:route:not-found', fragment, router);
 
             if (currentInstruction) {
-                history.navigate(currentInstruction.fragment, { trigger:false, replace:true });
+                history.navigate(reconstructUrl(currentInstruction), { trigger:false, replace:true });
             }
 
             rootRouter.explicitNavigation = false;
@@ -846,6 +856,14 @@ define(['durandal/system', 'durandal/app', 'durandal/activator', 'durandal/event
     rootRouter = createRouter();
     rootRouter.explicitNavigation = false;
     rootRouter.navigatingBack = false;
+
+    /**
+     * Makes the RegExp generated for routes case sensitive, rather than the default of case insensitive.
+     * @method makeRoutesCaseSensitive
+     */
+    rootRouter.makeRoutesCaseSensitive = function(){
+        routesAreCaseSensitive = true;
+    };
 
     /**
      * Verify that the target is the current window

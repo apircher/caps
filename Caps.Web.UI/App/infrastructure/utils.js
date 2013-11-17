@@ -27,9 +27,17 @@
         return s.replace('.00', '').replace('.', ',');
     }
 
+    function stringStartsWith(s, value) {
+        s = s || '';
+        if (value.length > s.length)
+            return false;
+        return s.substring(0, value.length) === value;
+    };
+
     return {
         compareArrays: compareArrays,
-        formatFileSize: formatFileSize
+        formatFileSize: formatFileSize,
+        stringStartsWith: stringStartsWith
     };
 
 });

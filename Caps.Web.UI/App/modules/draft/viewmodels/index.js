@@ -21,6 +21,7 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         searchWords = ko.observable(''),
         sortOptions = createSortOptions(),
         initialized = false,
+        isLoading = ko.observable(false),
         deleteDraftCommand = new DeleteDraftCommand();
 
     app.on('caps:draft:saved', function (args) {
@@ -47,9 +48,11 @@ function (module, datacontext, ko, app, moment, localization, publicationService
     }
 
     function fetchListItems() {
+        isLoading(true);
         return datacontext.searchDrafts(searchWords(), sortOptions.getOrderBy()).then(function (data) {
             var items = ko.utils.arrayMap(data.results, function (draft) { return new DraftListItem(draft); });
             listItems(items);
+            isLoading(false);
         });
     }
 
@@ -90,6 +93,7 @@ function (module, datacontext, ko, app, moment, localization, publicationService
             fetchListItems().then(selectFirstDraft);
         },
         sortOptions: sortOptions,
+        isLoading: isLoading,
 
         activate: function () {
             if (!initialized) {
