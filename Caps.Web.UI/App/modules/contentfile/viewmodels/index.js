@@ -13,9 +13,10 @@
     'doubleTap',
     'infrastructure/tagService',
     './fileListItem',
-    './uploadManager'
+    './uploadManager',
+    './fileSearchControl'
 ],
-function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, SortModel, $, toastr, Q, doubleTap, tagService, FileListItem, UploadManager) {
+function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, SortModel, $, toastr, Q, doubleTap, tagService, FileListItem, UploadManager, FileSearchControl) {
         
     var vm,
         initialized = false,
@@ -24,26 +25,23 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
         uploadManager = createUploadManager(),
         isInteractive = ko.observable(false),
         scrollTop = ko.observable(0),
-        searchWords = ko.observable(''),
-        sortOptions = createSortOptions(),
-        tagFilterOptions = null,
-        filterOptions = ko.observable(),
-        currentFilter = '';
+        searchControl = new FileSearchControl();
 
     module.router.on('router:navigation:attached', function (currentActivation, currentInstruction, router) {
         if (currentActivation == vm)  isInteractive(true);
     });
 
     app.on('caps:tags:added', function (data) {
-        if (tagFilterOptions) tagFilterOptions.add(createTagFilterItem(data));
+        searchControl.addTagFilter(data);
     });
 
     app.on('caps:tag:deleted', function (data) {
-        if (tagFilterOptions) {
-            var filter = tagFilterOptions.findFilter(data.Id());
-            if (filter) tagFilterOptions.filters.remove(filter);
-        }
+        searchControl.removeTagFilter(data);
     });
+
+    searchControl.refreshResults = function () {
+        vm.refresh();
+    };
 
     vm = {
         list: list,
@@ -53,9 +51,7 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
         selectedFiles: list.selectedItems,
         scrollTop: scrollTop,
         isInteractive: isInteractive,
-        searchWords: searchWords,
-        sortOptions: sortOptions,
-        filterOptions: filterOptions,
+        searchControl: searchControl,
 
         activate: function () {
             if (!initialized) {
@@ -104,30 +100,6 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
             list.removeAll();
             loadPage(1);
         },
-
-        beginSetFilter: function () {
-            tagFilterOptions = tagFilterOptions || createTagFilterOptions();
-            filterOptions(tagFilterOptions.clone());
-            return true;
-        },
-
-        endSetFilter: function () {
-            var filter = filterOptions().toString();
-            if (filter !== currentFilter) {
-                tagFilterOptions = filterOptions();
-                currentFilter = filter;
-                vm.refresh();
-            }
-            filterOptions(null);
-        },
-
-        search: function () {            
-            if (searchWords() && searchWords().length) {
-                if (!datacontext.isValidUserQuery(searchWords()))
-                    return false;
-            }
-            vm.refresh();
-        },
                 
         resetSelectedItem: function () {
             list.resetSelection();
@@ -172,20 +144,20 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
     };
 
     function loadPage(pageNumber) {
-        var deferred = Q.defer();
-        isLoading(true);
-        console.log('loadPage called. pageNumber=' + pageNumber + ', Filter=' + currentFilter);
-
-        datacontext.searchFiles(searchWords(), pageNumber, list.itemsPerPage(), sortOptions.getOrderBy(), currentFilter)
-            .then(function (data) {
-                list.addPage(data, pageNumber);
-                deferred.resolve();
-            })
-            .fail(deferred.reject)
-            .done(function () {
-                isLoading(false);
-            });
-        return deferred.promise;
+        var sc = searchControl;
+        console.log('loadPage called. pageNumber=' + pageNumber + ', Filter=' + sc.currentFilter);
+        return system.defer(function (dfd) {
+            isLoading(true);
+            datacontext.searchFiles(sc.searchWords(), pageNumber, list.itemsPerPage(), sc.sortOptions.getOrderBy(), sc.currentFilter)
+                .then(function (data) {
+                    list.addPage(data, pageNumber);
+                    dfd.resolve();
+                })
+                .fail(dfd.reject)
+                .done(function () {
+                    isLoading(false);
+                });
+        }).promise();
     }
 
     function deleteFile(item) {
@@ -197,24 +169,6 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
         function deleteFailed(err) {
             dialog.showMessage('Die Datei konnte nicht gelöscht werden.', 'Nicht erfolgreich');
         }
-    }
-
-    function createTagFilterOptions() {
-        var items = ko.utils.arrayMap(tagService.tags(), function (t) { return createTagFilterItem(t); });
-        return new FilterModel.FilterOptions(items);
-    }
-
-    function createSortOptions() {
-        var columns = [
-            new SortModel.ListColumn('Created.At', 'Hochgeladen am'),
-            new SortModel.ListColumn('Created.By', 'Hochgeladen von'),
-            new SortModel.ListColumn('Modified.At', 'Letzte Änderung'),
-            new SortModel.ListColumn('Modified.By', 'Letzte Änderung von'),
-            new SortModel.ListColumn('FileName', 'Dateiname')
-        ];
-        return new SortModel.SortOptions(columns, function () {
-            vm.refresh();
-        });
     }
 
     function createUploadManager() {
@@ -233,10 +187,6 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
                 });
             }
         });
-    }
-
-    function createTagFilterItem(tag) {
-        return new FilterModel.FilterItem('DbFileTag', tag.Name(), tag.Id());
     }
                 
     return vm;

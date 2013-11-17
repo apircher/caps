@@ -12,7 +12,7 @@
                     <ul class="checkbox-list" role="menu">
                         <li>
                             <a role="menuitem" tabindex="-1" href="#" class="checkable-item" data-bind="click: filterOptions().toggleAll, clickBubble: false">
-                                <span class="icon"><i class="fa fa-fw" data-bind="css: { 'fa-square': !filterOptions().allSelected(), 'fa-check': filterOptions().allSelected() }"></i></span>
+                                <span class="icon"><i class="fa fa-fw" data-bind="css: { 'fa-square-o': !filterOptions().allSelected(), 'fa-check-square-o': filterOptions().allSelected() }"></i></span>
                                 <span class="mnu-label">Alle</span>
                             </a>
                         </li>
@@ -24,7 +24,7 @@
                     <ul class="checkbox-list" role="menu" data-bind="foreach: filterOptions().filters">
                         <li>
                             <a role="menuitem" tabindex="-1" href="#" class="checkable-item" data-bind="click: toggleSelect, clickBubble: false">
-                                <span class="icon"><i class="fa fa-fw" data-bind="css: { 'fa-square': !isSelected(), 'fa-check': isSelected() }"></i></span>
+                                <span class="icon"><i class="fa fa-fw" data-bind="css: { 'fa-square-o': !isSelected(), 'fa-check-square-o': isSelected() }"></i></span>
                                 <span data-bind="text: title" class="mnu-label"></span>
                             </a>
                         </li>

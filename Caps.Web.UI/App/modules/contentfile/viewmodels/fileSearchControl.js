@@ -63,6 +63,17 @@ function (ko, FilterModel, SortModel, tagService, datacontext) {
     FileSearchControl.prototype.refreshResults = function () {
         //TODO: Refresh list...
     };
+
+    FileSearchControl.prototype.addTagFilter = function (tag) {
+        if (this.tagFilterOptions) this.tagFilterOptions.add(createTagFilterItem(tag));
+    };
+
+    FileSearchControl.prototype.removeTagFilter = function (tag) {
+        if (this.tagFilterOptions) {
+            var filter = this.tagFilterOptions.findFilter(tag.Id());
+            if (filter) this.tagFilterOptions.filters.remove(filter);
+        }
+    };
     
     function createTagFilterItem(tag) {
         return new FilterModel.FilterItem('DbFileTag', tag.Name(), tag.Id());

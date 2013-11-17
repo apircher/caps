@@ -1,163 +1,95 @@
 ﻿<div id="files-index" class="app-page bottom-fixed-navbar-container">
 
-    <div id="files-toolbar">
-        <div class="toolbar">
-
-            <div class="row">
-                <div class="col-md-offset-6 col-md-6 col-lg-offset-8 col-lg-4">
-                    <div class="input-group">
-                        <!-- Filter Dropdown -->
-                        <div class="input-group-btn" data-bind="event: { 'show.bs.dropdown': beginSetFilter }">
-                            <a id="A1" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn-dropdown">
-                                <span><i class="fa fa-filter"></i></span>
-                                <b class="caret"/>
-                            </a>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="A1">
-                                <li role="presentation" class="dropdown-header">Markierungen</li>
-                                <li data-bind="if: filterOptions()">
-                                    <div class="dropdown menu-section">
-                                        <ul class="checkbox-list" role="menu">
-                                            <li>
-                                                <a role="menuitem" tabindex="-1" href="#" class="checkable-item" data-bind="click: filterOptions().toggleAll, clickBubble: false">
-                                                    <i class="fa fa-fw" data-bind="css: { 'fa-square-o': !filterOptions().allSelected(), 'fa-check-square-o': filterOptions().allSelected() }"></i>
-                                                    <span class="mnu-label">Alle</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li data-bind="if: filterOptions()">
-                                    <div id="FiltersDropDown" class="dropdown menu-section scrollable" data-bind="click: function () { $('#FiltersDropDown > ul').focus(); }, clickBubble: false">
-                                        <ul class="checkbox-list" role="menu" data-bind="foreach: filterOptions().filters">
-                                            <li>
-                                                <a role="menuitem" tabindex="-1" href="#" class="checkable-item" data-bind="click: toggleSelect, clickBubble: false">
-                                                    <i class="fa fa-fw" data-bind="css: { 'fa-square-o': !isSelected(), 'fa-check-square-o': isSelected() }"></i>
-                                                    <span data-bind="text: title" class="mnu-label"></span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="dropdown-buttons">
-                                        <button class="btn btn-default btn-sm" data-bind="click: endSetFilter">Ok</button>
-                                        <button class="btn btn-default btn-sm">Abbrechen</button>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- Searchwords -->
-                        <input type="text" data-bind="delayedSearch: { searchObservable: searchWords, searchHandler: search }" class="form-control hide-ms-clear" placeholder="Suche" />
-                        <!-- Sort Button/Dropdown -->
-                        <div class="input-group-btn btn-group split-btn">
-                            <a href="#" role="button" data-bind="click: sortOptions.toggleSortDirection">
-                                <span><i data-bind="css: { 'fa-sort-alpha-asc': sortOptions.sortDirection() == 'asc', 'fa-sort-alpha-desc': sortOptions.sortDirection() != 'asc' }" class="fa"></i></span>
-                            </a>
-                            <a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn-dropdown">
-                                <b class="caret"/>
-                            </a>
-                            <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">    
-                                <!-- ko foreach: sortOptions.columns -->
-                                <li role="presentation">
-                                    <a role="menuitem" tabindex="-1" href="#" data-bind="click: sort">
-                                        <span class="pull-right" data-bind="visible: isSelected"><i class="fa fa-check"></i></span> 
-                                        <span data-bind="text: title" class="mnu-label"></span>
-                                    </a>
-                                </li>
-                                <!-- /ko -->
-                                <li role="presentation" class="divider"></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortOptions.sortAsc"><span class="pull-right" data-bind="visible: sortOptions.sortDirection() == 'asc'"><i class="fa fa-check"></i></span> Aufsteigend</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortOptions.sortDesc"><span class="pull-right" data-bind="visible: sortOptions.sortDirection() == 'desc'"><i class="fa fa-check"></i></span> Absteigend</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+    <div class="page-content">
+        <div id="files-toolbar" class="toolbar row">
+            <div class="col-md-offset-6 col-md-6 col-lg-offset-8 col-lg-4">
+                <!-- ko compose: searchControl --><!-- /ko -->
             </div>
         </div>
-    </div>
-    
-    <div id="drop-zone" class="page-content" data-bind="click: resetSelectedItem">
 
-        <div class="row thumbnails-fixed-size list-files" data-bind="lazyLoad: { data: list.items(), loadHandler: loadHandler }, scrollTop: { observable: scrollTop, enabled: isInteractive }">
-            <div class="col-sm-6 col-md-3 col-lg-2">
-                <div class="thumbnail-container" data-bind="css: { 'item-checked': isSelected  }">
-                    <a href="#" class="thumbnail" data-bind="css: { 'item-selected': isSelectedItem }, clickBubble: false, event: { dblclick: $parent.showDetail }, click: selectItem">
+        <div id="drop-zone" data-bind="click: resetSelectedItem">
+
+            <div class="row thumbnails-fixed-size list-files" data-bind="lazyLoad: { data: list.items(), loadHandler: loadHandler }, scrollTop: { observable: scrollTop, enabled: isInteractive }">
+                <div class="col-sm-6 col-md-3 col-lg-2">
+                    <div class="thumbnail-container" data-bind="css: { 'item-checked': isSelected  }">
+                        <a href="#" class="thumbnail" data-bind="css: { 'item-selected': isSelectedItem }, clickBubble: false, event: { dblclick: $parent.showDetail }, click: selectItem">
+                            <!-- ko if: data() -->
+                            <!-- ko template: { name: 'dbfile-icon', data: data() } --><!-- /ko -->
+                            <!-- /ko -->
+                        </a>
                         <!-- ko if: data() -->
-                        <!-- ko template: { name: 'dbfile-icon', data: data() } --><!-- /ko -->
-                        <!-- /ko -->
-                    </a>
-                    <!-- ko if: data() -->          
                         <div class="item-check" data-bind="click: toggleSelected, clickBubble: false, attr: { title: data().FileName() + ' auswählen' }">
                             <i class="fa" data-bind="css: { 'fa-check-square-o': isSelected, 'fa-square-o': !isSelected() }"></i>
-                        </div>          
+                        </div>
                         <div class="thumbnail-controls">
                             <a class="btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="fa fa-trash-o fa-2x"></i></a>
                         </div>
-                    <!-- /ko -->
+                        <!-- /ko -->
+                    </div>
                 </div>
             </div>
+
+            <div class="drop-zone-placeholder" data-bind="visible: list.count() == 0 && !isLoading()">
+                <p data-bind="if: (window.FileReader && Modernizr.draganddrop)">
+                    <!-- ko if: (window.FileReader && Modernizr.draganddrop) -->
+                    Füge Dateien hinzu, indem Du sie hier per Drag and Drop ablegst oder unten auf "Dateien hinzufügen" klickst.
+                    <!-- /ko -->
+                    <!-- ko if: !(window.FileReader && Modernizr.draganddrop) -->
+                    Füge Dateien hinzu, indem Du unten auf "Dateien hinzufügen" klickst.
+                    <!-- /ko -->
+
+                </p>
+            </div>
         </div>
 
-        <div class="drop-zone-placeholder" data-bind="visible: list.count() == 0 && !isLoading()">
-            <p data-bind="if: (window.FileReader && Modernizr.draganddrop)">
-                <!-- ko if: (window.FileReader && Modernizr.draganddrop) -->
-                Füge Dateien hinzu, indem Du sie hier per Drag and Drop ablegst oder unten auf "Dateien hinzufügen" klickst.
-                <!-- /ko -->
-                <!-- ko if: !(window.FileReader && Modernizr.draganddrop) -->
-                Füge Dateien hinzu, indem Du unten auf "Dateien hinzufügen" klickst.
-                <!-- /ko -->
-
-            </p>
-        </div>
-    </div>
-
-    <div class="navbar navbar-default navbar-fixed-bottom">        
-        <div class="navbar-panel pull-left">
-            <ul class="nav navbar-nav">
-                <li>
-                    <a class="fileinput-button">
-                        <span><i class="fa fa-plus"></i> Dateien hinzufügen</span>
-                        <!-- ko with: uploadManager -->
-                        <input type="file" name="files" data-url="api/DbFileUpload" 
-                            data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: $('#drop-zone'), drop: filesDropped }" multiple>
-                        <!-- /ko -->
-                    </a>                    
-                </li>
-                <li>
-                    <a href="#" data-bind="click: showSelectedFile, visible: selectedFile()">
-                        <i class="fa fa-arrow-right"></i> Details
-                    </a>
-                </li>
-                <li data-bind="visible: selectedFiles().length > 0">
-                    <a href="#" data-bind="click: deleteSelection">
-                        <i class="fa fa-times"></i> Auswahl löschen
-                    </a>
-                </li>
-            </ul>
-        </div>
-        
-        <div class="navbar-panel pull-right">
-            <div class="navbar-text" data-bind="visible: uploadManager.isUploading">
-                Upload: <span data-bind="text: uploadManager.progress"></span> %
+        <div class="navbar navbar-default navbar-fixed-bottom">
+            <div class="navbar-panel pull-left">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a class="fileinput-button">
+                            <span><i class="fa fa-plus"></i> Dateien hinzufügen</span>
+                            <!-- ko with: uploadManager -->
+                            <input type="file" name="files" data-url="api/DbFileUpload"
+                                    data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: $('#drop-zone'), drop: filesDropped }" multiple>
+                            <!-- /ko -->
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" data-bind="click: showSelectedFile, visible: selectedFile()">
+                            <i class="fa fa-arrow-right"></i> Details
+                        </a>
+                    </li>
+                    <li data-bind="visible: selectedFiles().length > 0">
+                        <a href="#" data-bind="click: deleteSelection">
+                            <i class="fa fa-times"></i> Auswahl löschen
+                        </a>
+                    </li>
+                </ul>
             </div>
 
-            <div class="navbar-text hidden-sm">
-                <!-- ko if: selectedFiles().length > 0 -->
-                <span data-bind="text: selectedFiles().length"></span> Dateien ausgewählt
-                <!-- /ko -->
-                <!-- ko if: selectedFiles().length <= 0 && selectedFile() && selectedFile().data() -->
-                <span data-bind="text: selectedFile().data().FileName"></span>
-                <!-- /ko -->
-            </div>
+            <div class="navbar-panel pull-right">
+                <div class="navbar-text" data-bind="visible: uploadManager.isUploading">
+                    Upload: <span data-bind="text: uploadManager.progress"></span> %
+                </div>
 
-            <div class="navbar-text">
-                <span data-bind="text: list.count()"></span> Dateien
+                <div class="navbar-text hidden-sm">
+                    <!-- ko if: selectedFiles().length > 0 -->
+                    <span data-bind="text: selectedFiles().length"></span> Dateien ausgewählt
+                    <!-- /ko -->
+                    <!-- ko if: selectedFiles().length <= 0 && selectedFile() && selectedFile().data() -->
+                    <span data-bind="text: selectedFile().data().FileName"></span>
+                    <!-- /ko -->
+                </div>
+
+                <div class="navbar-text">
+                    <span data-bind="text: list.count()"></span> Dateien
+                </div>
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="fa fa-refresh fa-fw" data-bind="css: { 'fa-spin': isLoading }"></i></a>
+                    </li>
+                </ul>
             </div>
-            <ul class="nav navbar-nav">
-                <li>
-                    <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="fa fa-refresh fa-fw" data-bind="css: { 'fa-spin': isLoading }"></i></a>
-                </li>
-            </ul>
         </div>
     </div>
 </div>
