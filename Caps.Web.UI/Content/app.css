@@ -174,12 +174,12 @@
     margin:0;
     padding:0;
 }
-.modal-body > .container {
-    padding-left:0;
-    padding-right:0;
+.modal-body {
+    padding:20px 30px;
 }
 .messageBox {
     min-width: 400px;
+    max-width: 800px;
 }
     .messageBox p.message {
         word-wrap: break-word;
