@@ -1,4 +1,4 @@
-﻿<div id="files-index" class="app-page bottom-fixed-navbar-container">
+﻿<div id="files-index" class="app-page bottom-fixed-navbar-container" data-bind="scrollTop: { observable: scrollTop, enabled: isInteractive }">
 
     <div class="page-content">
         <div id="files-toolbar" class="toolbar row">
@@ -7,14 +7,17 @@
             </div>
         </div>
 
-        <div id="drop-zone" data-bind="click: resetSelectedItem">
+        <div id="drop-zone" class="row" data-bind="click: resetSelectedItem">
 
-            <div class="row thumbnails-fixed-size list-files" data-bind="lazyLoad: { data: list.items(), loadHandler: loadHandler }, scrollTop: { observable: scrollTop, enabled: isInteractive }">
+            <div class="thumbnails-fixed-size" data-bind="lazyLoad: { data: list.items(), loadHandler: loadHandler }">
                 <div class="col-sm-6 col-md-3 col-lg-2">
-                    <div class="thumbnail-container" data-bind="css: { 'item-checked': isSelected  }">
-                        <a href="#" class="thumbnail" data-bind="css: { 'item-selected': isSelectedItem }, clickBubble: false, event: { dblclick: $parent.showDetail }, click: selectItem">
+                    <div class="thumbnail-container" data-bind="css: { 'item-checked': isSelected, 'item-selected': isSelectedItem  }">
+                        <a href="#" class="thumbnail" data-bind="doubleTap: true, event: { dbltap: $parent.showDetail }, click: selectItem, clickBubble: false">
                             <!-- ko if: data() -->
                             <!-- ko template: { name: 'dbfile-icon', data: data() } --><!-- /ko -->
+                            <!-- /ko -->
+                            <!-- ko if: isUploading() -->
+                            <span><i class="fa fa-spinner fa-spin fa-4x"></i></span>
                             <!-- /ko -->
                         </a>
                         <!-- ko if: data() -->
@@ -50,7 +53,7 @@
                             <span><i class="fa fa-plus"></i> Dateien hinzufügen</span>
                             <!-- ko with: uploadManager -->
                             <input type="file" name="files" data-url="api/DbFileUpload"
-                                    data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: $('#drop-zone'), drop: filesDropped }" multiple>
+                                   data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: $('#drop-zone'), drop: filesDropped }" multiple>
                             <!-- /ko -->
                         </a>
                     </li>
@@ -96,9 +99,9 @@
 
 <script type="text/html" id="dbfile-icon">
     <!-- ko if: isImage() -->
-    <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: FileName, alt: FileName }, lazyImage: true, click: function () { $parents[1].showDetail($parent); }" />
+    <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: FileName, alt: FileName }, lazyImage: true" />
     <!-- /ko -->
     <!-- ko if: !isImage() -->
-    <span data-bind="attr: { title: FileName }"><i class="fa fa-file fa-4x" data-bind="click: function () { $parents[1].showDetail($parent); }"></i></span>
+    <span data-bind="attr: { title: FileName }"><i class="fa fa-file fa-4x"></i></span>
     <!-- /ko -->
 </script>

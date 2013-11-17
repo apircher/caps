@@ -73,7 +73,7 @@
 }
 
 .page-content {    
-    padding:0 25px 0 15px;
+    padding:0 15px;
 }
 
 .panel-scroll-v {
@@ -302,26 +302,23 @@ ul.tree-branch a:hover {
 
 .thumbnail-container {
     position:relative;
-    padding:0 0 15px;
 }
 
 .thumbnail {
     background-color:#fff;
 }
-    .thumbnail,
-    .thumbnail:active,
-    .thumbnail:visited,
-    .thumbnail:focus,
-    .thumbnail:hover {
-        text-decoration:none;
-    }
+
+.item-selected > .thumbnail {
+    border-color: #0088cc;
+    box-shadow: 0px 1px 4px rgba(0,105,214,0.25);
+}
+
 .thumbnails-fixed-size .thumbnail {
     position: relative;
     overflow: hidden;
-    background-color:#fff;
     height: 180px;
     text-align: center;
-    padding:0;
+    padding: 0;
 }
     .thumbnails-fixed-size .thumbnail,
     .thumbnails-fixed-size .thumbnail > span > i {
@@ -342,38 +339,27 @@ ul.tree-branch a:hover {
 .thumbnail-controls {
     position: absolute;
     left: 1px;
-    bottom: 37px;
-    font-size: 79.5%;
+    bottom: 1px;
     width:auto;
+    border-bottom-left-radius:4px;
+    opacity: 1;
+    background-color: #fff;
 }
-/* Hide if not on touch device. */
-.no-touch .thumbnail-controls {
+
+.thumbnail-controls {
     visibility: hidden;
 }
-/* On no-touch devices, show the controls when hovering
-   over the item or when the item is selected. */
-/*.no-touch .thumbnail.item-selected .thumbnail-controls,   <- Not supported... */
-.no-touch .thumbnail-container:hover .thumbnail-controls {
-    visibility: visible;
+
+.item-selected > .thumbnail-controls {
+    visibility:visible;
 }
 
 .thumbnail-controls .btn-link {
     text-decoration: none;
-    color: #ddd;
+    color: #333;
     padding: 0 .3em;
-    opacity: .5;
+    opacity: .4;
     display: inline-block;
-}
-/* Hover feedback on no-touch devices. */
-.no-touch .thumbnail-controls .btn-link:hover {
-    color: #999;
-    opacity: 1;
-    background-color: rgba(255, 255, 255, .75);
-}
-
-.thumbnail.item-selected {
-    border-color:#0088cc;
-    box-shadow:0px 1px 4px rgba(0,105,214,0.25);
 }
 
 .thumbnail-container .item-check {
@@ -384,11 +370,12 @@ ul.tree-branch a:hover {
     cursor: pointer;
     padding: 0px 21px 16px 4px;
     opacity: 1;
+    border-top-left-radius: 4px;
 } 
     .thumbnail-container .item-check i {
         background-color: #fff;
-        padding-right: 3px;
-        padding-bottom: 1px;
+        padding:0 4px 1px 3px;
+        margin-left:-3px;
     }
 /* Hover feedback on no-touch devices. */
 .no-touch .thumbnail-container .item-check:hover {

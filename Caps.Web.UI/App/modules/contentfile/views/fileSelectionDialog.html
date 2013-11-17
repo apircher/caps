@@ -11,7 +11,7 @@
         </div>
 
         <div>
-            <div class="row thumbnails-fixed-size list-files" data-bind="lazyLoad: { data: list.items(), loadHandler: loadHandler }">
+            <div class="row thumbnails-fixed-size" data-bind="lazyLoad: { data: list.items(), loadHandler: loadHandler }">
                 <div class="col-sm-6 col-md-3 col-lg-2">
                     <div class="thumbnail-container" data-bind="css: { 'item-checked': isSelected  }">
                         <a href="#" class="thumbnail" data-bind="css: { 'item-selected': isSelectedItem }, clickBubble: false, click: selectItem">

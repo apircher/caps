@@ -1,0 +1,24 @@
+﻿<div class="form-group">
+    <div class="input-group">
+        <input type="text" class="form-control" placeholder="Entwürfe durchsuchen..." data-bind="delayedSearch: { searchObservable: searchWords, searchHandler: search }" />
+        <div class="input-group-btn btn-group split-btn">
+            <a href="#" role="button" data-bind="click: sortOptions.toggleSortDirection">
+                <span><i data-bind="css: { 'fa-sort-alpha-asc': sortOptions.sortDirection() == 'asc', 'fa-sort-alpha-desc': sortOptions.sortDirection() != 'asc' }" class="fa fa-fw"></i></span>
+            </a>
+            <a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn-dropdown"><b class="caret" /></a>
+            <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">
+                <!-- ko foreach: sortOptions.columns -->
+                <li role="presentation">
+                    <a role="menuitem" tabindex="-1" href="#" data-bind="click: sort">
+                        <span class="pull-right" data-bind="visible: isSelected"><i class="fa fa-check"></i></span>
+                        <span data-bind="text: title" class="mnu-label"></span>
+                    </a>
+                </li>
+                <!-- /ko -->
+                <li role="presentation" class="divider"></li>
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortOptions.sortAsc"><span class="pull-right" data-bind="visible: sortOptions.sortDirection() == 'asc'"><i class="fa fa-check"></i></span> Aufsteigend</a></li>
+                <li role="presentation"><a role="menuitem" tabindex="-1" href="#" data-bind="click: sortOptions.sortDesc"><span class="pull-right" data-bind="visible: sortOptions.sortDirection() == 'desc'"><i class="fa fa-check"></i></span> Absteigend</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

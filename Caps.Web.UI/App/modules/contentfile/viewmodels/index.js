@@ -175,6 +175,7 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
         return new UploadManager({
             uploadStarted: function (file, batchIndex) {
                 file.listItem = list.insertItem(undefined, batchIndex);
+                file.listItem.isUploading(true);
             },
             uploadDone: function (result, file) {
                 var listItem = file.listItem;

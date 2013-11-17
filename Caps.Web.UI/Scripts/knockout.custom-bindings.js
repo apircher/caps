@@ -373,15 +373,21 @@
             if (ko.isObservable(o)) {
                 var st = $html.scrollTop() || $body.scrollTop();
                 console.log('saveScrollTop, offset=' + st);
-                if (o() !== st) o(st);
+                if (ko.unwrap(o) !== st) {
+                    o(st);
+                }
             }
         },
 
         restoreScrollTop: function (o) {
             if (ko.isObservable(o) && o()) {
                 var st = $html.scrollTop() || $body.scrollTop();
-                console.log('restoreScrollTop, offset=' + st);
-                if (o() != st) $('html, body').scrollTop(o());
+                if (ko.unwrap(o) !== st) {
+                    console.log('restoreScrollTop, offset=' + st);
+                    window.setTimeout(function () {
+                        $('html, body').scrollTop(o());
+                    }, 0);
+                }
             }
         }
     };

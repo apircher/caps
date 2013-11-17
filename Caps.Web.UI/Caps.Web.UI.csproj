@@ -224,7 +224,9 @@
     <Content Include="App\infrastructure\urlHelper.js" />
     <Content Include="App\main-built.js" />
     <Content Include="App\modules\draft\commands\deleteDraft.js" />
+    <Content Include="App\modules\draft\viewmodels\draftSearchControl.js" />
     <Content Include="App\modules\draft\viewmodels\editor\templateEditor.js" />
+    <Content Include="App\modules\draft\views\draftSearchControl.html" />
     <Content Include="App\modules\draft\views\editor\templateEditor.html" />
     <Content Include="App\modules\sitemap\entities.js" />
     <Content Include="App\infrastructure\entityManagerProvider.js" />

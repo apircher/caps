@@ -1,4 +1,8 @@
-﻿define(['ko'], function (ko) {
+﻿define([
+    'ko',
+    'durandal/system'
+],
+function (ko, system) {
     
     /*
      * UploadManager Class
@@ -16,7 +20,11 @@
                     options.uploadStarted(f, i++);
             });
             self.isUploading(true);
-            data.submit();
+
+            return system.defer(function (dfd) {
+                data.submit();
+            })
+            .promise();
         };
 
         self.uploadDone = function (e, data) {

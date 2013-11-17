@@ -11,18 +11,22 @@ define([
     'infrastructure/publicationService',
     '../contentGenerator',
     'infrastructure/listSortModel',
-    '../commands/deleteDraft'
+    '../commands/deleteDraft',
+    './draftSearchControl'
 ],
-function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel, DeleteDraftCommand) {
+function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel, DeleteDraftCommand, DraftSearchControl) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
         draftPreview = ko.observable(),
-        searchWords = ko.observable(''),
-        sortOptions = createSortOptions(),
         initialized = false,
         isLoading = ko.observable(false),
-        deleteDraftCommand = new DeleteDraftCommand();
+        deleteDraftCommand = new DeleteDraftCommand(),
+        searchControl = new DraftSearchControl();
+    
+    searchControl.refreshResults = function () {
+        vm.refresh();
+    };
 
     app.on('caps:draft:saved', function (args) {
         var draft = args.entity;
@@ -48,8 +52,9 @@ function (module, datacontext, ko, app, moment, localization, publicationService
     }
 
     function fetchListItems() {
+        var sc = searchControl;
         isLoading(true);
-        return datacontext.searchDrafts(searchWords(), sortOptions.getOrderBy()).then(function (data) {
+        return datacontext.searchDrafts(sc.searchWords(), sc.sortOptions.getOrderBy()).then(function (data) {
             var items = ko.utils.arrayMap(data.results, function (draft) { return new DraftListItem(draft); });
             listItems(items);
             isLoading(false);
@@ -88,12 +93,8 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         items: listItems,
         selectedItem: selectedItem,
         draftPreview: draftPreview,
-        searchWords: searchWords,
-        search: function() {
-            fetchListItems().then(selectFirstDraft);
-        },
-        sortOptions: sortOptions,
         isLoading: isLoading,
+        searchControl: searchControl,
 
         activate: function () {
             if (!initialized) {
@@ -149,20 +150,6 @@ function (module, datacontext, ko, app, moment, localization, publicationService
             deleteDraftCommand.execute(selectedItem().draftId());
         }
     };
-
-    function createSortOptions() {
-        var columns = [
-            new SortModel.ListColumn('Created.At', 'Erstellt am'),
-            new SortModel.ListColumn('Created.By', 'Erstellt von'),
-            new SortModel.ListColumn('Modified.At', 'Letzte Änderung'),
-            new SortModel.ListColumn('Modified.By', 'Letzte Änderung von'),
-            new SortModel.ListColumn('Name', 'Name')
-        ];
-        var so = new SortModel.SortOptions(columns, function () {
-            vm.refresh();
-        }, 'Modified.At');
-        return so;
-    }
 
     /*
      * DraftPreviewViewModel class
