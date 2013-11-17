@@ -702,6 +702,7 @@ ul.data-list {
     ul.data-list li {
         padding:7px 7.5px;
         border-bottom:1px solid #eee;
+        cursor:pointer;
     }
     ul.data-list li:first-of-type {
         border-top:1px solid #eee;

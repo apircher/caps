@@ -220,7 +220,7 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         });
 
         self.isSelected = ko.computed(function () {
-            return selectedItem() === self;
+            return selectedItem() && selectedItem().draftId() === self.draftId();
         });
     }
 
