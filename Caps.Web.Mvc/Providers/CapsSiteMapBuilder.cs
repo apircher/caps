@@ -128,9 +128,10 @@ namespace Caps.Web.Mvc.Providers
 
             if (entity.IsNodeType("Teaser"))
             {
-                var linkedNode = nodeList.FirstOrDefault(n => n.Name == entity.Redirect);
+                int redirectId = int.Parse(entity.Redirect);
+                var linkedNode = nodeList.FirstOrDefault(n => n.PermanentId == redirectId);
                 if (linkedNode != null)
-                    return GetUrl(linkedNode) + String.Format("?ref={0}", entity.Name);
+                    return GetUrl(linkedNode) + String.Format("?ref={0}", entity.Id);
             }
 
             return helper.Action("Index", "Home", routeData);

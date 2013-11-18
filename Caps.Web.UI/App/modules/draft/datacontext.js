@@ -141,6 +141,10 @@ function (system, entityManagerProvider, ko, UserQueryParser) {
         getTemplates: getTemplates,
         getTemplate: getTemplate,
         fetchPublications: fetchPublications,
-        searchDrafts: searchDrafts
+        searchDrafts: searchDrafts,
+
+        isValidUserQuery: function (searchWords) {
+            return parser.validate(searchWords);
+        }
     };
 });

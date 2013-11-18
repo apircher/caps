@@ -31,7 +31,10 @@ namespace Caps.Data.ContentControls
                 return document.CreateComment(String.Format("Caps Slideshow: No files in group {0}.", fileGroup));
 
             if (files.Count == 1)
-                return document.CreateSlideImage(urlHelper, files.First(), language, "caps-slide1");
+            {
+                var file = files.First();
+                return document.CreateSlideImage(file, language, GetSlideImageSrc(urlHelper, file, language), "caps-slide1");
+            }
 
             return CreateImageList(document, controlId, files, urlHelper, language);
         }
@@ -44,7 +47,7 @@ namespace Caps.Data.ContentControls
             foreach (var file in files)
             {
                 var item = document.CreateElement("li");
-                var image = document.CreateSlideImage(urlHelper, file, language, "caps-slide");
+                var image = document.CreateSlideImage(file, language, GetSlideImageSrc(urlHelper, file, language), "caps-slide");
                 item.AppendChild(image);
                 list.AppendChild(item);
             }
@@ -52,23 +55,27 @@ namespace Caps.Data.ContentControls
             container.AppendChild(list);
             return container;
         }
-    }
 
-    static class XmlExtensions
-    {
-        public static XmlNode CreateSlideImage(this XmlDocument document, IUrlHelper urlHelper, PublicationFile file, String language, String cssClass)
+        protected virtual String GetSlideImageSrc(IUrlHelper urlHelper, PublicationFile file, String language)
         {
             var sqlFile = file.FileVersionForLanguage(language, "de", "en");
-            if (sqlFile == null)
-                return document.CreateComment("Caps Slideshow: File not found.");
-
-            var src = urlHelper.Action("Thumbnail", "CapsContent", new
+            return urlHelper.Action("Thumbnail", "CapsContent", new
             {
                 area = "",
                 id = sqlFile.Id,
                 name = System.Web.HttpUtility.UrlEncode(sqlFile.File.FileName),
                 size = "300x300"
             });
+        }
+    }
+
+    static class XmlExtensions
+    {
+        public static XmlNode CreateSlideImage(this XmlDocument document, PublicationFile file, String language, String src, String cssClass)
+        {
+            var sqlFile = file.FileVersionForLanguage(language, "de", "en");
+            if (sqlFile == null)
+                return document.CreateComment("Caps Slideshow: File not found.");
             return document.CreateImage(src, "", cssClass);
         }
     }

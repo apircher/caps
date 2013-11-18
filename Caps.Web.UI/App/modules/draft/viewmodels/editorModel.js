@@ -40,14 +40,21 @@
         var self = this;
         self.draft = ko.observable(draft);
         self.groupName = ko.observable(groupName);
+        self.groupFilter = ko.observable(groupName);
         self.isExpanded = ko.observable(false);
         self.toggleIsExpanded = function () { self.isExpanded(!self.isExpanded()); };
+
+        self.groupName.subscribe(function (newValue) {
+            var files = self.files().slice(0);
+            files.forEach(function (file) { file.draftFile.Group(newValue); });
+            self.groupFilter(newValue);
+        });
 
         self.files = ko.computed(function () {
             var draft = self.draft(),
             files = [];
             if (draft) {
-                files = ko.utils.arrayMap(draft.filesByGroupName(self.groupName()), function (file) {
+                files = ko.utils.arrayMap(draft.filesByGroupName(self.groupFilter()), function (file) {
                     return new DraftFileViewModel(file, file.getOrCreateResource('de'));
                 });
             }
@@ -64,21 +71,13 @@
             return result;
         });
         
-        self.groupName.subscribe(function (newValue) {
+        self.groupFilter.subscribe(function (newValue) {
             var files = self.files().slice(0);
             files.forEach(function (f) { f.draftFile.Group(newValue); });
         });
     }
 
     DraftFileGroup.prototype.refresh = function () {
-        //var draft = this.draft(),
-        //    files = [];
-        //if (draft) {
-        //    files = ko.utils.arrayMap(draft.filesByGroupName(this.groupName()), function (file) {
-        //        return new DraftFileViewModel(file, file.getOrCreateResource('de'));
-        //    });
-        //}
-        //this.files(files);
     };
 
     return {

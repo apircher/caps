@@ -69,5 +69,10 @@ namespace Caps.Data
 
             base.OnModelCreating(modelBuilder);
         }
+
+        public static void SetDbInitializer()
+        {
+            Database.SetInitializer<CapsDbContext>(new MigrateDatabaseToLatestVersion<CapsDbContext, Caps.Data.Migrations.Configuration>());
+        }
     }
 }

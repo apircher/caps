@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caps.Data.Localization;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Caps.Data.Model
 {
-    public class DbSiteMapNodeResource
+    public class DbSiteMapNodeResource : ILocalizedResource
     {
         [Key, Column(Order = 1)]
         public int SiteMapNodeId { get; set; }

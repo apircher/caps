@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caps.Data.Localization;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Caps.Data.Model
 {
-    public class DraftContentPart
+    public class DraftContentPart : ILocalizableEntity<DraftContentPartResource>
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
@@ -26,5 +27,14 @@ namespace Caps.Data.Model
         public Draft Draft { get; set; }        
         [InverseProperty("ContentPart")]
         public ICollection<DraftContentPartResource> Resources { get; set; }
+
+        public String ContentForLanguage(String language)
+        {
+            return this.GetValueForLanguage(language, r => r.Content, null);
+        }
+        public String ContentForLanguage(String language, params String[] fallbackLanguages)
+        {
+            return this.GetValueForLanguage(language, r => r.Content, null, fallbackLanguages);
+        }
     }
 }

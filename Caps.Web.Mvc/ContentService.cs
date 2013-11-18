@@ -47,7 +47,7 @@ namespace Caps.Web.Mvc
             return new ContentModel
             {
                 SiteMapNode = entity,
-                ContentParts = contentParts
+                ContentParts = contentParts.Where(c => c != null)
             };
         }
 
@@ -61,7 +61,7 @@ namespace Caps.Web.Mvc
             if (rootNode == null)
                 return null;
 
-            var teasers = from node in db.SiteMapNodes
+            var teasers = (from node in db.SiteMapNodes
                           join node2 in db.SiteMapNodes on node.Redirect.Trim() equals SqlFunctions.StringConvert((double)node2.PermanentId).Trim()
                           orderby node.Ranking
                           where
@@ -73,9 +73,16 @@ namespace Caps.Web.Mvc
                           {
                               Teaser = node,
                               TeasedContent = node2
-                          };
+                          })
+                          .ToList();
 
-            return teasers.ToList();
+            var publicationIds = teasers.Select(t => t.Teaser.ContentId).Distinct().ToList();
+            var publications = db.Publications
+                .Include("ContentParts.Resources")
+                .Include("Files.Resources.FileVersion.File")
+                .Where(p => publicationIds.Contains(p.Id)).ToList();
+            
+            return teasers;
         }
     }
 

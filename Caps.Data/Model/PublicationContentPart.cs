@@ -30,5 +30,14 @@ namespace Caps.Data.Model
 
         [InverseProperty("ContentPart")]
         public ICollection<PublicationContentPartResource> Resources { get; set; }
+
+        public String ContentForLanguage(String language)
+        {
+            return this.GetValueForLanguage(language, r => r.Content, null);
+        }
+        public String ContentForLanguage(String language, params String[] fallbackLanguages)
+        {
+            return this.GetValueForLanguage(language, r => r.Content, null, fallbackLanguages);
+        }
     }
 }

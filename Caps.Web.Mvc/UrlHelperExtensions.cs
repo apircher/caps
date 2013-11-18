@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caps.Data.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,16 @@ namespace Caps.Web.Mvc
 
             return helper.Action(actionName, routeValues);
 
+        }
+
+        public static String Action(this UrlHelper helper, DbFileVersion fileVersion)
+        {
+            return helper.Action(fileVersion.File);
+        }
+
+        public static String Action(this UrlHelper helper, DbFile file)
+        {
+            return helper.Action("ContentFile", "CapsContent", new { area = "", id = file.Id, name = file.FileName });
         }
     }
 }

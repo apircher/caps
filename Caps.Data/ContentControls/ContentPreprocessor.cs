@@ -63,7 +63,7 @@ namespace Caps.Data.ContentControls
             int controlIndex = 1;
             foreach (XmlNode node in capsNodes)
             {
-                var replacement = TransformCapsControl(node, String.Format("cc{0:x}{1}", siteMapNode.Name, controlIndex++), language, scriptManager);
+                var replacement = TransformCapsControl(node, String.Format("cc{0:x}{1}", siteMapNode.ContentId, controlIndex++), language, scriptManager);
                 if (replacement != null)
                     node.ParentNode.ReplaceChild(replacement, node);
             }

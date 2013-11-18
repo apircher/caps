@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caps.Data.Localization;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Caps.Data.Model
 {
-    public class DbSiteMapNode
+    public class DbSiteMapNode : ILocalizableEntity<DbSiteMapNodeResource>
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -62,5 +63,11 @@ namespace Caps.Data.Model
 
         [InverseProperty("SiteMapNodes"), ForeignKey("ContentId")]
         public Publication Content { get; set; }
+
+
+        public String TitleForLanguage(String language)
+        {
+            return this.GetValueForLanguage(language, r => r.Title, null);
+        }
     }
 }

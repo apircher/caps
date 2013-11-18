@@ -51,10 +51,10 @@
 <script type="text/html" id="dbfile-icon">
     <!-- ko with: resource.FileVersion() -->
     
-    <!-- ko if: File().isImage() -->
+    <!-- ko if: File().isImage && File().isImage() -->
     <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: File().FileName, alt: File().FileName }, lazyImage: true" />
     <!-- /ko -->
-    <!-- ko if: !File().isImage() -->
+    <!-- ko if: File().isImage && !File().isImage() -->
     <span data-bind="attr: { title: File().FileName }"><i class="fa fa-file fa-4x"></i></span>
     <!-- /ko -->
 
@@ -101,7 +101,7 @@
         <div class="form-group" data-bind="if: showGroup">
             <label class="col-md-2 control-label">Gruppe</label>
             <div class="col-md-4">
-                <select class="form-control" data-bind="options: $parents[1].editor.entity().distinctFileGroupNames, value: draftFile.Group, optionsCaption: 'Bitte wählen...'"></select>
+                <select class="form-control" data-bind="options: $parents[1].groups, optionsValue: 'groupName', optionsTitle: 'groupName', value: draftFile.Group, optionsCaption: 'Bitte wählen...'"></select>
             </div>
         </div>
     </form>

@@ -1,4 +1,5 @@
 ﻿using Caps.Web.Mvc.Attributes;
+using Caps.Web.Mvc.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace DemoWebsite.Controllers
         // GET: /Home/
         public ActionResult Index()
         {
+            var caps = DependencyResolver.Current.GetService<Caps.Web.Mvc.ContentService>();
+            ViewBag.Teasers = caps.GetTeasers() ?? new List<TeaserModel>();
             return View();
         }
 

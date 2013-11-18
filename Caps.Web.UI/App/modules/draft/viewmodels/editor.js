@@ -144,16 +144,17 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
 
         self.createDraftFile = function (file) {
             var query = breeze.EntityQuery.from('Files').where('Id', '==', file.Id()).expand('Versions.File');
-            manager.executeQuery(query)
-            .then(function (data) {
+            manager.executeQuery(query).then(function (data) {
                 var dbFile = data.results[0];
 
-                var draftFile = manager.createEntity('DraftFile', { DraftId: self.entity().Id(), Name: file.FileName() });
+                var draftFile = manager.createEntity('DraftFile', { Name: file.FileName() });
                 manager.addEntity(draftFile);
 
                 var resource = manager.createEntity('DraftFileResource', { Language: 'de', DbFileVersionId: dbFile.latestVersion().Id() });
                 manager.addEntity(resource);
                 draftFile.Resources.push(resource);
+
+                draftFile.DraftId(self.entity().Id());
 
                 self.entity().Files.push(draftFile);
             });
