@@ -15,7 +15,7 @@
                 <div class="col-sm-6 col-md-3 col-lg-2">
                     <div class="thumbnail-container" data-bind="css: { 'item-checked': isSelected  }">
                         <a href="#" class="thumbnail" data-bind="css: { 'item-selected': isSelectedItem }, clickBubble: false, click: selectItem">
-                            <!-- ko if: data() && data().isImage -->
+                            <!-- ko if: data() -->
                             <!-- ko with: data() -->
                             <!-- ko if: isImage -->
                             <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: FileName, alt: FileName }, lazyImage: true" />
@@ -24,6 +24,9 @@
                             <span data-bind="attr: { title: FileName }"><i class="fa fa-file fa-4x"></i></span>
                             <!-- /ko -->
                             <!-- /ko -->
+                            <!-- /ko -->                            
+                            <!-- ko if: isUploading() -->
+                            <span><i class="fa fa-spinner fa-spin fa-4x"></i></span>
                             <!-- /ko -->
                         </a>
                         <!-- ko if: data() -->
@@ -49,6 +52,15 @@
                 </li>
                 <li>
                     <a href="#" data-bind="click: selectOk"><span><i class="fa fa-save fa-fw"></i> Hinzufügen</span></a>
+                </li>
+                <li>
+                    <a class="fileinput-button">
+                        <span><i class="fa fa-plus"></i> Dateien hochladen</span>
+                        <!-- ko with: uploadManager -->
+                        <input type="file" name="files" data-url="api/DbFileUpload"
+                               data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: $('#drop-zone'), drop: filesDropped }" multiple>
+                        <!-- /ko -->
+                    </a>
                 </li>
             </ul>
         </div>

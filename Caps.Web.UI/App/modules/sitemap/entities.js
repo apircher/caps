@@ -151,6 +151,10 @@ define(['ko'], function (ko) {
             },
             deferEvaluation: true
         });
+
+        sitemapNode.canLinkTo = ko.computed(function () {
+            return sitemapNode.NodeType().toLowerCase() !== 'teaser';
+        });
     }
 
     SitemapNode.prototype.getResource = function (language) {

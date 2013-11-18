@@ -94,6 +94,12 @@
                     <em data-bind="text: selectedNode().ContentId()"></em>
                     <!-- /ko -->
                 </p>
+                <!-- ko if: selectedNode().canLinkTo() -->
+                <h5>Adresse</h5>
+                <p>
+                    <span>caps://publication/<!-- ko text: selectedNode().PermanentId() --><!-- /ko --></span>
+                </p>
+                <!-- /ko -->
                 <!-- /ko -->
             </div>
         </div>

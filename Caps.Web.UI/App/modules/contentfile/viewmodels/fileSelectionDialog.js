@@ -5,9 +5,11 @@
     'durandal/system',
     '../datacontext',
     'infrastructure/virtualListModel',
-    './fileSearchControl'
+    './fileSearchControl',
+    './uploadManager',
+    'toastr',
 ],
-function (dialog, ko, FileListItem, system, datacontext, VirtualListModel, FileSearchControl) {
+function (dialog, ko, FileListItem, system, datacontext, VirtualListModel, FileSearchControl, UploadManager, toastr) {
 
     function FileSelectionDialog(options) {
         var self = this;
@@ -46,6 +48,24 @@ function (dialog, ko, FileListItem, system, datacontext, VirtualListModel, FileS
                 }
             }
         };
+
+        self.uploadManager = new UploadManager({
+            uploadStarted: function (file, batchIndex) {
+                file.listItem = self.list.insertItem(undefined, batchIndex);
+                file.listItem.isUploading(true);
+            },
+            uploadDone: function (result, file) {
+                var listItem = file.listItem;
+                datacontext.fetchFile(result.Id).then(function () {
+                    listItem.data(datacontext.localGetFile(result.Id));
+                    listItem.isUploading(false);
+                    listItem.isSelected(true);
+                })
+                .fail(function (err) {
+                    toastr.error('Die Datei ' + r.FileName + ' konnte nicht geladen werden.');
+                });
+            }
+        });
     }
 
     FileSelectionDialog.prototype.activate = function () {
