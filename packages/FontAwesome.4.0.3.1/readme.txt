@@ -1,4 +1,10 @@
-Please Read - File Structure Changing!
+***New File Structure!***
+
+Note: 
+Some may have experienced a web optimization issue with the previous version if bundling css together due to relative paths in the css. 
+This change should also resolve that issue. Just update your BundleConfig with the new css path.
+
+More info on why this change occured can be found below:
 
 The folks at Outercurve have taken over support for the Twitter.Bootstrap package now being called simply bootstrap. 
 More info here http://chriskirby.net/bootstrap-nuget-package-moving-to-outercurve/
@@ -8,4 +14,4 @@ So in an effort to keep the asset locations as clean as possible the FontAwesome
 
 Feel free to report any concerns at https://github.com/JustLikeIcarus/Font-Awesome-NuGet/issues
 
-If you have any thought's as to a better solution please let me know.
+
