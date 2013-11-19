@@ -20,17 +20,42 @@
         });
 
         self.moveUp = function () {
-            self.draftFile.Ranking(self.draftFile.Ranking() - 1);
+            var orderedFiles = self.draftFile.Draft().orderedFiles().slice(0),
+                index = orderedFiles.indexOf(self.draftFile);
+
+            if (index <= 0)
+                return;
+
+            orderedFiles.splice(index, 1);
+            orderedFiles.splice(index - 1, 0, self.draftFile);
+
+            setRankings(orderedFiles);
         };
 
         self.moveDown = function () {
-            self.draftFile.Ranking(self.draftFile.Ranking() + 1);
+            var orderedFiles = self.draftFile.Draft().orderedFiles().slice(0),
+                index = orderedFiles.indexOf(self.draftFile);
+
+            if (index >= orderedFiles.length - 1)
+                return;
+
+            orderedFiles.splice(index, 1);
+            orderedFiles.splice(index + 1, 0, self.draftFile);
+
+            setRankings(orderedFiles);
         };
 
         self.showGroup = ko.observable(false);
         self.selectGroup = function () {
             self.showGroup(true);
         };
+        
+        function setRankings(files) {
+            for (var i = 0; i < files.length; i++) {
+                if (files[i].Ranking() !== i + 1)
+                    files[i].Ranking(i + 1);
+            }
+        }
     }
 
     /*

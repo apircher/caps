@@ -28,6 +28,25 @@ function (require, ko) {
         draft.distinctFileGroupNames = ko.computed(function () {
             return ko.utils.arrayGetDistinctValues(draft.fileGroupNames());
         });
+        draft.orderedFiles = ko.computed(function () {
+            var files = draft.Files();
+            files.sort(function (a, b) {
+                if (a.Group() !== b.Group())
+                    return compareGroups(a, b);
+                else
+                    return compareRankings(a, b);
+            });
+            return files;
+
+            function compareGroups(a, b) {
+                if (a.Group() === b.Group()) return 0;
+                return a.Group() <= b.Group() ? - 1 : 1;
+            }
+            function compareRankings(a, b) {
+                if (a.Ranking() === b.Ranking()) return 0;
+                return a.Ranking() <= b.Ranking() ? -1 : 1;
+            }
+        });
     }
 
     Draft.prototype.getResource = function (language) {
