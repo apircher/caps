@@ -39,7 +39,7 @@ namespace Caps.Web.Mvc
                 {
                     Content = r.Content,
                     Language = r.Language,
-                    Usage = p.PartType,
+                    Usage = p.Name,
                     IsFallback = !String.Equals(Language.CurrentLanguage, r.Language, StringComparison.OrdinalIgnoreCase)
                 }
                 , null, "de", "en"));

@@ -6,6 +6,7 @@ define([
     'durandal/system',
     '../module',
     '../datacontext',
+    '../entities',
     'entityManagerProvider',
     'breeze',
     'ko',
@@ -16,10 +17,13 @@ define([
     './editor/draftFiles',
     './editor/contentPartEditor',
     './editor/templateEditor',
+    './editor/draftNotes',
     './editorModel',
     'authentication'
 ],
-function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, TemplateEditor, EditorModel, authentication) {
+function (app, system, module, datacontext, DraftsModel, entityManagerProvider, breeze, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, TemplateEditor, DraftNotesEditor, EditorModel, authentication) {
+
+
 
     // Editor Model
     function DraftEditor() {
@@ -30,6 +34,7 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
             draftFilesVM,
             propertiesVM,
             templateEditorVM,
+            draftNotesVM,
             contentPartEditors = [],
             router = module.router;
 
@@ -39,6 +44,7 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
         self.entity.subscribe(onEntityChanged);
         self.template = ko.observable();
         self.isNewDraft = ko.observable(false);
+        self.draftStates = DraftsModel.supportedDraftStates;
 
         self.activate = function (draftIdOrTemplateName) {
             return system.defer(function (dfd) {
@@ -74,7 +80,7 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
         };
 
         self.showProperties = function () {
-            propertiesVM = propertiesVM || new DraftProperties(self, self.entity().getOrCreateResource('de', manager));
+            propertiesVM = propertiesVM || new DraftProperties(self);
             self.currentContent(propertiesVM);
         };
 
@@ -86,6 +92,11 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
         self.showTemplateEditor = function () {
             templateEditorVM = templateEditorVM || new TemplateEditor(self);
             self.currentContent(templateEditorVM);
+        };
+
+        self.showDraftNotes = function () {
+            draftNotesVM = draftNotesVM || new DraftNotesEditor(self);
+            self.currentContent(draftNotesVM);
         };
 
         self.navigateBack = function () {
@@ -119,13 +130,13 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
                 });
         };
 
-        self.getOrCreateContentPart = function (partType) {
-            var cp = self.entity().findContentPart(partType);
+        self.getOrCreateContentPart = function (templateCell) {
+            var cp = self.entity().findContentPart(templateCell.name);
             if (!cp) {
                 cp = manager.createEntity('DraftContentPart', {
                     DraftId: self.entity().Id(),
-                    PartType: partType,
-                    ContentType: 'markdown'
+                    Name: templateCell.name,
+                    ContentType: templateCell.contentType || 'markdown'
                 });
                 manager.addEntity(cp);
 
@@ -144,7 +155,7 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
 
         self.createDraftFile = function (file) {
             var query = breeze.EntityQuery.from('Files').where('Id', '==', file.Id()).expand('Versions.File');
-            manager.executeQuery(query).then(function (data) {
+            return manager.executeQuery(query).then(function (data) {
                 var dbFile = data.results[0];
 
                 var draftFile = manager.createEntity('DraftFile', { Name: file.FileName() });
@@ -157,28 +168,27 @@ function (app, system, module, datacontext, entityManagerProvider, breeze, ko, Q
                 draftFile.DraftId(self.entity().Id());
 
                 self.entity().Files.push(draftFile);
+                return draftFile;
             });
         };
 
-        function createEntity(templateName) {
+        function createEntity(templateName, language) {
+            language = language || 'de';
             var template = datacontext.getTemplate(templateName);
 
-            var d = manager.createEntity('Draft', { Template: templateName, Version: 1 });
-            d.TemplateContent(JSON.stringify(template));
+            var d = manager.createEntity('Draft', { TemplateName: templateName, Version: 1, OriginalLanguage: language, Status: 'NEW' });
+            d.Template(JSON.stringify(template));
             d.Created().At(new Date());
             d.Created().By(authentication.user().userName());
             d.Modified().At(new Date());
             d.Modified().By(authentication.user().userName());
-
-            var res = manager.createEntity('DraftResource', { Language: 'de' });
-            d.Resources.push(res);
 
             self.entity(d);
         }
 
         function loadEntity(id) {
             var query = breeze.EntityQuery.from('Drafts').where('Id', '==', id)
-                .expand('Resources, ContentParts.Resources, Files.Resources.FileVersion.File');
+                .expand('ContentParts.Resources, Files.Resources.FileVersion.File');
             return manager.executeQuery(query).then(function (data) {
                 self.entity(data.results[0]);
             });

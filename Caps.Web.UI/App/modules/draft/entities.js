@@ -3,25 +3,41 @@
  */
 define([
     'require',
-    'ko'
+    'ko',
+    'durandal/system'
 ],
-function (require, ko) {
+function (require, ko, system) {
+
+    // Supported Draft States
+    var draftStates = [
+        {
+            value: 'NEW',
+            title: 'Entwurf in Arbeit'
+        },
+        {
+            value: 'RFT',   // Ready for Translation
+            title: 'Übersetzung in Arbeit'
+        },
+        {
+            value: 'RFP',   // Ready for Publication
+            title: 'Bereit zur Veröffentlichung'
+        }
+    ];
     
     /**
      * Draft Entity
      */
     function Draft() {
-        var self = this;
 
-        self.template = ko.computed({
-            read: function () {
-                return self.deserializeTemplate();
-            },
-            deferEvaluation: true
-        });
     }
 
     function InitializeDraft(draft) {
+        draft.template = ko.computed({
+            read: function () {
+                return draft.deserializeTemplate();
+            },
+            deferEvaluation: true
+        });
         draft.fileGroupNames = ko.computed(function () {
             return ko.utils.arrayMap(draft.Files(), function (f) { return f.Group() || ''; });
         });
@@ -47,33 +63,40 @@ function (require, ko) {
                 return a.Ranking() <= b.Ranking() ? -1 : 1;
             }
         });
+
+        draft.statusTitle = ko.computed(function () {
+            if (!draft.Status()) return '';
+            var key = draft.Status().toLowerCase(),
+                vm = ko.utils.arrayFirst(draftStates, function (ds) { return ds.value.toLowerCase() === key; });
+            return vm ? vm.title : '';
+        });
     }
 
-    Draft.prototype.getResource = function (language) {
+    Draft.prototype.getTranslation = function (language) {
         var key = language.toLowerCase();
-        return ko.utils.arrayFirst(this.Resources(), function (res) {
-            return res.Language().toLowerCase() === key;
+        return ko.utils.arrayFirst(this.Translations(), function (t) {
+            return t.Language().toLowerCase() === key;
         });
     };
     
-    Draft.prototype.getOrCreateResource = function (language, manager) {
+    Draft.prototype.getOrCreateTranslation = function (language, manager) {
         var key = language.toLowerCase(),
-        resource = this.getResource(language);
-        if (resource)
-            return resource;
+            translation = this.getTranslation(language);
+        if (translation)
+            return translation;
 
-        resource = manager.createEntity('DraftResource', {
+        translation = manager.createEntity('DraftTranslation', {
             DraftId: this.Id(),
             Language: key
         });
-        manager.addEntity(resource);
-        this.Resources.push(resource);
-        return resource;
+        manager.addEntity(translation);
+        this.Translations.push(translation);
+        return translation;
     };
 
-    Draft.prototype.findContentPart = function (partType) {
+    Draft.prototype.findContentPart = function (name) {
         var part = ko.utils.arrayFirst(this.ContentParts(), function (p) {
-            return p.PartType().toLowerCase() === partType.toLowerCase();
+            return p.Name().toLowerCase() === name.toLowerCase();
         });
         return part;
     };
@@ -90,7 +113,13 @@ function (require, ko) {
     };
 
     Draft.prototype.deserializeTemplate = function () {
-        var t = JSON.parse(this.TemplateContent());
+        var t;
+        try {
+            t = JSON.parse(this.Template());
+        }
+        catch (error) {
+            system.log(error.message);
+        }
         if (!t) return undefined;
 
         t.findCell = function (cellName) {
@@ -109,12 +138,15 @@ function (require, ko) {
     };
 
     Draft.prototype.setDeleted = function () {
-        while (this.Resources().length) {
-            this.Resources()[0].entityAspect.setDeleted();
+        while (this.Translations().length) {
+            this.Translations()[0].entityAspect.setDeleted();
         }        
         while (this.ContentParts().length) {
             this.ContentParts()[0].setDeleted();
-        }                
+        }
+        while (this.Files().length) {
+            this.Files()[0].setDeleted();
+        }
         this.entityAspect.setDeleted();
     };
 
@@ -122,6 +154,14 @@ function (require, ko) {
         var files = ko.utils.arrayFilter(this.Files(), function (file) {
             var gn = file.Group() || '';
             return gn.toLowerCase() === groupName.toLowerCase();
+        });
+        return files;
+    };
+
+    Draft.prototype.filesByDetermination = function (determination) {
+        var files = ko.utils.arrayFilter(this.Files(), function (file) {
+            var gn = file.Determination() || '';
+            return gn.toLowerCase() === determination.toLowerCase();
         });
         return files;
     };
@@ -209,10 +249,11 @@ function (require, ko) {
         return resource;    
     };
 
-
     return {
         Draft: Draft,
         DraftContentPart: DraftContentPart,
+
+        supportedDraftStates: draftStates,
 
         extendModel: function (metadataStore) {
             metadataStore.registerEntityTypeCtor('Draft', Draft, InitializeDraft);

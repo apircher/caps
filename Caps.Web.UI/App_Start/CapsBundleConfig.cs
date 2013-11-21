@@ -33,6 +33,7 @@ namespace Caps.Web.UI.App_Start
                 .Include("~/Scripts/breeze.min.js")
                 .Include("~/Scripts/toastr.js")
                 .Include("~/Scripts/Markdown.Converter.js")
+                .Include("~/Scripts/Markdown.Editor.js")
                 .Include("~/Scripts/typeahead.js")
                 .Include("~/Scripts/knockout.custom-bindings.js")
             );

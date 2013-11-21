@@ -298,21 +298,21 @@ define(['ko'], function (ko) {
         });
     }
 
-    Publication.prototype.getContentPart = function (partType) {
-        var key = partType.toLowerCase();
+    Publication.prototype.getContentPart = function (name) {
+        var key = name.toLowerCase();
         return ko.utils.arrayFirst(this.ContentParts(), function (pt) {
-            return pt.PartType().toLowerCase() === key;
+            return pt.Name().toLowerCase() === key;
         });
     };
 
-    Publication.prototype.getOrCreateContentPart = function (partType, manager) {
-        var key = partType.toLowerCase(),
+    Publication.prototype.getOrCreateContentPart = function (name, manager) {
+        var key = name.toLowerCase(),
         pt = this.getContentPart(key);
         if (pt) return pt;
 
         pt = manager.createEntity('PublicationContentPart', {
             PublicationId: this.Id(),
-            PartType: key,
+            Name: key,
             ContentType: 'html',
             Ranking: 0
         });
@@ -322,7 +322,7 @@ define(['ko'], function (ko) {
     };
 
     Publication.prototype.deserializeTemplate = function () {
-        var t = JSON.parse(this.TemplateData());
+        var t = JSON.parse(this.Template());
         if (!t) return undefined;
 
         t.findCell = function (cellName) {

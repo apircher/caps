@@ -26,7 +26,7 @@
                 return;
             }
 
-            self.editor.entity().TemplateContent(JSON.stringify(modifiedTemplate));
+            self.editor.entity().Template(JSON.stringify(modifiedTemplate));
             self.editor.template(modifiedTemplate);
         });
 

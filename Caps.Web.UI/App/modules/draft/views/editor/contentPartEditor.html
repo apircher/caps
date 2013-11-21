@@ -1,5 +1,7 @@
-﻿<div class="text-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .contentpart-nav', minWidth: 979 }">
-    <textarea class="form-control" data-bind="value: resource.Content"></textarea>
+﻿<div data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .contentpart-nav', minWidth: 992 }">
+    <!--<textarea class="form-control" data-bind="value: resource.Content"></textarea>-->
+
+    <!-- ko compose: contentEditor --><!-- /ko -->
 </div>
 <div class="contentpart-nav">
     <div class="pull-right">

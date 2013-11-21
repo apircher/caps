@@ -34,7 +34,7 @@ function (system, entityManagerProvider, ko, UserQueryParser) {
 
     function getDraft(id) {
         var query = EntityQuery.from('Drafts').where('Id', '==', id)
-                .expand('Resources, ContentParts.Resources, Files.Resources.FileVersion.File');
+                .expand('Translations, ContentParts.Resources, Files.Resources.FileVersion.File');
         return manager.executeQuery(query);
     }
 
@@ -80,10 +80,10 @@ function (system, entityManagerProvider, ko, UserQueryParser) {
         // Template 3
         t.push(buildTemplate('Template 3', [
             buildRow([
-                buildCell('Header', 'Kopfbereich', 12)
+                buildCell('Header', 'Kopfbereich', 12, 'html')
             ]),
             buildRow([
-                buildCell('Main', 'Hauptteil', 12)
+                buildCell('Main', 'Hauptteil', 12, 'text')
             ])
         ]));
 
@@ -100,11 +100,13 @@ function (system, entityManagerProvider, ko, UserQueryParser) {
             };
         }
 
-        function buildCell(name, title, colspan) {
+        function buildCell(name, title, colspan, contentType) {
+            contentType = contentType || 'markdown';
             return {
                 'name': name,
                 'title': title,
-                'colspan': colspan
+                'colspan': colspan,
+                'contentType': contentType
             };
         }
 

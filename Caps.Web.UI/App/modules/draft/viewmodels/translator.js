@@ -88,7 +88,7 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
 
         function loadEntity(id) {
             var query = breeze.EntityQuery.from('Drafts').where('Id', '==', id)
-                .expand('Resources, ContentParts.Resources, Files.Resources.FileVersion.File');
+                .expand('Translations, ContentParts.Resources, Files.Resources.FileVersion.File');
             return manager.executeQuery(query).then(function (data) {
                 self.entity(data.results[0]);
             });
@@ -129,8 +129,8 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
                 });
                 self.files(fileTranslations);
 
-                // Init DraftResource
-                var r = e.getOrCreateResource(self.language().culture, manager);
+                // Init DraftTranslation
+                var r = e.getOrCreateTranslation(self.language().culture, manager);
             }
         }
     }

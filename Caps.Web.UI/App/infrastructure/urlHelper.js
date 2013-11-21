@@ -13,7 +13,7 @@
             if (/(\?|&amp;|&)download=1/i.test(querystring) || !fileVersion.File().isImage())
                 return '/DbFileContent/Download/' + fileVersion.Id();
             else if (fileVersion.File().isImage()) {
-                if (/(\?|&amp;|&)thumbnail=1/i.test(querystring)) {
+                if (/(\?|&amp;|&)size=([0-9]+x[0-9]+)/i.test(querystring)) {
                     var size = '220x160';
                     var sizeMatches = querystring.match(/(\?|&amp;|&)size=([0-9]+x[0-9]+)/);
                     if (sizeMatches && sizeMatches.length == 3) {

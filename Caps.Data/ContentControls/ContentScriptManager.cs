@@ -60,7 +60,7 @@ namespace Caps.Data.ContentControls
 
         public PublicationContentPart CreateContentPart()
         {
-            var result = new PublicationContentPart { PartType = "Script" };
+            var result = new PublicationContentPart { Name = "ContentScripts", ContentType = "Script" };
             var xml = ToXml();
 
             var resource = new PublicationContentPartResource

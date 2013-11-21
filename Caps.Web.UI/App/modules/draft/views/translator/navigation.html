@@ -1,10 +1,10 @@
-﻿<h4 class="nav-header">Übersetzung</h4>
+﻿<h4 class="nav-header"><!-- ko text: editor.entity().Name --><!-- /ko --> <small>Übersetzung</small></h4>
 <ul data-bind="foreach: contentParts" class="nav nav-pills nav-stacked">
-    <li data-bind="css: { active: contentPart.PartType() === $parent.currentContentPart() }">
-        <a data-bind="text: templateCell.title, click: editContentPart" href="#"></a>
+    <li data-bind="css: { active: contentPart.Name() === $parent.currentContentPart() }">
+        <a data-bind="click: editContentPart" href="#"><i class="fa fa-arrow-right fa-fw"></i> <!-- ko text: templateCell.title --><!-- /ko --></a>
     </li>
 </ul>
 <ul class="nav nav-pills nav-stacked">
-    <li data-bind="css: { active: currentView() == 'DraftFiles'}"><a data-bind="click: editor.showFiles" href="#">Dateien</a></li>
-    <li data-bind="css: { active: currentView() == 'DraftProperties'}"><a data-bind="click: editor.showProperties" href="#">Eigenschaften</a></li>
+    <li data-bind="css: { active: currentView() == 'DraftFiles'}"><a data-bind="click: editor.showFiles" href="#"><i class="fa fa-files-o fa-fw"></i> Dateien (<!-- ko text: numberOfFiles --><!-- /ko -->)</a></li>
+    <li data-bind="css: { active: currentView() == 'DraftProperties'}"><a data-bind="click: editor.showProperties" href="#"><i class="fa fa-cogs fa-fw"></i> Eigenschaften</a></li>
 </ul>

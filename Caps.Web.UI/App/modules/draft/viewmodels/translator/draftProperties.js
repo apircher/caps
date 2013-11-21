@@ -5,11 +5,7 @@
         self.name = 'DraftProperties';
         self.editor = editor;
         self.moment = moment;
-        self.resource = editor.entity().getResource(editor.language().culture);
-
-        self.fallbackResource = ko.computed(function () {
-            return self.editor.entity().getResource('de');
-        });
+        self.translation = editor.entity().getTranslation(editor.language().culture);
     }
 
     return DraftProperties;

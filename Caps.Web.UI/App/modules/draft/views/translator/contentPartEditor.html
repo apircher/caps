@@ -3,15 +3,15 @@
         <span>Original (Deutsch)</span>
     </div>
     <div class="col-md-6">
-        <span data-bind="text:editor.language().localeName('de')"></span>
+        <span data-bind="text: 'Übersetzung (' + editor.language().localeName('de') + ')'"></span>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-6 text-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .editor-header', minWidth: 979 }">
-        <textarea class="form-control" data-bind="value: originalContent" disabled="disabled" />
+    <div class="col-md-6 content-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .editor-header', minWidth: 992 }">
+        <div class="textarea-disabled" data-bind="html: originalContent" />
     </div>
-    <div class="col-md-6 text-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .editor-header', minWidth: 979 }">
+    <div class="col-md-6 content-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .editor-header', minWidth: 992 }">
         <textarea class="form-control" data-bind="value: resource.Content, attr: { lang: editor.language().culture }" />
     </div>
 </div>

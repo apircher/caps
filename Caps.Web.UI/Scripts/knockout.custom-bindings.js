@@ -147,7 +147,7 @@
             }
 
             var $ce = $elem, $document = $(document);
-            while ($ce && ($ce[0].nodeName != 'HTML')) {
+            while ($ce && $ce.length && ($ce[0].nodeName != 'HTML')) {
                 var paddingTop = new Number($ce.css('padding-top').replace('px', ''));
                 var paddingBottom = new Number($ce.css('padding-bottom').replace('px', ''));
                 var marginTop = new Number($ce.css('margin-top').replace('px', ''));

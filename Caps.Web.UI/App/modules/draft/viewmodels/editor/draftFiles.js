@@ -50,9 +50,7 @@ function (app, module, ko, EditorModel) {
         };
 
         self.removeFile = function (file) {
-            editor.files.remove(file);
             file.draftFile.setDeleted();
-            editor.entity().Files.valueHasMutated();
         };
 
         function initializeGroups() {

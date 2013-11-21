@@ -2,18 +2,20 @@
     
     <div class="container-fullwidth">
         <div class="row">
-            <div class="col-md-4 col-lg-3">
+            <div class="col-md-4 col-lg-3 left-fixed-sidebar">
                 <!-- ko compose: searchControl --><!-- /ko -->
-                <ul data-bind="foreach: items" class="data-list">
-                    <li data-bind="css: { active: isSelected() }, click: $parent.selectDraft">
-                        <div class="pull-right">
-                            <small data-bind="text: modifiedAt"></small>
-                        </div>
-                        <span data-bind="text: title"></span>
-                    </li>
-                </ul>
+                <div data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .draft-search', minWidth: 992 }" class="panel-scroll-v">
+                    <ul data-bind="foreach: items" class="data-list">
+                        <li data-bind="css: { active: isSelected() }, click: $parent.selectDraft">
+                            <div class="pull-right">
+                                <small data-bind="text: modifiedAt"></small>
+                            </div>
+                            <span data-bind="text: title"></span>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="col-md-8 col-lg-9 draft-preview hidden-xs hidden-sm">
+            <div class="col-md-offset-4 col-lg-offset-3 col-md-8 col-lg-9 draft-preview hidden-xs hidden-sm">
                 <!-- ko if: draftPreview() -->
                 <!-- ko template: { name: 'DraftPreviewTemplate', data: draftPreview() } --><!-- /ko -->
                 <!-- /ko -->
@@ -58,14 +60,10 @@
             <p>
                 <small data-bind="text: entity().Modified().By"></small> <small data-bind="text: modifiedFromNow(), attr: { title: modifiedAt() }"></small>
             </p>
-            <h4><!-- ko text: resource().Title --><!-- /ko --> <small data-bind="text: entity().Name() + ' (v.' + entity().Version() + ')'"></small></h4>
+            <h4><!-- ko text: entity().Name() --><!-- /ko --> <small data-bind="text: 'v.' + entity().Version()"></small></h4>
             <p>
-                Original: <span data-bind="text: defaultCulture.localeName('de')"></span>,
-
-                <span>Übersetzungen: </span>
-                <!-- ko foreach: supportedTranslations -->
-                <a data-bind="text: localeName('de'), click: $parent.translateDraft" href="#"></a>
-                <!-- /ko -->
+                <span>Status: </span>
+                <!-- ko text: entity().statusTitle() --><!-- /ko -->
             </p>
         </div>
     </div>
@@ -83,23 +81,37 @@
     <!-- ko if: entity().Files().length > 0 -->
     <div class="row draft-preview-panel" data-bind="with: entity()">
         <div class="col-md-12">
-            <p>
-                Dateien (<!-- ko text: Files().length --><!-- /ko -->):
-            </p>
+            <h6>Dateien (<!-- ko text: Files().length --><!-- /ko -->)</h6>
             <ul data-bind="foreach: Files()" class="list-inline">
-                <li>
-                    <i class="fa fa-file"></i> <span data-bind="text: Name" />
-                </li>
+                <li><i class="fa fa-file"></i> <span data-bind="text: Name" /></li>
             </ul>
+        </div>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: supportedTranslations.length -->
+    <div class="row draft-preview-panel">
+        <div class="col-md-12">
+            <h6>Übersetzungen (Original: <!-- ko text: originalLanguage.localeName('de') --><!-- /ko -->)</h6>            
+            <p>
+                <!-- ko foreach: supportedTranslations -->
+                <a data-bind="text: localeName('de'), click: $parent.translateDraft" href="#"></a>
+                <!-- /ko -->
+            </p>
+        </div>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: entity().Notes() && entity().Notes().length -->
+    <div class="row draft-preview-panel" data-bind="with: entity()">
+        <div class="col-md-12">
+            <h6>Notizen</h6>
+            <pre data-bind="text: Notes"></pre>
         </div>
     </div>
     <!-- /ko -->
     <!-- ko if: publications().length > 0 -->
     <div class="row draft-preview-panel">
         <div class="col-md-12">
-            <p>
-                Veröffentlichungen (<!-- ko text: publications().length --><!-- /ko -->):
-            </p>
+            <h6>Veröffentlichungen (<!-- ko text: publications().length --><!-- /ko -->)</h6>
             <ul data-bind="foreach: publications()" class="list-unstyled">
                 <li>
                     <i class="fa fa-share-square-o"></i> <span data-bind="text: title" /> 

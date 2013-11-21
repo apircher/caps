@@ -34,7 +34,7 @@ function (system, app, entityManagerProvider, breeze, ko) {
         return system.defer(function (dfd) {            
             // Load the draft.
             var query = new EntityQuery().from('Drafts').where('Id', '==', draftId)
-                .expand('Resources, ContentParts.Resources, Files.Resources.FileVersion.File');
+                .expand('Translations, ContentParts.Resources, Files.Resources.FileVersion.File');
 
             self.manager.executeQuery(query).then(function (data) {
                 var btnOk = 'Entwurf löschen',

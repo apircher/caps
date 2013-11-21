@@ -41,10 +41,10 @@ function (ko, markdown, urlHelper, ContentReferenceManager) {
         self.cells = cells;
     }
 
-    function TemplateContentCell(partType, title, colspan, content) {
+    function TemplateContentCell(name, title, colspan, content) {
         var self = this;
 
-        self.partType = partType;
+        self.name = name;
         self.title = title;
         self.colspan = colspan;
         self.content = content;
@@ -52,6 +52,8 @@ function (ko, markdown, urlHelper, ContentReferenceManager) {
 
     function createTemplateContent(draft, language) {
         var template = draft.deserializeTemplate();
+        if (!template) return new TemplateContent();
+
         return new TemplateContent(template.name, ko.utils.arrayMap(template.rows, function (row) {
             return new TemplateContentRow(ko.utils.arrayMap(row.cells, function (cell) {
                 var content = generateLocalizedContentForTemplateCell(draft, cell, language);
@@ -103,12 +105,11 @@ function (ko, markdown, urlHelper, ContentReferenceManager) {
 
             name: draft.Name(),
             template: draft.Template(),
-            templateContent: draft.TemplateContent(),
 
             created: prepareChangeInfo(draft.Created()),
             modified: prepareChangeInfo(draft.Modified()),
 
-            resources: prepareResources(draft.Resources()),
+            resources: prepareResources(draft),
             contentParts: prepareContentParts(draft),
             files: prepareFiles(draft)
         };
@@ -121,23 +122,28 @@ function (ko, markdown, urlHelper, ContentReferenceManager) {
         };
     }
 
-    function prepareResources(resources) {
-        return ko.utils.arrayMap(resources, function (resource) {
+    function prepareResources(draft) {
+        var resources = ko.utils.arrayMap(draft.Translations(), function (translation) {
             return {
-                language: resource.Language(),
-                title: resource.Title(),
-                keywords: resource.Keywords(),
-                description: resource.Description(),
-                created: prepareChangeInfo(resource.Created()),
-                modified: prepareChangeInfo(resource.Modified())
+                language: translation.Language(),
+                title: translation.TranslatedName(),
+                created: prepareChangeInfo(translation.Created()),
+                modified: prepareChangeInfo(translation.Modified())
             };
         });
+        resources.push({
+            language: draft.OriginalLanguage(),
+            title: draft.Name(),
+            created: prepareChangeInfo(draft.Created()),
+            modified: prepareChangeInfo(draft.Modified())
+        });
+        return resources;
     }
 
     function prepareContentParts(draft) {
         return ko.utils.arrayMap(draft.ContentParts(), function (contentPart) {
             return {
-                partType: contentPart.PartType(),
+                name: contentPart.Name(),
                 contentType: contentPart.ContentType(),
                 ranking: contentPart.Ranking(),
                 resources: prepareContentPartResources(draft, contentPart.Resources())
@@ -147,12 +153,9 @@ function (ko, markdown, urlHelper, ContentReferenceManager) {
 
     function prepareContentPartResources(draft, resources) {
         return ko.utils.arrayMap(resources, function (resource) {
-            var transformedContent = generateContent(resource, resource.Language());
             return {
                 language: resource.Language(),
-                content: transformedContent,
-                created: prepareChangeInfo(resource.Created()),
-                modified: prepareChangeInfo(resource.Modified())
+                content: generateContent(resource, resource.Language())
             };
         });
     }

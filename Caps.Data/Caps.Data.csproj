@@ -148,6 +148,22 @@
     <Compile Include="Migrations\201311141131251_AddDbSiteMapNodeActionUrl.Designer.cs">
       <DependentUpon>201311141131251_AddDbSiteMapNodeActionUrl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311191441412_AlterDraftAddNotesAndStatus.cs" />
+    <Compile Include="Migrations\201311191441412_AlterDraftAddNotesAndStatus.Designer.cs">
+      <DependentUpon>201311191441412_AlterDraftAddNotesAndStatus.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201311191522118_AlterDraftAddOriginalLanguage.cs" />
+    <Compile Include="Migrations\201311191522118_AlterDraftAddOriginalLanguage.Designer.cs">
+      <DependentUpon>201311191522118_AlterDraftAddOriginalLanguage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201311192232422_AddDraftTranslations.cs" />
+    <Compile Include="Migrations\201311192232422_AddDraftTranslations.Designer.cs">
+      <DependentUpon>201311192232422_AddDraftTranslations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201311201740416_AlterContentParts.cs" />
+    <Compile Include="Migrations\201311201740416_AlterContentParts.Designer.cs">
+      <DependentUpon>201311201740416_AlterContentParts.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
@@ -164,15 +180,16 @@
     <Compile Include="Model\DraftContentTypes.cs" />
     <Compile Include="Model\DraftFile.cs" />
     <Compile Include="Model\DraftFileResource.cs" />
-    <Compile Include="Model\DraftResource.cs" />
     <Compile Include="Model\DbSiteMap.cs" />
     <Compile Include="Model\DbSiteMapNode.cs" />
+    <Compile Include="Model\DraftTranslation.cs" />
     <Compile Include="Model\Publication.cs" />
     <Compile Include="Model\PublicationFile.cs" />
     <Compile Include="Model\PublicationFileResource.cs" />
     <Compile Include="Model\PublicationContentPart.cs" />
     <Compile Include="Model\PublicationContentPartResource.cs" />
     <Compile Include="Model\DbSiteMapNodeResource.cs" />
+    <Compile Include="Model\PublicationTranslation.cs" />
     <Compile Include="Model\Tag.cs" />
     <Compile Include="Model\Website.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -241,6 +258,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201311141131251_AddDbSiteMapNodeActionUrl.resx">
       <DependentUpon>201311141131251_AddDbSiteMapNodeActionUrl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311191441412_AlterDraftAddNotesAndStatus.resx">
+      <DependentUpon>201311191441412_AlterDraftAddNotesAndStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311191522118_AlterDraftAddOriginalLanguage.resx">
+      <DependentUpon>201311191522118_AlterDraftAddOriginalLanguage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311192232422_AddDraftTranslations.resx">
+      <DependentUpon>201311192232422_AddDraftTranslations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311201740416_AlterContentParts.resx">
+      <DependentUpon>201311201740416_AlterContentParts.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

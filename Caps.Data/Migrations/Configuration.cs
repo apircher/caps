@@ -39,6 +39,12 @@ namespace Caps.Data.Migrations
                 new Caps.Data.Model.Website { Name = "Caps Website", Url = "http://caps.luxbox.net" }
             );
 
+            foreach (var draft in context.Drafts)
+            {
+                if (String.IsNullOrWhiteSpace(draft.OriginalLanguage)) draft.OriginalLanguage = "de";
+                if (String.IsNullOrWhiteSpace(draft.Status)) draft.Status = "NEW";
+            }
+
             SqlTableChangeTracking.InitializeChangeTracking(context);
 
 #if DEBUG

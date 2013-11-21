@@ -29,7 +29,7 @@
             <div class="col-md-3">
                 <div class="thumbnail-container">
                     <a class="thumbnail" data-bind="if: resource.FileVersion()">
-                        <!-- ko template: { name: 'dbfile-icon' } --><!-- /ko -->
+                        <!-- ko template: { name: 'draftFiles-dbfile-icon' } --><!-- /ko -->
                     </a>
                     <div class="thumbnail-remove">
                         <a href="#" data-bind="click: selectGroup"><i class="fa fa-arrows"></i></a>
@@ -48,7 +48,7 @@
     </div>
 </section>
 
-<script type="text/html" id="dbfile-icon">
+<script type="text/html" id="draftFiles-dbfile-icon">
     <!-- ko with: resource.FileVersion() -->
     
     <!-- ko if: File().isImage && File().isImage() -->

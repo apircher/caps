@@ -1,0 +1,60 @@
+﻿<div class="messageBox dialog-large">
+    <div class="modal-header">
+        <h4>Bild einfügen</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row panel-scroll-v">
+            <ul data-bind="foreach: files" class="list-inline">
+                <li data-bind="click: $parent.selectFile, css: { 'item-selected': isSelected() }">
+                    <a class="thumbnail" data-bind="if: resource.FileVersion()">
+                        <!-- ko template: { name: 'insertImageDlg-dbfile-icon' } --><!-- /ko -->
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="row modal-section">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label class="control-label">Adresse</label>
+                    <input type="text" class="form-control" data-bind="value: imageUrl" />
+                </div>
+            </div>
+        </div>
+        <form class="form-inline">
+            <div class="form-group">
+                <label class="checkbox-inline">
+                    <input type="checkbox" data-bind="checked: thumbnail" /> Bild verkleinern
+                </label>
+            </div>
+            <div class="pull-right">
+                <div class="form-group">
+                    <label class="control-label" data-bind="uniqueFor: { value: thumbnailWidth, prefix: 'iidlg-thumbwidth' }">Breite: </label>
+                    <input type="text" data-bind="value: thumbnailWidth, uniqueId: { value: thumbnailWidth, prefix: 'iidlg-thumbwidth' }" class="form-control" style="width:80px" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label" data-bind="uniqueFor: { value: thumbnailHeight, prefix: 'iidlg-thumbheight' }">Höhe: </label>
+                    <input type="text" data-bind="value: thumbnailHeight, uniqueId: { value: thumbnailHeight, prefix: 'iidlg-thumbheight' }" class="form-control" style="width:80px" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div class="pull-left">
+            <a href="#" class="btn btn-link" data-bind="click: addFiles"><i class="fa fa-plus"></i> Bilder hinzufügen</a>
+        </div>
+        <button class="btn btn-primary" data-bind="click: ok">Ok</button>
+        <button class="btn btn-default" data-bind="click: cancel">Abbrechen</button>
+    </div>
+</div>
+
+<script type="text/html" id="insertImageDlg-dbfile-icon">
+    <!-- ko with: resource.FileVersion() -->
+    <!-- ko if: File().isImage && File().isImage() -->
+    <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=110x80', title: File().FileName, alt: File().FileName }, lazyImage: true" />
+    <!-- /ko -->
+    <!-- ko if: File().isImage && !File().isImage() -->
+    <span data-bind="attr: { title: File().FileName }"><i class="fa fa-file fa-4x"></i></span>
+    <!-- /ko -->
+    <!-- /ko -->
+</script>

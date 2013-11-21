@@ -111,10 +111,10 @@
         this.defaultLanguage = this.languages[0];
     }
 
-    WebsiteLocalization.prototype.supportedTranslations = function () {
-        var defaultLanguage = this.defaultLanguage.culture.toLowerCase();
+    WebsiteLocalization.prototype.supportedTranslations = function (originalLanguage) {
+        originalLanguage = (originalLanguage || this.defaultLanguage.culture).toLowerCase();
         return ko.utils.arrayFilter(this.languages, function (language) {
-            return language.culture.toLowerCase() !== defaultLanguage;
+            return language.culture.toLowerCase() !== originalLanguage;
         });
     };
 

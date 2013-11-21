@@ -31,7 +31,7 @@ namespace Caps.Web.Mvc.Model
                 if (SiteMapNode == null || SiteMapNode.Content == null)
                     return null;
 
-                dynamic template = JObject.Parse(SiteMapNode.Content.TemplateData);
+                dynamic template = JObject.Parse(SiteMapNode.Content.Template);
                 if (template != null)
                     return template.name;
                 return null;

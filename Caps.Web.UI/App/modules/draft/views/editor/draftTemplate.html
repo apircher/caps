@@ -1,4 +1,4 @@
-﻿<div id="draftTemplate">
+﻿<div id="draftTemplate" data-bind="if: editor.template()">
     <!-- ko foreach: { data: editor.template().rows, as: 'row' } -->
     <div class="row">
         <!-- ko foreach: { data:row.cells, as: 'cell' } -->

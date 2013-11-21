@@ -1,52 +1,26 @@
 ﻿<form role="form" class="form-horizontal">
     <div class="form-group">
         <label for="draftName" class="col-md-3 col-lg-2">Name</label>
-        <div class="col-md-9 col-lg-10">
+        <div class="col-md-7 col-lg-8">
             <input type="text" data-bind="value: editor.entity().Name" class="form-control" id="draftName" />
         </div>
     </div>
 
     <div class="form-group">
-        <label for="draftTitle" class="col-md-3 col-lg-2">Titel (Deutsch)</label>
-        <div class="col-md-9 col-lg-10">
-            <input type="text" data-bind="value: resource.Title" class="form-control" id="draftTitle" />
+        <label for="draftStatus" class="col-md-3 col-lg-2">Status</label>
+        <div class="col-md-7 col-lg-8">
+            <select class="form-control" data-bind="options: editor.draftStates, optionsValue: 'value', optionsText: 'title', value: editor.entity().Status" id="draftStatus"></select>
         </div>
-    </div>
-
-    <div class="form-group">
-        <label for="draftDescription" class="col-md-3 col-lg-2">Beschreibung (Deutsch)</label>
-        <div class="col-md-9 col-lg-10">
-            <textarea data-bind="value: resource.Description" class="form-control" id="draftDescription" />
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="draftKeywords" class="col-md-3 col-lg-2">Schlüsselwörter (Deutsch)</label>
-        <div class="col-md-9 col-lg-10">
-            <input type="text" data-bind="value: resource.Keywords" class="form-control" id="draftKeywords" />
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="col-md-3 col-lg-2">Id</label>
-        <p class="form-static-control col-md-3 col-lg-4"><span data-bind="text: editor.entity().Id"></span></p>
-
-        <label class="col-md-3 col-lg-2">Version</label>
-        <p class="form-static-control col-md-3 col-lg-4"><span data-bind="text: editor.entity().Version"></span></p>
-    </div>
-
-    <div class="form-group">
-        <label class="col-md-3 col-lg-2">Vorlage</label>
-        <p class="form-static-control col-md-9 col-lg-10"><span data-bind="text: editor.entity().Template"></span></p>
     </div>
 
     <div class="form-group">
         <label class="col-md-3 col-lg-2">Erstellt von</label>
-        <p class="form-static-control col-md-9 col-lg-10"><span data-bind="text: editor.entity().Created().By"></span> <span data-bind="text: moment(editor.entity().Created().At()).fromNow(), attr: { title: moment(editor.entity().Created().At()).format('LLLL') }"></span></p>
+        <p class="form-static-control col-md-9 col-lg-10"><span data-bind="text: createdBy"></span> <span data-bind="text: createdFromNow, attr: { title: createdAt }"></span></p>
     </div>
 
     <div class="form-group">
         <label class="col-md-3 col-lg-2">Letzte Änderung</label>
-        <p class="form-static-control col-md-9 col-lg-10"><span data-bind="text: editor.entity().Modified().By"></span> <span data-bind="text: moment(editor.entity().Modified().At()).fromNow(), attr: { title: moment(editor.entity().Modified().At()).format('LLLL') }"></span></p>
+        <p class="form-static-control col-md-4 col-lg-5"><span data-bind="text: modifiedBy"></span> <span data-bind="text: modifiedFromNow, attr: { title: modifiedAt }"></span></p>
+        <p class="form-static-control col-md-5 col-lg-5"><strong>Id</strong> <span data-bind="text: editor.entity().Id"></span> v.<span data-bind="text: editor.entity().Version"></span></p>
     </div>
 </form>

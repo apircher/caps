@@ -13,14 +13,18 @@ namespace Caps.Data.Model
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
         [Required]
         public int DraftId { get; set; }
+
         [MaxLength(50)]
         public String Name { get; set; }
 
         public bool IsEmbedded { get; set; }
+
         [MaxLength(50)]
         public String Determination { get; set; }
+
         [MaxLength(50)]
         public String Group { get; set; }
 
@@ -28,6 +32,7 @@ namespace Caps.Data.Model
 
         [InverseProperty("Files"), ForeignKey("DraftId")]
         public Draft Draft { get; set; }
+
         [InverseProperty("DraftFile")]
         public ICollection<DraftFileResource> Resources { get; set; }
     }

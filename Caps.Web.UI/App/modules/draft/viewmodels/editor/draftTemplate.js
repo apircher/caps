@@ -6,7 +6,7 @@
         this.editor = editor;
 
         self.editContentPart = function (templateCell) {
-            var contentPart = self.editor.getOrCreateContentPart(templateCell.name);
+            var contentPart = self.editor.getOrCreateContentPart(templateCell);
             if (contentPart)
                 self.editor.showContentPartEditor(contentPart);
         };

@@ -155,12 +155,13 @@ function (module, datacontext, ko, app, moment, localization, publicationService
      * DraftPreviewViewModel class
      */
     function DraftPreviewViewModel(entity, template) {
-        var self = this;
+        var self = this,
+            language = new localization.Language(entity.OriginalLanguage());
+
         self.entity = ko.observable(entity);
-        self.resource = ko.observable(entity.getResource('de'));
         self.template = ko.observable(template);
-        self.defaultCulture = localization.website.defaultLanguage;
-        self.supportedTranslations = localization.website.supportedTranslations();
+        self.originalLanguage = language;
+        self.supportedTranslations = localization.website.supportedTranslations(language.culture);
         self.publications = ko.observableArray();
 
         self.createdAt = ko.computed(function () {

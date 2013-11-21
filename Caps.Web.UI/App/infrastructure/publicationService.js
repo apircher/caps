@@ -66,13 +66,13 @@ function (system, app, entityManagerProvider, breeze, ko) {
             ContentVersion: contentData.version,
             ContentDate: contentData.modified.at,
             AuthorName: contentData.created.by,
-            TemplateData: contentData.templateContent
+            Template: contentData.template
         });
         self.manager.addEntity(publication);
 
         // ContentParts
         ko.utils.arrayForEach(contentData.contentParts, function (contentPartData) {
-            var part = publication.getOrCreateContentPart(contentPartData.partType, self.manager);
+            var part = publication.getOrCreateContentPart(contentPartData.name, self.manager);
             part.ContentType(contentPartData.contentType);
             part.Ranking(contentPartData.ranking);
 

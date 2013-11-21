@@ -11,46 +11,18 @@
     <div class="col-md-6">
         
         <div class="form-group">
-            <label class="col-md-2">Titel</label>
+            <label class="col-md-2">Name</label>
             <div class="col-md-10">
-                <input type="text" data-bind="value: fallbackResource().Title" class="form-control" disabled="disabled" />
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-md-2">Beschreibung</label>
-            <div class="col-md-10">
-                <textarea data-bind="value: fallbackResource().Description" class="form-control" disabled="disabled" />
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-md-2">Stichworte</label>
-            <div class="col-md-10">
-                <input type="text" data-bind="value: fallbackResource().Keywords" class="form-control" disabled="disabled" />
+                <input type="text" data-bind="value: editor.entity().Name" class="form-control" disabled="disabled" />
             </div>
         </div>
     </div>
 
     <div class="col-md-6">
         <div class="form-group">
-            <label class="col-md-2">Titel</label>
+            <label class="col-md-2">Name</label>
             <div class="col-md-10">
-                <input type="text" data-bind="value: resource.Title, attr: { lang: editor.language().culture }" class="form-control" />
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-md-2">Beschreibung</label>
-            <div class="col-md-10">
-                <textarea data-bind="value: resource.Description, attr: { lang: editor.language().culture }" class="form-control" />
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="col-md-2">Stichworte</label>
-            <div class="col-md-10">
-                <input type="text" data-bind="value: resource.Keywords, attr: { lang: editor.language().culture }" class="form-control" />
+                <input type="text" data-bind="value: translation.TranslatedName, attr: { lang: editor.language().culture }" class="form-control" />
             </div>
         </div>
     </div>

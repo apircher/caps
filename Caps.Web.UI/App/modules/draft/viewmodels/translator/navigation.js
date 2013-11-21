@@ -15,7 +15,7 @@
 
         self.currentContentPart = ko.computed(function () {
             if (self.editor.currentContent() && self.editor.currentContent().name === 'ContentPartEditor')
-                return self.editor.currentContent().contentPart.PartType();
+                return self.editor.currentContent().contentPart.Name();
             return undefined;
         });
 
@@ -41,6 +41,11 @@
 
         if (self.entity()) initContentPartItems();
         self.entity.subscribe(initContentPartItems);
+
+        self.numberOfFiles = ko.computed(function () {
+            var entity = self.entity();
+            return entity ? entity.Files().length : 0;
+        });
     }
 
     function ContentPartItem(contentPart, templateCell, editor) {

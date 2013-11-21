@@ -51,27 +51,6 @@ namespace Caps.Web.UI.Infrastructure
         }
         void ProcessNewOrModifiedDrafts(Dictionary<Type, List<EntityInfo>> saveMap)
         {
-            if (saveMap.ContainsKey(typeof(DraftContentPartResource)))
-            {
-                var newResources = saveMap[typeof(DraftContentPartResource)].Where(n => n.EntityState == EntityState.Added);
-                foreach (var entry in newResources)
-                {
-                    var resource = entry.Entity as DraftContentPartResource;
-                    resource.Created.By = user.Identity.Name;
-                    resource.Created.At = DateTime.UtcNow;
-                    resource.Modified.By = user.Identity.Name;
-                    resource.Modified.At = DateTime.UtcNow;
-                }
-
-                var modifiedResources = saveMap[typeof(DraftContentPartResource)].Where(n => n.EntityState == EntityState.Modified);
-                foreach (var entry in modifiedResources)
-                {
-                    var resource = entry.Entity as DraftContentPartResource;
-                    resource.Modified.By = user.Identity.Name;
-                    resource.Modified.At = DateTime.UtcNow;
-                }
-            }
-
             if (saveMap.ContainsKey(typeof(Draft)))
             {
                 var newDrafts = saveMap[typeof(Draft)].Where(n => n.EntityState == EntityState.Added);
@@ -93,6 +72,29 @@ namespace Caps.Web.UI.Infrastructure
                     draft.Modified.By = user.Identity.Name;
                     draft.Modified.At = DateTime.UtcNow;
                     draft.Version++;
+                }
+            }
+
+            if (saveMap.ContainsKey(typeof(DraftTranslation)))
+            {
+                var newTranslations = saveMap[typeof(DraftTranslation)].Where(n => n.EntityState == EntityState.Added);
+                foreach (var entry in newTranslations)
+                {
+                    var translation = entry.Entity as DraftTranslation;
+                    translation.Created.By = user.Identity.Name;
+                    translation.Created.At = DateTime.UtcNow;
+                    translation.Modified.By = user.Identity.Name;
+                    translation.Modified.At = DateTime.UtcNow;
+                }
+
+                var modifiedTranslations = saveMap[typeof(DraftTranslation)].Where(n => n.EntityState == EntityState.Modified);
+                foreach (var entry in modifiedTranslations)
+                {
+                    entry.ForceUpdate = true;
+
+                    var translation = entry.Entity as DraftTranslation;
+                    translation.Modified.By = user.Identity.Name;
+                    translation.Modified.At = DateTime.UtcNow;
                 }
             }
         }

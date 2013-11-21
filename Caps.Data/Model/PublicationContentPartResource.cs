@@ -20,14 +20,6 @@ namespace Caps.Data.Model
 
         public String Content { get; set; }
 
-        public String TranslationAuthor { get; set; }
-
-        public DateTime TranslationDate { get; set; }
-
-        public ChangeInfo Created { get; set; }
-        
-        public ChangeInfo Modified { get; set; }
-
         [InverseProperty("Resources"), ForeignKey("PublicationContentPartId")]
         public PublicationContentPart ContentPart { get; set; }
     }

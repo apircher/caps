@@ -17,16 +17,42 @@ namespace Caps.Data.Model
         [Required]
         public int PublicationId { get; set; }
 
-        [InverseProperty("ContentParts"), ForeignKey("PublicationId")]
-        public Publication Publication { get; set; }
-        
+        /// <summary>
+        /// The name of the content part.
+        /// </summary>
+        /// <remarks>
+        /// The name can be used to associate the content part with a container in the template.
+        /// </remarks>
         [MaxLength(50)]
-        public String PartType { get; set; }
+        public String Name { get; set; }
 
+        /// <summary>
+        /// The type of content that this part provides.
+        /// </summary>
+        /// <remarks>
+        /// Valid types are defined in the DraftContentTypes class.
+        /// </remarks>
         [MaxLength(50)]
         public String ContentType { get; set; }
 
+        /// <summary>
+        /// Serialized properties of the content part.
+        /// </summary>
+        /// <remarks>
+        /// This could be an XML- or JSON-Document containing properties for custom content handlers.
+        /// </remarks>
+        public String Properties { get; set; }
+
+        /// <summary>
+        /// The ranking for the content part.
+        /// </summary>
+        /// <remarks>
+        /// This could be used in situations where multiple parts are displayed in the same container.
+        /// </remarks>
         public int Ranking { get; set; }
+        
+        [InverseProperty("ContentParts"), ForeignKey("PublicationId")]
+        public Publication Publication { get; set; }
 
         [InverseProperty("ContentPart")]
         public ICollection<PublicationContentPartResource> Resources { get; set; }

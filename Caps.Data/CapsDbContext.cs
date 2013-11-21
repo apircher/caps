@@ -32,7 +32,7 @@ namespace Caps.Data
         public DbSet<Publication> Publications { get; set; }
 
         public DbSet<Draft> Drafts { get; set; }
-        public DbSet<DraftResource> DraftResources { get; set; }
+        public DbSet<DraftTranslation> DraftTranslations { get; set; }
         public DbSet<DraftContentPart> DraftContentParts { get; set; }
         public DbSet<DraftContentPartResource> DraftContentPartResources { get; set; }
         public DbSet<DraftFile> DraftFiles { get; set; }
