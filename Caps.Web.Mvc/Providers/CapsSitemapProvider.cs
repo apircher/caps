@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Mvc;
 using System.Web.Routing;
 
 namespace Caps.Web.Mvc.Providers
@@ -82,7 +83,8 @@ namespace Caps.Web.Mvc.Providers
                 if (rootNode != null)
                     return rootNode;
 
-                using (CapsSiteMapBuilder builder = new CapsSiteMapBuilder())
+                // Build the SiteMap.
+                using (ISiteMapBuilder builder = GetBuilder())
                 {
                     var result = builder.BuildSitemap(this, (n1, n2) => AddNode(n1, n2));
                     if (result != null)
@@ -94,19 +96,14 @@ namespace Caps.Web.Mvc.Providers
                     }
                     else
                     {
-                        rootNode = new CapsSiteMapNode(this, "root");
-                        rootNode.Title = "Home";
-                        rootNode.Url = "~/";
-                        AddNode(rootNode);
-
+                        rootNode = AddDefaultRootNode();
                         siteMapExpiration = DateTime.UtcNow.AddMinutes(1);
                         nodeIdIndex = new Dictionary<int, SiteMapNode>();
                         nodeNameIndex = new Dictionary<String, SiteMapNode>();
                     }
                 }
 
-                // Add SqlCacheDependency
-                // Auf Sql Azure nicht verfügbar.
+                // Add CacheDependency
                 using (CacheDependency dependency = new PollingCacheDependency(10000, "CapsDbContext", "DbSiteMaps", "DbSiteMapNodes", "DbSiteMapNodeResources"))
                 {
                     HttpRuntime.Cache.Insert(cacheKey, "", dependency, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable,
@@ -165,7 +162,7 @@ namespace Caps.Web.Mvc.Providers
             return BuildSiteMap();
         }
 
-        void EnsureSiteMapBuilt()
+        void EnsureSiteMapBuilt() 
         {
             if (rootNode == null)
             {
@@ -173,10 +170,25 @@ namespace Caps.Web.Mvc.Providers
                 BuildSiteMap();
             }
         }
-        void ResetSiteMap()
+        void ResetSiteMap() 
         {
             rootNode = null;
             Clear();
+        }
+        ISiteMapBuilder GetBuilder() 
+        {
+            var builder = DependencyResolver.Current.GetService<ISiteMapBuilder>();
+            return builder ?? DependencyResolver.Current.GetService <DefaultSiteMapBuilder>();
+        }
+        CapsSiteMapNode AddDefaultRootNode()
+        {
+            var node = new CapsSiteMapNode(this, "root");
+            node.Title = "Home";
+            node.Url = "~/";
+
+            AddNode(node);
+            
+            return node;
         }
     }
 }

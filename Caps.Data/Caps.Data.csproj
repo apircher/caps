@@ -164,6 +164,10 @@
     <Compile Include="Migrations\201311201740416_AlterContentParts.Designer.cs">
       <DependentUpon>201311201740416_AlterContentParts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201311231240223_AddDraftTemplate.cs" />
+    <Compile Include="Migrations\201311231240223_AddDraftTemplate.Designer.cs">
+      <DependentUpon>201311231240223_AddDraftTemplate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
@@ -182,6 +186,7 @@
     <Compile Include="Model\DraftFileResource.cs" />
     <Compile Include="Model\DbSiteMap.cs" />
     <Compile Include="Model\DbSiteMapNode.cs" />
+    <Compile Include="Model\DraftTemplate.cs" />
     <Compile Include="Model\DraftTranslation.cs" />
     <Compile Include="Model\Publication.cs" />
     <Compile Include="Model\PublicationFile.cs" />
@@ -270,6 +275,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201311201740416_AlterContentParts.resx">
       <DependentUpon>201311201740416_AlterContentParts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201311231240223_AddDraftTemplate.resx">
+      <DependentUpon>201311231240223_AddDraftTemplate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

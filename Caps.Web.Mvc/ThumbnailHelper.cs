@@ -103,6 +103,73 @@ namespace Caps.Web.Mvc
             }
         }
 
+        public static byte[] AddOverlay(this DbFileVersion fileVersion, String overlayFileName, System.Drawing.Color backgroundColor)
+        {
+            return AddOverlay(fileVersion.Content.Data, overlayFileName, backgroundColor);
+        }
+        public static byte[] AddOverlay(byte[] imageBytes, String overlayFileName, System.Drawing.Color backgroundColor)
+        {
+            var overlayImageBytes = File.ReadAllBytes(overlayFileName);
+            return AddOverlay(imageBytes, overlayImageBytes, backgroundColor);
+        }
+        public static byte[] AddOverlay(byte[] imageBytes, byte[] overlayImageBytes, System.Drawing.Color backgroundColor)
+        {
+            using (var streamImage = new MemoryStream(imageBytes))
+            using (var bmpImage = new System.Drawing.Bitmap(streamImage))
+            using (var streamOverlay = new MemoryStream(overlayImageBytes))
+            using (var bmpOverlayImage = new System.Drawing.Bitmap(streamOverlay))
+            {
+                var newImage = new System.Drawing.Bitmap(bmpOverlayImage.Width, bmpOverlayImage.Height, bmpOverlayImage.PixelFormat);
+                var g = System.Drawing.Graphics.FromImage(newImage);
+
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBilinear;
+                g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+
+                // Fill with background
+                g.Clear(backgroundColor);
+
+                // Add the image
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                g.DrawImageUnscaled(bmpImage, (bmpOverlayImage.Width - bmpImage.Width) / 2, (bmpOverlayImage.Height - bmpImage.Height) / 2);
+
+                // Add the overlay
+                g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                g.DrawImageUnscaled(bmpOverlayImage, 0, 0);
+
+                // Save the image.
+                byte[] result = SaveImage(newImage, bmpImage.RawFormat);
+                
+                g.Dispose();
+                newImage.Dispose();
+
+                return result;
+            }
+        }
+
+        static byte[] SaveImage(System.Drawing.Image image, System.Drawing.Imaging.ImageFormat imageFormat)
+        {
+            var streamOut = new MemoryStream();
+
+            if (imageFormat == System.Drawing.Imaging.ImageFormat.Jpeg)
+            {
+                var jpgEncoder = GetEncoder(imageFormat);
+                var myEncoder = System.Drawing.Imaging.Encoder.Quality;
+                var encoderParameters = new System.Drawing.Imaging.EncoderParameters(1);
+                encoderParameters.Param[0] = new System.Drawing.Imaging.EncoderParameter(myEncoder, 100L);
+                image.Save(streamOut, jpgEncoder, encoderParameters);
+            }
+            else
+                image.Save(streamOut, imageFormat);
+
+            byte[] result;
+            streamOut.Position = 0;
+            using (System.IO.BinaryReader reader = new System.IO.BinaryReader(streamOut))
+                result = reader.ReadBytes((int)streamOut.Length);
+
+            return result;
+        }
+
         static bool TryParseDimensions(String s, out int width, out int height)
         {
             width = 0;
@@ -119,6 +186,21 @@ namespace Caps.Web.Mvc
                 return true;
             }
             return false;
+        }
+
+        static System.Drawing.Imaging.ImageCodecInfo GetEncoder(System.Drawing.Imaging.ImageFormat format)
+        {
+
+            System.Drawing.Imaging.ImageCodecInfo[] codecs = System.Drawing.Imaging.ImageCodecInfo.GetImageDecoders();
+
+            foreach (System.Drawing.Imaging.ImageCodecInfo codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+            return null;
         }
     }
 }

@@ -19,22 +19,26 @@ namespace Caps.Web.Mvc
             this.db = db;
         }
 
-        public ContentModel GetContentById(int id)
+        public Caps.Data.Model.DbSiteMapNode GetCurrentNodeVersion(int id)
         {
             var currentSiteMap = db.GetCurrentSiteMap(db.Websites.First().Id);
             if (currentSiteMap == null)
-                throw new ContentNotFoundException();
+                return null;
 
-            var entity = db.SiteMapNodes
+            return db.SiteMapNodes
                 .Include("Resources")
                 .Include("Content.ContentParts.Resources")
                 .Include("Content.Files.Resources.FileVersion.File")
                 .FirstOrDefault(n => n.SiteMap.Id == currentSiteMap.Id && n.PermanentId == id);
+        }
 
+        public ContentModel GetContentById(int id)
+        {
+            var entity = GetCurrentNodeVersion(id);
             if (entity == null)
                 throw new ContentNotFoundException();
 
-            var contentParts = entity.Content.ContentParts.Select(p =>
+            var contentParts = entity.Content != null ? entity.Content.ContentParts.Select(p =>
                 p.GetValueForLanguage(Language.CurrentLanguage, r => new ContentPartModel
                 {
                     Content = r.Content,
@@ -42,12 +46,29 @@ namespace Caps.Web.Mvc
                     Usage = p.Name,
                     IsFallback = !String.Equals(Language.CurrentLanguage, r.Language, StringComparison.OrdinalIgnoreCase)
                 }
-                , null, "de", "en"));
+                , null, "de", "en")) : new List<ContentPartModel>();
+
+            var contentFiles = entity.Content != null ? entity.Content.Files.Select(f =>
+                f.GetValueForLanguage(Language.CurrentLanguage, r => new ContentFileModel
+                {
+                    Name = f.Name,
+                    Language = r.Language,
+                    Determination = f.Determination,
+                    Group = f.Group,
+                    Ranking = f.Ranking,
+                    Title = String.IsNullOrWhiteSpace(r.Title) ? r.FileVersion.File.FileName : r.Title,
+                    Description = r.Description,
+                    Credits = r.Credits,
+                    FileVersionId = r.DbFileVersionId.GetValueOrDefault(),
+                    FileName = r.FileVersion.File.FileName
+                }
+                , null, "de", "en")) : new List<ContentFileModel>();
 
             return new ContentModel
             {
                 SiteMapNode = entity,
-                ContentParts = contentParts.Where(c => c != null)
+                ContentParts = contentParts.Where(c => c != null),
+                ContentFiles = contentFiles.Where(f => f != null)
             };
         }
 

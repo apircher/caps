@@ -126,5 +126,47 @@ namespace Caps.Web.UI.Infrastructure
                 }
             }
         }
+        void ProcessDeletedSiteMapNodes(Dictionary<Type, List<EntityInfo>> saveMap)
+        {
+            if (saveMap.ContainsKey(typeof(DbSiteMapNode)))
+            {
+                var deletedSitemapNodes = saveMap[typeof(DbSiteMapNode)].Where(n => n.EntityState == EntityState.Deleted);
+
+                foreach (var node in deletedSitemapNodes.Select(nfo => nfo.Entity).Cast<DbSiteMapNode>())
+                {
+                    if (!node.ContentId.HasValue) continue;
+                    if (!Context.SiteMapNodes.Any(n => n.ContentId == node.ContentId && n.Id != node.Id))
+                        AddPublicationForDeletion(node.ContentId, saveMap);
+                }
+            }
+        }
+
+
+        void AddPublicationForDeletion(int? id, Dictionary<Type, List<EntityInfo>> saveMap)
+        {
+            var publication = Context.Publications.FirstOrDefault(p => p.Id == id.GetValueOrDefault());
+            if (publication == null) return;
+
+            AddEntityInfo(saveMap, publication, EntityState.Deleted);
+            Array.ForEach(publication.Files.ToArray(), f =>
+            {
+                AddEntityInfo(saveMap, f, EntityState.Deleted);
+                Array.ForEach(f.Resources.ToArray(), r => AddEntityInfo(saveMap, r, EntityState.Deleted));
+            });
+
+            Array.ForEach(publication.ContentParts.ToArray(), cp =>
+            {
+                AddEntityInfo(saveMap, cp, EntityState.Deleted);
+                Array.ForEach(cp.Resources.ToArray(), r => AddEntityInfo(saveMap, r, EntityState.Deleted));
+            });
+        }
+
+        void AddEntityInfo<T>(Dictionary<Type, List<EntityInfo>> saveMap, T entity, EntityState state)
+        {
+            var nfo = CreateEntityInfo(entity, EntityState.Deleted);
+            var t = entity.GetType();
+            if (!saveMap.ContainsKey(t)) saveMap.Add(t, new List<EntityInfo>());
+            saveMap[t].Add(nfo);
+        }
     }
 }

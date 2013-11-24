@@ -21,5 +21,8 @@ namespace Caps.Data.Model
 
         [InverseProperty("Website")]
         public ICollection<DbSiteMap> SiteMapVersions { get; set; }
+
+        [InverseProperty("Website")]
+        public ICollection<DraftTemplate> DraftTemplates { get; set; }
     }
 }

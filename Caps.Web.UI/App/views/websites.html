@@ -12,6 +12,15 @@
             <label>Adresse</label>
             <input type="text" data-bind="value: website().Url" class="form-control" />
         </div>
+
+        <h2>Entwurfs-Vorlagen</h2>
+        <ul data-bind="foreach: website().DraftTemplates" class="list-group">
+            <li class="list-group-item">
+                <a href="#" data-bind="click: $parent.editTemplate"><i class="fa fa-columns"></i> <!-- ko text: Name --><!-- /ko --></a>
+            </li>
+        </ul>
+
+        <a href="#" data-bind="click: addTemplate" class="btn btn-link"><i class="fa fa-plus"></i> Vorlage hinzufügen</a>
     </div>
 
 

@@ -17,5 +17,6 @@ namespace Caps.Data.ContentControls
     {
         String Action(String action, String controller, object routeData);
         String Publication(int permanentId);
+        String Content(String contentPath);
     }
 }

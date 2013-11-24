@@ -2,13 +2,40 @@
     <div class="page-content">
         <h1>Entwurfs-Vorlage wählen</h1>
 
-        <div class="row" data-bind="foreach: templates">
-            <div class="col-xs-4 col-md-3 col-lg-2">
-                <div class="thumbnail">
-                    <img data-bind="attr: { alt: name, src: '/App/modules/draft/images/' + name + '.png' }, click: $parent.createDraft" class="clickable" />
-                    <div class="caption">
-                        <h4 data-bind="text: name"></h4>
-                        <a href="#" data-bind="click: $parent.createDraft">Vorlage wählen</a>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label class="control-label">Name</label>
+                    <input type="text" class="form-control" data-bind="value: draftName" />
+                </div>
+
+                <!-- ko if: selectedItem() && selectedItem().template.parameters -->
+                <!-- ko foreach: selectedItem().template.parameters -->
+                <div class="form-group">
+                    <label class="control-label" data-bind="text: title"></label>
+                    <input type="text" class="form-control" data-bind="value: value" />
+                </div>
+                <!-- /ko -->
+                <!-- /ko -->
+
+                <!-- ko if: selectedItem() -->
+                <div class="form-group">
+                    <label class="control-label">Vorlage</label>
+                    <p class="form-control-static" data-bind="text: selectedItem().title"></p>
+                </div>
+                <!-- /ko -->
+
+            </div>
+            <div class="col-md-9">
+                <div class="row" data-bind="foreach: listItems">
+                    <div class="col-xs-4 col-md-3 col-lg-2">
+                        <div class="thumbnail">
+                            <img data-bind="attr: { alt: name, src: icon }, click: $parent.selectTemplate" class="clickable" />
+                            <div class="caption">
+                                <h4 data-bind="text: title"></h4>
+                                <a href="#" data-bind="click: $parent.selectTemplate">Vorlage wählen</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -20,6 +47,9 @@
             <ul class="nav navbar-nav">
                 <li>
                     <a href="#" data-bind="click: cancel"><span><i class="fa fa-arrow-left"></i> Abbrechen</span></a>
+                </li>
+                <li>
+                    <a href="#" data-bind="click: createDraft"><span><i class="fa fa-arrow-right"></i> Weiter</span></a>
                 </li>
             </ul>
         </div>

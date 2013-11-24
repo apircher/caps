@@ -103,6 +103,12 @@ namespace Caps.Web.UI.Controllers
         {
             return _contextProvider.Context.Publications;
         }
+        // ~/breeze/capsdata/DraftTemplates
+        [HttpGet]
+        public IQueryable<DraftTemplate> DraftTemplates()
+        {
+            return _contextProvider.Context.DraftTemplates;
+        }
 
         // ~/breeze/capsdata/SaveChanges
         public SaveResult SaveChanges(JObject saveBundle)

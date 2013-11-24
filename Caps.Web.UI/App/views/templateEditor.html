@@ -1,0 +1,42 @@
+﻿<div class="app-page bottom-fixed-navbar-container">
+    <div class="page-content" data-bind="if: template()">
+
+        <div class="row">
+            <div class="col-md-9">
+                <div class="content-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top', minWidth: 992 }">
+                    <textarea data-bind="value: template().TemplateContent" class="form-control" rows="20"></textarea>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <h3 data-bind="text: title"></h3>
+
+                <div class="form-group">
+                    <label class="control-label">Name</label>
+                    <input type="text" data-bind="value: template().Name" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Beschreibung</label>
+                    <textarea class="form-control" data-bind="value: template().Description" rows="8"></textarea>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="navbar navbar-default navbar-fixed-bottom">
+        <div class="navbar-panel">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#" data-bind="click: navigateBack"><i class="fa fa-arrow-left"></i> Zurück</a>
+                </li>
+                <li>
+                    <a href="#" data-bind="click: saveChanges"><i class="fa fa-save"></i> Speichern</a>
+                </li>
+                <li>
+                    <a href="#" data-bind="click: deleteTemplate"><i class="fa fa-trash-o"></i> Vorlage Löschen</a>
+                </li>
+            </ul>
+        </div>
+    </div> 
+</div>

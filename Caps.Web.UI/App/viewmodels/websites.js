@@ -1,16 +1,22 @@
 ﻿define([
     'durandal/system',
+    'durandal/app',
     'infrastructure/datacontext',
     'entityManagerProvider',
     'ko',
     'breeze',
     'plugins/router'
 ],
-function (system, datacontext, entityManagerProvider, ko, breeze, router) {
+function (system, app, datacontext, entityManagerProvider, ko, breeze, router) {
 
     var website = ko.observable(),
         EntityQuery = breeze.EntityQuery,
         manager = entityManagerProvider.createManager();
+
+    app.on('caps:draftTemplate:deleted', function (templateId) {
+        var t = ko.utils.arrayFirst(website().DraftTemplates(), function (t) { return t.Id() === templateId; });
+        if (t) manager.detachEntity(t);
+    });
 
     function createDefaultWebsite() {
         return system.defer(function (dfd) {
@@ -25,7 +31,7 @@ function (system, datacontext, entityManagerProvider, ko, breeze, router) {
     }
 
     function fetchWebsites() {
-        var query = new EntityQuery().from("Websites");
+        var query = new EntityQuery().from('Websites').expand('DraftTemplates');
         return manager.executeQuery(query);
     }
 
@@ -45,11 +51,19 @@ function (system, datacontext, entityManagerProvider, ko, breeze, router) {
         },
 
         saveChanges: function () {
-            manager.saveChanges();
+            manager.saveChanges().then(router.navigateBack);
         },
 
         navigateBack: function () {
             router.navigateBack();
+        },
+
+        addTemplate: function () {
+            router.navigate('#templates/' + website().Id() + '/create');
+        },
+
+        editTemplate: function (template) {
+            router.navigate('#templates/' + website().Id() + '/edit/' + template.Id());
         }
     };
 });

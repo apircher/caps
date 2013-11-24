@@ -33,7 +33,7 @@ function (system, entityManagerProvider, ko, UserQueryParser) {
     }
 
     function getDraft(id) {
-        var query = EntityQuery.from('Drafts').where('Id', '==', id)
+        var query = new EntityQuery().from('Drafts').where('Id', '==', id)
                 .expand('Translations, ContentParts.Resources, Files.Resources.FileVersion.File');
         return manager.executeQuery(query);
     }
@@ -44,10 +44,27 @@ function (system, entityManagerProvider, ko, UserQueryParser) {
         return templates;
     }
     function getTemplate(templateName) {
-        var t = ko.utils.arrayFirst(getTemplates(), function (template) {
-            return template.name.toLowerCase() === templateName.toLowerCase();
-        });
-        return t;
+        return system.defer(function (dfd) {
+            var t = ko.utils.arrayFirst(getTemplates(), function (template) {
+                return template.name.toLowerCase() === templateName.toLowerCase();
+            });
+
+            if (t) dfd.resolve(t);
+
+            var query = new EntityQuery().from('DraftTemplates').where('Name', '==', templateName);
+            manager.executeQuery(query).then(function (data) {
+                if (!data.results || !data.results.length) dfd.resolve(null);
+                try {
+                    t = JSON.parse(data.results[0].TemplateContent());
+                }
+                catch (error) {
+                    dfd.reject(error);
+                }
+                dfd.resolve(t);
+            })
+            .fail(dfd.reject);
+        })
+        .promise();
     }
     function initTemplates()  {
         var t = [];

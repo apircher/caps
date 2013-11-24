@@ -34,7 +34,9 @@ function (router, app, authentication, moduleRouter, moduleRegistry, ko) {
                     { route: 'login', moduleId: 'viewmodels/login', title: 'Anmelden', nav: false },
                     { route: 'forbidden', moduleId: 'viewmodels/forbidden', title: 'Nicht erlaubt', nav: false },
                     { route: 'profile', moduleId: 'viewmodels/profile', title: 'Mein Profil', nav: false, hash: '#profile' },
-                    { route: 'website', moduleId: 'viewmodels/websites', title: 'Website', nav: false }
+                    { route: 'website', moduleId: 'viewmodels/websites', title: 'Website', nav: false },
+                    { route: 'templates/:websiteId/create', moduleId: 'viewmodels/templateEditor', title: 'Vorlage erstellen', nav: false },
+                    { route: 'templates/:websiteId/edit/:id', moduleId: 'viewmodels/templateEditor', title: 'Vorlage bearbeiten', nav: false }
             ]);
             return moduleRouter.mapModuleRoutes(router)
                 .buildNavigationModel()

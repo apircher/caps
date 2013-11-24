@@ -126,7 +126,7 @@ function (system, app, entityManagerProvider, breeze, ko) {
                 .fail(dfd.reject);
             });
         })
-        .promse();
+        .promise();
 
         function fetchNode() {
             return system.defer(function (dfd) {

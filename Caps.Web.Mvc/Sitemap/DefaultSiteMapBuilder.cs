@@ -12,9 +12,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace Caps.Web.Mvc.Providers
+namespace Caps.Web.Mvc.Sitemap
 {
-    public class CapsSiteMapBuilder : IDisposable
+    public class DefaultSiteMapBuilder : ISiteMapBuilder
     {
         static String[] supportedNodeTypes = new String[] { "ROOT", "Page", "Action", "Teaser" };
 
@@ -27,20 +27,19 @@ namespace Caps.Web.Mvc.Providers
         Dictionary<String, SiteMapNode> indexNameToSiteMapNode;
         Dictionary<int, SiteMapNode> indexIdToSiteMapNode;
 
-        public CapsSiteMapBuilder()
+        public DefaultSiteMapBuilder(CapsDbContext db)
         {
-            db = DependencyResolver.Current.GetService<CapsDbContext>();
+            this.db = db;
             website = db.Websites.FirstOrDefault();
 
             if (website != null)
             {
-                currentSiteMap = db.GetCurrentSiteMap(website.Id);
+                currentSiteMap = LoadSiteMapData(website);
                 nodeList = currentSiteMap != null && currentSiteMap.SiteMapNodes != null ? 
                     currentSiteMap.SiteMapNodes.ToList() : new List<DbSiteMapNode>();
             }
         }
-
-        ~CapsSiteMapBuilder()
+        ~DefaultSiteMapBuilder()
         {
             Dispose(false);
         }
@@ -75,13 +74,14 @@ namespace Caps.Web.Mvc.Providers
         {
             CapsSiteMapNode siteMapNode = null;
 
-            if (entity.IsNodeTypeIn(supportedNodeTypes))
+            if (entity != null && IsSupportedNodeType(entity.NodeType))
             {
                 String url = GetUrl(entity);
                 if (String.IsNullOrWhiteSpace(url))
                     return;
 
-                siteMapNode = new CapsSiteMapNode(provider, entity.Id.ToString("x", CultureInfo.InvariantCulture), GetUrl(entity), entity.Name);
+                siteMapNode = CreateNode(provider, entity, entity.Id.ToString("x", CultureInfo.InvariantCulture), GetUrl(entity), entity.Name);
+                siteMapNode.PermanentId = entity.PermanentId;
                 if (addNodeAction != null)
                     addNodeAction(siteMapNode, parentNode);
                 Index(entity, siteMapNode);
@@ -98,7 +98,15 @@ namespace Caps.Web.Mvc.Providers
             }
         }
 
-        String GetUrl(DbSiteMapNode entity)
+        protected virtual CapsSiteMapNode CreateNode(StaticSiteMapProvider provider, DbSiteMapNode entity, String key, String url, String title) 
+        {
+            return new CapsSiteMapNode(provider, key, url, title);
+        }
+        protected virtual bool IsSupportedNodeType(String nodeType) 
+        {
+            return supportedNodeTypes.Any(nt => String.Equals(nodeType, nt, StringComparison.OrdinalIgnoreCase));
+        }
+        protected virtual String GetUrl(DbSiteMapNode entity) 
         {
             RequestContext ctx;
             if (HttpContext.Current.Handler is MvcHandler)
@@ -136,7 +144,7 @@ namespace Caps.Web.Mvc.Providers
 
             return helper.Action("Index", "Home", routeData);
         }
-        DateTime GetSiteMapExpiration()
+        protected virtual DateTime GetSiteMapExpiration() 
         {
             DateTime siteMapExpiration = DateTime.MaxValue;
             var nextSiteMap = db.SiteMaps.Where(m => m.PublishedFrom.HasValue && m.PublishedFrom.Value > DateTime.UtcNow)
@@ -144,6 +152,10 @@ namespace Caps.Web.Mvc.Providers
             if (nextSiteMap != null)
                 siteMapExpiration = nextSiteMap.PublishedFrom.Value;
             return siteMapExpiration;
+        }
+        protected virtual System.Data.Entity.Infrastructure.DbQuery<DbSiteMap> IncludeRelatedEntities(System.Data.Entity.Infrastructure.DbQuery<DbSiteMap> sitemaps)
+        {
+            return sitemaps.Include("SiteMapNodes").Include("SiteMapNodes.Resources");
         }
 
         void Index(DbSiteMapNode entity, SiteMapNode node)
@@ -154,6 +166,13 @@ namespace Caps.Web.Mvc.Providers
 
             if (!indexIdToSiteMapNode.ContainsKey(entity.PermanentId))
                 indexIdToSiteMapNode.Add(entity.PermanentId, node);
+        }
+        DbSiteMap LoadSiteMapData(Website website)
+        {
+            return IncludeRelatedEntities(db.SiteMaps)
+                .Where(m => m.PublishedFrom.HasValue && m.PublishedFrom.Value <= DateTime.UtcNow)
+                .OrderByDescending(m => m.Version).ThenByDescending(m => m.PublishedFrom)
+                .FirstOrDefault();
         }
 
         public void Dispose()
@@ -172,13 +191,5 @@ namespace Caps.Web.Mvc.Providers
             }
             disposed = true;
         }
-    }
-
-    public class CapsSiteMapBuilderResult
-    {
-        public SiteMapNode RootNode { get; set; }
-        public IDictionary<int, SiteMapNode> IndexIdToNode { get; set; }
-        public IDictionary<String, SiteMapNode> IndexNameToNode { get; set; }
-        public DateTime SiteMapExpiration { get; set; }
     }
 }

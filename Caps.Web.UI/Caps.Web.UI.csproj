@@ -330,6 +330,7 @@
     <Content Include="App\viewmodels\forbidden.js" />
     <Content Include="App\viewmodels\login.js" />
     <Content Include="App\viewmodels\profile.js" />
+    <Content Include="App\viewmodels\templateEditor.js" />
     <Content Include="App\viewmodels\websites.js" />
     <Content Include="App\views\changePasswordDialog.html" />
     <Content Include="App\views\editorTemplates\checkboxTemplate.html" />
@@ -347,6 +348,7 @@
     <Content Include="App\views\profile.html" />
     <Content Include="App\views\shell.html" />
     <Content Include="App\viewmodels\shell.js" />
+    <Content Include="App\views\templateEditor.html" />
     <Content Include="App\views\websites.html" />
     <Content Include="App\views\welcome.html" />
     <Content Include="App\viewmodels\welcome.js" />
@@ -526,7 +528,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\DbSiteMapNode\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

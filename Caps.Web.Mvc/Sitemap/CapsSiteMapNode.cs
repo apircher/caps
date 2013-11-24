@@ -44,6 +44,7 @@ namespace Caps.Web.Mvc.Sitemap
             }
         }
         public DbSiteMapNode Entity { get; set; }
+        public int PermanentId { get; set; }
 
         public override string Title
         {

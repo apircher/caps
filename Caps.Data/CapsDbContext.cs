@@ -37,6 +37,8 @@ namespace Caps.Data
         public DbSet<DraftContentPartResource> DraftContentPartResources { get; set; }
         public DbSet<DraftFile> DraftFiles { get; set; }
         public DbSet<DraftFileResource> DraftFileResources { get; set; }
+
+        public DbSet<DraftTemplate> DraftTemplates { get; set; }
         
         public Author GetAuthorByUserName(String userName) 
         {

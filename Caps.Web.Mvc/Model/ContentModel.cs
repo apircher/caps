@@ -15,6 +15,7 @@ namespace Caps.Web.Mvc.Model
     {
         public DbSiteMapNode SiteMapNode { get; set; }
         public IEnumerable<ContentPartModel> ContentParts { get; set; }
+        public IEnumerable<ContentFileModel> ContentFiles { get; set; }
 
         public bool HasLocalizedContent
         {
@@ -57,6 +58,16 @@ namespace Caps.Web.Mvc.Model
         {
             var part = FindPart(usage);
             return part != null ? part.PrepareDisplay(SiteMapNode, urlHelper, ScriptManager) : String.Empty;
+        }
+
+        public IEnumerable<ContentFileModel> Downloads
+        {
+            get
+            {
+                if (ContentFiles == null || !ContentFiles.Any())
+                    return new List<ContentFileModel>();
+                return ContentFiles.Where(f => String.Equals(f.Determination, "Download", StringComparison.OrdinalIgnoreCase)).OrderBy(f => f.Ranking).ToList();
+            }
         }
 
         ContentScriptManager scriptManager;

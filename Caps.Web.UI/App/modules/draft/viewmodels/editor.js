@@ -46,7 +46,7 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
         self.isNewDraft = ko.observable(false);
         self.draftStates = DraftsModel.supportedDraftStates;
 
-        self.activate = function (draftIdOrTemplateName) {
+        self.activate = function (draftIdOrTemplateName, queryString) {
             return system.defer(function (dfd) {
                 if (draftIdOrTemplateName && /^[0-9]+$/.test(draftIdOrTemplateName)) {
                     loadEntity(draftIdOrTemplateName)
@@ -57,7 +57,7 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
                 }
                 else {
                     self.isNewDraft(true);
-                    createEntity(draftIdOrTemplateName);
+                    createEntity(draftIdOrTemplateName, queryString);
                     initViews();
                     dfd.resolve();
                 }
@@ -172,18 +172,57 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
             });
         };
 
-        function createEntity(templateName, language) {
+        function createEntity(templateName, queryString, language) {
             language = language || 'de';
-            var template = datacontext.getTemplate(templateName);
+            datacontext.getTemplate(templateName).then(function (t) {
+                var template = t,
+                    d = manager.createEntity('Draft', { TemplateName: templateName, Version: 1, OriginalLanguage: language, Status: 'NEW' });
+                d.Template(JSON.stringify(template));
+                d.Created().At(new Date());
+                d.Created().By(authentication.user().userName());
+                d.Modified().At(new Date());
+                d.Modified().By(authentication.user().userName());
 
-            var d = manager.createEntity('Draft', { TemplateName: templateName, Version: 1, OriginalLanguage: language, Status: 'NEW' });
-            d.Template(JSON.stringify(template));
-            d.Created().At(new Date());
-            d.Created().By(authentication.user().userName());
-            d.Modified().At(new Date());
-            d.Modified().By(authentication.user().userName());
+                if (queryString && queryString.name)
+                    d.Name(queryString.name);
 
-            self.entity(d);
+                self.entity(d);
+
+                for (var r = 0; r < template.rows.length; r++) {
+                    var row = template.rows[r];
+                    for (var c = 0; c < row.cells.length; c++) {
+                        var cell = row.cells[c];
+
+                        var contentPart = self.getOrCreateContentPart(cell);
+                        if (cell.content) {
+
+                            var regexPlaceHolders = /<%\s*([A-Za-z0-9_\.]+)\s*%>/gi;
+                            var content = cell.content.replace(regexPlaceHolders, function (hit, p1, offset, s) {
+                                if (queryString && queryString[p1]) return queryString[p1];
+                                return findTemplateParameterValue(p1) || 'Nicht gefunden';
+                            });
+                            contentPart.getResource('de').Content(content);
+                        }
+                    }
+                }
+
+            })
+        }
+
+        function findTemplateParameterValue(key) {
+            if (!self.entity() || !self.entity().template())
+                return null;
+
+            var template = self.entity().template();
+            if (!template.parameters)
+                return null;
+
+            var p = ko.utils.arrayFirst(template.parameters, function (pa) {
+                return pa.name.toLowerCase() === key.toLowerCase();
+            });
+
+            if (!p) return null;
+            return p.value;
         }
 
         function loadEntity(id) {
