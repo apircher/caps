@@ -7,7 +7,7 @@ define([
 ],
 function (breeze, moduleRegistry) {
 
-    var serviceName = '/breeze/capsdata';
+    var serviceName = '~/breeze/capsdata';
     var masterManager = new breeze.EntityManager(serviceName);
 
     //TODO: configure the metadataStore with entity type extensions.

@@ -12,15 +12,18 @@
     'infrastructure/urlHelper',
     'infrastructure/treeViewModel',
     'moment',
-    './siteMapViewModel'
+    './siteMapViewModel',
+    'infrastructure/publicationService',
+    'authentication'
 ],
-function (module, ko, datacontext, router, entityManagerProvider, breeze, system, app, localization, ContentReferenceManager, urlHelper, TreeModel, moment, SiteMapViewModel) {
+function (module, ko, datacontext, router, entityManagerProvider, breeze, system, app, localization, ContentReferenceManager, urlHelper, TreeModel, moment, SiteMapViewModel, publicationService, authentication) {
     
     var manager = entityManagerProvider.createManager(),
         EntityQuery = breeze.EntityQuery,
         website = ko.observable(),
         selectedSitemap = ko.observable(),
         selectedNode = ko.observable(),
+        teasers = ko.observableArray(),
         contentPreview = ko.observable(),
         supportedTranslations = localization.website.supportedTranslations(),
         isInitialized = false;
@@ -68,6 +71,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         }),
         selectedSitemap: selectedSitemap,
         selectedNode: selectedNode,
+        teasers: teasers,
         supportedTranslations: supportedTranslations,
         contentPreview: contentPreview,
 
@@ -114,26 +118,33 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         },
 
         deleteSitemapVersion: function () {
-            var sitemap = selectedSitemap().entity();
-            if (sitemap) {
-                var nextSelection = sitemap.nextVersion() || sitemap.previousVersion();
+            var btnOk = 'Sitemap-Version verwerfen';
+            var btnCancel = 'Abbrechen';
+            app.showMessage('Soll diese Version wirklich verworfen werden?', 'Sitemap-Version verwerfen?', [btnOk, btnCancel]).then(function (result) {
+                if (result === btnOk) {
+                    var sitemap = selectedSitemap().entity();
+                    if (sitemap) {
+                        var nextSelection = sitemap.nextVersion() || sitemap.previousVersion();
 
-                try {
-                    sitemap.setDeleted();
-                    selectedSitemap(getSiteMapVM(nextSelection));
+                        try {
+                            sitemap.setDeleted();
+                            selectedSitemap(getSiteMapVM(nextSelection));
+                        }
+                        catch (error) {
+                            alert('Die Version konnte nicht gelöscht werden.');
+                        }
+                        manager.saveChanges().fail(function(error) {
+                            alert(error.message);
+                        });
+                    }
                 }
-                catch (error) {
-                    alert('Die Version konnte nicht gelöscht werden.');
-                }
-                manager.saveChanges().fail(function(error) {
-                    alert(error.message);
-                });
-            }
+            });
+
         },
 
         publishSitemapVersion: function() {
             selectedSitemap().entity().PublishedFrom(new Date());
-            selectedSitemap().entity().PublishedBy('me');
+            selectedSitemap().entity().PublishedBy(authentication.user().userName());
 
             manager.saveChanges();
         },
@@ -236,8 +247,12 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             }
         },
 
-        doTest1: function () {
-            module.router.navigate('#sitemap/test1');
+        createTeaser: function () {
+            if (selectedNode()) {
+                var siteMapId = selectedSitemap().entity().Id();
+                var rootNodeId = selectedSitemap().tree().root.childNodes()[0].entity().Id();
+                publicationService.createTeaser(siteMapId, rootNodeId, selectedNode().Id());
+            }
         }
     };
 
@@ -252,7 +267,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         contentPreview(null);
         if (selectedNode() && selectedNode().ContentId()) {
             var query = new EntityQuery().from('Publications').where('Id', '==', selectedNode().ContentId())
-                .expand("ContentParts.Resources, Files.Resources.FileVersion.File");
+                .expand("Translations, ContentParts.Resources, Files.Resources.FileVersion.File");
             manager.executeQuery(query).then(function (data) {
                 // Show preview
                 var cp = new ContentPreviewViewModel(selectedNode());
@@ -261,6 +276,19 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             .fail(function (error) {
                 alert(error.message);
             });
+        }
+
+        refreshTeasers();
+    }
+
+    function refreshTeasers() {
+        teasers(null);
+
+        if (selectedNode()) {
+            var coll = ko.utils.arrayFilter(selectedNode().childNodes(), function (node) {
+                return node.NodeType().toLowerCase() === 'teaser';
+            });
+            teasers(coll);
         }
     }
 

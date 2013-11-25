@@ -1,4 +1,15 @@
-﻿
+﻿if (typeof String.prototype.endsWith !== 'function') {
+    String.prototype.endsWith = function (suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    };
+}
+
+if (typeof String.prototype.startsWith != 'function') {
+    String.prototype.startsWith = function (str) {
+        return str && this.slice(0, str.length) == str;
+    };
+}
+
 requirejs.config({
     paths: {
         'text': '../Scripts/text',
@@ -31,9 +42,13 @@ define('markdown', function () { return Markdown; });
 define('toastr', function () { return toastr; });
 
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authentication', 'infrastructure/antiForgeryToken',
-    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider',
+    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider', 'infrastructure/serverUtil',
     'knockout.extenders', 'infrastructure/validation', '../Scripts/safari.cancelZoom'],
-    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider) {
+    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider, serverUtil) {
+
+        $(document).ajaxSend(function (event, request, settings) {
+            settings.url = serverUtil.mapPath(settings.url);
+        });
 
         //>>excludeStart("build", true);
         system.debug(true);

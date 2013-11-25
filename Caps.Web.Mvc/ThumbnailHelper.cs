@@ -77,7 +77,6 @@ namespace Caps.Web.Mvc
             }
             return fileVersion.GetOrCreateThumbnail(thumbnailName, maxWidth, maxHeight);
         }
-
         public static DbThumbnail GetOrCreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, int? maxWidth, int? maxHeight)
         {
             var thumbnail = fileVersion.Thumbnails.FirstOrDefault(t => String.Equals(t.Name, thumbnailName, StringComparison.OrdinalIgnoreCase));
@@ -94,6 +93,38 @@ namespace Caps.Web.Mvc
             return thumbnail;
         }
 
+        public static DbThumbnail GetOrCreateOverlayedThumbnail(this DbFileVersion fileVersion, String overlayFileName, System.Drawing.Color backgroundColor)
+        {
+            var thumbnail = fileVersion.Thumbnails.FirstOrDefault(t => String.Equals(t.Name, String.Format("Overlay:{0}", overlayFileName), StringComparison.OrdinalIgnoreCase));
+            if (thumbnail == null || !thumbnail.OriginalFileHash.SequenceEqual(fileVersion.Hash))
+            {
+                if (thumbnail != null)
+                    fileVersion.Thumbnails.Remove(thumbnail);
+
+                var newThumbnail = fileVersion.CreateOverlayedThumbnail(overlayFileName, backgroundColor);
+                fileVersion.Thumbnails.Add(newThumbnail);
+
+                thumbnail = newThumbnail;
+            }
+            return thumbnail;
+        }
+        public static DbThumbnail CreateOverlayedThumbnail(this DbFileVersion fileVersion, String overlayFileName, System.Drawing.Color backgroundColor)
+        {
+            System.Drawing.Size finalSize;
+            byte[] data = fileVersion.AddOverlay(overlayFileName, backgroundColor, out finalSize);
+
+            var thumbnail = new DbThumbnail();
+            thumbnail.ContentType = fileVersion.File.ContentType;
+            thumbnail.Data = data;
+            thumbnail.FileVersionId = fileVersion.Id;
+            thumbnail.OriginalFileHash = fileVersion.Hash;
+            thumbnail.Name = String.Format("Overlay:{0}", overlayFileName);
+            thumbnail.Width = finalSize.Width;
+            thumbnail.Height = finalSize.Height;
+
+            return thumbnail;
+        }
+
         public static System.Drawing.Size GetImageSize(this DbFileVersion fileVersion)
         {
             using (var stream = new MemoryStream(fileVersion.Content.Data))
@@ -103,17 +134,19 @@ namespace Caps.Web.Mvc
             }
         }
 
-        public static byte[] AddOverlay(this DbFileVersion fileVersion, String overlayFileName, System.Drawing.Color backgroundColor)
+        public static byte[] AddOverlay(this DbFileVersion fileVersion, String overlayFileName, System.Drawing.Color backgroundColor, out System.Drawing.Size finalSize)
         {
-            return AddOverlay(fileVersion.Content.Data, overlayFileName, backgroundColor);
+            return AddOverlay(fileVersion.Content.Data, overlayFileName, backgroundColor, out finalSize);
         }
-        public static byte[] AddOverlay(byte[] imageBytes, String overlayFileName, System.Drawing.Color backgroundColor)
+        public static byte[] AddOverlay(byte[] imageBytes, String overlayFileName, System.Drawing.Color backgroundColor, out System.Drawing.Size finalSize)
         {
             var overlayImageBytes = File.ReadAllBytes(overlayFileName);
-            return AddOverlay(imageBytes, overlayImageBytes, backgroundColor);
+            return AddOverlay(imageBytes, overlayImageBytes, backgroundColor, out finalSize);
         }
-        public static byte[] AddOverlay(byte[] imageBytes, byte[] overlayImageBytes, System.Drawing.Color backgroundColor)
+        public static byte[] AddOverlay(byte[] imageBytes, byte[] overlayImageBytes, System.Drawing.Color backgroundColor, out System.Drawing.Size finalSize)
         {
+            finalSize = new System.Drawing.Size();
+
             using (var streamImage = new MemoryStream(imageBytes))
             using (var bmpImage = new System.Drawing.Bitmap(streamImage))
             using (var streamOverlay = new MemoryStream(overlayImageBytes))
@@ -143,6 +176,8 @@ namespace Caps.Web.Mvc
                 g.Dispose();
                 newImage.Dispose();
 
+                finalSize.Width = bmpOverlayImage.Width;
+                finalSize.Height = bmpOverlayImage.Height;
                 return result;
             }
         }

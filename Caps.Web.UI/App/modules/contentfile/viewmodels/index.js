@@ -14,9 +14,10 @@
     'infrastructure/tagService',
     './fileListItem',
     './uploadManager',
-    './fileSearchControl'
+    './fileSearchControl',
+    'infrastructure/serverUtil'
 ],
-function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, SortModel, $, toastr, Q, doubleTap, tagService, FileListItem, UploadManager, FileSearchControl) {
+function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, SortModel, $, toastr, Q, doubleTap, tagService, FileListItem, UploadManager, FileSearchControl, server) {
         
     var vm,
         initialized = false,
@@ -52,6 +53,7 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
         scrollTop: scrollTop,
         isInteractive: isInteractive,
         searchControl: searchControl,
+        server: server,
 
         activate: function () {
             if (!initialized) {

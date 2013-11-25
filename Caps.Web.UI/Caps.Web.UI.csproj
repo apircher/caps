@@ -220,6 +220,7 @@
     <Content Include="App\infrastructure\authentication.js" />
     <Content Include="App\infrastructure\contentReferences.js" />
     <Content Include="App\infrastructure\datacontext.js" />
+    <Content Include="App\infrastructure\serverUtil.js" />
     <Content Include="App\infrastructure\treeViewModel.js" />
     <Content Include="App\infrastructure\urlHelper.js" />
     <Content Include="App\main-built.js" />
@@ -456,6 +457,7 @@
     <None Include="Properties\PublishProfiles\caps-dev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\caps-dev - Web Deploy.pubxml" />
     <Content Include="Scripts\almond-custom.js" />
+    <None Include="Properties\PublishProfiles\Xcopy.pubxml" />
     <None Include="Scripts\breeze.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

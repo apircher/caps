@@ -5,12 +5,13 @@
  */
 define([
     'durandal/system',
-    'jquery'
+    'jquery',
+    'infrastructure/serverUtil'
 ],
-function (system, $) {
+function (system, $, server) {
     
     var tokens = { c: '', f: '' },
-        tokenServiceUrl = '/Caps/GetAntiForgeryToken';
+        tokenServiceUrl = '~/Caps/GetAntiForgeryToken';
         
     /*
      * Request tokens from the server.
@@ -30,9 +31,9 @@ function (system, $) {
      * Handles global ajax events to send the tokens back to the server.
      */
     $(document).ajaxSend(function (event, request, settings) {
-        if (settings.url !== tokenServiceUrl) {
+        if (!settings.url.endsWith(tokenServiceUrl.slice(1))) {
             request.setRequestHeader('RequestVerificationToken', tokens.c + ':' + tokens.f);
-        }
+        }        
     });
 
 

@@ -52,7 +52,7 @@
     <!-- ko with: resource.FileVersion() -->
     
     <!-- ko if: File().isImage && File().isImage() -->
-    <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: File().FileName, alt: File().FileName }, lazyImage: true" />
+    <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': 'DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: File().FileName, alt: File().FileName }, lazyImage: true" />
     <!-- /ko -->
     <!-- ko if: File().isImage && !File().isImage() -->
     <span data-bind="attr: { title: File().FileName }"><i class="fa fa-file fa-4x"></i></span>

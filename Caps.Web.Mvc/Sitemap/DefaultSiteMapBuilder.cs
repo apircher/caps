@@ -82,6 +82,7 @@ namespace Caps.Web.Mvc.Sitemap
 
                 siteMapNode = CreateNode(provider, entity, entity.Id.ToString("x", CultureInfo.InvariantCulture), GetUrl(entity), entity.Name);
                 siteMapNode.PermanentId = entity.PermanentId;
+                siteMapNode.Entity = entity;
                 if (addNodeAction != null)
                     addNodeAction(siteMapNode, parentNode);
                 Index(entity, siteMapNode);
@@ -108,20 +109,13 @@ namespace Caps.Web.Mvc.Sitemap
         }
         protected virtual String GetUrl(DbSiteMapNode entity) 
         {
-            RequestContext ctx;
-            if (HttpContext.Current.Handler is MvcHandler)
-                ctx = ((MvcHandler)HttpContext.Current.Handler).RequestContext;
-            else
-                ctx = new RequestContext(new HttpContextWrapper(HttpContext.Current), new RouteData());
-
-            UrlHelper helper = new UrlHelper(ctx);
             var routeData = new RouteValueDictionary();
             if (entity.IsNodeTypeIn("Page"))
             {
                 routeData.Add("id", entity.PermanentId.ToString("x"));
                 routeData.Add("name", entity.Name.UrlEncode());
                 routeData.Add("language", CapsSiteMapNode.LanguagePlaceHolder);
-                return helper.Action("Index", "CapsContent", routeData);
+                return Url.Action("Index", "CapsContent", routeData);
             }
 
             if (entity.IsNodeType("Action"))
@@ -129,7 +123,7 @@ namespace Caps.Web.Mvc.Sitemap
                 var routeValueDict = RouteUtils.GetRouteDataByUrl(entity.ActionUrl);
                 var routeValues = routeValueDict.Values;
                 if (routeValues.ContainsKey("language")) routeValues["language"] = CapsSiteMapNode.LanguagePlaceHolder;
-                VirtualPathData vpd = routeValueDict.Route.GetVirtualPath(new RequestContext(ctx.HttpContext, routeValueDict), routeValues);
+                VirtualPathData vpd = routeValueDict.Route.GetVirtualPath(new RequestContext(RequestContext.HttpContext, routeValueDict), routeValues);
                 String url = ("~/" + vpd.VirtualPath);
                 return VirtualPathUtility.ToAbsolute(url);
             }
@@ -142,7 +136,7 @@ namespace Caps.Web.Mvc.Sitemap
                     return GetUrl(linkedNode) + String.Format("?ref={0}", entity.Id);
             }
 
-            return helper.Action("Index", "Home", routeData);
+            return Url.Action("Index", "Home", routeData);
         }
         protected virtual DateTime GetSiteMapExpiration() 
         {
@@ -173,6 +167,32 @@ namespace Caps.Web.Mvc.Sitemap
                 .Where(m => m.PublishedFrom.HasValue && m.PublishedFrom.Value <= DateTime.UtcNow)
                 .OrderByDescending(m => m.Version).ThenByDescending(m => m.PublishedFrom)
                 .FirstOrDefault();
+        }
+
+        UrlHelper urlHelper;
+        protected UrlHelper Url
+        {
+            get
+            {
+                if (urlHelper == null) urlHelper = new UrlHelper(RequestContext);
+                return urlHelper;
+            }
+        }
+
+        RequestContext requestContext;
+        RequestContext RequestContext
+        {
+            get
+            {
+                if (requestContext == null)
+                {
+                    if (HttpContext.Current.Handler is MvcHandler)
+                        requestContext = ((MvcHandler)HttpContext.Current.Handler).RequestContext;
+                    else
+                        requestContext = new RequestContext(new HttpContextWrapper(HttpContext.Current), new RouteData());
+                }
+                return requestContext;
+            }
         }
 
         public void Dispose()

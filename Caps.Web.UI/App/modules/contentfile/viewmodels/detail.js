@@ -6,9 +6,10 @@
     '../datacontext',
     'moment',
     'infrastructure/utils',
-    'infrastructure/tagService'
+    'infrastructure/tagService',
+    'infrastructure/serverUtil'
 ],
-function (system, app, ko, module, datacontext, moment, utils, tagService) {
+function (system, app, ko, module, datacontext, moment, utils, tagService, server) {
 
     var currentFileId = ko.observable(0),
         currentFile = ko.observable(),
@@ -94,7 +95,8 @@ function (system, app, ko, module, datacontext, moment, utils, tagService) {
         },
 
         moment: moment,
-        utils: utils
+        utils: utils,
+        server: server
     };
 
     function getFile() {

@@ -52,7 +52,7 @@
                         <a class="fileinput-button">
                             <span><i class="fa fa-plus"></i> Dateien hinzufügen</span>
                             <!-- ko with: uploadManager -->
-                            <input type="file" name="files" data-url="api/DbFileUpload"
+                            <input type="file" name="files" data-url="~/api/DbFileUpload"
                                    data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: $('#drop-zone'), drop: filesDropped }" multiple>
                             <!-- /ko -->
                         </a>
@@ -99,7 +99,7 @@
 
 <script type="text/html" id="dbfile-icon">
     <!-- ko if: isImage() -->
-    <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: FileName, alt: FileName }, lazyImage: true" />
+    <img data-bind="attr: { src: $root.server.mapPath('~/content/images/blank.gif'), 'data-src': $root.server.mapPath('~/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160'), title: FileName, alt: FileName }, lazyImage: true" />
     <!-- /ko -->
     <!-- ko if: !isImage() -->
     <span data-bind="attr: { title: FileName }"><i class="fa fa-file fa-4x"></i></span>

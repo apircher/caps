@@ -33,7 +33,12 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Seitentyp</label>
-                    <select class="form-control" data-bind="options: nodeTypes, optionsCaption: 'Bitte wählen...', optionsText: 'title', value: nodeType"></select>
+                    <select class="form-control" data-bind="options: nodeTypes, optionsCaption: 'Bitte wählen...', optionsText: 'title', value: nodeType, disable: nodeType() && nodeType().isRoot"></select>
+                </div>
+
+                <div class="form-group" data-bind="if: nodeType() && nodeType().isCustomType">
+                    <label>Benutzerdefinierter Typ</label>
+                    <input type="text" data-bind="value: entity().NodeType" class="form-control" />
                 </div>
 
                 <div class="form-group">

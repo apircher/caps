@@ -159,6 +159,7 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
                 var dbFile = data.results[0];
 
                 var draftFile = manager.createEntity('DraftFile', { Name: file.FileName() });
+                if (file.isImage()) draftFile.Determination('Picture');
                 manager.addEntity(draftFile);
 
                 var resource = manager.createEntity('DraftFileResource', { Language: 'de', DbFileVersionId: dbFile.latestVersion().Id() });

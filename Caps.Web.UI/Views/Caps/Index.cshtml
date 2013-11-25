@@ -53,6 +53,10 @@
             var require = {
                 urlArgs: "v=@Html.CapsVersion()"
             };
+
+            var capsConfig = {
+                applicationPath: "@HttpContext.Current.Request.ApplicationPath"
+            };
         </script>
         @if (HttpContext.Current.IsDebuggingEnabled) {
             <script type="text/javascript" src="~/Scripts/require.js" data-main="@Url.Content("~/App/main")"></script>

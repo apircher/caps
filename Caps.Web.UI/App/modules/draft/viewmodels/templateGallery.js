@@ -4,9 +4,10 @@
     '../module',
     'breeze', 
     'entityManagerProvider',
-    'durandal/system'
+    'durandal/system',
+    'infrastructure/serverUtil'
 ],
-function (ko, datacontext, module, breeze, entityManagerProvider, system) {
+function (ko, datacontext, module, breeze, entityManagerProvider, system, server) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
@@ -28,11 +29,11 @@ function (ko, datacontext, module, breeze, entityManagerProvider, system) {
             fetchDraftTemplates().then(function (coll) {
                 var draftTemplateListItems = ko.utils.arrayMap(coll, function (t) {
                     var templateObj = parseTemplate(t.TemplateContent());
-                    return new GalleryListItem(t.Name(), t.Name(), templateObj, '/App/modules/draft/images/Template 3.png');
+                    return new GalleryListItem(t.Name(), t.Name(), templateObj, server.mapPath('~/App/modules/draft/images/Template 3.png'));
                 });
 
                 var stockTemplateListItems = ko.utils.arrayMap(stockTemplates, function (t) {
-                    var icon = '/App/modules/draft/images/' + t.name + '.png';
+                    var icon = server.mapPath('~/App/modules/draft/images/' + t.name + '.png');
                     return new GalleryListItem(t.name, t.name, t, icon);
                 });
 

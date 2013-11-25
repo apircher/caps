@@ -45,7 +45,53 @@ function (system, app, entityManagerProvider, breeze, ko) {
             });
         })
         .promise();
+    };
 
+    Publisher.prototype.createTeaser = function (siteMapId, parentNodeId, contentNodeId) {
+        var self = this;
+        return system.defer(function (dfd) {            
+            var query = new EntityQuery().from('SiteMaps').where('Id', '==', siteMapId).expand('SiteMapNodes.Resources');
+            self.manager.executeQuery(query).then(function (data) {
+                var siteMap = data.results[0],
+                    parentNode = ko.utils.arrayFirst(siteMap.SiteMapNodes(), function (n) { return n.Id() === parentNodeId; }),
+                    nextRanking = parentNode ? parentNode.maxChildNodeRanking() + 1 : 0,
+                    contentNode = ko.utils.arrayFirst(siteMap.SiteMapNodes(), function (n) { return n.Id() === contentNodeId; });
+
+                self.contentFromNode(contentNode).then(function (contentData) {
+                    var node = self.manager.createEntity('DbSiteMapNode', { NodeType: 'TEASER', Name: contentNode.Name(), Ranking: nextRanking, Redirect: contentNode.PermanentId() });
+                    self.manager.addEntity(node);
+
+                    node.SiteMapId(siteMapId);
+                    if (parentNode) node.ParentNodeId(parentNode.Id());
+
+                    self.createResources(node, contentData);
+
+                    var publication = self.createPublication(contentData, self.manager);
+                    node.ContentId(publication.Id());
+
+                    self.manager.saveChanges().then(function () {
+                        app.trigger('caps:publication:created', node);
+                        dfd.resolve(node);
+                    })
+                    .fail(dfd.reject);
+                });
+            });
+        })
+        .promise();
+    };
+
+    Publisher.prototype.contentFromNode = function (siteMapNode) {
+        var self = this;
+        return system.defer(function (dfd) {
+            var query = new EntityQuery().from('Publications').where('Id', '==', siteMapNode.ContentId())
+                .expand('Translations, ContentParts.Resources, Files.Resources.FileVersion.File');
+            self.manager.executeQuery(query).then(function (data) {
+                var pb = data.results[0];
+                dfd.resolve(pb.generateContentData(siteMapNode));
+            })
+            .fail(dfd.reject);
+        })
+        .promise();
     };
 
     Publisher.prototype.createResources = function (node, contentData) {
@@ -151,6 +197,11 @@ function (system, app, entityManagerProvider, breeze, ko) {
         republish: function (siteMapNodeId, contentData) {
             var publisher = new Publisher();
             return publisher.republish(siteMapNodeId, contentData);
+        },
+
+        createTeaser: function (siteMapId, parentNodeId, contentNodeId) {
+            var publisher = new Publisher();
+            return publisher.createTeaser(siteMapId, parentNodeId, contentNodeId);
         }
     };
 });

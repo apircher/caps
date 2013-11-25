@@ -30,7 +30,7 @@ define([
      */
     function getMetadata() {
         return system.defer(function (dfd) {
-            $.ajax('/Caps/GetAuthenticationMetadata', { method: 'post' })
+            $.ajax('~/Caps/GetAuthenticationMetadata', { method: 'post' })
                 .then(function (data) {
                     metadata.lockoutPeriod = data.LockoutPeriod;
                     metadata.minRequiredPasswordLength = data.MinRequiredPasswordLength;
@@ -49,7 +49,7 @@ define([
      */
     function getUser() {
         return system.defer(function (dfd) {
-            $.ajax('/Caps/GetCurrentUser', { method: 'post' })
+            $.ajax('~/Caps/GetCurrentUser', { method: 'post' })
                 .then(function (data) {
                     user(new UserModel(data.IsAuthenticated, data.UserName, data.Roles, data));
                     if (data.IsAuthenticated) app.trigger('caps:authentication:loggedOn', user());
@@ -81,7 +81,7 @@ define([
      */
     function logon(userName, password, rememberMe) {
         return system.defer(function (dfd) {
-            $.ajax('/Caps/Logon', { method: 'post', data: { UserName: userName, Password: password, RememberMe: rememberMe } })
+            $.ajax('~/Caps/Logon', { method: 'post', data: { UserName: userName, Password: password, RememberMe: rememberMe } })
                 .done(logonResultAvailable)
                 .fail(logonFailed);
 
@@ -113,7 +113,7 @@ define([
      */
     function logoff() {
         return system.defer(function (dfd) {
-            $.ajax('/Caps/Logoff', { method: 'post' })
+            $.ajax('~/Caps/Logoff', { method: 'post' })
                 .then(antiForgeryToken.initToken)
                 .then(function () {
                     system.log('logoff successful');
@@ -131,7 +131,7 @@ define([
      */
     function changePassword(oldPassword, newPassword) {
         return system.defer(function (dfd) {
-            $.ajax('/Caps/ChangePassword', { method: 'post', data: { OldPassword: oldPassword, NewPassword: newPassword } })
+            $.ajax('~/Caps/ChangePassword', { method: 'post', data: { OldPassword: oldPassword, NewPassword: newPassword } })
                 .then(getUser)
                 .then(dfd.resolve)
                 .fail(dfd.reject);

@@ -68,6 +68,15 @@
                 </div>
                 <!-- /ko -->
 
+                <!-- ko if: selectedNode() && teasers() && teasers().length -->
+                <h5>Aufmacher</h5>
+                <ul class="list-inline" data-bind="foreach: teasers">
+                    <li>
+                        <i class="fa fa-star"></i> <!-- ko text: localeTitle('de') --><!-- /ko -->
+                    </li>
+                </ul>
+                <!-- /ko -->
+
             </div>
 
             <div class="col-md-3 col-lg-2">
@@ -100,6 +109,12 @@
                     <span>caps://publication/<!-- ko text: selectedNode().PermanentId() --><!-- /ko --></span>
                 </p>
                 <!-- /ko -->
+                <h5>Optionen</h5>
+                <ul class="list-inline">
+                    <li>
+                        <a href="#" data-bind="click: createTeaser"><i class="fa fa-arrow-right"></i> Auf Startseite platzieren</a>
+                    </li>
+                </ul>
                 <!-- /ko -->
             </div>
         </div>
@@ -129,7 +144,8 @@
 </div>
 
 <script type="text/html" id="NodesTemplate">
-    <ul data-bind="foreach: $data" class="list-unstyled tree-branch">        
+    <ul data-bind="foreach: $data" class="list-unstyled tree-branch">            
+        <!-- ko if: !(entity() && entity().NodeType().toLowerCase() === 'teaser') -->
         <li data-bind="if: !entity().entityAspect.entityState.isDeleted()">
             <div class="tree-node" data-bind="css: { 'tree-node-selected': isSelected }">
                 <div class="tree-node-toggle pull-left">
@@ -146,5 +162,6 @@
             <!-- ko template: { name: 'NodesTemplate', data: childNodes() } --><!-- /ko -->
             <!-- /ko -->
         </li>        
+        <!-- /ko -->    
     </ul>
 </script>

@@ -5,7 +5,7 @@
         </div>
 
         <ul id="nav-user" class="nav navbar-nav pull-right" data-bind="visible: authentication.isAuthenticated">
-            <li><a href="/#profile"><strong data-bind="text: authentication.user().displayName()"></strong></a></li>
+            <li><a href="#profile"><strong data-bind="text: authentication.user().displayName()"></strong></a></li>
             <li><a href="#" data-bind="click: logOff, clickBubble: false" title="Abmelden"><i class="fa fa-power-off"></i></a></li>                    
         </ul>
 

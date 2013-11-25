@@ -1,5 +1,5 @@
 ﻿
-define(['ko'], function (ko) {
+define(['ko', 'authentication'], function (ko, authentication) {
 
     /**
      * Website Entity
@@ -286,7 +286,7 @@ define(['ko'], function (ko) {
     }
     
     /**
-     * SitemapNodeContent Entity
+     * Publication Entity
      */
     function Publication() {
         var self = this;
@@ -355,6 +355,96 @@ define(['ko'], function (ko) {
                 return res.FileVersion() && res.FileVersion().File().FileName().toLowerCase() === key;
             });
         return file;
+    };
+
+    Publication.prototype.generateContentData = function (siteMapNode) {
+        var self = this;
+        return {
+            entityType: 'Publication',
+            entityId: self.Id(),
+            version: self.ContentVersion(),
+
+            name: siteMapNode.Name(),
+            template: self.Template(),
+
+            created: getChangeInfo(),
+            modified: getChangeInfo(),
+
+            resources: prepareResources(self, siteMapNode),
+            contentParts: prepareContentParts(self),
+            files: prepareFiles(self)
+        };
+
+        function prepareChangeInfo(changeInfo) {
+            return {
+                at: changeInfo.At(),
+                by: changeInfo.By()
+            };
+        }
+
+        function getChangeInfo() {
+            return {
+                at: new Date(),
+                by: authentication.user().userName()
+            };
+        }
+
+        function prepareResources(publication, siteMapNode) {
+            var resources = ko.utils.arrayMap(siteMapNode.Resources(), function (resource) {
+                return {
+                    language: resource.Language(),
+                    title: resource.Title(),
+                    created: getChangeInfo(),
+                    modified: getChangeInfo()
+                };
+            });
+            return resources;
+        }
+
+        function prepareContentParts(publication) {
+            return ko.utils.arrayMap(publication.ContentParts(), function (contentPart) {
+                return {
+                    name: contentPart.Name(),
+                    contentType: contentPart.ContentType(),
+                    ranking: contentPart.Ranking(),
+                    resources: prepareContentPartResources(publication, contentPart.Resources())
+                };
+            });
+        }
+
+        function prepareContentPartResources(publication, resources) {
+            return ko.utils.arrayMap(resources, function (resource) {
+                return {
+                    language: resource.Language(),
+                    content: resource.Content()
+                };
+            });
+        }
+
+        function prepareFiles(publication) {
+            return ko.utils.arrayMap(publication.Files(), function (file) {
+                return {
+                    name: file.Name(),
+                    isEmbedded: file.IsEmbedded(),
+                    determination: file.Determination(),
+                    group: file.Group(),
+                    ranking: file.Ranking(),
+                    resources: prepareFileResources(file.Resources())
+                };
+            });
+        }
+
+        function prepareFileResources(resources) {
+            return ko.utils.arrayMap(resources, function (resource) {
+                return {
+                    language: resource.Language(),
+                    dbFileVersionId: resource.DbFileVersionId(),
+                    title: resource.Title(),
+                    description: resource.Description(),
+                    credits: resource.Credits()
+                };
+            });
+        }
     };
 
     /**
