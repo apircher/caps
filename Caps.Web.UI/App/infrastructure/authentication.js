@@ -106,7 +106,7 @@ define([
 
             function logonFailed(error) {
                 system.log('logon failed: ' + error.message);
-                dfd.reject(err);
+                dfd.reject(error);
             }
         })
         .promise();
