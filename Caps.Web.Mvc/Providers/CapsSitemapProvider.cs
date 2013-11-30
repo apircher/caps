@@ -69,6 +69,12 @@ namespace Caps.Web.Mvc.Providers
                     throw new ProviderException("Unrecognized attribute: " + attr);
             }
         }
+
+        public bool IsBuildingSiteMap
+        {
+            get;
+            set;
+        }
         public override SiteMapNode BuildSiteMap()
         {
             lock (synclock)
@@ -86,20 +92,28 @@ namespace Caps.Web.Mvc.Providers
                 // Build the SiteMap.
                 using (ISiteMapBuilder builder = GetBuilder())
                 {
-                    var result = builder.BuildSitemap(this, (n1, n2) => AddNode(n1, n2));
-                    if (result != null)
+                    try
                     {
-                        rootNode = result.RootNode;
-                        siteMapExpiration = result.SiteMapExpiration;
-                        nodeIdIndex = result.IndexIdToNode;
-                        nodeNameIndex = result.IndexNameToNode;
+                        IsBuildingSiteMap = true;
+                        var result = builder.BuildSitemap(this, (n1, n2) => AddNode(n1, n2));
+                        if (result != null)
+                        {
+                            rootNode = result.RootNode;
+                            siteMapExpiration = result.SiteMapExpiration;
+                            nodeIdIndex = result.IndexIdToNode;
+                            nodeNameIndex = result.IndexNameToNode;
+                        }
+                        else
+                        {
+                            rootNode = AddDefaultRootNode();
+                            siteMapExpiration = DateTime.UtcNow.AddMinutes(1);
+                            nodeIdIndex = new Dictionary<int, SiteMapNode>();
+                            nodeNameIndex = new Dictionary<String, SiteMapNode>();
+                        }
                     }
-                    else
+                    finally
                     {
-                        rootNode = AddDefaultRootNode();
-                        siteMapExpiration = DateTime.UtcNow.AddMinutes(1);
-                        nodeIdIndex = new Dictionary<int, SiteMapNode>();
-                        nodeNameIndex = new Dictionary<String, SiteMapNode>();
+                        IsBuildingSiteMap = false;
                     }
                 }
 
@@ -133,7 +147,7 @@ namespace Caps.Web.Mvc.Providers
                 {
                     if (routeValues.ContainsKey("language")) routeValues["language"] = CapsSiteMapNode.LanguagePlaceHolder;
                     VirtualPathData vpd = routeData.Route.GetVirtualPath(new RequestContext(httpContext, routeData), routeValues);
-                    url = ("~/" + vpd.VirtualPath).Replace(CapsSiteMapNode.LanguagePlaceHolder, initialLanguage);
+                    url = "~/" + vpd.VirtualPath.Replace(CapsSiteMapNode.LanguagePlaceHolder, Language.DefaultLanguage);
                     node = base.FindSiteMapNode(VirtualPathUtility.ToAbsolute(url));
                 }
             }
@@ -142,9 +156,10 @@ namespace Caps.Web.Mvc.Providers
         public DbSiteMapNode FindSitemapNode(String name)
         {
             EnsureSiteMapBuilt();
-            if (nodeNameIndex.ContainsKey(name))
+            var key = name.UrlEncode();
+            if (nodeNameIndex.ContainsKey(key))
             {
-                var capsNode = nodeNameIndex[name] as CapsSiteMapNode;
+                var capsNode = nodeNameIndex[key] as CapsSiteMapNode;
                 if (capsNode != null) return capsNode.Entity;
             }
             return null;

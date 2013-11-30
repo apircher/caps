@@ -14,8 +14,9 @@ function (ko, markdown, urlHelper, ContentReferenceManager) {
             replaceFileReference: function (reference, language, context) {
                 var draft = reference.context,
                     draftFile = draft.findDraftFile(reference.fileName),
-                    resource = draftFile.getResource(language),
-                    fileVersion = resource !== null ? resource.FileVersion() : undefined;
+                    resource = draftFile ? draftFile.getResource(language) : undefined,
+                    fileVersion = resource ? resource.FileVersion() : undefined;
+                if (!fileVersion) return '';
                 return urlHelper.getFileUrl(reference.fileName, fileVersion, reference.query);
             },
 

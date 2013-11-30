@@ -63,6 +63,10 @@
     <Compile Include="Attributes\SetCultureAttribute.cs" />
     <Compile Include="ContentService.cs" />
     <Compile Include="HtmlHelperExtensions.cs" />
+    <Compile Include="Imaging\BitmapExtensions.cs" />
+    <Compile Include="Imaging\DefaultThumbnailGenerator.cs" />
+    <Compile Include="Imaging\IThumbnailGenerator.cs" />
+    <Compile Include="Imaging\ThumbnailGenerator.cs" />
     <Compile Include="Model\ContentFileModel.cs" />
     <Compile Include="Model\ContentModel.cs" />
     <Compile Include="Model\ContentPartModel.cs" />
@@ -75,7 +79,7 @@
     <Compile Include="Sitemap\CapsSiteMapNode.cs" />
     <Compile Include="Sitemap\ISiteMapBuilder.cs" />
     <Compile Include="Sitemap\SiteMapExtensions.cs" />
-    <Compile Include="ThumbnailHelper.cs" />
+    <Compile Include="Imaging\ThumbnailHelper.cs" />
     <Compile Include="UrlHelperExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

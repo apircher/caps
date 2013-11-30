@@ -61,13 +61,18 @@ namespace Caps.Web.Mvc.Sitemap
         {
             get
             {
-                return base.Url.Replace(LanguagePlaceHolder, Language.CurrentLanguage);
+                var language = Language.CurrentLanguage;
+                var provider = this.Provider as Caps.Web.Mvc.Providers.CapsSitemapProvider;
+                if (provider != null && provider.IsBuildingSiteMap)
+                    language = Language.DefaultLanguage;
+                return base.Url.Replace(LanguagePlaceHolder, language);
             }
             set
             {
                 base.Url = value;
             }
         }
+        public String Name { get; set; }
 
         public CapsSiteMapNodeResource ResourceForLanguage(String language)
         {

@@ -26,6 +26,7 @@ namespace Caps.Web.Mvc.Sitemap
 
         Dictionary<String, SiteMapNode> indexNameToSiteMapNode;
         Dictionary<int, SiteMapNode> indexIdToSiteMapNode;
+        Dictionary<String, SiteMapNode> indexUrlToSiteMapNode;
 
         public DefaultSiteMapBuilder(CapsDbContext db)
         {
@@ -48,10 +49,13 @@ namespace Caps.Web.Mvc.Sitemap
         {
             indexNameToSiteMapNode = new Dictionary<string, SiteMapNode>();
             indexIdToSiteMapNode = new Dictionary<int, SiteMapNode>();
+            indexUrlToSiteMapNode = new Dictionary<string, SiteMapNode>();
 
             var rootNode = new CapsSiteMapNode(provider, "root");
             rootNode.Title = "Home";
             rootNode.Url = "~/";
+
+            indexUrlToSiteMapNode.Add("~/", rootNode);
 
             var rootNodeEntity = nodeList.Where(n => !n.ParentNodeId.HasValue && String.Equals(n.NodeType, "ROOT"))
                 .FirstOrDefault();
@@ -80,9 +84,14 @@ namespace Caps.Web.Mvc.Sitemap
                 if (String.IsNullOrWhiteSpace(url))
                     return;
 
-                siteMapNode = CreateNode(provider, entity, entity.Id.ToString("x", CultureInfo.InvariantCulture), GetUrl(entity), entity.Name);
+                siteMapNode = CreateNode(provider, entity, entity.Id.ToString("x", CultureInfo.InvariantCulture), url, entity.Name);
                 siteMapNode.PermanentId = entity.PermanentId;
                 siteMapNode.Entity = entity;
+                siteMapNode.Name = entity.Name.UrlEncode();
+
+                if (indexUrlToSiteMapNode.ContainsKey(siteMapNode.Url))
+                    return;
+
                 if (addNodeAction != null)
                     addNodeAction(siteMapNode, parentNode);
                 Index(entity, siteMapNode);
@@ -160,6 +169,9 @@ namespace Caps.Web.Mvc.Sitemap
 
             if (!indexIdToSiteMapNode.ContainsKey(entity.PermanentId))
                 indexIdToSiteMapNode.Add(entity.PermanentId, node);
+
+            if (!indexUrlToSiteMapNode.ContainsKey(node.Url))
+                indexUrlToSiteMapNode.Add(node.Url, node);
         }
         DbSiteMap LoadSiteMapData(Website website)
         {

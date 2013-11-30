@@ -10,6 +10,7 @@ using Caps.Web.UI.Infrastructure;
 using Caps.Web.UI.Infrastructure.WebApi;
 using Caps.Data.Model;
 using Caps.Web.Mvc;
+using Caps.Web.Mvc.Imaging;
 
 namespace Caps.Web.UI.Controllers
 {
