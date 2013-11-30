@@ -21,7 +21,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
     var manager = entityManagerProvider.createManager(),
         EntityQuery = breeze.EntityQuery,
         website = ko.observable(),
-        selectedSitemap = ko.observable(),
+        selectedSiteMap = ko.observable(),
         selectedNode = ko.observable(),
         teasers = ko.observableArray(),
         contentPreview = ko.observable(),
@@ -41,7 +41,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
         }
     });
 
-    selectedSitemap.subscribe(function (newValue) {
+    selectedSiteMap.subscribe(function (newValue) {
         selectedNode(null);
         if (newValue) {
             newValue.fetchTree().then(function () {
@@ -69,7 +69,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
                 return smvm;
             });
         }),
-        selectedSitemap: selectedSitemap,
+        selectedSiteMap: selectedSiteMap,
         selectedNode: selectedNode,
         teasers: teasers,
         supportedTranslations: supportedTranslations,
@@ -80,22 +80,22 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
                 isInitialized = true;
                 fetchWebsite().then(function (data) {
                     website(data.results[0]);
-                    selectedSitemap(getSiteMapVM(website().latestSitemap()));
+                    selectedSiteMap(getSiteMapVM(website().latestSiteMap()));
                 });
             }
         },
 
-        createSitemapVersion: function () {
+        createSiteMapVersion: function () {
             try {
                 if (website()) {
-                    var latestVersion = website().latestSitemap(),
+                    var latestVersion = website().latestSiteMap(),
                         nextVersion = latestVersion ? latestVersion.Version() + 1 : 1;
 
                     var sitemapVersion = latestVersion ? latestVersion.createNewVersion(nextVersion, manager)
                         : createInitialVersion(manager);
 
                     manager.saveChanges().then(function () {
-                        selectedSitemap(getSiteMapVM(sitemapVersion));
+                        selectedSiteMap(getSiteMapVM(sitemapVersion));
                     })
                     .fail(function(error) {
                         system.log(error);
@@ -117,18 +117,18 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             }
         },
 
-        deleteSitemapVersion: function () {
+        deleteSiteMapVersion: function () {
             var btnOk = 'Sitemap-Version verwerfen';
             var btnCancel = 'Abbrechen';
             app.showMessage('Soll diese Version wirklich verworfen werden?', 'Sitemap-Version verwerfen?', [btnOk, btnCancel]).then(function (result) {
                 if (result === btnOk) {
-                    var sitemap = selectedSitemap().entity();
+                    var sitemap = selectedSiteMap().entity();
                     if (sitemap) {
                         var nextSelection = sitemap.nextVersion() || sitemap.previousVersion();
 
                         try {
                             sitemap.setDeleted();
-                            selectedSitemap(getSiteMapVM(nextSelection));
+                            selectedSiteMap(getSiteMapVM(nextSelection));
                         }
                         catch (error) {
                             alert('Die Version konnte nicht gelöscht werden.');
@@ -142,15 +142,15 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
 
         },
 
-        publishSitemapVersion: function() {
-            selectedSitemap().entity().PublishedFrom(new Date());
-            selectedSitemap().entity().PublishedBy(authentication.user().userName());
+        publishSiteMapVersion: function() {
+            selectedSiteMap().entity().PublishedFrom(new Date());
+            selectedSiteMap().entity().PublishedBy(authentication.user().userName());
 
             manager.saveChanges();
         },
 
-        createSitemapNode: function () {
-            var siteMap = selectedSitemap();
+        createSiteMapNode: function () {
+            var siteMap = selectedSiteMap();
             if (siteMap && selectedNode()) {
                 var node = manager.createEntity('DbSiteMapNode', { NodeType: 'PAGE' });
                 manager.addEntity(node);
@@ -170,8 +170,8 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             }
         },
 
-        deleteSitemapNode: function () {
-            var siteMap = selectedSitemap();
+        deleteSiteMapNode: function () {
+            var siteMap = selectedSiteMap();
             if (siteMap && selectedNode()) {
                 var btnOk = 'Seite löschen';
                 var btnCancel = 'Abbrechen';
@@ -180,7 +180,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
                         if (result === btnOk) {
                             var selection = selectedNode(),
                                 nextSelection = selection.nextNode() || selection.previousNode() || selection.ParentNode();
-                            deleteSitemapNode(selection).then(function () {
+                            deleteSiteMapNode(selection).then(function () {
                                 siteMap.refreshTree();
                                 if (nextSelection) siteMap.selectNodeByKey(nextSelection.Id());
                             })
@@ -191,7 +191,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
                     });
             }
             
-            function deleteSitemapNode(node) {
+            function deleteSiteMapNode(node) {
                 node.setDeleted();
                 return manager.saveChanges();
             }
@@ -205,7 +205,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             if (selectedNode()) module.router.navigate('#sitemap/translate/' + selectedNode().Id() + '/' + language.culture);
         },
 
-        editSitemapNode: function () {
+        editSiteMapNode: function () {
             if (selectedNode()) module.router.navigate('#sitemap/edit/' + selectedNode().Id());
         },
 
@@ -213,7 +213,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             if (selectedNode()) {
                 selectedNode().moveUp();
                 manager.saveChanges().then(function () {
-                    if (selectedSitemap()) selectedSitemap().refreshTree();
+                    if (selectedSiteMap()) selectedSiteMap().refreshTree();
                 });
             }
         },
@@ -222,14 +222,14 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
             if (selectedNode()) {
                 selectedNode().moveDown();
                 manager.saveChanges().then(function () {
-                    if (selectedSitemap()) selectedSitemap().refreshTree();
+                    if (selectedSiteMap()) selectedSiteMap().refreshTree();
                 });
             }
         },
 
         moveSelectedNode: function () {
-            if (selectedSitemap()) {
-                var siteMap = selectedSitemap(),
+            if (selectedSiteMap()) {
+                var siteMap = selectedSiteMap(),
                     node = selectedNode();
                 app.selectSiteMapNode({ module: module, nodeFilter: filterSelection, siteMapId: siteMap.entity().Id(), canSelectSiteMap: false }).then(function (result) {
                     if (result.dialogResult && result.selectedNode && result.selectedNode.Id() !== node.ParentNodeId()) {
@@ -249,8 +249,8 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
 
         createTeaser: function () {
             if (selectedNode()) {
-                var siteMapId = selectedSitemap().entity().Id();
-                var rootNodeId = selectedSitemap().tree().root.childNodes()[0].entity().Id();
+                var siteMapId = selectedSiteMap().entity().Id();
+                var rootNodeId = selectedSiteMap().tree().root.childNodes()[0].entity().Id();
                 publicationService.createTeaser(siteMapId, rootNodeId, selectedNode().Id());
             }
         }
@@ -258,7 +258,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
 
     function refreshNodeIfSelected(siteMapNode) {
         if (isInSelectedSiteMap(siteMapNode)) refetchNode(siteMapNode.Id()).then(function () {
-            if (selectedSitemap()) selectedSitemap().refreshTree();
+            if (selectedSiteMap()) selectedSiteMap().refreshTree();
             refreshPreview();
         });
     }
@@ -299,7 +299,7 @@ function (module, ko, datacontext, router, entityManagerProvider, breeze, system
     }
 
     function isInSelectedSiteMap(node) {
-        var siteMap = selectedSitemap();
+        var siteMap = selectedSiteMap();
         return node && siteMap && node.SiteMapId() === siteMap.entity().Id();
     }
 

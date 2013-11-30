@@ -1,7 +1,7 @@
 ﻿using Caps.Data;
 using Caps.Data.Model;
 using Caps.Data.Utils;
-using Caps.Web.Mvc.Sitemap;
+using Caps.Web.Mvc.SiteMap;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,7 +12,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace Caps.Web.Mvc.Sitemap
+namespace Caps.Web.Mvc.SiteMap
 {
     public class DefaultSiteMapBuilder : ISiteMapBuilder
     {
@@ -45,7 +45,7 @@ namespace Caps.Web.Mvc.Sitemap
             Dispose(false);
         }
 
-        public CapsSiteMapBuilderResult BuildSitemap(StaticSiteMapProvider provider, Action<System.Web.SiteMapNode, System.Web.SiteMapNode> addNodeAction)
+        public CapsSiteMapBuilderResult BuildSiteMap(StaticSiteMapProvider provider, Action<System.Web.SiteMapNode, System.Web.SiteMapNode> addNodeAction)
         {
             indexNameToSiteMapNode = new Dictionary<string, SiteMapNode>();
             indexIdToSiteMapNode = new Dictionary<int, SiteMapNode>();

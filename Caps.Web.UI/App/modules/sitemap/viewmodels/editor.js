@@ -33,7 +33,7 @@ function (module, ko, entityManagerProvider, breeze, app) {
             }
         ];
 
-    function SitemapNodeEditor() {
+    function SiteMapNodeEditor() {
         var self = this,
             manager;
 
@@ -84,5 +84,5 @@ function (module, ko, entityManagerProvider, breeze, app) {
         }
     }
 
-    return SitemapNodeEditor;
+    return SiteMapNodeEditor;
 });

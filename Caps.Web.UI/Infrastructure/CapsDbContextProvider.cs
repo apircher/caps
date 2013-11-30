@@ -21,7 +21,7 @@ namespace Caps.Web.UI.Infrastructure
         {
             ProcessNewOrModifiedDbFileTags(saveMap);
             ProcessNewOrModifiedDrafts(saveMap);
-            ProcessNewOrModifiedSitemapNodes(saveMap);
+            ProcessNewOrModifiedSiteMapNodes(saveMap);
 
             return saveMap;
         }
@@ -99,12 +99,12 @@ namespace Caps.Web.UI.Infrastructure
             }
         }
 
-        void ProcessNewOrModifiedSitemapNodes(Dictionary<Type, List<EntityInfo>> saveMap)
+        void ProcessNewOrModifiedSiteMapNodes(Dictionary<Type, List<EntityInfo>> saveMap)
         {
             if (saveMap.ContainsKey(typeof(DbSiteMapNode)))
             {
-                var newSitemapNodes = saveMap[typeof(DbSiteMapNode)].Where(n => n.EntityState == EntityState.Added);
-                foreach (var entry in newSitemapNodes)
+                var newSiteMapNodes = saveMap[typeof(DbSiteMapNode)].Where(n => n.EntityState == EntityState.Added);
+                foreach (var entry in newSiteMapNodes)
                 {
                     var sitemapNode = entry.Entity as DbSiteMapNode;
                     sitemapNode.Created.At = DateTime.UtcNow;
@@ -130,9 +130,9 @@ namespace Caps.Web.UI.Infrastructure
         {
             if (saveMap.ContainsKey(typeof(DbSiteMapNode)))
             {
-                var deletedSitemapNodes = saveMap[typeof(DbSiteMapNode)].Where(n => n.EntityState == EntityState.Deleted);
+                var deletedSiteMapNodes = saveMap[typeof(DbSiteMapNode)].Where(n => n.EntityState == EntityState.Deleted);
 
-                foreach (var node in deletedSitemapNodes.Select(nfo => nfo.Entity).Cast<DbSiteMapNode>())
+                foreach (var node in deletedSiteMapNodes.Select(nfo => nfo.Entity).Cast<DbSiteMapNode>())
                 {
                     if (!node.ContentId.HasValue) continue;
                     if (!Context.SiteMapNodes.Any(n => n.ContentId == node.ContentId && n.Id != node.Id))

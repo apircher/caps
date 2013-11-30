@@ -72,13 +72,13 @@
     <Compile Include="Model\ContentPartModel.cs" />
     <Compile Include="Model\TeaserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sitemap\DefaultSiteMapBuilder.cs" />
-    <Compile Include="Providers\CapsSitemapProvider.cs" />
+    <Compile Include="SiteMap\DefaultSiteMapBuilder.cs" />
+    <Compile Include="Providers\CapsSiteMapProvider.cs" />
     <Compile Include="RouteUtils.cs" />
     <Compile Include="RssFeed.cs" />
-    <Compile Include="Sitemap\CapsSiteMapNode.cs" />
-    <Compile Include="Sitemap\ISiteMapBuilder.cs" />
-    <Compile Include="Sitemap\SiteMapExtensions.cs" />
+    <Compile Include="SiteMap\CapsSiteMapNode.cs" />
+    <Compile Include="SiteMap\ISiteMapBuilder.cs" />
+    <Compile Include="SiteMap\SiteMapExtensions.cs" />
     <Compile Include="Imaging\ThumbnailHelper.cs" />
     <Compile Include="UrlHelperExtensions.cs" />
   </ItemGroup>

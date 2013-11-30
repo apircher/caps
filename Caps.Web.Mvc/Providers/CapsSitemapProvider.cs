@@ -1,7 +1,7 @@
 ﻿using Caps.Data.Localization;
 using Caps.Data.Model;
 using Caps.Data.Utils;
-using Caps.Web.Mvc.Sitemap;
+using Caps.Web.Mvc.SiteMap;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -16,7 +16,7 @@ using System.Web.Routing;
 
 namespace Caps.Web.Mvc.Providers
 {
-    public class CapsSitemapProvider : StaticSiteMapProvider
+    public class CapsSiteMapProvider : StaticSiteMapProvider
     {
         const string cacheKey = "__CapsSiteMapProvider";
 
@@ -95,7 +95,7 @@ namespace Caps.Web.Mvc.Providers
                     try
                     {
                         IsBuildingSiteMap = true;
-                        var result = builder.BuildSitemap(this, (n1, n2) => AddNode(n1, n2));
+                        var result = builder.BuildSiteMap(this, (n1, n2) => AddNode(n1, n2));
                         if (result != null)
                         {
                             rootNode = result.RootNode;
@@ -153,7 +153,7 @@ namespace Caps.Web.Mvc.Providers
             }
             return node;
         }
-        public DbSiteMapNode FindSitemapNode(String name)
+        public DbSiteMapNode FindSiteMapNode(String name)
         {
             EnsureSiteMapBuilt();
             var key = name.UrlEncode();
@@ -164,7 +164,7 @@ namespace Caps.Web.Mvc.Providers
             }
             return null;
         }
-        public SiteMapNode FindSitemapNode(int permanentId)
+        public SiteMapNode FindSiteMapNode(int permanentId)
         {
             EnsureSiteMapBuilt();
             if (nodeIdIndex.ContainsKey(permanentId))

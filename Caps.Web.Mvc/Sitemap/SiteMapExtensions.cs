@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Caps.Web.Mvc.Sitemap
+namespace Caps.Web.Mvc.SiteMap
 {
     public static class SiteMapExtensions
     {

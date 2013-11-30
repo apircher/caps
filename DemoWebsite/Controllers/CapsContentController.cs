@@ -2,6 +2,7 @@
 using Caps.Data.Model;
 using Caps.Web.Mvc;
 using Caps.Web.Mvc.Attributes;
+using Caps.Web.Mvc.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;

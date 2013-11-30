@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Caps.Web.Mvc.Sitemap
+namespace Caps.Web.Mvc.SiteMap
 {
     public interface ISiteMapBuilder : IDisposable
     {
-        CapsSiteMapBuilderResult BuildSitemap(StaticSiteMapProvider provider, Action<SiteMapNode, SiteMapNode> addNodeAction);
+        CapsSiteMapBuilderResult BuildSiteMap(StaticSiteMapProvider provider, Action<SiteMapNode, SiteMapNode> addNodeAction);
     }
 
     public class CapsSiteMapBuilderResult

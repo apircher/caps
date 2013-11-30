@@ -9,7 +9,7 @@ function (module, ko, localization, entityManagerProvider, breeze) {
 
     var EntityQuery = breeze.EntityQuery;
 
-    function SitemapNodeTranslator() {
+    function SiteMapNodeTranslator() {
         var self = this,
             manager = entityManagerProvider.createManager();
 
@@ -48,5 +48,5 @@ function (module, ko, localization, entityManagerProvider, breeze) {
         }
     }
 
-    return SitemapNodeTranslator;
+    return SiteMapNodeTranslator;
 });

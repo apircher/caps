@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Caps.Web.Mvc.Sitemap
+namespace Caps.Web.Mvc.SiteMap
 {
     public class CapsSiteMapNode : System.Web.SiteMapNode
     {
@@ -62,7 +62,7 @@ namespace Caps.Web.Mvc.Sitemap
             get
             {
                 var language = Language.CurrentLanguage;
-                var provider = this.Provider as Caps.Web.Mvc.Providers.CapsSitemapProvider;
+                var provider = this.Provider as Caps.Web.Mvc.Providers.CapsSiteMapProvider;
                 if (provider != null && provider.IsBuildingSiteMap)
                     language = Language.DefaultLanguage;
                 return base.Url.Replace(LanguagePlaceHolder, language);

@@ -1,4 +1,4 @@
-﻿using Caps.Web.Mvc.Sitemap;
+﻿using Caps.Web.Mvc.SiteMap;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -71,7 +71,7 @@ function (dialog, ko, entityManagerProvider, breeze, SiteMapViewModel, system) {
             var siteMap;
             if (lastSelectedSiteMapId) 
                 siteMap = ko.utils.arrayFirst(self.website().SiteMapVersions(), function(smv) { return smv.Id() === lastSelectedSiteMapId; }); 
-            self.selectedSiteMap(self.findSiteMap(siteMap || self.website().latestSitemap()));
+            self.selectedSiteMap(self.findSiteMap(siteMap || self.website().latestSiteMap()));
         });
     };
         

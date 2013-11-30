@@ -92,10 +92,10 @@ namespace Caps.Web.Mvc.Model
 
         public string Publication(int permanentId)
         {
-            var capsSiteMapProvider = SiteMap.Provider as Caps.Web.Mvc.Providers.CapsSitemapProvider;
+            var capsSiteMapProvider = System.Web.SiteMap.Provider as Caps.Web.Mvc.Providers.CapsSiteMapProvider;
             if (capsSiteMapProvider != null)
             {
-                var node = capsSiteMapProvider.FindSitemapNode(permanentId);
+                var node = capsSiteMapProvider.FindSiteMapNode(permanentId);
                 if (node != null) return node.Url;
             }
             return String.Empty;

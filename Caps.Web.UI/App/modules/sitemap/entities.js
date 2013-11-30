@@ -20,7 +20,7 @@ define(['ko', 'authentication'], function (ko, authentication) {
         });
     }
 
-    Website.prototype.latestSitemap = function () {
+    Website.prototype.latestSiteMap = function () {
         var maxVersion = Math.max.apply(null, ko.utils.arrayMap(this.SiteMapVersions(), function (sitemap) { return sitemap.Version(); }));
         return ko.utils.arrayFirst(this.SiteMapVersions(), function (sitemap) {
             return sitemap.Version() === maxVersion;
@@ -28,13 +28,13 @@ define(['ko', 'authentication'], function (ko, authentication) {
     };
 
     /**
-     * Sitemap Entity
+     * SiteMap Entity
      */
-    function Sitemap() {
+    function SiteMap() {
         var self = this;
     }
 
-    function SitemapInitializer(sitemap) {
+    function SiteMapInitializer(sitemap) {
         sitemap.rootNodes = ko.computed({
             read: function () {
                 return ko.utils.arrayFilter(sitemap.SiteMapNodes(), function (node) { return !node.ParentNodeId(); });
@@ -48,28 +48,28 @@ define(['ko', 'authentication'], function (ko, authentication) {
         });
     }
 
-    Sitemap.prototype.previousVersion = function () {        
+    SiteMap.prototype.previousVersion = function () {
         var self = this,
             arr = ko.utils.arrayFilter(self.siblings(), function (sitemap) { return sitemap.Version() < self.Version(); });
         if (!arr.length) return undefined;
-        arr.sort(sortSitemapsByVersionDesc);
+        arr.sort(sortSiteMapsByVersionDesc);
         return arr[0];
     };
 
-    Sitemap.prototype.nextVersion = function () {
+    SiteMap.prototype.nextVersion = function () {
         var self = this,
             arr = ko.utils.arrayFilter(self.siblings(), function (sitemap) { return sitemap.Version() > self.Version(); });
         if (!arr.length) return undefined;
-        arr.sort(sortSitemapsByVersionAsc);
+        arr.sort(sortSiteMapsByVersionAsc);
         return arr[0];
     };
     
-    Sitemap.prototype.setDeleted = function () {
+    SiteMap.prototype.setDeleted = function () {
         this.rootNodes().slice(0).forEach(function (n) { n.setDeleted(); });
         this.entityAspect.setDeleted();
     };
 
-    Sitemap.prototype.createNewVersion = function (versionNumber, manager) {
+    SiteMap.prototype.createNewVersion = function (versionNumber, manager) {
         var siteMapVersion = manager.createEntity('DbSiteMap', { WebsiteId: this.WebsiteId(), Version: versionNumber });
         ko.utils.arrayForEach(this.rootNodes(), function (node) {
             var copy = node.clone(manager, siteMapVersion, null);
@@ -78,26 +78,26 @@ define(['ko', 'authentication'], function (ko, authentication) {
         return siteMapVersion;
     };
 
-    function sortSitemapsByVersionAsc(a, b) {
+    function sortSiteMapsByVersionAsc(a, b) {
         var vA = a && a.Version ? a.Version() : 0,
             vB = b && b.Version ? b.Version() : 0;
         return vA == vB ? 0 : vA > vB ? 1 : -1;
     }
 
-    function sortSitemapsByVersionDesc(a, b) {
+    function sortSiteMapsByVersionDesc(a, b) {
         var vA = a && a.Version ? a.Version() : 0,
             vB = b && b.Version ? b.Version() : 0;
         return vA == vB ? 0 : vA < vB ? 1 : -1;
     }
 
     /**
-     * SitemapNode Entity
+     * SiteMapNode Entity
      */
-    function SitemapNode() {
+    function SiteMapNode() {
 
     }
 
-    function SitemapNodeInitializer(sitemapNode) {
+    function SiteMapNodeInitializer(sitemapNode) {
         var self = this;
 
         sitemapNode.childNodes = ko.computed({
@@ -108,7 +108,7 @@ define(['ko', 'authentication'], function (ko, authentication) {
                     return node.ParentNodeId() === sitemapNode.Id();
                 });
 
-                result.sort(sortSitemapNodesByRankingAsc);
+                result.sort(sortSiteMapNodesByRankingAsc);
                 return result;
             }, deferEvaluation: true
         });
@@ -157,14 +157,14 @@ define(['ko', 'authentication'], function (ko, authentication) {
         });
     }
 
-    SitemapNode.prototype.getResource = function (language) {
+    SiteMapNode.prototype.getResource = function (language) {
         var key = language.toLowerCase();
         return ko.utils.arrayFirst(this.Resources(), function (res) {
             return res.Language().toLowerCase() === key;
         });
     };
 
-    SitemapNode.prototype.getOrCreateResource = function (language, manager) {
+    SiteMapNode.prototype.getOrCreateResource = function (language, manager) {
         var key = language.toLowerCase(),
             resource = this.getResource(language);
         if (resource)
@@ -179,12 +179,12 @@ define(['ko', 'authentication'], function (ko, authentication) {
         return resource;
     };
 
-    SitemapNode.prototype.localeTitle = function (language) {
+    SiteMapNode.prototype.localeTitle = function (language) {
         var res = this.getResource('de');
         return res ? res.Title() : '';
     };
     
-    SitemapNode.prototype.setDeleted = function () {
+    SiteMapNode.prototype.setDeleted = function () {
         var childNodes = this.childNodes().slice(0),
             resources = this.Resources().slice(0);
         
@@ -196,7 +196,7 @@ define(['ko', 'authentication'], function (ko, authentication) {
         this.entityAspect.setDeleted();
     };
 
-    SitemapNode.prototype.clone = function (manager, siteMapVersion, parentNodeId) {
+    SiteMapNode.prototype.clone = function (manager, siteMapVersion, parentNodeId) {
         var args = {
             SiteMapId: siteMapVersion.Id(),
             ParentNodeId: parentNodeId,
@@ -230,7 +230,7 @@ define(['ko', 'authentication'], function (ko, authentication) {
         return copy;
     };
 
-    SitemapNode.prototype.maxChildNodeRanking = function () {
+    SiteMapNode.prototype.maxChildNodeRanking = function () {
         var childNodes = this.childNodes();
         if (childNodes.length === 0) return 0;
         if (childNodes.length === 1) return childNodes[0].Ranking();
@@ -238,7 +238,7 @@ define(['ko', 'authentication'], function (ko, authentication) {
         return Math.max.apply(null, ko.utils.arrayMap(childNodes, function (n) { return n.Ranking(); }));
     };
 
-    SitemapNode.prototype.moveUp = function () {
+    SiteMapNode.prototype.moveUp = function () {
         var siblings = this.siblings().slice(0),
             index = siblings.indexOf(this);
 
@@ -251,7 +251,7 @@ define(['ko', 'authentication'], function (ko, authentication) {
         setRankings(siblings);
     };
 
-    SitemapNode.prototype.moveDown = function () {
+    SiteMapNode.prototype.moveDown = function () {
         var siblings = this.siblings().slice(0),
             index = siblings.indexOf(this);
 
@@ -264,7 +264,7 @@ define(['ko', 'authentication'], function (ko, authentication) {
         setRankings(siblings);
     };
 
-    SitemapNode.prototype.reparent = function (newParentNode) {
+    SiteMapNode.prototype.reparent = function (newParentNode) {
         if (newParentNode) {
             this.ParentNodeId(newParentNode.Id());
             this.Ranking(newParentNode.maxChildNodeRanking() + 1);
@@ -278,7 +278,7 @@ define(['ko', 'authentication'], function (ko, authentication) {
         }
     }
 
-    function sortSitemapNodesByRankingAsc(a, b) {
+    function sortSiteMapNodesByRankingAsc(a, b) {
         var rankingA = a.Ranking(),
             rankingB = b.Ranking();
         if (rankingA == rankingB) return a.Id() < b.Id() ? -1 : 1;
@@ -518,8 +518,8 @@ define(['ko', 'authentication'], function (ko, authentication) {
     return {
         extendModel: function (metadataStore) {
             metadataStore.registerEntityTypeCtor('Website', Website);
-            metadataStore.registerEntityTypeCtor('DbSiteMap', Sitemap, SitemapInitializer);
-            metadataStore.registerEntityTypeCtor('DbSiteMapNode', SitemapNode, SitemapNodeInitializer);
+            metadataStore.registerEntityTypeCtor('DbSiteMap', SiteMap, SiteMapInitializer);
+            metadataStore.registerEntityTypeCtor('DbSiteMapNode', SiteMapNode, SiteMapNodeInitializer);
             metadataStore.registerEntityTypeCtor('Publication', Publication);
             metadataStore.registerEntityTypeCtor('PublicationContentPart', PublicationContentPart);
             metadataStore.registerEntityTypeCtor('PublicationFile', PublicationFile);

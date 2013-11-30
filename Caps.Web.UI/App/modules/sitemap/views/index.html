@@ -9,24 +9,24 @@
                     </li>
                     <li>
                         <!-- ko if: sitemaps() -->
-                        <select data-bind="options: sitemaps, optionsCaption: 'Version wählen', optionsText: 'title', value: selectedSitemap"></select>
+                        <select data-bind="options: sitemaps, optionsCaption: 'Version wählen', optionsText: 'title', value: selectedSiteMap"></select>
                         <!-- /ko -->
                     </li>
                     <li>
-                        <a href="#" data-bind="click: createSitemapVersion"><i class="fa fa-plus"></i> Neue Version</a>
+                        <a href="#" data-bind="click: createSiteMapVersion"><i class="fa fa-plus"></i> Neue Version</a>
                     </li>
-                    <li data-bind="if: selectedSitemap()">
-                        <a href="#" data-bind="click: deleteSitemapVersion"><i class="fa fa-trash-o"></i> Version verwerfen</a>
+                    <li data-bind="if: selectedSiteMap()">
+                        <a href="#" data-bind="click: deleteSiteMapVersion"><i class="fa fa-trash-o"></i> Version verwerfen</a>
                     </li>
                 </ul>
 
                 <div class="pull-left">
-                    <!-- ko if: selectedSitemap() -->
-                    <span data-bind="visible: !selectedSitemap().entity().PublishedFrom()">
-                        Nicht veröffentlicht <a href="#" data-bind="click: publishSitemapVersion"><i class="fa fa-share-square-o"></i> Jetzt veröffentlichen</a>
+                    <!-- ko if: selectedSiteMap() -->
+                    <span data-bind="visible: !selectedSiteMap().entity().PublishedFrom()">
+                        Nicht veröffentlicht <a href="#" data-bind="click: publishSiteMapVersion"><i class="fa fa-share-square-o"></i> Jetzt veröffentlichen</a>
                     </span>
-                    <span data-bind="visible: selectedSitemap().entity().PublishedFrom()">
-                        Veröffentlicht <span data-bind="text: selectedSitemap().publishedFromNow()"></span>
+                    <span data-bind="visible: selectedSiteMap().entity().PublishedFrom()">
+                        Veröffentlicht <span data-bind="text: selectedSiteMap().publishedFromNow()"></span>
                     </span>
                     <!-- /ko -->
                 </div>
@@ -34,8 +34,8 @@
         </div>
         <div class="row">
             <div class="col-md-3 col-lg-2">
-                <!-- ko if: selectedSitemap() && selectedSitemap().tree() -->
-                <!-- ko template: { name: 'NodesTemplate', data: selectedSitemap().tree().rootNodes() } --><!-- /ko -->
+                <!-- ko if: selectedSiteMap() && selectedSiteMap().tree() -->
+                <!-- ko template: { name: 'NodesTemplate', data: selectedSiteMap().tree().rootNodes() } --><!-- /ko -->
                 <!-- /ko -->
             </div>
 
@@ -84,7 +84,7 @@
                 <h5 data-bind="text: selectedNode().localeTitle('de')"></h5>
                 <ul class="list-inline">
                     <li>
-                        <a href="#" data-bind="click: editSitemapNode"><i class="fa fa-edit"></i> Seiten-Eigenschaften</a>
+                        <a href="#" data-bind="click: editSiteMapNode"><i class="fa fa-edit"></i> Seiten-Eigenschaften</a>
                     </li>
                 </ul>  
                 <h5>Übersetzungen</h5>   
@@ -124,7 +124,7 @@
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
                 <li data-bind="if: selectedNode()">
-                    <a href="#" data-bind="click: createSitemapNode"><span><i class="fa fa-plus fa-fw"></i> Neue Seite</span></a>
+                    <a href="#" data-bind="click: createSiteMapNode"><span><i class="fa fa-plus fa-fw"></i> Neue Seite</span></a>
                 </li>
                 <li data-bind="if: selectedNode()">
                     <a href="#" data-bind="click: moveSelectedNode"><span><i class="fa fa-arrows fa-fw"></i> Seite verschieben</span></a>
@@ -136,7 +136,7 @@
                     <a href="#" data-bind="click: moveSelectedNodeDown" title="Nach unten"><span><i class="fa fa-arrow-down fa-fw"></i></span></a>
                 </li>
                 <li data-bind="if: selectedNode()">
-                    <a href="#" data-bind="click: deleteSitemapNode"><span><i class="fa fa-trash-o fa-fw"></i> Seite löschen</span></a>
+                    <a href="#" data-bind="click: deleteSiteMapNode"><span><i class="fa fa-trash-o fa-fw"></i> Seite löschen</span></a>
                 </li>
             </ul>
         </div>
