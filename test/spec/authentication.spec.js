@@ -1,4 +1,4 @@
-define(['infrastructure/authentication', 'plugins/router', 'moment'], function (authentication, router, moment) {
+define(['authentication', 'plugins/router', 'moment'], function (authentication, router, moment) {
 
     describe('Authentication', function () {
 
@@ -71,7 +71,23 @@ define(['infrastructure/authentication', 'plugins/router', 'moment'], function (
                 var flag = false;
 
                 runs(function() {
-                    router.guardRoute(null, routeInfo).then(function() { flag = true; });
+                    var resultOrPromise = router.guardRoute(null, routeInfo);
+                    if (resultOrPromise) {
+                        if (resultOrPromise.then) {
+                            resultOrPromise.then(function () {
+                                flag = true;
+                            })
+                            .fail(function() {
+                                flag = true;
+                            });
+                        }
+                        else {
+                            result = resultOrPromise;
+                            flag = true;
+                        }
+                    }
+                    else
+                        flag = true;
                 });
 
                 waitsFor(function () {
@@ -129,10 +145,20 @@ define(['infrastructure/authentication', 'plugins/router', 'moment'], function (
                     result;
 
                 runs(function () {
-                    router.guardRoute(null, routeInfo).then(function (r) {
-                        result = r;
-                        flag = true;
-                    });
+                    var resultOrPromise = router.guardRoute(null, routeInfo);                    
+                    if (resultOrPromise) {
+                        if (resultOrPromise.then) {
+                            resultOrPromise.then(function (r) {
+                                result = r;
+                                flag = true;
+                            });
+                        }
+                        else
+                        {
+                            result = resultOrPromise;
+                            flag = true;
+                        }
+                    }
                 });
 
                 waitsFor(function () {

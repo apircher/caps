@@ -69,9 +69,13 @@ define([
     function refreshUserWhenExpired() {
         return system.defer(function (dfd) {
             if (isAuthenticated() && !user().isExpired())
-                dfd.resolve();
-            else
-                getUser().then(dfd.resolve).fail(dfd.reject);
+                dfd.resolve(user());
+            else {
+                if (user().isExpired())
+                    getUser().then(dfd.resolve).fail(dfd.reject);
+                else
+                    dfd.resolve(user());
+            }
         })
         .promise();
     }
@@ -166,25 +170,19 @@ define([
      * Check authentication while navigating
      */
     router.guardRoute = function (vm, routeInfo) {
-        var deferred = Q.defer();
-        refreshUserWhenExpired()
-            .then(function () {
+        return system.defer(function (dfd) {
+            refreshUserWhenExpired().then(function () {
                 if (isAuthenticated() || routeInfo.config.moduleId === logonModuleId) {
-                    if (routeInfo.config.roles) {
-                        if (user().isInAnyRole(routeInfo.config.roles))
-                            return true;
-                        // Not allowed
-                        return 'forbidden';
-                    }
-                    return true;
+                    if (routeInfo.config.roles && !user().isInAnyRole(routeInfo.config.roles))
+                        dfd.resolve('forbidden');
+                    dfd.resolve(true);
                 }
                 else
-                    return router.logon(routeInfo);
+                    dfd.resolve(router.logon(routeInfo));
             })
-            .then(deferred.resolve)
-            .fail(deferred.reject)
-            .done();
-        return deferred.promise;
+            .fail(dfd.reject);
+        })
+        .promise();
     };
 
 

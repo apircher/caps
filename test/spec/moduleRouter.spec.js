@@ -25,15 +25,6 @@ define(['infrastructure/moduleRouter', 'spec/testModuleA', 'infrastructure/modul
                     expect(childRouter.navigateToModule).toBeDefined();
                 });
 
-                it('registers activation meta data in the moduleHistory when the composition-complete event is fired', function () {
-                    var childRouter = moduleRouter.createModuleRouter(testModule, 'test/', 'test');
-                    var activation = { route: 'xyz' };
-                    var instruction = { something: 1 };
-                    spyOn(childRouter.moduleHistory, 'registerActivation');
-                    childRouter.trigger('router:navigation:composition-complete', activation, instruction, childRouter);
-                    expect(childRouter.moduleHistory.registerActivation).toHaveBeenCalledWith(activation, instruction);
-                });
-
                 describe('areSameItem Override', function () {
                     it('returns false when called with different items', function () {
                         var childRouter = moduleRouter.createModuleRouter(testModule, 'test/', 'test');
@@ -74,17 +65,6 @@ define(['infrastructure/moduleRouter', 'spec/testModuleA', 'infrastructure/modul
                         var result = childRouter.activeItem.settings.areSameItem(vm, vm, [1], [2]);
                         expect(result).toBe(false);
                     });
-                });
-
-                describe('navigateToModule function', function () {
-
-                    it('calls the activateLast-Function of the moduleHistory', function () {
-                        var childRouter = moduleRouter.createModuleRouter(testModule, 'test/', 'test');
-                        spyOn(childRouter.moduleHistory, 'activateLast');
-                        childRouter.navigateToModule();
-                        expect(childRouter.moduleHistory.activateLast).toHaveBeenCalled();
-                    });
-
                 });
 
             });
