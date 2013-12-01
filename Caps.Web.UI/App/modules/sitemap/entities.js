@@ -269,10 +269,28 @@ define(['ko', 'authentication'], function (ko, authentication) {
     };
 
     SiteMapNode.prototype.reparent = function (newParentNode) {
-        if (newParentNode) {
+        if (newParentNode && newParentNode.Id() !== this.ParentNodeId()) {
             this.ParentNodeId(newParentNode.Id());
             this.Ranking(newParentNode.maxChildNodeRanking() + 1);
         }
+    };
+
+    SiteMapNode.prototype.findTeasers = function () {
+        var self = this,
+            siteMap = self.SiteMap(),
+            teasers = ko.utils.arrayFilter(siteMap.SiteMapNodes(), function (n) {
+                return n.isTeaser() && n.Redirect() == self.PermanentId();
+            });
+        return teasers;
+    };
+
+    SiteMapNode.prototype.hasTeasers = function () {
+        var teasers = this.findTeasers();
+        return teasers.length > 0;
+    };
+
+    SiteMapNode.prototype.isTeaser = function () {
+        return this.NodeType().toLowerCase() === 'teaser';
     };
 
     function setRankings(nodeArray) {

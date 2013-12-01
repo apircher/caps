@@ -34,10 +34,16 @@ function (dialog, ko, entityManagerProvider, breeze, SiteMapViewModel, system) {
             self.selectedNode(null);
             if (newValue) {
                 lastSelectedSiteMapId = newValue.entity().Id();
-                newValue.fetchTree().then(function () {
+                fetchTree(newValue.entity().Id()).then(function () {
+                    newValue.buildTree();
                     if (newValue.entity().rootNodes().length)
                         newValue.selectNodeByKey(newValue.entity().rootNodes()[0].Id());
                 });
+            }
+
+            function fetchTree(siteMapId) {
+                var query = new EntityQuery('SiteMapNodes').where('SiteMapId', '==', siteMapId).expand('Resources');
+                return self.manager.executeQuery(query);
             }
         });
 

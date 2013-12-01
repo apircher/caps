@@ -106,7 +106,7 @@ function (entityManagerProvider, breeze, system) {
         var query = new EntityQuery('SiteMapNodes').where('SiteMapId', '==', siteMapId).expand('Resources');
         return manager.executeQuery(query);
     }
-
+    
     return {
         createInitialSiteMap: createInitialSiteMap,
         createNewSiteMapVersion: createNewSiteMapVersion,

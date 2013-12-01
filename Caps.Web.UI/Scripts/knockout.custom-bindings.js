@@ -105,17 +105,22 @@
             var $elem = $(elem),
                 options = valueAccessor();
 
-            $window.on('resize', setElementHeight);
             setElementHeight();
 
+            var th;
             function setElementHeight() {
-                window.setTimeout(function () {
+                if (th) window.clearTimeout(th);
+                th = window.setTimeout(function () {
                     ko.bindingHandlers.forceViewportHeight.setElementHeight($window, $elem, options);
-                }, 20);
+                }, 40);
             }
+
+            $window.on('resize', setElementHeight);
+            $window.on('forceViewportHeight:refresh', setElementHeight);
 
             ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {
                 $window.off('resize', setElementHeight);
+                $window.off('forceViewportHeight:refresh', setElementHeight);
             });
         },
 
@@ -146,7 +151,7 @@
                 });
             }
 
-            var $ce = $elem, $document = $(document);
+            var $ce = $elem;
             while ($ce && $ce.length && ($ce[0].nodeName != 'HTML')) {
                 var paddingTop = new Number($ce.css('padding-top').replace('px', ''));
                 var paddingBottom = new Number($ce.css('padding-bottom').replace('px', ''));

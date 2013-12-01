@@ -17,7 +17,6 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         selectedSiteMap = ko.observable(),
         selectedNode = ko.observable(),
         selectedPublication = ko.observable(),
-        teasers = ko.observableArray(),
         supportedTranslations = localization.website.supportedTranslations(),
         isInitialized = false;
     
@@ -34,16 +33,17 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         website: website,
         siteMapVersions: ko.computed(function() {
             var items = website() ? website().sortedSiteMapVersions() : [];
-            return ko.utils.arrayMap(items, function(siteMap) {
-                var smvm = new SiteMapViewModel(siteMap);
-                smvm.selectedNodeChanged = function (node) { if (node) selectedNode(node.entity()); };
-                return smvm;
-            });
+            return ko.utils.arrayMap(items, createSiteMapVersionViewModel);
         }),
         selectedSiteMap: selectedSiteMap,
         selectedNode: selectedNode,
         selectedPublication: selectedPublication,
-        teasers: teasers,
+        teasers: ko.computed(function() {
+            if (!selectedNode()) return [];
+            return ko.utils.arrayFilter(selectedNode().childNodes(), function (node) {
+                return node.NodeType().toLowerCase() === 'teaser';
+            });
+        }),
         supportedTranslations: supportedTranslations,
 
         activate: function () {
@@ -155,7 +155,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             }
 
             function filterSelection(item) {
-                return item.Id() !== selectedNode().Id();
+                return !item.isTeaser() && item.Id() !== selectedNode().Id();
             }
         },
 
@@ -169,7 +169,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
 
         canCreateTeaser: function () {
             if (selectedNode()) {
-                if (selectedNode().NodeType() == 'ROOT') return false;
+                if (selectedNode().NodeType() == 'ROOT' || selectedNode().hasTeasers()) return false;
                 return true;
             }
             return false;
@@ -201,17 +201,6 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             })
             .fail(handleError);
         }
-        refreshTeasers();
-    }
-
-    function refreshTeasers() {
-        teasers(null);
-        if (selectedNode()) {
-            var coll = ko.utils.arrayFilter(selectedNode().childNodes(), function (node) {
-                return node.NodeType().toLowerCase() === 'teaser';
-            });
-            teasers(coll);
-        }
     }
 
     function selectSiteMapVersion(entity) {
@@ -219,6 +208,12 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             return smvm.entity() === entity;
         });
         selectedSiteMap(hit);
+    }
+
+    function createSiteMapVersionViewModel(entity) {
+        var smvm = new SiteMapViewModel(entity);
+        smvm.selectedNodeChanged = function (node) { if (node) selectedNode(node.entity()); };
+        return smvm;
     }
 
     function isInSelectedSiteMap(node) {
