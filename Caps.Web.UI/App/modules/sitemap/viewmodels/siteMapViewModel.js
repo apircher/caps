@@ -3,21 +3,21 @@
     'moment',
     'breeze',
     'durandal/system',
-    'infrastructure/treeViewModel'
+    'infrastructure/treeViewModel',
+    '../datacontext'
 ],
-function (ko, moment, breeze, system, TreeModel) {
+function (ko, moment, breeze, system, TreeModel, datacontext) {
     
     var EntityQuery = breeze.EntityQuery;
 
     /*
      * SiteMapViewModel class
      */
-    function SiteMapViewModel(siteMap, manager) {
+    function SiteMapViewModel(siteMap) {
         var self = this;
 
         self.entity = ko.observable(siteMap);
         self.tree = ko.observable();
-        self.manager = manager;
 
         self.publishedFromNow = ko.computed(function () {
             return moment.utc(self.entity().PublishedFrom()).fromNow();
@@ -31,11 +31,11 @@ function (ko, moment, breeze, system, TreeModel) {
     SiteMapViewModel.prototype.fetchTree = function () {
         var self = this;
         return system.defer(function (dfd) {
-            var query = new EntityQuery('SiteMapNodes').where('SiteMapId', '==', self.entity().Id()).expand('Resources');
-            self.manager.executeQuery(query).then(function (data) {
+            datacontext.fetchSiteMapNodes(self.entity().Id()).then(function (data) {
                 self.buildTree();
                 dfd.resolve();
-            }).fail(dfd.reject);
+            })
+            .fail(dfd.reject);
         })
         .promise();
     };
@@ -83,6 +83,18 @@ function (ko, moment, breeze, system, TreeModel) {
 
     SiteMapViewModel.prototype.selectNodeByKey = function (key) {
         if (this.tree()) this.tree().selectNodeByKey(key);
+    };
+
+    SiteMapViewModel.prototype.selectRootNode = function () {
+        if (this.tree()) {
+            var rootNodes = this.tree().rootNodes();
+            var root = rootNodes.length ? rootNodes[0] : undefined;
+            if (root) this.tree().selectedNode(root);
+        }
+    };
+
+    SiteMapViewModel.prototype.containsNode = function (node) {
+        return node && this.entity().containsNode(node);
     };
 
     return SiteMapViewModel;

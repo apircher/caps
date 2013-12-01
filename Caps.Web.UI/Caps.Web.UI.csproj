@@ -244,6 +244,7 @@
     <Content Include="App\modules\draft\views\editor\contentEditors\textEditor.html" />
     <Content Include="App\modules\draft\views\editor\draftNotes.html" />
     <Content Include="App\modules\draft\views\editor\templateEditor.html" />
+    <Content Include="App\modules\sitemap\datacontext.js" />
     <Content Include="App\modules\sitemap\entities.js" />
     <Content Include="App\infrastructure\entityManagerProvider.js" />
     <Content Include="App\infrastructure\filterModel.js" />
@@ -310,6 +311,7 @@
     <Content Include="App\modules\sitemap\module.js" />
     <Content Include="App\modules\sitemap\viewmodels\editor.js" />
     <Content Include="App\modules\sitemap\viewmodels\siteMapNodeSelectionDialog.js" />
+    <Content Include="App\modules\sitemap\viewmodels\publicationViewModel.js" />
     <Content Include="App\modules\sitemap\viewmodels\siteMapViewModel.js" />
     <Content Include="App\modules\sitemap\viewmodels\translator.js" />
     <Content Include="App\modules\sitemap\views\editor.html" />

@@ -78,6 +78,10 @@ define(['ko', 'authentication'], function (ko, authentication) {
         return siteMapVersion;
     };
 
+    SiteMap.prototype.containsNode = function (node) {
+        return node && node.SiteMapId() === this.Id();
+    };
+
     function sortSiteMapsByVersionAsc(a, b) {
         var vA = a && a.Version ? a.Version() : 0,
             vB = b && b.Version ? b.Version() : 0;
