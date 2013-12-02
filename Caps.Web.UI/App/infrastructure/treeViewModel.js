@@ -1,4 +1,4 @@
-﻿define(['ko', 'infrastructure/interaction'], function (ko, interaction) {
+﻿define(['ko', 'infrastructure/interaction', 'infrastructure/keyCode'], function (ko, interaction, KeyCodes) {
 
     /*
      * TreeViewModel class
@@ -80,10 +80,10 @@
     };
 
     TreeViewModel.prototype.handleKeyDown = function (e) {
-        direction = e.key.toLowerCase();
+        direction = KeyCodes.getDirection(e.keyCode);
         var self = this;
 
-        if (isSupportedDirection(direction)) {
+        if (direction) {
             e.preventDefault();
 
             if (!self.selectedNode()) {
@@ -101,7 +101,7 @@
                 self.selectedNode().ensureVisible();
         }
 
-        if (direction === 'spacebar' && self.selectedNode()) {
+        if (e.keyCode === KeyCodes.keys.SPACEBAR && self.selectedNode()) {
             e.preventDefault();
             self.selectedNode().toggleIsExpanded();
         }
@@ -179,10 +179,6 @@
                 return true;
             }
             return false;
-        }
-
-        function isSupportedDirection(direction) {
-            return direction === 'up' || direction === 'down' || direction === 'left' || direction === 'right';
         }
     };
 

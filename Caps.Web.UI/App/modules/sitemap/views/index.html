@@ -1,7 +1,7 @@
 ﻿<div id="sitemap-index" class="app-page bottom-fixed-navbar-container">
 
-    <div class="container-fullwidth">
-        <div class="row sitemap-index-header">
+    <div class="container-fullwidth subnav-fixed-top-container">
+        <div class="row subnav-fixed-top sitemap-index-header">
             <div class="col-md-12">
                 <ul class="list-inline pull-left">
                     <li>
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-3 col-lg-2 left-fixed-sidebar">
+            <div class="col-md-3 col-lg-2 fixed-sidebar left-fixed-sidebar sitemap-index-sidebar">
                 <div data-bind="forceViewportHeight: { minWidth: 992 }" class="panel-scroll-vh">
                     <!-- ko if: selectedSiteMap() && selectedSiteMap().tree() -->
                     <!-- ko template: { name: 'NodesTemplate', data: selectedSiteMap().tree().rootNodes() } --><!-- /ko -->
@@ -69,7 +69,6 @@
                     </ul>
                 </div>
                 <!-- /ko -->
-
                 <!-- ko if: selectedNode() && teasers() && teasers().length -->
                 <h5>Aufmacher</h5>
                 <ul class="list-inline" data-bind="foreach: teasers">
@@ -88,19 +87,18 @@
                     <li>
                         <a href="#" data-bind="click: editSiteMapNode"><i class="fa fa-edit"></i> Seiten-Eigenschaften</a>
                     </li>
-                </ul>  
-                <h5>Übersetzungen</h5>   
+                </ul>
+                <h5>Übersetzungen</h5>
                 <ul data-bind="foreach: supportedTranslations" class="list-inline">
                     <li>
                         <a href="#" data-bind="click: $parent.editTranslation"><i class="fa fa-edit"></i> <!-- ko text: localeName('de') --><!-- /ko --></a>
                     </li>
-                </ul>           
+                </ul>
                 <h5>Inhalt</h5>
                 <p>
                     <!-- ko if: !selectedNode().ContentId() -->
                     <em>Kein Inhalt festgelegt</em>
                     <!-- /ko -->
-
                     <!-- ko if: selectedNode().ContentId() -->
                     <em data-bind="text: selectedNode().ContentId()"></em>
                     <!-- /ko -->

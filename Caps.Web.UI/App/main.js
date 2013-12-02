@@ -77,6 +77,7 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
 
         // Register knockout bindings for 
         // delayed execution.
+        composition.addBindingHandler('fixedPosition');
         composition.addBindingHandler('forceViewportHeight');
 
         // Initialize Knockout Validation

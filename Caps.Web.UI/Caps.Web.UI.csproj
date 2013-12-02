@@ -224,6 +224,7 @@
     <Content Include="App\infrastructure\contentReferences.js" />
     <Content Include="App\infrastructure\datacontext.js" />
     <Content Include="App\infrastructure\interaction.js" />
+    <Content Include="App\infrastructure\keyCode.js" />
     <Content Include="App\infrastructure\serverUtil.js" />
     <Content Include="App\infrastructure\treeViewModel.js" />
     <Content Include="App\infrastructure\urlHelper.js" />

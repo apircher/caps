@@ -97,8 +97,37 @@
         }
     };
 
+    
     //
-    // Stretch Height
+    // fixedPosition
+    //
+    ko.bindingHandlers.fixedPosition = {
+        update: function (elem, valueAccessor) {
+            var $elem = $(elem),
+                options = valueAccessor() || {};
+            ko.bindingHandlers.fixedPosition.setElementPosition($elem, options);
+        },
+
+        setElementPosition: function ($elem, options) {
+            var viewportWidth = $window.width();
+            if (options.minWidth && typeof options.minWidth === 'number') {
+                if (options.minWidth >= viewportWidth) {
+                    $elem.css('position', 'static');
+                    return;
+                }
+            }
+
+            $elem.css('position', 'fixed');
+            if (options.below && typeof options.below === 'string') {
+                var $below = $(options.below),
+                    elemY = $below.offset().top + $below.outerHeight() + new Number($below.css('margin-bottom').replace('px', ''));
+                $elem.css('top', elemY + 'px');
+            }
+        }
+    }
+
+    //
+    // forceViewportHeight
     //
     ko.bindingHandlers.forceViewportHeight = {
         init: function (elem, valueAccessor) {
@@ -169,6 +198,10 @@
         }
     };
 
+
+    //
+    // stretchLineHeight
+    //
     ko.bindingHandlers.stretchLineHeight = {
         setLineHeight: function($elem, options) {
             var parentHeight = $elem.parent().innerHeight(); // css('height');
@@ -214,7 +247,7 @@
                         return current;
                     current = current.parent();
                 }
-                return $window;
+                return null;
             }
 
             function isElementVisible(container, element) {
@@ -235,8 +268,15 @@
             function getScrollInfo(container, element) {
                 var pos = element.position(),
                     scrollTop = container.scrollTop(),
-                    elemY1 = pos.top - container.position().top,
-                    elemY2 = elemY1 + element.outerHeight();
+                    elemY1, elemY2;
+
+                try {
+                    elemY1 = pos.top - container.position().top; 
+                }
+                catch (error) {
+                    elemY1 = 0;
+                }                    
+                elemY2 = elemY1 + element.outerHeight();
 
                 return {
                     scrollTop: scrollTop,

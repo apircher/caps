@@ -13,9 +13,10 @@ define([
     'infrastructure/listSortModel',
     '../commands/deleteDraft',
     './draftSearchControl',
-    'infrastructure/interaction'
+    'infrastructure/interaction',
+    'infrastructure/keyCode'
 ],
-function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel, DeleteDraftCommand, DraftSearchControl, interaction) {
+function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel, DeleteDraftCommand, DraftSearchControl, interaction, KeyCodes) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
@@ -185,11 +186,11 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         },
 
         handleKeyDown: function (e) {
-            var test = e.key.toLowerCase();
-            if (test === 'up' || test === 'down') {
+            var keyCode = e.keyCode;
+            if (keyCode === KeyCodes.keys.UP || keyCode === KeyCodes.keys.DOWN) {
                 e.preventDefault();
-                if (test === 'up') vm.selectPreviousDraft();
-                if (test === 'down') vm.selectNextDraft();
+                if (keyCode === KeyCodes.keys.UP) vm.selectPreviousDraft();
+                if (keyCode === KeyCodes.keys.DOWN) vm.selectNextDraft();
             }
         }
     };

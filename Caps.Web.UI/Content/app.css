@@ -79,10 +79,12 @@
 .panel-scroll-v {
     overflow-x:hidden;
     overflow-y:scroll;
+    -webkit-overflow-scrolling: touch;
 }
 .panel-scroll-vh {
     overflow-x:auto;
     overflow-y:scroll;
+    -webkit-overflow-scrolling: touch;
 }
 
 .container-fullwidth {
@@ -280,7 +282,10 @@
   */
 .left-fixed-sidebar {
     position:fixed;
+    top:70px;
+    left:0;
     margin-bottom:-15px;
+    padding-right:0;
 }
 
 /**
@@ -769,6 +774,27 @@ ul.data-list {
                 color:#fff;
             }
 
+
+.subnav-fixed-top {
+    position:fixed;
+    top:50px;
+    height:50px;
+    width:100%;
+    padding-top:15px;
+    z-index: 100;
+}
+
+.subnav-fixed-top-container {
+    padding-top:50px;
+}
+
+.sitemap-index-header {
+    background:#fff;
+}
+.sitemap-index-sidebar {
+    top: 100px;
+}
+
 /**
  * Media Queries
  * -----------------------------------------------------------------------------
@@ -804,10 +830,26 @@ ul.data-list {
 
     .left-fixed-sidebar {
         position:static;
+        top:auto;
         margin-bottom:0;
+        padding-right:15px;
+        clear:both;
     }
     .left-fixed-sidebar > .panel-scroll-v {
         overflow-y:visible;
+    }
+    .left-fixed-sidebar > .panel-scroll-vh {
+        overflow-y:visible;
+        overflow-x:visible;
+    }
+
+    .subnav-fixed-top {
+        position:static;
+        top:auto;
+        display:block;
+    }
+    .subnav-fixed-top-container {
+        padding-top:0;
     }
 }
 
