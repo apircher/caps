@@ -3,10 +3,10 @@
     <div class="container-fullwidth">
         <div class="row">
             <div class="col-md-4 col-lg-3 left-fixed-sidebar">
-                <!-- ko compose: { model: searchControl, compositionComplete: function() { $(window).trigger('forceViewportHeight:refresh'); } } --><!-- /ko -->
-                <div data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .draft-search', minWidth: 992 }" class="panel-scroll-v">
+                <!-- ko compose: { model: searchControl } --><!-- /ko -->
+                <div data-bind="forceViewportHeight: { minWidth: 992 }" class="panel-scroll-v">
                     <ul data-bind="foreach: items" class="data-list">
-                        <li data-bind="css: { active: isSelected() }, click: $parent.selectDraft">
+                        <li data-bind="css: { active: isSelected() }, click: $parent.selectDraft, scrollIntoViewTrigger: { source: scrollIntoViewRequest }">
                             <div class="pull-right">
                                 <small data-bind="text: modifiedAt"></small>
                             </div>

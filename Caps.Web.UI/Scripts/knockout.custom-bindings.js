@@ -112,7 +112,7 @@
                 if (th) window.clearTimeout(th);
                 th = window.setTimeout(function () {
                     ko.bindingHandlers.forceViewportHeight.setElementHeight($window, $elem, options);
-                }, 40);
+                }, 30);
             }
 
             $window.on('resize', setElementHeight);
@@ -143,6 +143,9 @@
                 }
             }
 
+            var offset = $elem.offset();
+            viewportHeight -= offset.top;
+
             if (options.spacers && typeof(options.spacers) === 'string') {
                 var $spacers = $(options.spacers);
                 $.each($spacers, function (index, spacer) {
@@ -153,11 +156,9 @@
 
             var $ce = $elem;
             while ($ce && $ce.length && ($ce[0].nodeName != 'HTML')) {
-                var paddingTop = new Number($ce.css('padding-top').replace('px', ''));
                 var paddingBottom = new Number($ce.css('padding-bottom').replace('px', ''));
-                var marginTop = new Number($ce.css('margin-top').replace('px', ''));
                 var marginBottom = new Number($ce.css('margin-bottom').replace('px', ''));
-                viewportHeight -= (paddingTop + paddingBottom + marginTop + marginBottom);
+                viewportHeight -= (paddingBottom + marginBottom);
                 $ce = $ce.parent();
             }
 
@@ -182,6 +183,69 @@
             $elem.parent().on('stretchHeight:reseted', function () {
                 $elem.css('line-height', '0');
             });
+        }
+    };
+
+    
+    //
+    // ScrollIntoViewTrigger
+    //
+    ko.bindingHandlers.scrollIntoViewTrigger = {
+        init: function (elem, valueAccessor) {
+            var options = valueAccessor() || {},
+                $elem = $(elem);
+
+            if (options.source && options.source.attach) {
+                options.source.attach({
+                    trigger: function () {
+                        var $container = findScrollParent($elem);
+                        if ($container && !isElementVisible($container, $elem))
+                            scrollElementIntoView($container, $elem);
+                    }
+                });
+            }
+
+            function findScrollParent(element) {
+                var current = element.parent();
+                while (current && current.length && (current[0].nodeName != 'HTML')) {
+                    var overflowX = current.css('overflow-x');
+                    var overflowY = current.css('overflow-y');
+                    if (overflowX === 'scroll' || overflowY === 'scroll')
+                        return current;
+                    current = current.parent();
+                }
+                return $window;
+            }
+
+            function isElementVisible(container, element) {
+                var nfo = getScrollInfo(container, element);
+                return nfo.elemY1 >= 0 && nfo.elemY2 < container.height();
+            }
+
+            function scrollElementIntoView(container, element) {
+                var nfo = getScrollInfo(container, element);
+                if (nfo.elemY1 < 0) {
+                    container.scrollTop(nfo.scrollTop + nfo.elemY1);
+                }
+                else if (nfo.elemY2 > container.height()) {
+                    container.scrollTop(nfo.scrollTop + (nfo.elemY2 - container.height()));
+                }
+            }
+
+            function getScrollInfo(container, element) {
+                var pos = element.position(),
+                    scrollTop = container.scrollTop(),
+                    elemY1 = pos.top - container.position().top,
+                    elemY2 = elemY1 + element.outerHeight();
+
+                return {
+                    scrollTop: scrollTop,
+                    elemY1: elemY1,
+                    elemY2: elemY2,
+                    viewTop: scrollTop,
+                    viewBottom: scrollTop + container.height()
+                }
+            }
         }
     };
 

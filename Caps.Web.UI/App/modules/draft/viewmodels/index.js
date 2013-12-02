@@ -12,9 +12,10 @@ define([
     '../contentGenerator',
     'infrastructure/listSortModel',
     '../commands/deleteDraft',
-    './draftSearchControl'
+    './draftSearchControl',
+    'infrastructure/interaction'
 ],
-function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel, DeleteDraftCommand, DraftSearchControl) {
+function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel, DeleteDraftCommand, DraftSearchControl, interaction) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
@@ -22,7 +23,8 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         initialized = false,
         isLoading = ko.observable(false),
         deleteDraftCommand = new DeleteDraftCommand(),
-        searchControl = new DraftSearchControl();
+        searchControl = new DraftSearchControl(),
+        isActive = false;
     
     searchControl.refreshResults = function () {
         vm.refresh();
@@ -43,6 +45,13 @@ function (module, datacontext, ko, app, moment, localization, publicationService
 
     app.on('caps:publication:created', refetchPublicationsWhenSelected);
     app.on('caps:publication:refreshed', refetchPublicationsWhenSelected);
+
+    module.on('module:activate', function () {
+        if (isActive) attachKeyHandler();
+    });
+    module.on('module:deactivate', function () {
+        if (isActive) detachKeyHandler();
+    });
 
     function refetchPublicationsWhenSelected(sitemapNode) {
         if (!sitemapNode || !selectedItem()) return;
@@ -101,6 +110,13 @@ function (module, datacontext, ko, app, moment, localization, publicationService
                 initialized = true;
                 fetchListItems().then(selectFirstDraft);
             }
+            isActive = true;
+            attachKeyHandler();
+        },
+
+        deactivate: function() {
+            isActive = false;
+            detachKeyHandler();
         },
 
         addDraft: function () {
@@ -117,6 +133,7 @@ function (module, datacontext, ko, app, moment, localization, publicationService
 
         selectDraft: function (listItem) {
             selectedItem(listItem);
+            if (listItem) listItem.scrollIntoView();
             draftPreview(null);
             showPreview(listItem.draftId());
         },
@@ -124,6 +141,23 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         selectDraftById: function(id) {
             var listItem = ko.utils.arrayFirst(listItems(), function (d) { return d.draftId() === id; });
             if (listItem) vm.selectDraft(listItem);
+        },
+
+        selectNextDraft: function() {
+            if (!selectedItem()) vm.selectDraft(listItems()[0]);
+            else {
+                var index = listItems().indexOf(selectedItem());
+                if (index < listItems().length - 1)
+                    vm.selectDraft(listItems()[index + 1]);
+            }
+        },
+
+        selectPreviousDraft: function() {
+            if (!selectedItem()) vm.selectDraft(listItems()[listItems().length - 1]);
+            else {
+                var index = listItems().indexOf(selectedItem());
+                if (index > 0) vm.selectDraft(listItems()[index - 1]);
+            }
         },
 
         publishDraft: function () {
@@ -148,8 +182,25 @@ function (module, datacontext, ko, app, moment, localization, publicationService
 
         deleteDraft: function () {
             deleteDraftCommand.execute(selectedItem().draftId());
+        },
+
+        handleKeyDown: function (e) {
+            var test = e.key.toLowerCase();
+            if (test === 'up' || test === 'down') {
+                e.preventDefault();
+                if (test === 'up') vm.selectPreviousDraft();
+                if (test === 'down') vm.selectNextDraft();
+            }
         }
     };
+
+    function attachKeyHandler() {
+        $(window).on('keydown', vm.handleKeyDown);
+    }
+
+    function detachKeyHandler() {
+        $(window).off('keydown', vm.handleKeyDown);
+    }
 
     /*
      * DraftPreviewViewModel class
@@ -210,7 +261,13 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         self.isSelected = ko.computed(function () {
             return selectedItem() && selectedItem().draftId() === self.draftId();
         });
+
+        self.scrollIntoViewRequest = new interaction.InteractionRequest('ScrollIntoView');
     }
+
+    DraftListItem.prototype.scrollIntoView = function () {
+        this.scrollIntoViewRequest.trigger();
+    };
 
     DraftListItem.prototype.formatDate = function (date) {
         return moment(date).calendar();

@@ -1,7 +1,7 @@
 ﻿<div id="sitemap-index" class="app-page bottom-fixed-navbar-container">
 
     <div class="container-fullwidth">
-        <div class="row">
+        <div class="row sitemap-index-header">
             <div class="col-md-12">
                 <ul class="list-inline pull-left">
                     <li>
@@ -33,13 +33,15 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-3 col-lg-2">
-                <!-- ko if: selectedSiteMap() && selectedSiteMap().tree() -->
-                <!-- ko template: { name: 'NodesTemplate', data: selectedSiteMap().tree().rootNodes() } --><!-- /ko -->
-                <!-- /ko -->
+            <div class="col-md-3 col-lg-2 left-fixed-sidebar">
+                <div data-bind="forceViewportHeight: { minWidth: 992 }" class="panel-scroll-vh">
+                    <!-- ko if: selectedSiteMap() && selectedSiteMap().tree() -->
+                    <!-- ko template: { name: 'NodesTemplate', data: selectedSiteMap().tree().rootNodes() } --><!-- /ko -->
+                    <!-- /ko -->
+                </div>
             </div>
 
-            <div class="col-md-6 col-lg-8">
+            <div class="col-md-offset-3 col-lg-offset-2 col-md-6 col-lg-8">
 
                 <section class="draft-preview-content" data-bind="if: selectedPublication()">
                     <!-- ko with: selectedPublication() -->
@@ -147,7 +149,7 @@
     <ul data-bind="foreach: $data" class="list-unstyled tree-branch">            
         <!-- ko if: !(entity() && entity().NodeType().toLowerCase() === 'teaser') -->
         <li data-bind="if: !entity().entityAspect.entityState.isDeleted()">
-            <div class="tree-node" data-bind="css: { 'tree-node-selected': isSelected }">
+            <div class="tree-node" data-bind="css: { 'tree-node-selected': isSelected }, scrollIntoViewTrigger: { source: scrollIntoViewRequest }">
                 <div class="tree-node-toggle pull-left">
                     <a href="#" data-bind="click: toggleIsExpanded">
                         <i class="fa fa-fw" data-bind="css: { 'fa-plus': !isExpanded() && hasChildNodes(), 'fa-minus': isExpanded() && hasChildNodes() }"></i>

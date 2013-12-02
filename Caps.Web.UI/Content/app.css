@@ -279,7 +279,8 @@
   * Sidebar
   */
 .left-fixed-sidebar {
-    position:absolute;
+    position:fixed;
+    margin-bottom:-15px;
 }
 
 /**
@@ -803,6 +804,7 @@ ul.data-list {
 
     .left-fixed-sidebar {
         position:static;
+        margin-bottom:0;
     }
     .left-fixed-sidebar > .panel-scroll-v {
         overflow-y:visible;

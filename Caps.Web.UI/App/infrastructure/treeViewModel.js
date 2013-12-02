@@ -1,4 +1,4 @@
-﻿define(['ko'], function (ko) {
+﻿define(['ko', 'infrastructure/interaction'], function (ko, interaction) {
 
     /*
      * TreeViewModel class
@@ -74,6 +74,118 @@
         });
     };
 
+    TreeViewModel.prototype.selectRootNode = function () {
+        if (this.rootNodes().length)
+            this.selectedNode(this.rootNodes()[0]);
+    };
+
+    TreeViewModel.prototype.handleKeyDown = function (e) {
+        direction = e.key.toLowerCase();
+        var self = this;
+
+        if (isSupportedDirection(direction)) {
+            e.preventDefault();
+
+            if (!self.selectedNode()) {
+                self.selectRootNode();
+                return;
+            }
+
+            var n = self.selectedNode();
+            if (direction === 'down') moveDown(n);
+            if (direction === 'up') moveUp(n);
+            if (direction === 'left') moveLeft(n);
+            if (direction === 'right') moveRight(n);
+
+            if (self.selectedNode())
+                self.selectedNode().ensureVisible();
+        }
+
+        if (direction === 'spacebar' && self.selectedNode()) {
+            e.preventDefault();
+            self.selectedNode().toggleIsExpanded();
+        }
+
+        function moveDown(node) {
+            if (node.hasChildNodes() && node.isExpanded())
+                selectFirstChild(node);
+            else {
+                if (selectNextSibling(node))
+                    return;
+                if (node.parentNode())
+                    selectNextSibling(node.parentNode());
+            }
+        }
+
+        function moveUp(node) {
+            var prev = node.previousSibling();
+            if (prev && prev.hasChildNodes() && prev.isExpanded())
+                selectLastChild(prev);
+            else {
+                if (!selectPreviousSibling(node))
+                    selectParentNode(node);
+            }
+        }
+
+        function moveLeft(node) {
+            if (node.hasChildNodes() && node.isExpanded()) 
+                node.isExpanded(false);
+        }
+
+        function moveRight(node) {
+            if (node.hasChildNodes() && !node.isExpanded())
+                node.isExpanded(true);
+        }
+
+        function selectFirstChild(node) {
+            if (node.hasChildNodes()) {
+                var nextSelection = node.childNodes()[0];
+                self.selectedNode(nextSelection);
+                return true;
+            }
+            return false;
+        }
+
+        function selectLastChild(node) {
+            if (node.hasChildNodes()) {
+                var nextSelection = node.childNodes()[node.childNodes().length -1];
+                self.selectedNode(nextSelection);
+                return true;
+            }
+            return false;
+        }
+
+        function selectParentNode(node) {
+            if (node.parentNode() && node.parentNode() !== self.root) {
+                self.selectedNode(node.parentNode());
+                return true;
+            }
+            return false;
+        }
+
+        function selectNextSibling(node) {
+            var next = node.nextSibling();
+            if (next) {
+                self.selectedNode(next);
+                return true;
+            }
+            return false;
+        }
+
+        function selectPreviousSibling(node) {
+            var next = node.previousSibling();
+            if (next) {
+                self.selectedNode(next);
+                return true;
+            }
+            return false;
+        }
+
+        function isSupportedDirection(direction) {
+            return direction === 'up' || direction === 'down' || direction === 'left' || direction === 'right';
+        }
+    };
+
     /*
      * TreeNodeViewModel class
      */
@@ -111,7 +223,37 @@
         self.hasChildNodes = ko.computed(function () {
             return self.childNodes() && self.childNodes().length;
         });
+
+        self.nextSibling = ko.computed({
+            read: function () {
+                var siblings = self.parentNode() ? self.parentNode().childNodes() : (self.tree ? self.tree.rootNodes() : [self]);
+                var index = siblings.indexOf(self);
+
+                if (index < siblings.length - 1)
+                    return siblings[index + 1];
+                return null;
+            },
+            deferEvaluation: true
+        });
+
+        self.previousSibling = ko.computed({
+            read: function () {
+                var siblings = self.parentNode() ? self.parentNode().childNodes() : (self.tree ? self.tree.rootNodes() : [self]);
+                var index = siblings.indexOf(self);
+
+                if (index > 0)
+                    return siblings[index - 1];
+                return null;
+            },
+            deferEvaluation: true
+        });
+
+        self.scrollIntoViewRequest = new interaction.InteractionRequest('ScrollIntoView');
     }
+    
+    TreeNodeViewModel.prototype.scrollIntoView = function () {
+        this.scrollIntoViewRequest.trigger();
+    };
 
     TreeNodeViewModel.prototype.selectNode = function () {
         this.tree.selectedNode(this);
@@ -144,6 +286,8 @@
             if (!node.isExpanded()) node.isExpanded(true);
             node = node.parentNode();
         }
+
+        self.scrollIntoView();
     };
     
     return {

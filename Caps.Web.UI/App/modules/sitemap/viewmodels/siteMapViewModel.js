@@ -54,7 +54,12 @@ function (ko, moment, breeze, system, TreeModel, datacontext) {
         });
 
         function appendTreeNodes(parentNode, siteMapNodes) {
-            ko.utils.arrayForEach(siteMapNodes, function (siteMapNode) {
+
+            var filteredNodes = ko.utils.arrayFilter(siteMapNodes, function (siteMapNode) {
+                return !siteMapNode.isTeaser();
+            });
+
+            ko.utils.arrayForEach(filteredNodes, function (siteMapNode) {
                 var node = tree.createNode();
                 node.entity(siteMapNode);
                 parentNode.addChildNode(node);

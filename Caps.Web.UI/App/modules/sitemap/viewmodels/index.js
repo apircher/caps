@@ -18,7 +18,8 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         selectedNode = ko.observable(),
         selectedPublication = ko.observable(),
         supportedTranslations = localization.website.supportedTranslations(),
-        isInitialized = false;
+        isInitialized = false,
+        isActive = false;
     
     selectedSiteMap.subscribe(selectedSiteMapChanged);
     selectedNode.subscribe(refreshPreview);
@@ -28,6 +29,13 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
     });
     app.on('caps:publication:created', refreshNodeIfSelected);
     app.on('caps:publication:refreshed', refreshNodeIfSelected);
+
+    module.on('module:activate', function () {
+        if (isActive) attachKeyHandler();
+    });
+    module.on('module:deactivate', function () {
+        if (isActive) detachKeyHandler();
+    });
     
     var vm = {
         website: website,
@@ -55,6 +63,13 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
                 })
                 .fail(handleError);
             }
+            attachKeyHandler();
+            isActive = true;
+        },
+
+        deactivate: function () {
+            detachKeyHandler();
+            isActive = false;
         },
 
         createSiteMapVersion: function () {
@@ -173,6 +188,10 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
                 return true;
             }
             return false;
+        },
+
+        handleKeyDown: function (e) {
+            selectedSiteMap().tree().handleKeyDown(e);
         }
     };
 
@@ -223,6 +242,14 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
     function handleError(error) {
         system.log(error.message);
         alert(error.message);
+    }
+
+    function attachKeyHandler() {
+        $(window).on('keydown', vm.handleKeyDown);
+    }
+
+    function detachKeyHandler() {
+        $(window).off('keydown', vm.handleKeyDown);
     }
     
     return vm;

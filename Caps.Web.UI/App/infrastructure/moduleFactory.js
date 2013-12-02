@@ -3,14 +3,23 @@
  */
 define([
     'ko',
-    'plugins/dialog'
+    'plugins/dialog',
+    'durandal/events'
 ],
-function (ko, dialog) {
+function (ko, dialog, Events) {
 
     function CapsModule (routeConfig) {
         this.routeConfig = routeConfig;
         this.dialogContext = undefined;
     }
+
+    CapsModule.prototype.activate = function () {
+        this.trigger('module:activate', this);
+    };
+
+    CapsModule.prototype.deactivate = function () {
+        this.trigger('module:deactivate', this);
+    };
 
     CapsModule.prototype.initializeRouter = function () {
     };
@@ -61,7 +70,9 @@ function (ko, dialog) {
 
     function createModule(routeConfig) {
         routeConfig.hasUnsavedChanges = routeConfig.hasUnsavedChanges || ko.observable(false);
-        return new CapsModule(routeConfig);
+        var m = new CapsModule(routeConfig);
+        Events.includeIn(m);
+        return m;
     }
 
     return {
