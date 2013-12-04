@@ -9,20 +9,23 @@
     './publicationViewModel',
     'infrastructure/publicationService',
     'authentication',
-    '../datacontext'
+    '../datacontext',
+    'durandal/composition',
+    'moment'
 ],
-function (module, ko, router, system, app, localization, SiteMapViewModel, PublicationViewModel, publicationService, authentication, datacontext) {
+function (module, ko, router, system, app, localization, SiteMapViewModel, PublicationViewModel, publicationService, authentication, datacontext, composition, moment) {
     
     var website = ko.observable(),
         selectedSiteMap = ko.observable(),
         selectedNode = ko.observable(),
         selectedPublication = ko.observable(),
-        supportedTranslations = localization.website.supportedTranslations(),
+        selectedTeaser = ko.observable(),
+        properties = ko.observable(),
         isInitialized = false,
         isActive = false;
     
     selectedSiteMap.subscribe(selectedSiteMapChanged);
-    selectedNode.subscribe(refreshPreview);
+    selectedNode.subscribe(selectedNodeChanged);
 
     app.on('caps:sitemapnode:saved', function (siteMapNode) {
         if (isInSelectedSiteMap(siteMapNode)) datacontext.fetchSiteMapNode(siteMapNode.Id());
@@ -31,7 +34,10 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
     app.on('caps:publication:refreshed', refreshNodeIfSelected);
 
     module.on('module:activate', function () {
-        if (isActive) attachKeyHandler();
+        if (isActive) {
+            attachKeyHandler();
+            registerCompositionComplete();
+        }
     });
     module.on('module:deactivate', function () {
         if (isActive) detachKeyHandler();
@@ -46,13 +52,16 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         selectedSiteMap: selectedSiteMap,
         selectedNode: selectedNode,
         selectedPublication: selectedPublication,
+        properties: properties,
         teasers: ko.computed(function() {
             if (!selectedNode()) return [];
-            return ko.utils.arrayFilter(selectedNode().childNodes(), function (node) {
-                return node.NodeType().toLowerCase() === 'teaser';
+            var entities = ko.utils.arrayFilter(selectedNode().childNodes(), function (node) {
+                return node.isTeaser();
+            });
+            return ko.utils.arrayMap(entities, function (entity) {
+                return new TeaserViewModel(entity);
             });
         }),
-        supportedTranslations: supportedTranslations,
 
         activate: function () {
             if (!isInitialized) {
@@ -64,6 +73,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
                 .fail(handleError);
             }
             attachKeyHandler();
+            registerCompositionComplete();
             isActive = true;
         },
 
@@ -105,35 +115,16 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         },
 
         deleteSiteMapNode: function () {
-            var siteMap = selectedSiteMap();
-            if (siteMap && selectedNode()) {
-                var btnOk = 'Seite löschen';
-                var btnCancel = 'Abbrechen';
-                app.showMessage('Soll die Seite wirklich gelöscht werden?', 'Seite löschen', [btnOk, btnCancel])
-                    .then(function (result) {
-                        if (result === btnOk) {
-                            var selection = selectedNode(),
-                                nextSelection = selection.nextNode() || selection.previousNode() || selection.ParentNode();
-                            datacontext.deleteSiteMapNode(selection).then(function () {
-                                siteMap.refreshTree();
-                                if (nextSelection) siteMap.selectNodeByKey(nextSelection.Id());
-                            })
-                            .fail(handleError);
-                        }
-                    });
-            }
+            var btnOk = 'Seite löschen';
+            var btnCancel = 'Abbrechen';
+            app.showMessage('Soll die Seite "' + selectedNode().localeTitle('de') + '" wirklich gelöscht werden?', 'Seite löschen', [btnOk, btnCancel])
+                .then(function (result) {
+                    if (result === btnOk) deleteNode(selectedNode());
+                });
         },
 
         editWebsite: function () {
             router.navigate('#website');
-        },
-
-        editTranslation: function (language) {
-            if (selectedNode()) module.router.navigate('#sitemap/translate/' + selectedNode().Id() + '/' + language.culture);
-        },
-
-        editSiteMapNode: function () {
-            if (selectedNode()) module.router.navigate('#sitemap/edit/' + selectedNode().Id());
         },
 
         moveSelectedNodeUp: function () {
@@ -174,22 +165,6 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             }
         },
 
-        createTeaser: function () {
-            if (selectedNode()) {
-                var siteMapId = selectedSiteMap().entity().Id();
-                var rootNodeId = selectedSiteMap().tree().root.childNodes()[0].entity().Id();
-                publicationService.createTeaser(siteMapId, rootNodeId, selectedNode().Id());
-            }
-        },
-
-        canCreateTeaser: function () {
-            if (selectedNode()) {
-                if (selectedNode().NodeType() == 'ROOT' || selectedNode().hasTeasers()) return false;
-                return true;
-            }
-            return false;
-        },
-
         handleKeyDown: function (e) {
             selectedSiteMap().tree().handleKeyDown(e);
         }
@@ -211,6 +186,12 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         });
     }
 
+    function selectedNodeChanged(newValue) {
+        selectedTeaser(null);
+        refreshPreview();
+        showProperties(newValue);
+    }
+
     function refreshPreview() {
         selectedPublication(null);
         if (selectedNode() && selectedNode().ContentId()) {
@@ -219,6 +200,13 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
                 selectedPublication(cp);
             })
             .fail(handleError);
+        }
+    }
+
+    function showProperties(entity) {
+        properties(null);
+        if (entity) {
+            properties(new NodePropertiesViewModel(entity));
         }
     }
 
@@ -244,12 +232,119 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         alert(error.message);
     }
 
+    function deleteNode(entity) {
+        var siteMapVM = selectedSiteMap();
+        if (siteMapVM && entity) {
+            var nextSelection = entity.nextNode() || entity.previousNode() || entity.ParentNode();
+            datacontext.deleteSiteMapNode(entity).then(function () {
+                siteMapVM.refreshTree();
+                if (nextSelection) siteMapVM.selectNodeByKey(nextSelection.Id());
+            })
+            .fail(handleError);
+        }
+    }
+
     function attachKeyHandler() {
         $(window).on('keydown', vm.handleKeyDown);
     }
 
     function detachKeyHandler() {
         $(window).off('keydown', vm.handleKeyDown);
+    }
+
+    var $window = $(window);
+    function registerCompositionComplete() {
+        composition.current.complete(function () {
+            $window.trigger('forceViewportHeight:refresh');
+        });
+    }
+
+    /*
+     * TeaserViewModel
+     */
+    function TeaserViewModel(entity) {
+        var self = this;
+
+        self.entity = entity;
+        self.isSelected = ko.computed(function () {
+            return selectedTeaser() === self;
+        });
+
+        self.selectTeaser = function () {
+            selectedTeaser(self);
+            showProperties(self.entity);
+        }
+    }
+
+    /*
+     * NodePropertiesViewModel
+     */
+    function NodePropertiesViewModel(entity) {
+        var self = this;
+
+        self.entity = entity;
+        self.supportedTranslations = localization.website.supportedTranslations();
+
+        self.edit = function () {
+            if (entity) module.router.navigate('#sitemap/edit/' + entity.Id());
+        };
+
+        self.editTranslation = function (language) {
+            if (entity) module.router.navigate('#sitemap/translate/' + entity.Id() + '/' + language.culture);
+        };
+        
+        self.createTeaser = function () {
+            if (entity) {
+                var siteMapId = entity.SiteMap().Id();
+                var rootNodeId = entity.SiteMap().rootNodes()[0].Id();
+                publicationService.createTeaser(siteMapId, rootNodeId, entity.Id());
+            }
+        };
+
+        self.canCreateTeaser = function () {
+            if (entity) {
+                if (entity.NodeType() == 'ROOT' || entity.hasTeasers()) return false;
+                if (entity.isTeaser()) return false;
+                return true;
+            }
+            return false;
+        };
+
+        self.deleteTeaser = function () {
+            var btnOk = 'Aufmacher löschen';
+            var btnCancel = 'Abbrechen';
+            app.showMessage('Soll der Aufmacher "' + self.entity.localeTitle('de') + '" wirklich gelöscht werden?', 'Aufmacher löschen', [btnOk, btnCancel])
+                .then(function (result) {
+                    if (result === btnOk) deleteNode(self.entity);
+                });
+        };
+
+        self.hasOptions = ko.computed(function () {
+            return self.entity.isTeaser() || self.canCreateTeaser();
+        });
+
+        self.hasContent = ko.computed(function () {
+            return entity && entity.Content();
+        });
+
+        self.contentSummary = ko.computed(function () {
+            if (!entity.ContentId()) return 'Kein Inhalt festgelegt';
+            var pub = entity.Content();
+            if (pub) {
+                return pub.EntityType() + ' #' + pub.EntityKey() + ' (v.' + pub.ContentVersion() + ')'
+            }
+            return '';
+        });
+
+        self.authorSummary = ko.computed(function () {
+            if (!entity.ContentId() || !entity.Content()) return '';
+            var pub = entity.Content();
+            return pub.AuthorName() + ' ' + moment(pub.ContentDate()).fromNow();
+        });
+
+        self.selectContent = function () {
+            alert('TODO: Dialog "Inhalt wählen"...');
+        };
     }
     
     return vm;

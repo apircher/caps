@@ -118,19 +118,18 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
             return cpe;
         }
 
-        function onEntityChanged() {
-            var e = self.entity();
-            if (e) {
+        function onEntityChanged(newValue) {
+            if (newValue) {
                 // Init Files.
-                var fileTranslations = ko.utils.arrayMap(e.Files(), function (file) {
-                    var originalResource = file.getResource('de'),
-                        translationResource = file.getOrCreateResource(self.language().culture, manager);
-                    return new DraftFileTranslation(self, item, originalResource, translationResource);
+                var fileTranslations = ko.utils.arrayMap(newValue.Files(), function (f) {
+                    var originalResource = f.getResource('de'),
+                        translationResource = f.getOrCreateResource(self.language().culture, manager);
+                    return new DraftFileTranslation(self, f, originalResource, translationResource);
                 });
                 self.files(fileTranslations);
 
                 // Init DraftTranslation
-                var r = e.getOrCreateTranslation(self.language().culture, manager);
+                var r = newValue.getOrCreateTranslation(self.language().culture, manager);
             }
         }
     }

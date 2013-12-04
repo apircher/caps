@@ -31,7 +31,7 @@ function (module, ko, localization, entityManagerProvider, breeze) {
         };
 
         self.navigateBack = function () {
-            self.showDraftsIndex();
+            if (self.entity()) module.router.navigate('#sitemap/edit/' + self.entity().Id());
         };
 
         self.showDraftsIndex = function () {

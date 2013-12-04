@@ -28,6 +28,17 @@
                     <label>Stichworte (Deutsch)</label>
                     <textarea data-bind="value: entity().getResource('de').Keywords" class="form-control" rows="5" />
                 </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Übersetzungen</h5>
+                        <ul data-bind="foreach: supportedTranslations" class="list-inline">
+                            <li>
+                                <a href="#" data-bind="click: $parent.editTranslation"><i class="fa fa-edit"></i> <!-- ko text: localeName('de') --><!-- /ko --></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
 
             <div class="col-md-6">

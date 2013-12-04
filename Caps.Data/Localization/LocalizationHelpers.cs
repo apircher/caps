@@ -26,7 +26,7 @@ namespace Caps.Data.Localization
             TResource res = (TResource)entity.GetLocalizedResource(language);
             if (res == null || expression(res) == null)
             {
-                if (fallbackLanguages.Length == 0)
+                if (fallbackLanguages == null || fallbackLanguages.Length == 0)
                     return defaultValue;
                 else
                     res = fallbackLanguages.Where(l => entity.HasLocalizedResource(l))

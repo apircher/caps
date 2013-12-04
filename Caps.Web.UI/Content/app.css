@@ -116,6 +116,7 @@
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
     color:#999;
     white-space:pre-line;
+    overflow-y: auto;
 }
 
 /** 
@@ -286,6 +287,17 @@
     left:0;
     margin-bottom:-15px;
     padding-right:0;
+}
+
+.right-fixed-sidebar {
+    position:fixed;
+    top: 70px;
+    right:0;
+    padding-top:5px;
+}
+.left-fixed-sidebar > .panel-scroll-vh {
+    padding-top:5px;
+    padding-bottom:5px;
 }
 
 /**
@@ -716,6 +728,9 @@ img.clickable {
     border-top:1px solid #eee;
     border-bottom:1px solid #eee;
 }
+.draft-preview-content.sitemap-index {
+    border-top:0;
+}
 
 .draft-preview-panel {
     padding:15px 0;
@@ -777,22 +792,63 @@ ul.data-list {
 
 .subnav-fixed-top {
     position:fixed;
+    left:0;
     top:50px;
     height:50px;
     width:100%;
-    padding-top:15px;
+    padding:15px 15px 0;
     z-index: 100;
 }
 
 .subnav-fixed-top-container {
-    padding-top:50px;
+    padding-top:35px;
 }
 
 .sitemap-index-header {
     background:#fff;
+    border-bottom:1px solid #eee;
 }
 .sitemap-index-sidebar {
     top: 100px;
+}
+
+.list-icons {
+    overflow:hidden;
+}
+
+.list-icons > li {
+    float:left;
+    width:100px;
+    height:100px;
+    background:#eee;
+    margin:0 15px 30px 0;
+    position:relative;
+    border: 3px solid #eee;
+    box-sizing:border-box;
+}
+
+.list-icons-label {
+    position:absolute;
+    bottom:-25px;
+    max-height:25px;
+    max-width:100px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.list-icons-tile {
+    text-align:center;
+    height:94px;
+    cursor:default;
+}
+.list-icons-tile > .fa {
+    line-height:94px;
+}
+
+.list-icons > li.selected,
+.list-icons > li:hover {
+    border-color:#0088cc;
 }
 
 /**
@@ -841,6 +897,12 @@ ul.data-list {
     .left-fixed-sidebar > .panel-scroll-vh {
         overflow-y:visible;
         overflow-x:visible;
+    }
+
+    .right-fixed-sidebar {
+        position:static;
+        top:auto;
+        clear:both;
     }
 
     .subnav-fixed-top {

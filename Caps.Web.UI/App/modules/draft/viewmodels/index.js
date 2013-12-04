@@ -14,9 +14,10 @@ define([
     '../commands/deleteDraft',
     './draftSearchControl',
     'infrastructure/interaction',
-    'infrastructure/keyCode'
+    'infrastructure/keyCode',
+    'durandal/composition'
 ],
-function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel, DeleteDraftCommand, DraftSearchControl, interaction, KeyCodes) {
+function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel, DeleteDraftCommand, DraftSearchControl, interaction, KeyCodes, composition) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
@@ -48,7 +49,10 @@ function (module, datacontext, ko, app, moment, localization, publicationService
     app.on('caps:publication:refreshed', refetchPublicationsWhenSelected);
 
     module.on('module:activate', function () {
-        if (isActive) attachKeyHandler();
+        if (isActive) {
+            attachKeyHandler();
+            registerCompositionComplete();
+        }
     });
     module.on('module:deactivate', function () {
         if (isActive) detachKeyHandler();
@@ -111,8 +115,9 @@ function (module, datacontext, ko, app, moment, localization, publicationService
                 initialized = true;
                 fetchListItems().then(selectFirstDraft);
             }
-            isActive = true;
             attachKeyHandler();
+            registerCompositionComplete();
+            isActive = true;
         },
 
         deactivate: function() {
@@ -201,6 +206,13 @@ function (module, datacontext, ko, app, moment, localization, publicationService
 
     function detachKeyHandler() {
         $(window).off('keydown', vm.handleKeyDown);
+    }
+
+    var $window = $(window);
+    function registerCompositionComplete() {
+        composition.current.complete(function () {
+            $window.trigger('forceViewportHeight:refresh');
+        });
     }
 
     /*

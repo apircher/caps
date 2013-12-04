@@ -157,7 +157,11 @@ define(['ko', 'authentication'], function (ko, authentication) {
         });
 
         sitemapNode.canLinkTo = ko.computed(function () {
-            return sitemapNode.NodeType().toLowerCase() !== 'teaser';
+            return !sitemapNode.isTeaser();
+        });
+
+        sitemapNode.canHaveContent = ko.computed(function () {
+            return !sitemapNode.isTeaser();
         });
     }
 
@@ -277,11 +281,13 @@ define(['ko', 'authentication'], function (ko, authentication) {
 
     SiteMapNode.prototype.findTeasers = function () {
         var self = this,
-            siteMap = self.SiteMap(),
-            teasers = ko.utils.arrayFilter(siteMap.SiteMapNodes(), function (n) {
-                return n.isTeaser() && n.Redirect() == self.PermanentId();
-            });
-        return teasers;
+            siteMap = self.SiteMap();
+
+        if (!siteMap) return [];
+
+        return ko.utils.arrayFilter(siteMap.SiteMapNodes(), function (n) {
+            return n.isTeaser() && n.Redirect() == self.PermanentId();
+        });
     };
 
     SiteMapNode.prototype.hasTeasers = function () {
@@ -319,6 +325,13 @@ define(['ko', 'authentication'], function (ko, authentication) {
             deferEvaluation: true
         });
     }
+
+    Publication.prototype.getTranslation = function (language) {
+        var key = language.toLowerCase();
+        return ko.utils.arrayFirst(this.Translations(), function (trns) {
+            return trns.Language().toLowerCase() === key;
+        });
+    };
 
     Publication.prototype.getContentPart = function (name) {
         var key = name.toLowerCase();

@@ -160,7 +160,7 @@
         },
 
         setElementHeight: function ($window, $elem, options) {
-
+            
             var viewportWidth = $window.width();
             var viewportHeight = $window.height();
 

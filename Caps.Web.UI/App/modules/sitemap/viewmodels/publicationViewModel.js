@@ -9,8 +9,8 @@ function (ko, ContentReferenceManager, urlHelper) {
         replaceFileReference: function (reference, language, context) {
             var publication = reference.context,
                 publicationFile = publication.findFile(reference.fileName),
-                resource = publicationFile.getResource(language),
-                fileVersion = resource !== null ? resource.FileVersion() : undefined;
+                resource = publicationFile ? publicationFile.getResource(language) : undefined,
+                fileVersion = resource ? resource.FileVersion() : undefined;
             return urlHelper.getFileUrl(reference.fileName, fileVersion, reference.query);
         },
         replacePublicationReference: function (reference, language, context) {
@@ -36,8 +36,8 @@ function (ko, ContentReferenceManager, urlHelper) {
             if (publication) {
                 var cp = publication.getContentPart(templateCell.name);
                 if (cp) {
-                    var text = cp.getResource('de').Content();
-                    return crmgr.replaceReferences(publication, text, 'de');
+                    var res = cp.getResource('de');
+                    if (res) return crmgr.replaceReferences(publication, res.Content(), 'de');
                 }
             }
             return '';

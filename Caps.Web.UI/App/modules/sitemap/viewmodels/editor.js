@@ -3,9 +3,10 @@
     'ko',
     'entityManagerProvider',
     'breeze',
-    'durandal/app'
+    'durandal/app',
+    'localization'
 ],
-function (module, ko, entityManagerProvider, breeze, app) {
+function (module, ko, entityManagerProvider, breeze, app, localization) {
 
     var EntityQuery = breeze.EntityQuery,
         nodeTypes = [
@@ -40,6 +41,7 @@ function (module, ko, entityManagerProvider, breeze, app) {
         self.entity = ko.observable();
         self.nodeTypes = nodeTypes;
         self.nodeType = ko.observable();
+        self.supportedTranslations = localization.website.supportedTranslations();
 
         self.nodeType.subscribe(function (newValue) {
             if (newValue) {
@@ -65,6 +67,10 @@ function (module, ko, entityManagerProvider, breeze, app) {
                 app.trigger('caps:sitemapnode:saved', self.entity());
                 self.navigateBack();
             });
+        };
+
+        self.editTranslation = function (language) {
+            if (self.entity()) module.router.navigate('#sitemap/translate/' + self.entity().Id() + '/' + language.culture);
         };
 
         function fetchNode(id) {

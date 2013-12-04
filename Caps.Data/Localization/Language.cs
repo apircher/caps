@@ -13,7 +13,7 @@ namespace Caps.Data.Localization
         static Dictionary<String, String> languageTitles = new Dictionary<String, String>
         {
             { "de", "Deutsch" },
-            { "en", "Englisch" }
+            { "en", "English" }
         };
         static Dictionary<String, String> languageCultures = new Dictionary<String, String>
         {

@@ -42,9 +42,9 @@ define('markdown', function () { return Markdown; });
 define('toastr', function () { return toastr; });
 
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authentication', 'infrastructure/antiForgeryToken',
-    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider', 'infrastructure/serverUtil', 'durandal/composition',
+    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider', 'infrastructure/serverUtil',
     'knockout.extenders', 'infrastructure/validation', '../Scripts/safari.cancelZoom'],
-    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider, serverUtil, composition) {
+    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider, serverUtil) {
 
         $(document).ajaxSend(function (event, request, settings) {
             settings.url = serverUtil.mapPath(settings.url);
@@ -74,11 +74,6 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
             };
             return deferred;
         };
-
-        // Register knockout bindings for 
-        // delayed execution.
-        composition.addBindingHandler('fixedPosition');
-        composition.addBindingHandler('forceViewportHeight');
 
         // Initialize Knockout Validation
         validation.init({

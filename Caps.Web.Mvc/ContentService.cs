@@ -56,11 +56,11 @@ namespace Caps.Web.Mvc
                     Determination = f.Determination,
                     Group = f.Group,
                     Ranking = f.Ranking,
-                    Title = String.IsNullOrWhiteSpace(r.Title) ? r.FileVersion.File.FileName : r.Title,
+                    Title = LocalizedFileTitle(f, r.Language),
                     Description = r.Description,
                     Credits = r.Credits,
                     FileVersionId = r.DbFileVersionId.GetValueOrDefault(),
-                    FileName = r.FileVersion.File.FileName
+                    FileName = r.FileVersion != null ? r.FileVersion.File.FileName : String.Empty
                 }
                 , null, "de", "en")) : new List<ContentFileModel>();
 
@@ -70,6 +70,15 @@ namespace Caps.Web.Mvc
                 ContentParts = contentParts.Where(c => c != null),
                 ContentFiles = contentFiles.Where(f => f != null)
             };
+        }
+        String LocalizedFileTitle(Caps.Data.Model.PublicationFile f, String language) {
+            var result = f.GetValueForLanguage(language, r => r.Title, "de", "en");
+            if (String.IsNullOrWhiteSpace(result))
+            {
+                var v = f.FileVersionForLanguage(language, "de", "en");
+                if (v != null) result = v.File.FileName;
+            }
+            return String.IsNullOrWhiteSpace(result) ? String.Empty : result;
         }
 
         public IEnumerable<TeaserModel> GetTeasers()

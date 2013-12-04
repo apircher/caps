@@ -17,6 +17,16 @@ namespace Caps.Web.Mvc
 
         public static String LocalizeAction(this UrlHelper helper, String actionName, String language)
         {
+            return helper.Action(actionName, GetRouteValues(helper, language));
+        }
+
+        public static String LocalizeAction(this UrlHelper helper, String actionName, String controllerName, String language)
+        {
+            return helper.Action(actionName, controllerName, new { language = language });
+        }
+
+        static System.Web.Routing.RouteValueDictionary GetRouteValues(UrlHelper helper, String language)
+        {
             var routeValues = helper.RequestContext.RouteData.Values;
 
             if (routeValues.ContainsKey("language"))
@@ -24,8 +34,7 @@ namespace Caps.Web.Mvc
             else
                 routeValues.Add("language", language);
 
-            return helper.Action(actionName, routeValues);
-
+            return routeValues;
         }
 
         public static String Action(this UrlHelper helper, DbFileVersion fileVersion)

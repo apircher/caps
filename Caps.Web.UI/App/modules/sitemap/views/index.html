@@ -42,8 +42,21 @@
             </div>
 
             <div class="col-md-offset-3 col-lg-offset-2 col-md-6 col-lg-8">
-
-                <section class="draft-preview-content" data-bind="if: selectedPublication()">
+                <!-- ko if: selectedNode() && teasers() && teasers().length -->
+                <h5>Aufmacher (<!-- ko text: teasers().length --><!-- /ko -->)</h5>
+                <ul class="list-unstyled list-icons" data-bind="foreach: teasers">
+                    <li data-bind="click: selectTeaser, css: { 'selected': isSelected() }">
+                        <div class="list-icons-tile">
+                            <i class="fa fa-star fa-4x"></i>
+                        </div>
+                        <div class="list-icons-label">
+                             <!-- ko text: entity.localeTitle('de') --><!-- /ko -->
+                        </div>
+                    </li>
+                </ul>
+                <!-- /ko -->
+                <!-- ko if: selectedPublication() -->
+                <section class="draft-preview-content sitemap-index">
                     <!-- ko with: selectedPublication() -->
                     <!-- ko if: template() -->
                     <!-- ko foreach: { data: template().rows, as: 'row' } -->
@@ -58,6 +71,7 @@
                     <!-- /ko -->
                     <!-- /ko -->
                 </section>
+                <!-- /ko -->
 
                 <!-- ko if: selectedPublication() && selectedPublication().files().length -->
                 <div data-bind="with: selectedPublication()">
@@ -69,52 +83,53 @@
                     </ul>
                 </div>
                 <!-- /ko -->
-                <!-- ko if: selectedNode() && teasers() && teasers().length -->
-                <h5>Aufmacher</h5>
-                <ul class="list-inline" data-bind="foreach: teasers">
-                    <li>
-                        <i class="fa fa-star"></i> <!-- ko text: localeTitle('de') --><!-- /ko -->
-                    </li>
-                </ul>
+                <!-- ko if: selectedPublication() && selectedNode() && selectedNode().canLinkTo() -->
+                <div>
+                    <h5>Adresse</h5>
+                    <p>
+                        <span>caps://publication/<!-- ko text: selectedNode().PermanentId() --><!-- /ko --></span>
+                    </p>
+                </div>
                 <!-- /ko -->
-
             </div>
 
-            <div class="col-md-3 col-lg-2">
-                <!-- ko if: selectedNode() -->
-                <h5 data-bind="text: selectedNode().localeTitle('de')"></h5>
+            <div class="col-md-3 col-lg-2 fixed-sidebar right-fixed-sidebar sitemap-index-sidebar" data-bind="if: properties()">
+                <!-- ko with: properties() -->
+                <h5 data-bind="text: entity.localeTitle('de')"></h5>
                 <ul class="list-inline">
                     <li>
-                        <a href="#" data-bind="click: editSiteMapNode"><i class="fa fa-edit"></i> Seiten-Eigenschaften</a>
+                        <a href="#" data-bind="click: edit"><i class="fa fa-edit"></i> Eigenschaften</a>
                     </li>
                 </ul>
-                <h5>Übersetzungen</h5>
-                <ul data-bind="foreach: supportedTranslations" class="list-inline">
-                    <li>
-                        <a href="#" data-bind="click: $parent.editTranslation"><i class="fa fa-edit"></i> <!-- ko text: localeName('de') --><!-- /ko --></a>
-                    </li>
-                </ul>
-                <h5>Inhalt</h5>
+                <!-- ko if: entity.canHaveContent() -->
+                <h5>Inhalt</h5>                
+                <!-- ko if: hasContent -->
                 <p>
-                    <!-- ko if: !selectedNode().ContentId() -->
-                    <em>Kein Inhalt festgelegt</em>
-                    <!-- /ko -->
-                    <!-- ko if: selectedNode().ContentId() -->
-                    <em data-bind="text: selectedNode().ContentId()"></em>
-                    <!-- /ko -->
-                </p>
-                <!-- ko if: selectedNode().canLinkTo() -->
-                <h5>Adresse</h5>
-                <p>
-                    <span>caps://publication/<!-- ko text: selectedNode().PermanentId() --><!-- /ko --></span>
+                    <em data-bind="text: contentSummary"></em>
+                    <br /><small data-bind="text: authorSummary"></small>
                 </p>
                 <!-- /ko -->
-                <h5>Optionen</h5>
                 <ul class="list-inline">
-                    <li data-bind="if: canCreateTeaser()">
-                        <a href="#" data-bind="click: createTeaser"><i class="fa fa-arrow-right"></i> Auf Startseite platzieren</a>
+                    <li>
+                        <a href="#" data-bind="click: selectContent"><i class="fa fa-arrow-right"></i> Inhalt festlegen</a>
                     </li>
                 </ul>
+                <!-- /ko -->
+                <!-- ko if: hasOptions -->
+                <h5>Optionen</h5>
+                <ul class="list-inline">
+                    <!-- ko if: canCreateTeaser() -->
+                    <li>
+                        <a href="#" data-bind="click: createTeaser"><i class="fa fa-arrow-right"></i> Auf Startseite platzieren</a>
+                    </li>
+                    <!-- /ko -->
+                    <!-- ko if: entity.isTeaser() -->
+                    <li>
+                        <a href="#" data-bind="click: deleteTeaser"><i class="fa fa-trash-o"></i> Aufmacher löschen</a>
+                    </li>
+                    <!-- /ko -->
+                </ul>
+                <!-- /ko -->
                 <!-- /ko -->
             </div>
         </div>
