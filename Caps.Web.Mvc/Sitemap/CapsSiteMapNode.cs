@@ -74,6 +74,21 @@ namespace Caps.Web.Mvc.SiteMap
         }
         public String Name { get; set; }
 
+        public String MetaKeywords
+        {
+            get
+            {
+                return GetLocalizedValue<CapsSiteMapNodeResource, String>(Language.CurrentLanguage, r => r.MetaKeywords, String.Empty);
+            }
+        }
+        public String MetaDescription
+        {
+            get
+            {
+                return GetLocalizedValue<CapsSiteMapNodeResource, String>(Language.CurrentLanguage, r => r.MetaDescription, String.Empty);
+            }
+        }
+
         public CapsSiteMapNodeResource ResourceForLanguage(String language)
         {
             String lang = language.ToUpperInvariant();
@@ -154,5 +169,7 @@ namespace Caps.Web.Mvc.SiteMap
     public class CapsSiteMapNodeResource
     {
         public String Title { get; set; }
+        public String MetaKeywords { get; set; }
+        public String MetaDescription { get; set; }
     }
 }

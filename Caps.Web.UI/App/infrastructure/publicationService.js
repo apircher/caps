@@ -47,6 +47,28 @@ function (system, app, entityManagerProvider, breeze, ko) {
         .promise();
     };
 
+    Publisher.prototype.setNodeContent = function(siteMapNodeId, contentData) {
+        var self = this;
+        return system.defer(function (dfd) {
+            // Fetch node
+            fetchNode(self.manager, siteMapNodeId).then(function (node) {
+                // Update content
+                if (node.Content())
+                    node.Content().setDeleted();
+
+                var publication = self.createPublication(contentData);
+                node.ContentId(publication.Id());
+
+                self.manager.saveChanges().then(function () {
+                    app.trigger('caps:publication:refreshed', node);
+                    dfd.resolve(node);
+                })
+                .fail(dfd.reject);
+            });
+        })
+        .promise();
+    };
+
     Publisher.prototype.createTeaser = function (siteMapId, parentNodeId, contentNodeId) {
         var self = this;
         return system.defer(function (dfd) {            
@@ -155,7 +177,7 @@ function (system, app, entityManagerProvider, breeze, ko) {
         var self = this;
         return system.defer(function (dfd) {
             // Fetch node
-            fetchNode().then(function (node) {
+            fetchNode(self.manager, siteMapNodeId).then(function (node) {
 
                 // Update resources
                 self.createResources(node, contentData);
@@ -173,19 +195,19 @@ function (system, app, entityManagerProvider, breeze, ko) {
             });
         })
         .promise();
-
-        function fetchNode() {
-            return system.defer(function (dfd) {
-                var query = new EntityQuery().from('SiteMapNodes').where('Id', '==', siteMapNodeId)
-                    .expand('Resources, Content');
-                self.manager.executeQuery(query).then(function (data) {
-                    dfd.resolve(data.results[0]);
-                })
-                .fail(dfd.reject);
-            })
-            .promise();
-        }
     };
+
+    function fetchNode(manager, siteMapNodeId) {
+        return system.defer(function (dfd) {
+            var query = new EntityQuery().from('SiteMapNodes').where('Id', '==', siteMapNodeId)
+                .expand('Resources, Content');
+            manager.executeQuery(query).then(function (data) {
+                dfd.resolve(data.results[0]);
+            })
+            .fail(dfd.reject);
+        })
+        .promise();
+    }
     
 
     return {
@@ -202,6 +224,11 @@ function (system, app, entityManagerProvider, breeze, ko) {
         createTeaser: function (siteMapId, parentNodeId, contentNodeId) {
             var publisher = new Publisher();
             return publisher.createTeaser(siteMapId, parentNodeId, contentNodeId);
+        },
+
+        setNodeContent: function (siteMapNodeId, contentData) {
+            var publisher = new Publisher();
+            return publisher.setNodeContent(siteMapNodeId, contentData);
         }
     };
 });

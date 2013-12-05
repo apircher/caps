@@ -222,6 +222,7 @@
     <Content Include="App\infrastructure\antiForgeryToken.js" />
     <Content Include="App\infrastructure\authentication.js" />
     <Content Include="App\infrastructure\contentReferences.js" />
+    <Content Include="Scripts\durandal\plugins\contentSelection.js" />
     <Content Include="App\infrastructure\datacontext.js" />
     <Content Include="App\infrastructure\interaction.js" />
     <Content Include="App\infrastructure\keyCode.js" />
@@ -231,6 +232,7 @@
     <Content Include="App\main-built.js" />
     <Content Include="App\modules\draft\commands\deleteDraft.js" />
     <Content Include="App\modules\draft\viewmodels\draftSearchControl.js" />
+    <Content Include="App\modules\draft\viewmodels\draftSelectionDialog.js" />
     <Content Include="App\modules\draft\viewmodels\editor\contentEditors\htmlEditor.js" />
     <Content Include="App\modules\draft\viewmodels\editor\contentEditors\insertImageDialog.js" />
     <Content Include="App\modules\draft\viewmodels\editor\contentEditors\insertLinkDialog.js" />
@@ -239,6 +241,7 @@
     <Content Include="App\modules\draft\viewmodels\editor\draftNotes.js" />
     <Content Include="App\modules\draft\viewmodels\editor\templateEditor.js" />
     <Content Include="App\modules\draft\views\draftSearchControl.html" />
+    <Content Include="App\modules\draft\views\draftSelectionDialog.html" />
     <Content Include="App\modules\draft\views\editor\contentEditors\htmlEditor.html" />
     <Content Include="App\modules\draft\views\editor\contentEditors\insertImageDialog.html" />
     <Content Include="App\modules\draft\views\editor\contentEditors\insertLinkDialog.html" />

@@ -145,7 +145,9 @@ namespace Caps.Web.Mvc.Providers
                     node = RootNode;
                 else
                 {
-                    if (routeValues.ContainsKey("language")) routeValues["language"] = CapsSiteMapNode.LanguagePlaceHolder;
+                    if (routeValues.ContainsKey("language"))
+                        routeValues["language"] = CapsSiteMapNode.LanguagePlaceHolder;
+
                     VirtualPathData vpd = routeData.Route.GetVirtualPath(new RequestContext(httpContext, routeData), routeValues);
                     url = "~/" + vpd.VirtualPath.Replace(CapsSiteMapNode.LanguagePlaceHolder, Language.DefaultLanguage);
                     node = base.FindSiteMapNode(VirtualPathUtility.ToAbsolute(url));
@@ -153,7 +155,7 @@ namespace Caps.Web.Mvc.Providers
             }
             return node;
         }
-        public DbSiteMapNode FindSiteMapNode(String name)
+        public DbSiteMapNode FindSiteMapNodeByName(String name)
         {
             EnsureSiteMapBuilt();
             var key = name.UrlEncode();

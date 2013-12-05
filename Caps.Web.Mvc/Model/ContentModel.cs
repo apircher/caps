@@ -39,9 +39,13 @@ namespace Caps.Web.Mvc.Model
             }
         }
 
-        public bool HasPart(String usage)
+        public bool HasPart(String usage, bool includeEmptyParts = true)
         {
-            return ContentParts.Any(p => String.Equals(p.Usage, usage, StringComparison.OrdinalIgnoreCase));
+            return ContentParts.Any(p => {
+                if (!String.Equals(p.Usage, usage, StringComparison.OrdinalIgnoreCase))
+                    return false;
+                return includeEmptyParts ? true : !String.IsNullOrWhiteSpace(p.Content.Trim());
+            });
         }
 
         public ContentPartModel FindPart(String usage)

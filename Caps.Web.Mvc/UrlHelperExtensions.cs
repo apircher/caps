@@ -46,5 +46,12 @@ namespace Caps.Web.Mvc
         {
             return helper.Action("ContentFile", "CapsContent", new { area = "", id = file.Id, name = file.FileName });
         }
+
+        public static String ToAbsolute(this UrlHelper helper, String url)
+        {
+            var s = System.Web.VirtualPathUtility.ToAbsolute(url);
+            var requestUri = helper.RequestContext.HttpContext.Request.Url;
+            return String.Format("{0}://{1}{2}/{3}", requestUri.Scheme, requestUri.Host, requestUri.Port == 80 ? String.Empty : ":" + requestUri.Port, s.TrimStart('/'));
+        }
     }
 }

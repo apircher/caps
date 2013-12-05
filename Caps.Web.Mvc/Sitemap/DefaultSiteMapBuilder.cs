@@ -51,16 +51,17 @@ namespace Caps.Web.Mvc.SiteMap
             indexIdToSiteMapNode = new Dictionary<int, SiteMapNode>();
             indexUrlToSiteMapNode = new Dictionary<string, SiteMapNode>();
 
-            var rootNode = new CapsSiteMapNode(provider, "root");
-            rootNode.Title = "Home";
-            rootNode.Url = "~/";
-
-            indexUrlToSiteMapNode.Add("~/", rootNode);
-
             var rootNodeEntity = nodeList.Where(n => !n.ParentNodeId.HasValue && String.Equals(n.NodeType, "ROOT"))
                 .FirstOrDefault();
             if (rootNodeEntity == null)
                 return null;
+
+            var rootNode = new CapsSiteMapNode(provider, "root");
+            rootNode.Title = "Home";
+            rootNode.Url = "~/";
+            rootNode.PermanentId = rootNodeEntity.PermanentId;
+
+            indexUrlToSiteMapNode.Add("~/", rootNode);
 
             foreach (var entity in rootNodeEntity.ChildNodes.OrderBy(n => n.Ranking))
                 MapNode(entity, provider, rootNode, addNodeAction);
@@ -97,7 +98,7 @@ namespace Caps.Web.Mvc.SiteMap
                 Index(entity, siteMapNode);
 
                 siteMapNode.AddResources(entity.Resources.Select(r =>
-                    new Tuple<String, CapsSiteMapNodeResource>(r.Language, new CapsSiteMapNodeResource { Title = r.Title })));
+                    new Tuple<String, CapsSiteMapNodeResource>(r.Language, new CapsSiteMapNodeResource { Title = r.Title, MetaKeywords = r.Keywords, MetaDescription = r.Description })));
                 siteMapNode.NodeType = entity.NodeType;
 
                 if (entity.ChildNodes != null)

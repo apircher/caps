@@ -166,7 +166,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         },
 
         handleKeyDown: function (e) {
-            selectedSiteMap().tree().handleKeyDown(e);
+            if (isActive) selectedSiteMap().tree().handleKeyDown(e);
         }
     };
 
@@ -343,7 +343,20 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         });
 
         self.selectContent = function () {
-            alert('TODO: Dialog "Inhalt wählen"...');
+            isActive = false;
+            app.selectContent({
+                module: module
+            }).then(function (result) {
+                if (result.dialogResult) dialogConfirmed(result.selectedContent);
+            }).finally(function() {
+                isActive = true;
+            });
+
+            function dialogConfirmed(selectedContent) {
+                publicationService.setNodeContent(self.entity.Id(), selectedContent).fail(function (error) {
+                    alert(error.message);
+                });
+            }
         };
     }
     

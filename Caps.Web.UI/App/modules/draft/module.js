@@ -32,7 +32,10 @@ function (moduleFactory, routerFactory, model, app) {
     };
     
     app.on('caps:started', function () {
-        require(['ko'], installKnockoutBindings);
+        require(['ko', 'modules/draft/viewmodels/draftSelectionDialog'], function (ko, DraftSelectionDialog) {
+            installKnockoutBindings(ko);
+            DraftSelectionDialog.install();
+        });
     });
     
     function installKnockoutBindings(ko) {
