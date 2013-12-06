@@ -37,6 +37,11 @@ function (moduleFactory, routerFactory, model, app) {
             DraftSelectionDialog.install();
         });
     });
+
+    module.editDraft = function (draftId) {
+        module.router.navigate('#drafts/edit/' + draftId);
+    };
+    app.registerContentEditor('Draft', module, module.editDraft);
     
     function installKnockoutBindings(ko) {
         //

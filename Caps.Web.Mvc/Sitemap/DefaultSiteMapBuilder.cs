@@ -57,9 +57,13 @@ namespace Caps.Web.Mvc.SiteMap
                 return null;
 
             var rootNode = new CapsSiteMapNode(provider, "root");
-            rootNode.Title = "Home";
+            rootNode.Title = rootNodeEntity.Name;
             rootNode.Url = "~/";
             rootNode.PermanentId = rootNodeEntity.PermanentId;
+            rootNode.Entity = rootNodeEntity;
+            rootNode.Name = rootNodeEntity.Name.UrlEncode();
+            rootNode.AddResources(rootNodeEntity.Resources.Select(r =>
+                new Tuple<String, CapsSiteMapNodeResource>(r.Language, new CapsSiteMapNodeResource { Title = r.Title, MetaKeywords = r.Keywords, MetaDescription = r.Description })));
 
             indexUrlToSiteMapNode.Add("~/", rootNode);
 

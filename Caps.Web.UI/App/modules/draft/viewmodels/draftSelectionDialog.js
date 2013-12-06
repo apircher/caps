@@ -19,7 +19,7 @@ function (dialog, ko, datacontext, DraftSearchControl, moment, contentGenerator)
         self.listItems = ko.observableArray();
         self.selectedItem = ko.observable();
 
-        self.okTitle = ko.observable('Veröffentlichung erstellen');
+        self.okTitle = ko.observable('Inhalt festlegen');
 
         self.refresh();
     }

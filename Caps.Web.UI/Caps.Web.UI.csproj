@@ -221,6 +221,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Content Include="App\infrastructure\antiForgeryToken.js" />
     <Content Include="App\infrastructure\authentication.js" />
+    <Content Include="App\infrastructure\contentEditing.js" />
     <Content Include="App\infrastructure\contentReferences.js" />
     <Content Include="Scripts\durandal\plugins\contentSelection.js" />
     <Content Include="App\infrastructure\datacontext.js" />

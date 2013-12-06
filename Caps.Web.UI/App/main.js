@@ -43,7 +43,7 @@ define('toastr', function () { return toastr; });
 
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authentication', 'infrastructure/antiForgeryToken',
     'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider', 'infrastructure/serverUtil',
-    'knockout.extenders', 'infrastructure/validation', '../Scripts/safari.cancelZoom'],
+    'knockout.extenders', 'infrastructure/validation', '../Scripts/safari.cancelZoom', 'infrastructure/contentEditing'],
     function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider, serverUtil) {
 
         $(document).ajaxSend(function (event, request, settings) {

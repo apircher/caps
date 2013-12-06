@@ -96,36 +96,35 @@
             <div class="col-md-3 col-lg-2 fixed-sidebar right-fixed-sidebar sitemap-index-sidebar" data-bind="if: properties()">
                 <!-- ko with: properties() -->
                 <h5 data-bind="text: entity.localeTitle('de')"></h5>
-                <ul class="list-inline">
+                <ul class="list-unstyled">
                     <li>
-                        <a href="#" data-bind="click: edit"><i class="fa fa-edit"></i> Eigenschaften</a>
+                        <a href="#" data-bind="click: edit"><i class="fa fa-edit fa-fw"></i> Eigenschaften</a>
                     </li>
                 </ul>
                 <!-- ko if: entity.canHaveContent() -->
-                <h5>Inhalt</h5>                
-                <!-- ko if: hasContent -->
-                <p>
-                    <em data-bind="text: contentSummary"></em>
-                    <br /><small data-bind="text: authorSummary"></small>
-                </p>
-                <!-- /ko -->
-                <ul class="list-inline">
+                <h5>Inhalt</h5>       
+                <ul class="list-unstyled">
+                    <!-- ko if: hasContent -->
                     <li>
-                        <a href="#" data-bind="click: selectContent"><i class="fa fa-arrow-right"></i> Inhalt festlegen</a>
+                        <a href="#" data-bind="click: editContent"><i class="fa fa-edit fa-fw"></i> <span data-bind="text: contentSummary, attr: { title: authorSummary }"></span></a>
+                    </li>
+                    <!-- /ko -->
+                    <li>
+                        <a href="#" data-bind="click: selectContent"><i class="fa fa-arrow-right fa-fw"></i> Inhalt festlegen</a>
                     </li>
                 </ul>
                 <!-- /ko -->
                 <!-- ko if: hasOptions -->
                 <h5>Optionen</h5>
-                <ul class="list-inline">
+                <ul class="list-unstyled">
                     <!-- ko if: canCreateTeaser() -->
                     <li>
-                        <a href="#" data-bind="click: createTeaser"><i class="fa fa-arrow-right"></i> Auf Startseite platzieren</a>
+                        <a href="#" data-bind="click: createTeaser"><i class="fa fa-arrow-right fa-fw"></i> Auf Startseite platzieren</a>
                     </li>
                     <!-- /ko -->
                     <!-- ko if: entity.isTeaser() -->
                     <li>
-                        <a href="#" data-bind="click: deleteTeaser"><i class="fa fa-trash-o"></i> Aufmacher löschen</a>
+                        <a href="#" data-bind="click: deleteTeaser"><i class="fa fa-trash-o fa-fw"></i> Aufmacher löschen</a>
                     </li>
                     <!-- /ko -->
                 </ul>

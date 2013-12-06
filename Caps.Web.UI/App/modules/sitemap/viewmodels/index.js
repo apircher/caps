@@ -358,6 +358,11 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
                 });
             }
         };
+
+        self.editContent = function () {
+            if (entity.ContentId() && entity.Content())
+                app.editContent(entity.Content().EntityType(), entity.Content().EntityKey());
+        };
     }
     
     return vm;
