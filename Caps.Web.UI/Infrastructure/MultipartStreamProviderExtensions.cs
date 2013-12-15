@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Cryptography;
 using System.Web;
 
 namespace Caps.Web.UI.Infrastructure
@@ -22,10 +22,6 @@ namespace Caps.Web.UI.Infrastructure
                     var fileBytes = item.ReadFileBytes();
                     var contentDisposition = item.Headers.ContentDisposition;
 
-                    byte[] hash;
-                    using (var cryptoProvider = new SHA1CryptoServiceProvider())
-                        hash = cryptoProvider.ComputeHash(fileBytes);
-
                     var entity = new DbFile
                     {
                         FileName = contentDisposition.FileName.Trim('"'),
@@ -34,22 +30,28 @@ namespace Caps.Web.UI.Infrastructure
                         Modified = ChangeInfo.GetChangeInfo(userName)
                     };
 
-                    var version = new DbFileVersion
-                    {
-                        Hash = hash,
-                        FileSize = fileBytes.Length,
-                        Created = ChangeInfo.GetChangeInfo(userName),
-                        Modified = ChangeInfo.GetChangeInfo(userName),
-                        Content = new DbFileContent
-                        {
-                            Data = fileBytes
-                        }
-                    };
-
-                    entity.Versions = new Collection<DbFileVersion>();
-                    entity.Versions.Add(version);
-
+                    var version = entity.AddNewVersion(fileBytes, userName);
                     result.Add(entity);
+                }
+            }
+
+            return result;
+        }
+
+        public static NameValueCollection GetFormData(this Collection<HttpContent> items)
+        {
+            var result = new NameValueCollection();
+
+            foreach (var item in items)
+            {
+                var contentDisposition = item.Headers.ContentDisposition;
+                if (contentDisposition == null) continue;
+                if (!String.IsNullOrWhiteSpace(contentDisposition.FileName)) continue;
+
+                if (String.Equals(contentDisposition.DispositionType, "form-data", StringComparison.OrdinalIgnoreCase))
+                {
+                    String formFieldValue = item.ReadAsStringAsync().Result;
+                    result.Add(contentDisposition.Name.Trim('\"'), formFieldValue);
                 }
             }
 

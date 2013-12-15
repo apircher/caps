@@ -1,7 +1,7 @@
 ﻿<div id="files-index" class="app-page bottom-fixed-navbar-container" data-bind="scrollTop: { observable: scrollTop, enabled: isInteractive }">
 
-    <div class="page-content">
-        <div id="files-toolbar" class="toolbar row">
+    <div class="page-content subnav-fixed-top-container">
+        <div id="files-toolbar" class="toolbar row subnav-fixed-top">
             <div class="col-md-offset-6 col-md-6 col-lg-offset-8 col-lg-4">
                 <!-- ko compose: searchControl --><!-- /ko -->
             </div>
@@ -24,10 +24,15 @@
                         <div class="item-check" data-bind="click: toggleSelected, clickBubble: false, attr: { title: data().FileName() + ' auswählen' }">
                             <i class="fa" data-bind="css: { 'fa-check-square-o': isSelected, 'fa-square-o': !isSelected() }"></i>
                         </div>
-                        <div class="thumbnail-controls">
-                            <a class="btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="fa fa-trash-o fa-2x"></i></a>
-                        </div>
                         <!-- /ko -->
+                        <div class="thumbnail-label">                            
+                            <!-- ko if: data() -->
+                            <div class="pull-right">
+                                <a class="btn-link" data-bind="click: $parent.deleteFile, clickBubble: false, attr: { title: data().FileName() + ' löschen' }"><i class="fa fa-trash-o"></i></a>
+                            </div>
+                            <span class="thumbnail-label-content" data-bind="text: data().FileName, attr: { title: data().FileName }"></span>
+                            <!-- /ko -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -98,10 +103,10 @@
 </div>
 
 <script type="text/html" id="dbfile-icon">
-    <!-- ko if: isImage() -->
-    <img data-bind="attr: { src: $root.server.mapPath('~/content/images/blank.gif'), 'data-src': $root.server.mapPath('~/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160'), title: FileName, alt: FileName }, lazyImage: true" />
+    <!-- ko if: isImage() && latestVersion() -->
+    <img data-bind="attr: { src: $root.server.mapPath('~/content/images/blank.gif'), 'data-src': $root.server.mapPath('~/DbFileContent/Thumbnail/' + latestVersion().Id() + '?thumbnailName=220x160&h=' + latestVersion().Hash()), alt: FileName }, lazyImage: true" />
     <!-- /ko -->
     <!-- ko if: !isImage() -->
-    <span data-bind="attr: { title: FileName }"><i class="fa fa-file fa-4x"></i></span>
+    <span><i class="fa fa-file fa-4x"></i></span>
     <!-- /ko -->
 </script>

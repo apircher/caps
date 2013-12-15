@@ -12,7 +12,7 @@ function (moduleFactory, routerFactory, model, app) {
     var module = moduleFactory.createModule({
         route: 'drafts*details',
         moduleId: 'modules/draft/module',
-        title: 'Entwürfe',
+        title: 'Inhalte',
         nav: 20,
         hash: '#drafts'
     });
@@ -22,10 +22,10 @@ function (moduleFactory, routerFactory, model, app) {
     module.initializeRouter = function () {
         module.router = routerFactory.createModuleRouter(module, 'modules/draft', 'drafts')
             .map([
-                { route: '', moduleId: 'viewmodels/index', title: 'Entwürfe', nav: false },
+                { route: '', moduleId: 'viewmodels/index', title: 'Inhalte', nav: false },
                 { route: 'create', moduleId: 'viewmodels/templateGallery', title: 'Vorlage wählen', nav: false },
-                { route: 'create/:templateName', moduleId: 'viewmodels/editor', title: 'Neuer Entwurf', nav: false },
-                { route: 'edit/:draftId', moduleId: 'viewmodels/editor', title: 'Entwurf bearbeiten', nav: false },
+                { route: 'create/:templateName', moduleId: 'viewmodels/editor', title: 'Neuer Inhalt', nav: false },
+                { route: 'edit/:draftId', moduleId: 'viewmodels/editor', title: 'Inhalt bearbeiten', nav: false },
                 { route: 'translate/:draftId/:language', moduleId: 'viewmodels/translator', title: 'Übersetzung', nav: false }
             ])
             .buildNavigationModel();
@@ -42,6 +42,12 @@ function (moduleFactory, routerFactory, model, app) {
         module.router.navigate('#drafts/edit/' + draftId);
     };
     app.registerContentEditor('Draft', module, module.editDraft);
+    
+    app.on('caps:contentfile:navigateToResourceOwner', function (resource) {
+        if (resource.DraftFile) {
+            module.router.navigate('#drafts/edit/' + resource.DraftFile().DraftId());
+        }
+    });
     
     function installKnockoutBindings(ko) {
         //

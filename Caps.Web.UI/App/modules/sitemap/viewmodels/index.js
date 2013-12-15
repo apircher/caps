@@ -63,18 +63,24 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             });
         }),
 
-        activate: function () {
+        activate: function (params) {
             if (!isInitialized) {
                 isInitialized = true;
-                datacontext.fetchFirstWebsite().then(function (data) {
-                    website(data.results[0]);
-                    selectSiteMapVersion(website().latestSiteMap());
-                })
-                .fail(handleError);
+
+                if (!params || !params.p) 
+                    showLatestSiteMap();
             }
+
+            if (params && params.p)
+                showPublication(params.p);
+
             attachKeyHandler();
             registerCompositionComplete();
             isActive = true;
+        },
+
+        shouldActivate: function(router, oldActivationData, newActivationData) {
+            return true;
         },
 
         deactivate: function () {
@@ -182,7 +188,14 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
     function selectedSiteMapChanged(newValue) {
         selectedNode(null);
         if (newValue) newValue.fetchTree().then(function () {
-            newValue.selectRootNode()
+            if (selectedNode()) {   
+                var tn = newValue.tree().findNodeByKey(selectedNode().Id());
+                if (tn) {
+                    tn.selectNode();
+                    return;
+                }
+            }
+            newValue.selectRootNode();
         });
     }
 
@@ -239,6 +252,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             datacontext.deleteSiteMapNode(entity).then(function () {
                 siteMapVM.refreshTree();
                 if (nextSelection) siteMapVM.selectNodeByKey(nextSelection.Id());
+                app.trigger('caps:sitemapnode:deleted', entity);
             })
             .fail(handleError);
         }
@@ -257,6 +271,31 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         composition.current.complete(function () {
             $window.trigger('forceViewportHeight:refresh');
         });
+    }
+
+    function showLatestSiteMap() {
+        datacontext.fetchFirstWebsite().then(function (data) {
+            website(data.results[0]);
+            selectSiteMapVersion(website().latestSiteMap());
+        })
+        .fail(handleError);
+    }
+
+    function showPublication(publicationId) {
+        datacontext.fetchSiteMapNodeByContentId(publicationId).then(function (data) {
+            if (!data.results.length) {
+                showLatestSiteMap();
+                return;
+            }
+
+            var node = data.results[0],
+                siteMap = node.SiteMap();
+
+            website(siteMap.Website());
+            selectSiteMapVersion(siteMap);
+            selectedNode(node);
+        })
+        .fail(handleError);
     }
 
     /*

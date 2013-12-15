@@ -115,8 +115,10 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
         self.saveChanges = function () {
             self.entity().Modified().At(new Date());
             self.entity().Modified().By(authentication.user().userName());
+
+            var deletedDraftFiles = manager.getEntities('DraftFile', breeze.EntityState.Deleted);
             manager.saveChanges().then(function () {
-                app.trigger('caps:draft:saved', { entity: self.entity(), isNewDraft: self.isNewDraft() });
+                app.trigger('caps:draft:saved', { entity: self.entity(), isNewDraft: self.isNewDraft(), deletedFiles: deletedDraftFiles });
                 self.showDraftsIndex();
             });
         };
@@ -236,7 +238,10 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
 
         function deleteEntity() {
             self.entity().setDeleted();
-            manager.saveChanges().then(self.navigateBack);
+            manager.saveChanges().then(function () {
+                app.trigger('caps:draft:deleted', self.entity());
+                self.navigateBack();
+            });
         }
 
         function initViews() {

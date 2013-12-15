@@ -23,6 +23,8 @@ namespace Caps.Web.UI.Infrastructure
             ProcessNewOrModifiedDrafts(saveMap);
             ProcessNewOrModifiedSiteMapNodes(saveMap);
 
+            ProcessDeletedSiteMapNodes(saveMap);
+
             return saveMap;
         }
         
@@ -144,7 +146,14 @@ namespace Caps.Web.UI.Infrastructure
 
         void AddPublicationForDeletion(int? id, Dictionary<Type, List<EntityInfo>> saveMap)
         {
-            var publication = Context.Publications.FirstOrDefault(p => p.Id == id.GetValueOrDefault());
+            if (!id.HasValue)
+                return;
+
+            var key = id.GetValueOrDefault();
+            var publication = Context.Publications
+                .Include("Files.Resources")
+                .Include("ContentParts.Resources")
+                .FirstOrDefault(p => p.Id == key);
             if (publication == null) return;
 
             AddEntityInfo(saveMap, publication, EntityState.Deleted);

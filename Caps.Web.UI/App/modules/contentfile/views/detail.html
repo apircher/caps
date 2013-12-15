@@ -1,18 +1,34 @@
 ﻿<div class="app-page bottom-fixed-navbar-container">
 
     <!-- ko if: file() -->
-    <div class="col-md-8 col-lg-9" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top', minWidth: 992 }">
-        <!-- ko template: { name: previewTemplate, data: file } -->
+    <div class="col-md-8 col-lg-9" data-bind="forceViewportHeight: { minWidth: 992 }">
+        <!-- ko template: { name: previewTemplate, data: fileVersion().entity } -->
         <!-- /ko -->
     </div>
 
     <div class="col-md-4 col-lg-3">
         <h4 class="break-h"><span data-bind="text: file().FileName"></span> <small>Details</small></h4>
-        <div data-bind="with: file().Created">
+        <div>
             <p>
-            Hochgeladen <span data-bind="text: moment(At()).fromNow(), attr: { title: moment(At()).format('LLLL') }"></span> 
-            von <span data-bind="text: By"></span>
+            Hochgeladen <span data-bind="text: uploadedFromNowBy, attr: { title: uploadedAt }"></span>
             </p>
+            <!-- ko with: fileVersion() -->
+            <!-- ko if: isInUse() -->
+            <p><strong>In Verwendung</strong></p>
+            <ul class="list-inline">
+                <!-- ko foreach: entity.DraftFileResources() -->
+                <li data-bind="if: DraftFile()">
+                    <a href="#" data-bind="click: $parent.navigateToResourceOwner"><i class="fa fa-file-text"></i> Inhalt <!-- ko text: DraftFile().DraftId --><!-- /ko --></a>
+                </li>
+                <!-- /ko -->                
+                <!-- ko foreach: entity.PublicationFileResources() -->
+                <li>
+                    <a href="#" data-bind="click: $parent.navigateToResourceOwner"><i class="fa fa-file-text"></i> Veröffentlichung <!-- ko text: PublicationFile().PublicationId --><!-- /ko --></a>
+                </li>
+                <!-- /ko -->
+            </ul>
+            <!-- /ko -->
+            <!-- /ko -->
         </div>
         <div class="well well-sm">
             <div>
@@ -63,7 +79,22 @@
                 <i class="fa fa-tag"></i> <span data-bind="text: Tag().Name"></span>
             </li>
         </ul>
-
+        
+        <!-- ko if: versions().length > 1 -->
+        <h4>Weitere Versionen <small>(<!-- ko text: versions().length - 1 --><!-- /ko -->)</small></h4>
+        <ul data-bind="foreach: versions" class="list-unstyled">
+            <!-- ko if: !isCurrentVersion() -->
+            <li>
+                <!-- ko if: !isInUse() -->
+                <a href="#" data-bind="click: select, text: entity.Id"></a>
+                <!-- /ko -->
+                <!-- ko if: isInUse -->
+                <small>In Verwendung</small>
+                <!-- /ko -->
+            </li>
+            <!-- /ko -->
+        </ul>
+        <!-- /ko -->
     </div>
     <!-- /ko -->
         
@@ -73,7 +104,21 @@
             <ul class="nav navbar-nav">
                 <li>
                     <a href="#" data-bind="click: navigateBack">
-                        <i class="fa fa-arrow-left"></i> Zurück</a>
+                        <i class="fa fa-arrow-left"></i> Alle Dateien</a>
+                </li>
+                <li>
+                    <a class="fileinput-button">
+                        <span><i class="fa fa-repeat"></i> Datei ersetzen</span>
+                        <!-- ko with: uploadManager -->
+                        <input type="file" name="files" data-url="~/api/DbFileUpload"
+                               data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: null, formData: { storageAction: 'replace', versionId: $parent.fileVersion().entity.Id() } }">
+                        <!-- /ko -->
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-bind="click: deleteFile">
+                        <i class="fa fa-trash-o"></i> Datei löschen
+                    </a>
                 </li>
             </ul>
         </div>
@@ -88,9 +133,10 @@
 
     <script type="text/html" id="file-preview-image">
         <div class="file-preview image-preview" data-bind="stretchLineHeight: true">
-            <img data-bind="attr: { src: $root.server.mapPath('~/DbFileContent/Inline/' + Id()) }" />
+            <img data-bind="attr: { src: $root.server.mapPath('~/DbFileContent/Inline/' + Id() + '?h=' + Hash()) }" />
         </div>
     </script>
+
     <script type="text/html" id="file-preview-general">
         <div class="file-preview unknown-preview">
             <span><i class="fa fa-file fa-4x"></i></span>

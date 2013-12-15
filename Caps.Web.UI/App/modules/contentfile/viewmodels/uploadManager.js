@@ -20,11 +20,7 @@ function (ko, system) {
                     options.uploadStarted(f, i++);
             });
             self.isUploading(true);
-
-            return system.defer(function (dfd) {
-                data.submit();
-            })
-            .promise();
+            data.submit();
         };
 
         self.uploadDone = function (e, data) {

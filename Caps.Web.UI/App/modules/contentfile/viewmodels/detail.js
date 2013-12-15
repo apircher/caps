@@ -7,30 +7,83 @@
     'moment',
     'infrastructure/utils',
     'infrastructure/tagService',
-    'infrastructure/serverUtil'
+    'infrastructure/serverUtil',
+    'durandal/composition',
+    'moment',
+    './uploadManager'
 ],
-function (system, app, ko, module, datacontext, moment, utils, tagService, server) {
+function (system, app, ko, module, datacontext, moment, utils, tagService, server, composition, moment, UploadManager) {
 
     var currentFileId = ko.observable(0),
         currentFile = ko.observable(),
+        currentVersion = ko.observable(),
+        versions = ko.observableArray(),
         isLoading = ko.observable(false),
         tagName = ko.observable(),
-        addTagUIVisible = ko.observable(false);
+        addTagUIVisible = ko.observable(false),
+        uploadManager = createUploadManager(),
+        isActive = false;
+
+    module.on('module:activate', function () {
+        if (isActive) registerCompositionComplete();
+    });
+
+    app.on('caps:sitemapnode:deleted', function (node) {
+        var contentId = node.ContentId();
+        datacontext.detachPublicationFileResources(contentId);
+    });
+
+    app.on('caps:draft:deleted', function (draft) {
+        datacontext.detachDraftFileResources(draft);
+    });
+
+    app.on('caps:draft:saved', function (data) {
+        if (data.deletedFiles && data.deletedFiles.length) {
+            data.deletedFiles.forEach(function (f) {
+                datacontext.detachDraftFile(f);
+            });
+        }
+    });
 
     var vm = {
         fileId: currentFileId,
         file: currentFile,
+        fileVersion: currentVersion,
+        versions: versions,
         isLoading: isLoading,
+        uploadManager: uploadManager,
+
+        uploadedFromNowBy: ko.computed(function () {
+            if (!currentVersion() || !currentVersion().entity) return '';
+            return moment(currentVersion().entity.Modified().At()).fromNow() + ' von ' + currentVersion().entity.Modified().By();
+        }),
+
+        uploadedAt: ko.computed(function () {
+            if (!currentVersion() || !currentVersion().entity) return '';
+            return moment(currentVersion().entity.Modified().At()).format('LLLL');
+        }),
 
         activate: function (fileId) {
             currentFile(null);
             currentFileId(fileId);
             tagName(null);
             addTagUIVisible(false);
+            registerCompositionComplete();
+            isActive = true;
             return getFile()
+                .then(function () {
+                    versions(ko.utils.arrayMap(currentFile().Versions(), function (v) {
+                        return new fileVersionViewModel(v);
+                    }));
+                    currentVersion(versions()[0]);
+                })
                 .fail(function (err) {
                     alert(err.message);
                 });
+        },
+
+        deactivate: function() {
+            isActive = false;
         },
 
         refresh: function () {
@@ -41,8 +94,8 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
             module.router.navigate(module.routeConfig.hash);
         },
 
-        previewTemplate: function (file) {
-            if (file && file.isImage()) return 'file-preview-image';
+        previewTemplate: function (fileVersion) {
+            if (fileVersion && fileVersion.File() && fileVersion.File().isImage()) return 'file-preview-image';
             return 'file-preview-general';
         },
 
@@ -94,6 +147,31 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
                 });
         },
 
+        deleteVersion: function (fileVersion) {
+            app.showMessage('Soll die Version wirklich gelöscht werden?', 'Version löschen?', ['Ok', 'Abbrechen']).then(function (result) {
+                if (result === 'Ok') {
+                    datacontext.deleteFileVersion(fileVersion.entity).then(function () {
+                        fileVersion.remove();
+                        if (fileVersion.isCurrentVersion()) {
+                            var cv = currentFile().nextVersion(fileVersion) || currentFile().previousVersion(fileVersion);
+                            currentVersion(new fileVersionViewModel(cv));
+                        }
+                    });
+                }
+            });
+        },
+
+        deleteFile: function() {
+            app.showMessage('Soll die Datei wirklich gelöscht werden?', 'Datei löschen?', ['Ok', 'Abbrechen']).then(function (result) {
+                if (result === 'Ok') {
+                    datacontext.deleteFile(currentFile()).then(function () {
+                        app.trigger('caps:file:deleted', currentFile());
+                        vm.navigateBack();
+                    });
+                }
+            });
+        },
+
         moment: moment,
         utils: utils,
         server: server
@@ -112,6 +190,51 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
             });
         })
         .promise();
+    }
+
+    function fileVersionViewModel(entity) {
+        var self = this;
+
+        self.entity = entity;
+
+        self.isCurrentVersion = ko.computed(function () {
+            return currentVersion() && self.entity.Id() === currentVersion().entity.Id();
+        });
+
+        self.isInUse = ko.computed(function () {
+            return self.entity.DraftFileResources().length > 0 || self.entity.PublicationFileResources().length > 0;
+        });
+
+        self.remove = function () {
+            versions.remove(self);
+        };
+
+        self.select = function () {
+            currentVersion(self);
+        };
+
+        self.navigateToResourceOwner = function (resource) {
+            app.trigger('caps:contentfile:navigateToResourceOwner', resource);
+        };
+    }
+
+    function createUploadManager() {
+        return new UploadManager({
+            uploadStarted: function (file, batchIndex, replace) {
+                isLoading(true);
+            },
+            uploadDone: function (result, file) {
+                isLoading(false);
+                getFile();
+            }
+        });
+    }
+
+    var $window = $(window);
+    function registerCompositionComplete() {
+        composition.current.complete(function () {
+            $window.trigger('forceViewportHeight:refresh');
+        });
     }
 
     return vm;

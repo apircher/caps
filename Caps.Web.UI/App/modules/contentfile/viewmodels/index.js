@@ -40,6 +40,14 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
         searchControl.removeTagFilter(data);
     });
 
+    app.on('caps:file:deleted', function (data) {
+        var li = list.findItem(function (i) { return i.data().Id() == data.Id(); });
+        if (li) {
+            if (list.selectedItem() === li) list.resetSelection();
+            list.removeItem(li);
+        }
+    });
+
     searchControl.refreshResults = function () {
         vm.refresh();
     };
@@ -175,15 +183,19 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
 
     function createUploadManager() {
         return new UploadManager({
-            uploadStarted: function (file, batchIndex) {
-                file.listItem = list.insertItem(undefined, batchIndex);
-                file.listItem.isUploading(true);
+            uploadStarted: function (file, batchIndex, replace) {
+                if (!replace) {
+                    file.listItem = list.insertItem(undefined, batchIndex);
+                    file.listItem.isUploading(true);
+                }
             },
             uploadDone: function (result, file) {
-                var listItem = file.listItem;
+                var listItem = file.listItem || list.findItem(function(f) { return f.data().Id() === result.Id; });
                 datacontext.fetchFile(result.Id).then(function () {
-                    listItem.data(datacontext.localGetFile(result.Id));
-                    listItem.isUploading(false);
+                    if (listItem) {
+                        listItem.data(datacontext.localGetFile(result.Id));
+                        listItem.isUploading(false);
+                    }
                 })
                 .fail(function (err) {
                     toastr.error('Die Datei ' + r.FileName + ' konnte nicht geladen werden.');

@@ -189,6 +189,7 @@
     <Compile Include="Controllers\DbFileContentController.cs" />
     <Compile Include="Controllers\DbFileController.cs" />
     <Compile Include="Controllers\DbFileUploadController.cs" />
+    <Compile Include="Controllers\DbFileVersionController.cs" />
     <Compile Include="Controllers\DbSiteMapNodeController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UserMgmtController.cs" />

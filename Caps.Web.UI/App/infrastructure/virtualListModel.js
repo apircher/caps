@@ -132,6 +132,10 @@ function (require, ko, $) {
         return this.pages()[pageNumber - 1];
     };
 
+    VirtualList.prototype.findItem = function (evaluator) {
+        return ko.utils.arrayFirst(this.getItems(), evaluator);
+    };
+
     VirtualList.prototype.isPageLoaded = function (pageNumber) {
         var page = this.findPage(pageNumber);
         return page ? page.isLoaded : false;

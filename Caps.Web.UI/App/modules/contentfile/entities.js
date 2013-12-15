@@ -17,10 +17,37 @@ function (require, ko, utils) {
             return utils.stringStartsWith(entity.ContentType(), 'image');
         });
 
-        entity.latestVersion = ko.computed(function () {
+        entity.sortedVersions = ko.computed(function () {
             var versions = entity.Versions();
+            versions.sort(function (a, b) {
+                if (a.Id() == b.Id()) return 0;
+                return a.Id() < b.Id() ? 1 : -1;
+            });
+            return versions;
+        });
+
+        entity.latestVersion = ko.computed(function () {
+            var versions = entity.sortedVersions();
             return versions.length > 0 ? versions[0] : null;
         });
+
+        entity.getVersion = function (versionId) {
+            return ko.utils.arrayFirst(entity.Versions(), function (v) { return v.Id() == versionId; });
+        };
+
+        entity.nextVersion = function (fileVersion) {
+            var versions = entity.sortedVersions(),
+                index = versions.indexOf(fileVersion);
+            if (index <= 0) return null;
+            return versions[index - 1];
+        };
+
+        entity.previousVersion = function (fileVersion) {
+            var versions = entity.sortedVersions(),
+                index = versions.indexOf(fileVersion);
+            if (index >= versions.length - 1) return null;
+            return versions[index + 1];
+        };
     }
 
     /*

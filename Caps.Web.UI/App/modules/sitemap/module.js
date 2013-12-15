@@ -26,5 +26,11 @@
         });
     });
 
+    app.on('caps:contentfile:navigateToResourceOwner', function (resource) {
+        if (resource.PublicationFile) {
+            module.router.navigate('#sitemap?p=' + resource.PublicationFile().PublicationId());
+        }
+    });
+
     return module;
 });

@@ -77,7 +77,7 @@
                 <div data-bind="with: selectedPublication()">
                     <h5>Dateien (<!-- ko text: files().length --><!-- /ko -->)</h5>
                     <ul class="list-inline" data-bind="foreach: files()">
-                        <li>
+                        <li data-bind="if: getResource('de') && getResource('de').FileVersion() && getResource('de').FileVersion().File()">
                             <i class="fa fa-file"></i> <!-- ko text: getResource('de').FileVersion().File().FileName --><!-- /ko -->
                         </li>
                     </ul>

@@ -29,7 +29,7 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
     function searchFiles(searchWords, pageNumber, itemsPerPage, orderBy, filters) {
         var src = filters ? EntityQuery.from('FilteredFiles').withParameters({ filterOptions: filters }) : EntityQuery.from('Files');
 
-        var query = filterQuery(src, searchWords)
+        var query = filterQuery(src, searchWords).expand('Versions')
             .orderBy(orderBy || 'Created.At desc')
             .skip((pageNumber - 1) * itemsPerPage)
             .take(itemsPerPage)
@@ -48,7 +48,7 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
     // Fetch a single DbFile-Entity.
     function fetchFile(id) {
         var query = EntityQuery.from('Files').where('Id', '==', id)
-            .expand('Tags.Tag, Versions, Versions.Properties');
+            .expand('Tags.Tag, Versions, Versions.Properties, Versions.DraftFileResources.DraftFile, Versions.PublicationFileResources.PublicationFile');
         return manager.executeQuery(query);
     }
 
@@ -64,6 +64,24 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
 
             function deleteSucceeded() {
                 manager.detachEntity(entity);
+                dfd.resolve();
+            }
+        })
+        .promise();
+    }
+
+    // Delete a DbFileVersion-Entity.
+    function deleteFileVersion(entity) {
+        return system.defer(function (dfd) {
+            $.ajax('api/DbFileVersion/' + entity.Id(), { method: 'delete' }).done(deleteSucceeded).fail(dfd.reject);
+
+            function deleteSucceeded() {
+                try {
+                    manager.detachEntity(entity);
+                }
+                catch (error) {
+                    system.log(error);
+                }
                 dfd.resolve();
             }
         })
@@ -93,15 +111,53 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
         return manager.saveChanges();
     }
 
+    function detachEntity(entity) {
+        manager.detachEntity(entity);
+    }
+
+    function detachDraftFileResources(entity) {
+        var resources = manager.getEntities('DraftFileResource');
+        resources.forEach(function (r) {
+            if (r.DraftFile() && r.DraftFile().DraftId() == entity.Id()) {
+                manager.detachEntity(r);
+            }
+        });
+    }
+
+    function detachPublicationFileResources(publicationId) {
+        var resources = manager.getEntities('PublicationFileResource');
+        resources.forEach(function (r) {
+            if (r.PublicationFile() && r.PublicationFile().PublicationId() == publicationId) {
+                manager.detachEntity(r);
+            }
+        });
+    }
+
+    function detachDraftFile(entity) {
+        var query = new EntityQuery().from('DraftFiles').where('Id', '==', entity.Id());
+        var results = manager.executeQueryLocally(query);
+        if (results && results.length) {
+            results.forEach(function (r) {
+                if (r.Resources()) r.Resources().forEach(function (res) { manager.detachEntity(res); });
+                manager.detachEntity(r);
+            });
+        }
+    }
+
 
     return {
         getFiles: getFiles,
         fetchFile: fetchFile,
         localGetFile: localGetFile,
         deleteFile: deleteFile,
+        deleteFileVersion: deleteFileVersion,
         searchFiles: searchFiles,
         addFileTag: addFileTag,
         removeFileTag: removeFileTag,
+        detachEntity: detachEntity,
+        detachPublicationFileResources: detachPublicationFileResources,
+        detachDraftFileResources: detachDraftFileResources,
+        detachDraftFile: detachDraftFile,
 
         isValidUserQuery: function (searchWords) {
             return parser.validate(searchWords);

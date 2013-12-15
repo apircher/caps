@@ -102,6 +102,11 @@ function (entityManagerProvider, breeze, system) {
         return manager.executeQuery(query);
     }
 
+    function fetchSiteMapNodeByContentId(contentId) {
+        var query = new EntityQuery().from('SiteMapNodes').where('ContentId', '==', contentId).expand('SiteMap.Website.SiteMapVersions');
+        return manager.executeQuery(query);
+    }
+
     function fetchSiteMapNodes(siteMapId) {
         var query = new EntityQuery('SiteMapNodes').where('SiteMapId', '==', siteMapId).expand('Resources');
         return manager.executeQuery(query);
@@ -118,6 +123,7 @@ function (entityManagerProvider, breeze, system) {
         fetchFirstWebsite: fetchFirstWebsite,
         fetchSiteMapNode: fetchSiteMapNode,
         fetchSiteMapNodes: fetchSiteMapNodes,
+        fetchSiteMapNodeByContentId: fetchSiteMapNodeByContentId,
         saveChanges: function () {
             return manager.saveChanges();
         }

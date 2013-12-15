@@ -398,11 +398,30 @@ ul.tree-branch a:hover {
 
 .thumbnail {
     background-color:#fff;
+    margin:0;
 }
 
 .item-selected > .thumbnail {
     border-color: #0088cc;
     box-shadow: 0px 1px 4px rgba(0,105,214,0.25);
+}
+
+.thumbnail-label {
+    height:1.75em;
+    margin:0 3px 5px;
+    overflow:hidden;
+}
+.thumbnail-label > div.pull-right {
+    margin-top:3px;
+}
+
+.thumbnail-label-content {
+    display:block;
+    padding:3px;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    max-width:100%;
 }
 
 .thumbnails-fixed-size .thumbnail {
@@ -551,6 +570,14 @@ ul.tree-branch a:hover {
         text-align:center;
         padding:2em;
     }
+
+#files-toolbar {
+    height:50px;
+    background:#fff;
+}
+#files-index .subnav-fixed-top-container {
+    padding-top:50px;
+}
 
 /**
  * Error Summary
@@ -925,6 +952,8 @@ ul.data-list {
         top:auto;
         display:block;
     }
+    
+    #files-index .subnav-fixed-top-container,
     .subnav-fixed-top-container {
         padding-top:0;
     }
