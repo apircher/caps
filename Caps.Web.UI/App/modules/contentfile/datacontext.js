@@ -144,6 +144,18 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
         }
     }
 
+    function getFileInfo(fileNames) {
+        return system.defer(function (dfd) {
+            $.ajax('DbFileMetadata/GetFileInfo', { method: 'post', traditional: true, data: { 'fileNames': fileNames } }).done(getSucceeded).fail(dfd.reject);
+
+            function getSucceeded(result) {
+                
+                dfd.resolve(result);
+            }
+        })
+        .promise();
+    }
+
 
     return {
         getFiles: getFiles,
@@ -158,6 +170,7 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
         detachPublicationFileResources: detachPublicationFileResources,
         detachDraftFileResources: detachDraftFileResources,
         detachDraftFile: detachDraftFile,
+        getFileInfo: getFileInfo,
 
         isValidUserQuery: function (searchWords) {
             return parser.validate(searchWords);

@@ -571,10 +571,6 @@ ul.tree-branch a:hover {
         padding:2em;
     }
 
-#files-toolbar {
-    height:50px;
-    background:#fff;
-}
 #files-index .subnav-fixed-top-container {
     padding-top:50px;
 }
@@ -840,10 +836,14 @@ ul.data-list {
     width:100%;
     padding:15px 15px 0;
     z-index: 100;
+    background:#fff;
 }
 
 .subnav-fixed-top-container {
     padding-top:35px;
+}
+.subnav-extrapadding {
+    padding-top:55px;
 }
 
 .sitemap-index-header {
@@ -951,9 +951,10 @@ ul.data-list {
         position:static;
         top:auto;
         display:block;
+        height:auto;
     }
     
-    #files-index .subnav-fixed-top-container,
+    .subnav-extrapadding,
     .subnav-fixed-top-container {
         padding-top:0;
     }

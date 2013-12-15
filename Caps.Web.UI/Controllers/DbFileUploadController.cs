@@ -55,6 +55,22 @@ namespace Caps.Web.UI.Controllers
                             var fileVersion = db.FileVersions.Include("Content").Include("Thumbnails").FirstOrDefault(v => v.Id == intVersionId);
                             ReplaceFileVersion(fileVersion, files[0].Versions.First());
                         }
+                        else
+                        {
+                            foreach(var file in files) {
+                                var dbFile = db.Files.Include("Versions.Content").Include("Versions.Thumbnails").FirstOrDefault(f => f.FileName.ToLower() == file.FileName.ToLower());
+                                if (dbFile != null)
+                                {
+                                    var fileVersion = dbFile.GetLatestVersion();
+                                    if (fileVersion != null)
+                                    {
+                                        ReplaceFileVersion(fileVersion, file.Versions.First());
+                                        continue;
+                                    }
+                                }
+                                AddFile(file);
+                            }
+                        }
                         break;
 
                     default:

@@ -13,14 +13,46 @@ function (ko, system) {
         self.isUploading = ko.observable(false);
         self.progress = ko.observable(0);
 
+        self.lastSelection = ko.observableArray();
+        self.pendingUploads = [];
+        self.beforeUploadCalled = false;
+
+        self.filesSelected = function (e, data) {
+            self.lastSelection(data.files);
+            self.pendingUploads = [];
+            self.beforeUploadCalled = false;
+        };
+
         self.addFiles = function (e, data) {
-            var i = 0;
-            ko.utils.arrayForEach(data.files, function (f) {
-                if (options.uploadStarted && typeof options.uploadStarted === 'function')
-                    options.uploadStarted(f, i++);
-            });
-            self.isUploading(true);
-            data.submit();
+            if (options.beforeUpload && typeof options.beforeUpload === 'function') {
+                self.pendingUploads.push(data);
+                if (!self.beforeUploadCalled) {
+                    self.beforeUploadCalled = true;
+                    options.beforeUpload.call(this, self.lastSelection(), data, beginUpload);
+                }
+            }
+            else
+                beginUpload();
+
+            function beginUpload(storageOptions) {
+                self.isUploading(true);
+
+                if (self.pendingUploads.length)
+                    self.pendingUploads.forEach(function (d) { submitFiles(d, storageOptions); });
+                else
+                    submitFiles(data, storageOptions);
+            }
+
+            function submitFiles(data, storageOptions) {
+                var i = 0;
+                ko.utils.arrayForEach(data.files, function (f) {
+                    if (options.uploadStarted && typeof options.uploadStarted === 'function')
+                        options.uploadStarted(f, i++, storageOptions);
+                });
+
+                if (storageOptions) data.formData = storageOptions;
+                data.submit();
+            }
         };
 
         self.uploadDone = function (e, data) {

@@ -188,6 +188,7 @@
     <Compile Include="Controllers\CapsDataController.cs" />
     <Compile Include="Controllers\DbFileContentController.cs" />
     <Compile Include="Controllers\DbFileController.cs" />
+    <Compile Include="Controllers\DbFileMetadataController.cs" />
     <Compile Include="Controllers\DbFileUploadController.cs" />
     <Compile Include="Controllers\DbFileVersionController.cs" />
     <Compile Include="Controllers\DbSiteMapNodeController.cs" />
@@ -542,6 +543,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\DbFileMetadata\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

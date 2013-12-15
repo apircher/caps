@@ -183,6 +183,28 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
 
     function createUploadManager() {
         return new UploadManager({
+            beforeUpload: function(files, data, callback) {
+                var fileNames = ko.utils.arrayMap(files, function (f) { return f.name; });
+                datacontext.getFileInfo(fileNames).then(function (result) {
+                    var existingFiles = ko.utils.arrayFilter(result, function (r) { return r.Count > 0; });
+                    if (existingFiles.length > 0) {
+
+                        var btnOk = 'Hinzufügen';
+                        var btnReplace = 'Ersetzen';
+                        var btnCancel = 'Abbrechen';
+                        app.showMessage('Es wurden ' + existingFiles.length + ' Namens-Konflikte gefunden. Wie sollen diese behandelt werden?', 'Dateien hinzufügen', [btnOk, btnReplace, btnCancel]).then(function (dialogResult) {
+                            if (dialogResult !== btnCancel) {
+
+                                var storageOptions;
+                                if (dialogResult === btnReplace) storageOptions = { 'storageAction': 'replace' };
+                                callback(storageOptions);
+                            }
+                        });
+                    }
+                    else
+                        callback();
+                });
+            },
             uploadStarted: function (file, batchIndex, replace) {
                 if (!replace) {
                     file.listItem = list.insertItem(undefined, batchIndex);
