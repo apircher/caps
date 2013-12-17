@@ -44,6 +44,7 @@ namespace Caps.Web.UI.Controllers
                 
                 var files = provider.Contents.GetFiles(User.Identity.Name);
                 var formData = provider.Contents.GetFormData();
+                var result = new Dictionary<String, DbFile>();
 
                 switch (GetStorageAction(formData))
                 {
@@ -53,35 +54,35 @@ namespace Caps.Web.UI.Controllers
                         {
                             var intVersionId = int.Parse(versionId);
                             var fileVersion = db.FileVersions.Include("Content").Include("Thumbnails").FirstOrDefault(v => v.Id == intVersionId);
-                            ReplaceFileVersion(fileVersion, files[0].Versions.First());
+                            var file = files[0];
+                            ReplaceFileVersion(fileVersion, file.Versions.First());
+                            result.Add(file.FileName, fileVersion.File);
                         }
                         else
                         {
                             foreach(var file in files) {
-                                var dbFile = db.Files.Include("Versions.Content").Include("Versions.Thumbnails").FirstOrDefault(f => f.FileName.ToLower() == file.FileName.ToLower());
-                                if (dbFile != null)
-                                {
-                                    var fileVersion = dbFile.GetLatestVersion();
-                                    if (fileVersion != null)
-                                    {
-                                        ReplaceFileVersion(fileVersion, file.Versions.First());
-                                        continue;
-                                    }
+                                var existingFile = ReplaceLatestVersionWithFileName(file.FileName, file.Versions.First());
+                                if (existingFile == null) {
+                                    AddFile(file);
+                                    existingFile = file;
                                 }
-                                AddFile(file);
+                                result.Add(file.FileName, existingFile);
                             }
                         }
                         break;
 
                     default:
-                        Array.ForEach(files.ToArray(), f => AddFile(f));
+                        Array.ForEach(files.ToArray(), f => {
+                            String originalFileName = f.FileName;
+                            AddFile(f);
+                            result.Add(originalFileName, f);
+                        });
                         break;
                 }
 
                 db.SaveChanges();
 
-                var result = files.Select(f => new { FileName = f.FileName, Id = f.Id }).ToList();
-                return Request.CreateResponse(HttpStatusCode.OK, result);
+                return Request.CreateResponse(HttpStatusCode.OK, result.Select(p => new { FileName = p.Key, Id = p.Value.Id }).ToList());
             }
             catch (Exception ex)
             {
@@ -92,6 +93,13 @@ namespace Caps.Web.UI.Controllers
         void AddFile(DbFile file)
         {
             var latestVersion = file.GetLatestVersion();
+
+            var existingFiles = db.Files.Where(f => f.FileName.ToLower().StartsWith(file.FileName.ToLower())).ToList();
+            if (existingFiles.Count > 0)
+            {
+                file.FileName = String.Format("{0}({1}){2}", System.IO.Path.GetFileNameWithoutExtension(file.FileName),
+                    existingFiles.Count + 1, System.IO.Path.GetExtension(file.FileName));
+            }
 
             db.Files.Add(file);
 
@@ -110,14 +118,27 @@ namespace Caps.Web.UI.Controllers
             Array.ForEach(fileVersion.Thumbnails.ToArray(), t => db.Thumbnails.Remove(t));
         }
 
-        DbFile ReplaceFileByFileName(DbFile file)
+        DbFile ReplaceLatestVersionWithFileName(String fileName, DbFileVersion data)
         {
-            var key = file.FileName.ToLower();
+            var key = fileName.ToLower();
+            var dbFile = db.Files.Include("Versions.Content").Include("Versions.Thumbnails").FirstOrDefault(f => f.FileName.ToLower() == key);
+            if (dbFile != null)
+            {
+                var fileVersion = dbFile.GetLatestVersion();
+                if (fileVersion != null)
+                    ReplaceFileVersion(fileVersion, data);
+            }
+            return dbFile;
+        }
+
+        DbFile AddVersionForFileName(String fileName, DbFileVersion data)
+        {
+            var key = fileName.ToLower();
             var existingFile = db.Files.Where(f => f.FileName.ToLower() == key).FirstOrDefault();
             if (existingFile != null)
             {
-                var data = file.GetLatestVersion().Content.Data;
-                var v = existingFile.AddNewVersion(data, User.Identity.Name);
+                var bytes = data.Content.Data;
+                var v = existingFile.AddNewVersion(bytes, User.Identity.Name);
                 if (existingFile.IsImage) HandleNewImageFile(v);
             }
             return existingFile;

@@ -12,11 +12,13 @@ namespace Caps.Data.ContentControls
     {
         List<String> dependencies;
         List<ScriptBlock> blocks;
+        HashSet<String> uniqueIds;
 
         public ContentScriptManager()
         {
             blocks = new List<ScriptBlock>();
             dependencies = new List<String>();
+            uniqueIds = new HashSet<String>();
         }
 
         public ScriptBlock FindScriptBlock(String name)
@@ -115,6 +117,16 @@ namespace Caps.Data.ContentControls
                 var content = ((XmlCDataSection)element.FirstChild).Value;
                 blocks.Add(new ScriptBlock { Name = name, Content = content });
             }
+        }
+
+        public String GetUniqueId(String scope, int contentId, int controlId)
+        {
+            String id = String.Format("cc{0}{1:x}{2}", scope, contentId, controlId);
+            int k = 0;
+            while (uniqueIds.Contains(id))
+                id = String.Format("cc{0}{1:x}{2}x{3}", scope, contentId, controlId, ++k);
+            uniqueIds.Add(id);
+            return id;
         }
 
         public static ContentScriptManager FromContentPart(PublicationContentPart contentPart)

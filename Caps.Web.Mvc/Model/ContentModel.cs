@@ -74,6 +74,11 @@ namespace Caps.Web.Mvc.Model
             }
         }
 
+        public void SetScriptManager(ContentScriptManager scriptManager)
+        {
+            this.scriptManager = scriptManager;
+        }
+
         ContentScriptManager scriptManager;
         public ContentScriptManager ScriptManager
         {

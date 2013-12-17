@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Caps.Data.Localization;
 
 namespace Caps.Data.ContentControls
 {
@@ -47,13 +48,18 @@ namespace Caps.Data.ContentControls
             foreach (var file in files)
             {
                 var item = document.CreateElement("li");
-                var image = document.CreateSlideImage(file, language, GetSlideImageSrc(urlHelper, file, language), "caps-slide");
+                var image = CreateSlideImage(document, file, language, GetSlideImageSrc(urlHelper, file, language), urlHelper);
                 item.AppendChild(image);
                 list.AppendChild(item);
             }
 
             container.AppendChild(list);
             return container;
+        }
+
+        protected virtual XmlNode CreateSlideImage(XmlDocument document, PublicationFile file, String language, String src, IUrlHelper urlHelper)
+        {
+            return document.CreateSlideImage(file, language, GetSlideImageSrc(urlHelper, file, language), "caps-slide");
         }
 
         protected virtual String GetSlideImageSrc(IUrlHelper urlHelper, PublicationFile file, String language)
@@ -76,7 +82,8 @@ namespace Caps.Data.ContentControls
             var sqlFile = file.FileVersionForLanguage(language, "de", "en");
             if (sqlFile == null)
                 return document.CreateComment("Caps Slideshow: File not found.");
-            return document.CreateImage(src, "", cssClass);
+            var title = file.GetValueForLanguage(language, r => r.Title, "en", "de");
+            return document.CreateImage(src, title, cssClass);
         }
     }
 }

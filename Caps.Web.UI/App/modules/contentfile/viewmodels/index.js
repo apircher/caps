@@ -15,9 +15,10 @@
     './fileListItem',
     './uploadManager',
     './fileSearchControl',
-    'infrastructure/serverUtil'
+    'infrastructure/serverUtil',
+    './fileUploadDialog'
 ],
-function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, SortModel, $, toastr, Q, doubleTap, tagService, FileListItem, UploadManager, FileSearchControl, server) {
+function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, SortModel, $, toastr, Q, doubleTap, tagService, FileListItem, UploadManager, FileSearchControl, server, FileUploadDialog) {
         
     var vm,
         initialized = false,
@@ -188,31 +189,25 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
                 datacontext.getFileInfo(fileNames).then(function (result) {
                     var existingFiles = ko.utils.arrayFilter(result, function (r) { return r.Count > 0; });
                     if (existingFiles.length > 0) {
-
-                        var btnOk = 'Hinzufügen';
-                        var btnReplace = 'Ersetzen';
-                        var btnCancel = 'Abbrechen';
-                        app.showMessage('Es wurden ' + existingFiles.length + ' Namens-Konflikte gefunden. Wie sollen diese behandelt werden?', 'Dateien hinzufügen', [btnOk, btnReplace, btnCancel]).then(function (dialogResult) {
-                            if (dialogResult !== btnCancel) {
-
-                                var storageOptions;
-                                if (dialogResult === btnReplace) storageOptions = { 'storageAction': 'replace' };
-                                callback(storageOptions);
-                            }
+                        var dlgVm = new FileUploadDialog(result);
+                        app.showDialog(dlgVm).then(function (dialogResult) {
+                            if (dialogResult) 
+                                callback(dialogResult);
                         });
                     }
                     else
                         callback();
                 });
             },
-            uploadStarted: function (file, batchIndex, replace) {
+            uploadStarted: function (file, batchIndex, storageOptions) {
+                var replace = storageOptions && storageOptions.storageAction === 'replace';
                 if (!replace) {
                     file.listItem = list.insertItem(undefined, batchIndex);
                     file.listItem.isUploading(true);
                 }
             },
             uploadDone: function (result, file) {
-                var listItem = file.listItem || list.findItem(function(f) { return f.data().Id() === result.Id; });
+                var listItem = file.listItem || list.findItem(function (f) { return f.data() && f.data().Id() === result.Id; });
                 datacontext.fetchFile(result.Id).then(function () {
                     if (listItem) {
                         listItem.data(datacontext.localGetFile(result.Id));

@@ -23,7 +23,7 @@ namespace Caps.Web.Mvc.Model
             if (!String.IsNullOrWhiteSpace(content))
             {
                 var pp = new ContentPreprocessor(node, controlRegistry);
-                content = pp.PrepareDisplay(content, Language, urlHelper, scriptManager);
+                content = pp.PrepareDisplay(Usage, content, Language, urlHelper, scriptManager);
             }
 
             return content;

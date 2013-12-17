@@ -21,31 +21,20 @@ namespace Caps.Data.ContentControls
             this.siteMapNode = siteMapNode;
             this.controlsRegistry = controlsRegistry;
         }
-        //public String Transform(String content, String contentType)
-        //{
-        //    var result = ReplacePlaceholders(content);
 
-        //    // Inhalts-Typ-spezifische Verarbeitung.
-        //    if (String.Equals(contentType, DraftContentTypes.Markdown, StringComparison.OrdinalIgnoreCase))
-        //        return ProcessMarkdown(result);
-        //    else if (String.Equals(contentType, DraftContentTypes.Text, StringComparison.OrdinalIgnoreCase))
-        //        return ProcessText(result);
-        //    else
-        //        return result;
-        //}
-        public String PrepareDisplay(String content, String language, IUrlHelper urlHelper, ContentScriptManager scriptManager)
+        public String PrepareDisplay(String scopeId, String content, String language, IUrlHelper urlHelper, ContentScriptManager scriptManager)
         {
             this.urlHelper = urlHelper;
 
             // Process Caps-XML.
-            var result = TransformCapsControls(content, language, scriptManager);
+            var result = TransformCapsControls(scopeId, content, language, scriptManager);
             // Replace placeholders
             result = ReplacePlaceholders(result, language);
             // Replace content references
             return ReplaceContentReferences(result, language);
         }
 
-        String TransformCapsControls(String content, String language, ContentScriptManager scriptManager)
+        String TransformCapsControls(String scopeId, String content, String language, ContentScriptManager scriptManager)
         {
             var document = new XmlDocument();
             var namespaceManager = new XmlNamespaceManager(document.NameTable);
@@ -63,7 +52,8 @@ namespace Caps.Data.ContentControls
             int controlIndex = 1;
             foreach (XmlNode node in capsNodes)
             {
-                var replacement = TransformCapsControl(node, String.Format("cc{0:x}{1}", siteMapNode.ContentId, controlIndex++), language, scriptManager);
+                var controlId = scriptManager.GetUniqueId(scopeId, siteMapNode.ContentId.GetValueOrDefault(), controlIndex++);
+                var replacement = TransformCapsControl(node, controlId, language, scriptManager);
                 if (replacement != null)
                     node.ParentNode.ReplaceChild(replacement, node);
             }

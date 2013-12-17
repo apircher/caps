@@ -193,8 +193,7 @@
 /** 
  *  MessageBox
  */
-.model-header {
-    padding:0 20px;
+.modal-header {
 }
 
 .modal-header h3 {
@@ -204,7 +203,7 @@
     padding:0;
 }
 .modal-body {
-    padding:15px 30px 0;
+    padding:15px 20px 0;
     overflow:hidden;
 }
 
@@ -213,6 +212,23 @@
 }
 .modal-footer > .pull-left {
     margin-left:-12px;
+}
+
+.modal-footer .btn-block{
+    text-align:left;
+}
+
+.modal-footer .btn-block > div {
+    margin-left:50px;
+}
+.modal-footer .btn-block > i.pull-left {
+    margin:5px 15px;
+}
+
+.modal-footer .btn-block > div > small {
+    display:block;
+    white-space:normal;
+    padding:0 15px 0 0;
 }
 
 .messageBox {

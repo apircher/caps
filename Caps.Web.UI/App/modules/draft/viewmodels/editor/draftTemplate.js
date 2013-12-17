@@ -12,6 +12,7 @@
         };
 
         self.previewText = function (templateCell) {
+            if (!templateCell || !templateCell.name) return '';
             var contentPart = self.editor.entity().findContentPart(templateCell.name);
             if (contentPart)
                 return contentPart.previewText('de');
