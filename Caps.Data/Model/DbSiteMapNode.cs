@@ -69,5 +69,13 @@ namespace Caps.Data.Model
         {
             return this.GetValueForLanguage(language, r => r.Title, null);
         }
+
+        public int ContentVersion
+        {
+            get
+            {
+                return Content != null ? Content.ContentVersion : 0;
+            }
+        }
     }
 }

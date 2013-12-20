@@ -30,7 +30,7 @@ function (entityManagerProvider, breeze, system) {
             if (latestVersion)
                 sitemapVersion = latestVersion.createNewVersion(nextVersion, manager);
             else
-                sitemapVersion = createInitialSiteMap(manager);
+                sitemapVersion = createInitialSiteMap(website);
 
             manager.saveChanges().then(function () {
                 dfd.resolve(sitemapVersion);

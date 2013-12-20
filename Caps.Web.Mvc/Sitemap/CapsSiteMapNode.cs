@@ -45,6 +45,7 @@ namespace Caps.Web.Mvc.SiteMap
         }
         public DbSiteMapNode Entity { get; set; }
         public int PermanentId { get; set; }
+        public int ContentVersion { get; set; }
 
         public override string Title
         {

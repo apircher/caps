@@ -7,10 +7,18 @@
                 <div data-bind="forceViewportHeight: { minWidth: 992 }" class="panel-scroll-v">
                     <ul data-bind="foreach: items" class="data-list">
                         <li data-bind="css: { active: isSelected() }, click: $parent.selectDraft, scrollIntoViewTrigger: { source: scrollIntoViewRequest }">
+                            <div class="pull-left">
+                                <i class="fa fa-file-text-o fa-fw"></i> 
+                            </div>
                             <div class="pull-right">
                                 <small data-bind="text: modifiedAt"></small>
                             </div>
-                            <span data-bind="text: title"></span>
+                            <div class="data-list-label text-ellipsis">
+                                <span data-bind="text: title"></span>
+                            </div>
+                            <div class="data-list-label">
+                                <small data-bind="text: status"></small>
+                            </div>
                         </li>
                     </ul>
                 </div>

@@ -39,12 +39,17 @@ namespace Caps.Web.Mvc
                 throw new ContentNotFoundException();
 
             var contentParts = entity.Content != null ? entity.Content.ContentParts.Select(p =>
-                p.GetValueForLanguage(Language.CurrentLanguage, r => new ContentPartModel
-                {
-                    Content = r.Content,
-                    Language = r.Language,
-                    Usage = p.Name,
-                    IsFallback = !String.Equals(Language.CurrentLanguage, r.Language, StringComparison.OrdinalIgnoreCase)
+                p.GetValueForLanguage(Language.CurrentLanguage, r => {
+                    if (String.IsNullOrWhiteSpace(r.Content))
+                        return null;
+
+                    return new ContentPartModel
+                    {
+                        Content = r.Content,
+                        Language = r.Language,
+                        Usage = p.Name,
+                        IsFallback = !String.Equals(Language.CurrentLanguage, r.Language, StringComparison.OrdinalIgnoreCase)
+                    };
                 }
                 , null, "de", "en")) : new List<ContentPartModel>();
 
@@ -106,7 +111,11 @@ namespace Caps.Web.Mvc
                           })
                           .ToList();
 
-            var publicationIds = teasers.Select(t => t.Teaser.ContentId).Distinct().ToList();
+            var publicationIds = teasers.Select(t => t.TeasedContent.ContentId)
+                .Union(teasers.Select(t => t.Teaser.ContentId))
+                .Distinct()
+                .ToList();
+
             var publications = db.Publications
                 .Include("ContentParts.Resources")
                 .Include("Files.Resources.FileVersion.File")

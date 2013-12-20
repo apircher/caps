@@ -62,6 +62,7 @@ namespace Caps.Web.Mvc.SiteMap
             rootNode.PermanentId = rootNodeEntity.PermanentId;
             rootNode.Entity = rootNodeEntity;
             rootNode.Name = rootNodeEntity.Name.UrlEncode();
+            rootNode.ContentVersion = rootNodeEntity.ContentVersion;
             rootNode.AddResources(rootNodeEntity.Resources.Select(r =>
                 new Tuple<String, CapsSiteMapNodeResource>(r.Language, new CapsSiteMapNodeResource { Title = r.Title, MetaKeywords = r.Keywords, MetaDescription = r.Description })));
 
@@ -93,6 +94,7 @@ namespace Caps.Web.Mvc.SiteMap
                 siteMapNode.PermanentId = entity.PermanentId;
                 siteMapNode.Entity = entity;
                 siteMapNode.Name = entity.Name.UrlEncode();
+                siteMapNode.ContentVersion = entity.ContentVersion;
 
                 if (indexUrlToSiteMapNode.ContainsKey(siteMapNode.Url))
                     return;
@@ -163,7 +165,7 @@ namespace Caps.Web.Mvc.SiteMap
         }
         protected virtual System.Data.Entity.Infrastructure.DbQuery<DbSiteMap> IncludeRelatedEntities(System.Data.Entity.Infrastructure.DbQuery<DbSiteMap> sitemaps)
         {
-            return sitemaps.Include("SiteMapNodes").Include("SiteMapNodes.Resources");
+            return sitemaps.Include("SiteMapNodes").Include("SiteMapNodes.Resources").Include("SiteMapNodes.Content");
         }
 
         void Index(DbSiteMapNode entity, SiteMapNode node)

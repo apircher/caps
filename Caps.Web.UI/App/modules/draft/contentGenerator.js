@@ -6,9 +6,10 @@ define([
     'ko',
     'markdown',
     'infrastructure/urlHelper',
-    'infrastructure/contentReferences'
+    'infrastructure/contentReferences',
+    'infrastructure/contentControls'
 ],
-function (ko, markdown, urlHelper, ContentReferenceManager) {
+function (ko, markdown, urlHelper, ContentReferenceManager, contentControls) {
 
     var crmgr = new ContentReferenceManager({
             replaceFileReference: function (reference, language, context) {
@@ -59,6 +60,7 @@ function (ko, markdown, urlHelper, ContentReferenceManager) {
             return new TemplateContentRow(ko.utils.arrayMap(row.cells, function (cell) {
                 var content = generateLocalizedContentForTemplateCell(draft, cell, language);
                 content = crmgr.replaceReferences(draft, content, language);
+                content = contentControls.replaceContentControls(content);
                 return new TemplateContentCell(cell.name, cell.title, cell.colspan, content);
             }));
         }));

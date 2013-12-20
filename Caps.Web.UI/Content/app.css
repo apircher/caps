@@ -843,6 +843,15 @@ ul.data-list {
                 color:#fff;
             }
 
+.data-list-label {
+    margin-left:23px;
+}
+
+.text-ellipsis {
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
 
 .subnav-fixed-top {
     position:fixed;
@@ -907,6 +916,11 @@ ul.data-list {
 .list-icons > li.selected,
 .list-icons > li:hover {
     border-color:#0088cc;
+}
+
+.caps-ccctag {
+    background:#eee;
+    padding:15px;
 }
 
 /**

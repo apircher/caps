@@ -1,9 +1,10 @@
 ﻿define([
     'ko',
     'infrastructure/contentReferences',
-    'infrastructure/urlHelper'
+    'infrastructure/urlHelper',
+    'infrastructure/contentControls'
 ],
-function (ko, ContentReferenceManager, urlHelper) {
+function (ko, ContentReferenceManager, urlHelper, ContentControls) {
     
     var crmgr = new ContentReferenceManager({
         replaceFileReference: function (reference, language, context) {
@@ -37,7 +38,11 @@ function (ko, ContentReferenceManager, urlHelper) {
                 var cp = publication.getContentPart(templateCell.name);
                 if (cp) {
                     var res = cp.getResource('de');
-                    if (res) return crmgr.replaceReferences(publication, res.Content(), 'de');
+                    if (res) {
+                        var content = crmgr.replaceReferences(publication, res.Content(), 'de');
+                        content = ContentControls.replaceContentControls(content);
+                        return content;
+                    }
                 }
             }
             return '';

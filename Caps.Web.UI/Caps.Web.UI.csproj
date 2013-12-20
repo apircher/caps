@@ -224,6 +224,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Content Include="App\infrastructure\antiForgeryToken.js" />
     <Content Include="App\infrastructure\authentication.js" />
+    <Content Include="App\infrastructure\contentControls.js" />
     <Content Include="App\infrastructure\contentEditing.js" />
     <Content Include="App\infrastructure\contentReferences.js" />
     <Content Include="App\modules\contentfile\viewmodels\fileUploadDialog.js" />
@@ -235,6 +236,8 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Properties\PublishProfiles\caps-pirchersoftware - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\caps-pirchersoftware - Web Deploy.pubxml" />
     <None Include="Scripts\breeze.intellisense.js" />
     <Content Include="Scripts\breeze.debug.js" />
     <Content Include="Scripts\breeze.min.js" />

@@ -275,6 +275,10 @@ function (module, datacontext, ko, app, moment, localization, publicationService
             return selectedItem() && selectedItem().draftId() === self.draftId();
         });
 
+        self.status = ko.computed(function () {
+            return entity.statusTitle();
+        });
+
         self.scrollIntoViewRequest = new interaction.InteractionRequest('ScrollIntoView');
     }
 
