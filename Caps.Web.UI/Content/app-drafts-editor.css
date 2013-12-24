@@ -1,0 +1,181 @@
+﻿
+/**
+ * Draft Editor Styles
+ */
+#drafts-editor {
+    padding-top: 57px;
+}
+
+.drafts-editor-nav {
+    height:57px;
+    background:#fff;
+    border-bottom:1px solid #ddd;
+}
+
+.drafts-editor-pane {
+    padding-top:15px;
+}
+
+.left-fixed-sidebar.draftfiles-sidebar {
+    top:107px;
+}
+
+.draftfiles-sidebar-nav {
+    padding:5px 3px;
+}
+
+.block-content-subnav {
+    padding:0 3px 5px;
+}
+
+/**
+ * Draft Template
+ */
+.draft-template-container {
+    background:#eee;
+    margin:0 -15px;
+}
+
+.draft-template-row {
+    position:relative;
+    overflow:hidden;
+    height:auto;
+}
+
+.draft-template-part {
+    padding:15px;
+}
+
+    .draft-template-part > div {
+        position:relative;
+        width:100%;
+        height:100%;
+        background:#fff;
+        box-shadow: rgba(0,0,0,0.3) 3px 3px 5px;
+        box-sizing:padding-box;
+        padding:1em;
+        min-height:160px;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        border:1px solid transparent;
+        cursor:default;
+    }
+        .draft-template-part > div > a {
+            font-weight:bold;
+        }
+
+.draft-template-part:hover > div {
+    border:1px solid #0094ff;
+}
+
+.draft-template-nav {
+    position:relative;
+    overflow:hidden;
+    padding:15px;
+}
+
+/**
+ * Content Editor
+ */
+.content-editor {
+    overflow:hidden;
+    height:100%;
+}
+
+    .content-editor > textarea {
+        height:100%;
+        box-sizing:border-box;
+    } 
+
+.content-toolbar {
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:38px;
+}
+
+.container-toolbar-top {
+    position:relative;
+    padding-top:38px;
+}
+
+.contentpart-nav {
+    position:relative;
+    overflow:hidden;
+    padding:5px 0 0;
+}
+
+/**
+ * Draft Preview
+ */
+.draft-preview {
+}
+
+.draft-preview-content {
+    border-top:1px solid #eee;
+    border-bottom:1px solid #eee;
+}
+
+.draft-preview-content.sitemap-index {
+    border-top:0;
+}
+
+.draft-preview-panel {
+    padding:15px 0;
+}
+
+.draft-preview-panel + .draft-preview-panel {
+    padding-top:0;
+}
+
+    .draft-preview .row {
+        border-bottom:1px solid #fff;
+    }
+    .draft-preview .row:last-of-type {
+        border-bottom:0;
+    }
+        .draft-preview .row > div {
+            border-right:1px solid #fff;
+        }
+
+        .draft-preview .row > div:last-of-type {
+            border-right:0;
+        }
+
+    .draft-preview pre {
+        border:0;
+        border-radius:0;
+        margin:0 0 10px;
+        padding:0;
+        font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-size:14px;
+        background:transparent;
+    }
+
+    .template-preview-cell {
+        overflow:hidden;
+        padding:15px 0;
+    }
+
+
+@media (max-width: 992px) {
+
+    #drafts-editor {
+        padding-top:0;
+    }
+    
+        #drafts-editor .drafts-editor-nav {
+            height: auto;
+        }
+
+    .content-editor > textarea {
+        min-height:350px;
+    }
+
+
+    .draft-template-part > div {
+        min-height:150px;
+    }
+    
+}

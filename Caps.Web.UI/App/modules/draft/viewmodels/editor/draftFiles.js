@@ -2,9 +2,11 @@
     'durandal/app',
     '../../module',
     'ko',
-    '../editorModel'
+    './editorModel',
+    'infrastructure/treeViewModel',
+    'infrastructure/serverUtil'
 ],
-function (app, module, ko, EditorModel) {
+function (app, module, ko, EditorModel, TreeModel, server) {
 
     var fileDeterminations = [
         {
@@ -22,58 +24,204 @@ function (app, module, ko, EditorModel) {
     ];
 
     function DraftFiles(editor) {
-        var self = this;
+        var self = this,
+            fileGroups = ko.observableArray();
+
         self.name = 'DraftFiles';
         self.editor = editor;
-        self.groups = ko.observableArray(); 
+        self.server = server;
         self.determinations = ko.observableArray(fileDeterminations);
+        self.tree = ko.observable();
 
         self.editor.entity().Files.subscribe(function () {
             refreshFileGroups();
+            self.tree().refresh();
+        });
+
+        self.groupNames = ko.computed(function () {
+            return ko.utils.arrayMap(fileGroups(), function (fileGroup) { return fileGroup.name(); });
+        });
+
+        self.sortedFileGroups = ko.computed(function () {
+            var groups = fileGroups();
+            groups.sort(function (a, b) { return a.name().toLowerCase().localeCompare(b.name().toLowerCase()); });
+            return groups;
         });
         
         self.selectFiles = function () {
             app.selectFiles({
                 module: module,
-                title: 'Dateien zu Entwurf "' + editor.entity().Name() + '" hinzufügen'
+                title: 'Anhänge hinzufügen'
             }).then(function (result) {
                 if (result.dialogResult) {
+                    var groupName = findSelectedGroupName();
                     ko.utils.arrayForEach(result.selectedFiles, function (file) {
-                        editor.createDraftFile(file);
+                        editor.createDraftFile(file, groupName);
                     });
                 }
             });
         };
 
         self.addGroup = function () {
-            self.groups.push(new EditorModel.DraftFileGroup(self.editor.entity(), 'Neue Gruppe'));
+            var name = uniqueGroupName('Neue Gruppe');
+            fileGroups.push(createFileGroup(name));
+            self.tree().refresh();
+            var groupNode = self.tree().findNodeByKey(name);
+            if (groupNode) {
+                groupNode.selectNode();
+            }
+
+            function uniqueGroupName(baseName) {
+                var existingItems = ko.utils.arrayFilter(self.groupNames(), function (groupName) {
+                    var rx = new RegExp('^(' + baseName + ')(\\s+\\(\\d+\\))?.*$', 'gi');
+                    return rx.test(groupName);
+                });
+
+                if (!existingItems.length) return baseName;
+                return baseName + ' (' + existingItems.length + ')';
+            }
+        };
+
+        self.moveSelectedNodeUp = function () {
+            var n = self.tree().selectedNode();
+            if (n.moveUp) n.moveUp();
+        };
+
+        self.moveSelectedNodeDown = function () {
+            var n = self.tree().selectedNode();
+            if (n.moveDown) n.moveDown();
         };
 
         self.removeFile = function (file) {
-            file.draftFile.setDeleted();
+            var btnOk = 'Entfernen', btnCancel = 'Abbrechen';
+            app.showMessage('Soll der Anhang ' + file.entity().Name() + ' wirklich entfernt werden?', 'Anhang entfernen', [btnOk, btnCancel]).then(function (dialogResult) {
+                if (dialogResult === btnOk) {
+                    file.detachFromParentNode();
+                    file.entity().setDeleted();
+                }
+            });
         };
 
-        function initializeGroups() {
-            var draft = editor.entity(),
-                distinctGroupNames = editor.entity().distinctFileGroupNames();
-            self.groups(ko.utils.arrayMap(distinctGroupNames, function (groupName) {
-                return new EditorModel.DraftFileGroup(draft, groupName);
-            }));
+        self.contentTemplateName = function () {
+            if (!self.tree() || !self.tree().selectedNode())
+                return '';
+            var n = self.tree().selectedNode();
+            return n.nodeType == 'group' ? 'draftfiles-group-template' : 'draftfiles-file-template';
+        };
+
+        self.navigateToFile = function () {
+            if (self.tree() && self.tree().selectedNode() && self.tree().selectedNode().nodeType === 'file') {
+                var vm = self.tree().selectedNode(),
+                    file = vm.resource.FileVersion().File();
+                app.trigger('caps:contentfile:navigateToFile', file);
+            }
+        };
+
+        function initializeFileGroups() {
+            var distinctGroupNames = editor.entity().distinctFileGroupNames();
+            fileGroups(ko.utils.arrayMap(distinctGroupNames, createFileGroup));
         }
 
         function refreshFileGroups() {
-            var draft = editor.entity(),
-                distinctGroupNames = editor.entity().distinctFileGroupNames(),
-                newGroupNames = ko.utils.arrayFilter(distinctGroupNames, function (s) { return !fileGroupExists(s); }),
-                newGroups = ko.utils.arrayMap(newGroupNames, function (groupName) { return new EditorModel.DraftFileGroup(draft, groupName); });
-            newGroups.forEach(function (g) { self.groups.push(g); });
+            var distinctGroupNames = editor.entity().distinctFileGroupNames();
+            var newGroupNames = ko.utils.arrayFilter(distinctGroupNames, function (groupName) {
+                return !hasGroup(groupName);
+            });
+            ko.utils.arrayForEach(newGroupNames, function (groupName) {
+                fileGroups.push(createFileGroup(groupName));
+            });
+
+            function hasGroup(groupName) {
+                return ko.utils.arrayFirst(fileGroups(), function (g) { return g.name().toLowerCase() === groupName.toLowerCase(); }) ? true : false;
+            }
         }
 
-        function fileGroupExists(groupName) {
-            return ko.utils.arrayFirst(self.groups(), function (g) { return g.groupName().toLowerCase() === groupName.toLowerCase(); });
+        function initializeTree() {
+            var t = new TreeModel.TreeViewModel(),
+                draft = editor.entity();
+
+            t.keyName('Id');
+            t.createNode = function () {
+                var node = new TreeModel.TreeNodeViewModel(t);
+                node.templateName = ko.observable();
+                return node;
+            };
+
+            t.refresh = function () {
+                var ts;
+                if (self.tree()) ts = self.tree().saveState();
+                t.clear();
+                ko.utils.arrayForEach(self.sortedFileGroups(), function (fileGroup) {
+                    var groupNode = createGroupNode(t, fileGroup);
+                    t.root.addChildNode(groupNode);
+                    var groupFiles = draft.filesByGroupName(fileGroup.name());
+                    ko.utils.arrayForEach(groupFiles, function (f) {
+                        groupNode.addChildNode(createFileNode(t, f));
+                    });
+                });
+                if (ts && self.tree()) self.tree().restoreState(ts);
+            };
+
+            self.tree(t);
         }
 
-        initializeGroups();
+        function createGroupNode(tree, fileGroup) {
+            var groupNode = tree.createNode();
+            groupNode.title = ko.observable(fileGroup.name());
+            groupNode.nodeType = 'group';
+            groupNode.entity(fileGroup);
+            groupNode.templateName = ko.computed(function () {
+                return groupNode.title().length ? 'draftfilegroup-label' : 'draftfilegroup-label-empty';
+            });
+            groupNode.groupName = ko.computed({
+                read: function () {
+                    return groupNode.entity().name();
+                },
+                write: function (newValue) {
+                    if (newValue === fileGroup.name()) return;
+
+                    groupNode.entity().name(newValue);
+                    groupNode.childNodes().forEach(function (n) { n.entity().Group(newValue); });
+                    tree.refresh();
+                }
+            });
+
+            return groupNode;
+        }
+
+        function createFileNode(tree, file) {
+            var fileNode = new EditorModel.DraftFileNode(file, file.getOrCreateResource('de'), tree);
+            fileNode.title = file.Name();
+            fileNode.templateName = ko.observable('draftfile-label');
+            return fileNode;
+        }
+
+        function findSelectedGroupName() {
+            if (!self.tree() || !self.tree().selectedNode())
+                return '';
+            var node = self.tree().selectedNode();
+            if (node.nodeType === 'group')
+                return node.title();
+
+            return node.parentNode().title();
+        }
+
+        function createFileGroup(groupName) {
+            var g = {
+                name: ko.observable(groupName)
+            };
+            g.Id = ko.computed(function () { return g.name(); });
+            return g;
+        }
+
+        initializeFileGroups();
+        initializeTree();
+
+        if (self.tree()) {
+            self.tree().refresh();
+            self.tree().expandRootNodes();
+            self.tree().selectRootNode();
+        }
     }
 
     return DraftFiles;

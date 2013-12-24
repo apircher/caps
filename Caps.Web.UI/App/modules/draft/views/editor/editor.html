@@ -1,12 +1,11 @@
-﻿<div id="drafts-editor" class="app-page bottom-fixed-navbar-container">
+﻿<div id="drafts-editor" class="app-page bottom-fixed-navbar-container subnav-fixed-top-container">
+
+    <div class="toolbar subnav-fixed-top drafts-editor-nav" data-bind="compose: currentNavigation"></div>
 
     <div class="container-fullwidth">
         <div class="row">
-            <div class="col-md-8 col-lg-9">
+            <div class="col-md-12 drafts-editor-pane">
                 <div data-bind="compose: currentContent"></div>
-            </div>
-            <div class="col-md-4 col-lg-3 draft-navigation">
-                <div data-bind="compose: currentNavigation"></div>
             </div>
         </div>
     </div>        
@@ -18,10 +17,10 @@
                     <a href="#" data-bind="click: navigateBack"><span><i class="fa fa-arrow-left"></i> Alle Inhalte</span></a>
                 </li>
                 <li>
-                    <a href="#" data-bind="click: saveChanges"><span><i class="fa fa-save"></i> Speichern</span></a>
+                    <a href="#" data-bind="click: saveChanges"><span><i class="fa fa-save"></i> Inhalt speichern</span></a>
                 </li>
                 <li>
-                    <a href="#" data-bind="click: deleteDraft"><span><i class="fa fa-times"></i> Löschen</span></a>
+                    <a href="#" data-bind="click: deleteDraft"><span><i class="fa fa-times"></i> Inhalt löschen</span></a>
                 </li>
             </ul>
         </div>

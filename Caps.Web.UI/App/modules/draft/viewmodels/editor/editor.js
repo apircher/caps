@@ -4,20 +4,20 @@
 define([
     'durandal/app',
     'durandal/system',
-    '../module',
-    '../datacontext',
-    '../entities',
+    '../../module',
+    '../../datacontext',
+    '../../entities',
     'entityManagerProvider',
     'breeze',
     'ko',
     'Q',
-    './editor/navigation',
-    './editor/draftTemplate',
-    './editor/draftProperties',
-    './editor/draftFiles',
-    './editor/contentPartEditor',
-    './editor/templateEditor',
-    './editor/draftNotes',
+    './navigation',
+    './draftTemplate',
+    './draftProperties',
+    './draftFiles',
+    './contentPartEditor',
+    './templateEditor',
+    './draftNotes',
     './editorModel',
     'authentication'
 ],
@@ -45,6 +45,7 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
         self.template = ko.observable();
         self.isNewDraft = ko.observable(false);
         self.draftStates = DraftsModel.supportedDraftStates;
+        self.lastContentPart = ko.observable();
 
         self.activate = function (draftIdOrTemplateName, queryString) {
             return system.defer(function (dfd) {
@@ -72,6 +73,14 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
         self.showEditorMain = function () {
             draftTemplateVM = draftTemplateVM || new DraftTemplate(self);
             self.currentContent(draftTemplateVM);
+            self.lastContentPart(null);
+        };
+
+        self.showLayoutArea = function () {
+            if (self.lastContentPart())
+                self.showContentPartEditor(self.lastContentPart());
+            else
+                self.showEditorMain();
         };
 
         self.showFiles = function () {
@@ -86,7 +95,10 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
 
         self.showContentPartEditor = function (contentPart) {
             var cpe = findContentPartEditor(contentPart);
-            if (cpe) self.currentContent(cpe);
+            if (cpe) {
+                self.currentContent(cpe);
+                self.lastContentPart(contentPart);
+            }
         };
 
         self.showTemplateEditor = function () {
@@ -100,10 +112,6 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
         };
 
         self.navigateBack = function () {
-            if (self.currentContent() && (self.currentContent().name === 'ContentPartEditor' || self.currentContent().name === 'TemplateEditor')) {
-                self.showEditorMain();
-                return;
-            }
             self.showDraftsIndex();
         };
 
@@ -155,13 +163,14 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
             return cp;
         };
 
-        self.createDraftFile = function (file) {
+        self.createDraftFile = function (file, groupName) {
             var query = breeze.EntityQuery.from('Files').where('Id', '==', file.Id()).expand('Versions.File');
             return manager.executeQuery(query).then(function (data) {
                 var dbFile = data.results[0];
 
                 var draftFile = manager.createEntity('DraftFile', { Name: file.FileName() });
                 if (file.isImage()) draftFile.Determination('Picture');
+                if (groupName && groupName.length) draftFile.Group(groupName);
                 manager.addEntity(draftFile);
 
                 var resource = manager.createEntity('DraftFileResource', { Language: 'de', DbFileVersionId: dbFile.latestVersion().Id() });

@@ -1,26 +1,31 @@
-﻿<form role="form" class="form-horizontal">
-    <div class="form-group">
-        <label for="draftName" class="col-md-3 col-lg-2">Name</label>
-        <div class="col-md-7 col-lg-8">
-            <input type="text" data-bind="value: editor.entity().Name" class="form-control" id="draftName" />
+﻿
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label class="col-md-5 col-lg-4">Erstellt von</label>
+            <p class="form-static-control col-md-7 col-lg-8"><span data-bind="text: createdBy"></span> <span data-bind="text: createdFromNow, attr: { title: createdAt }"></span></p>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-5 col-lg-4">Letzte Änderung</label>
+            <p class="form-static-control col-md-7 col-lg-8"><span data-bind="text: modifiedBy"></span> <span data-bind="text: modifiedFromNow, attr: { title: modifiedAt }"></span></p>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-5 col-lg-4">Id</label>
+            <p class="form-static-control col-md-7 col-lg-8"><span data-bind="text: editor.entity().Id"></span></p>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-5 col-lg-4">Version</label>
+            <p class="form-static-control col-md-7 col-lg-8"><span data-bind="text: editor.entity().Version"></span></p>
         </div>
     </div>
 
-    <div class="form-group">
-        <label for="draftStatus" class="col-md-3 col-lg-2">Status</label>
-        <div class="col-md-7 col-lg-8">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="draftStatus" class="control-label">Status</label>
             <select class="form-control" data-bind="options: editor.draftStates, optionsValue: 'value', optionsText: 'title', value: editor.entity().Status" id="draftStatus"></select>
         </div>
     </div>
-
-    <div class="form-group">
-        <label class="col-md-3 col-lg-2">Erstellt von</label>
-        <p class="form-static-control col-md-9 col-lg-10"><span data-bind="text: createdBy"></span> <span data-bind="text: createdFromNow, attr: { title: createdAt }"></span></p>
-    </div>
-
-    <div class="form-group">
-        <label class="col-md-3 col-lg-2">Letzte Änderung</label>
-        <p class="form-static-control col-md-4 col-lg-5"><span data-bind="text: modifiedBy"></span> <span data-bind="text: modifiedFromNow, attr: { title: modifiedAt }"></span></p>
-        <p class="form-static-control col-md-5 col-lg-5"><strong>Id</strong> <span data-bind="text: editor.entity().Id"></span> v.<span data-bind="text: editor.entity().Version"></span></p>
-    </div>
-</form>
+</div>

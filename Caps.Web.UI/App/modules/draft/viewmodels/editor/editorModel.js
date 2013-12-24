@@ -1,4 +1,77 @@
-﻿define(['ko'], function (ko) {
+﻿define(['ko', 'infrastructure/treeViewModel'], function (ko, TreeModel) {
+
+    /**
+     * DraftFileNode
+     */
+    function DraftFileNode(draftFile, resource, tree, parentNode) {
+        var self = this,
+            node = new TreeModel.TreeNodeViewModel(tree, parentNode);
+
+        node.entity(draftFile);
+        node.language = resource.Language();
+        node.resource = resource;
+        node.nodeType = 'file';
+
+        node.fallbackResource = ko.computed(function () {
+            return draftFile.getResource('de');
+        });
+
+        node.embedSrc = ko.computed(function () {
+            if (node.resource && node.resource.FileVersion())
+                return 'caps://content-file/' + escape(node.resource.FileVersion().File().FileName());
+            return '';
+        });
+
+        node.moveUp = function () {
+            var orderedFiles = node.entity().Draft().orderedFiles().slice(0),
+                index = orderedFiles.indexOf(node.entity());
+
+            if (index <= 0)
+                return;
+
+            orderedFiles.splice(index, 1);
+            orderedFiles.splice(index - 1, 0, node.entity());
+
+            setRankings(orderedFiles);
+            tree.refresh();
+        };
+
+        node.moveDown = function () {
+            var orderedFiles = node.entity().Draft().orderedFiles().slice(0),
+                index = orderedFiles.indexOf(node.entity());
+
+            if (index >= orderedFiles.length - 1)
+                return;
+
+            orderedFiles.splice(index, 1);
+            orderedFiles.splice(index + 1, 0, node.entity());
+
+            setRankings(orderedFiles);
+            tree.refresh();
+        };
+
+        node.showGroup = ko.observable(false);
+        node.selectGroup = function () {
+            node.showGroup(true);
+        };
+        node.cancelSelectGroup = function () {
+            node.showGroup(false);
+        };
+
+        node.groupNameChanged = function () {
+            tree.refresh();
+        };
+
+        function setRankings(files) {
+            for (var i = 0; i < files.length; i++) {
+                if (files[i].Ranking() !== i + 1)
+                    files[i].Ranking(i + 1);
+            }
+        }
+
+        return node;
+    }
+    DraftFileNode.prototype = new TreeModel.TreeNodeViewModel();
 
     /*
      * DraftFileViewModel
@@ -66,7 +139,7 @@
         self.draft = ko.observable(draft);
         self.groupName = ko.observable(groupName);
         self.groupFilter = ko.observable(groupName);
-        self.isExpanded = ko.observable(false);
+        self.isExpanded = ko.observable(true);
         self.toggleIsExpanded = function () { self.isExpanded(!self.isExpanded()); };
 
         self.groupName.subscribe(function (newValue) {
@@ -105,8 +178,36 @@
     DraftFileGroup.prototype.refresh = function () {
     };
 
+    /**
+     * ContentPartViewModel
+     */
+    function ContentPartViewModel(contentPart, editor, title) {
+        var self = this;
+
+        title = title || findTitle();
+
+        self.contentPart = contentPart;
+        self.title = ko.observable(title);
+
+        self.edit = function () {
+            editor.showContentPartEditor(contentPart);
+        };
+
+        function findTitle() {
+            if (editor.entity()) {
+                var template = editor.entity().template();
+                var cell = template.findCell(contentPart.Name());
+                if (cell) return cell.title;
+            }
+            return self.contentPart.Name();
+        }
+    }
+
     return {
         DraftFileViewModel: DraftFileViewModel,
-        DraftFileGroup: DraftFileGroup
+        DraftFileGroup: DraftFileGroup,
+        DraftFileNode: DraftFileNode,
+
+        ContentPartViewModel: ContentPartViewModel
     };
 });

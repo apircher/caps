@@ -1,6 +1,9 @@
-﻿<div class="content-editor" data-bind="forceViewportHeight: { spacers: '.navbar-fixed-top, .contentpart-nav', minWidth: 992 }">
+﻿<div class="content-editor" data-bind="forceViewportHeight: { spacers: '.contentpart-nav', minWidth: 992 }">
     <textarea class="form-control" data-bind="value: templateContent"></textarea>
 </div>
 <div class="contentpart-nav">
-    Inhaltsvorlage
+    <div class="pull-right">
+        <strong class="space-right">Layoutvorlage</strong>
+    </div>
+    <a href="#" data-bind="click: editor.showEditorMain"><i class="fa fa-columns"></i> Layoutübersicht</a>
 </div>

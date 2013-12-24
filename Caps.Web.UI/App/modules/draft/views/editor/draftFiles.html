@@ -1,58 +1,34 @@
 ﻿
-<div class="navbar navbar-default">
-    <div class="navbar-panel pull-left">
-        <ul class="nav navbar-nav">
-            <li>
-                <a href="#" data-bind="click: selectFiles"><span><i class="fa fa-plus"></i> Dateien hinzufügen</span></a>
-            </li>
-            <li>
-                <a href="#" data-bind="click: addGroup"><span><i class="fa fa-plus"></i> Gruppe hinzufügen</span></a>
-            </li>
-        </ul>
+<div class="row">
+    <div class="col-md-2 left-fixed-sidebar draftfiles-sidebar">
+        <div data-bind="if: tree(), forceViewportHeight: { spacers: '.draftfiles-sidebar-nav', minWidth: 992 }" class="panel-scroll-vh">
+            <!-- ko template: { name: 'draftfile-node-template', data: tree().rootNodes() } --><!-- /ko -->
+        </div>
+        <div class="draftfiles-sidebar-nav">
+            <ul class="list-inline">
+                <li><a href="#" data-bind="click: addGroup" title="Neue Gruppe"><i class="fa fa-folder"></i> Neu</a></li>
+                <!-- ko if: tree() && tree().selectedNode() && tree().selectedNode().nodeType === 'file' -->
+                <li><a href="#" title="Nach oben" data-bind="click: moveSelectedNodeUp"><i class="fa fa-arrow-up"></i></a></li>
+                <li><a href="#" title="Nach unten" data-bind="click: moveSelectedNodeDown"><i class="fa fa-arrow-down"></i></a></li>
+                <!-- /ko -->
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-offset-2 col-md-10">
+        <!-- ko if: tree().selectedNode() -->
+        <!-- ko template: { name: contentTemplateName, data: tree().selectedNode() } --><!-- /ko -->
+        <!-- /ko -->
+        <div data-bind="if: !tree().selectedNode()">
+            <a href="#" data-bind="click: selectFiles"><span><i class="fa fa-plus"></i> Anhänge hinzufügen</span></a>
+        </div>
     </div>
 </div>
-
-<section>
-    <div data-bind="foreach: groups">
-        <label>Gruppe</label>
-        <div class="form-group">
-            <input type="text" data-bind="value: groupName" class="form-control input-lg" />
-        </div>
-        <div>
-            <p>
-                <a href="#" data-bind="click: toggleIsExpanded, text: isExpanded() ? 'Dateien ausblenden' : 'Dateien einblenden'">Dateien anzeigen</a>
-            </p>
-        </div>
-        <!-- ko if: isExpanded -->
-        <!-- ko foreach: sortedFiles -->
-        <div class="row">
-            <div class="col-md-3">
-                <div class="thumbnail-container">
-                    <a class="thumbnail" data-bind="if: resource.FileVersion()">
-                        <!-- ko template: { name: 'draftFiles-dbfile-icon' } --><!-- /ko -->
-                    </a>
-                    <div class="thumbnail-remove">
-                        <a href="#" data-bind="click: selectGroup"><i class="fa fa-arrows"></i></a>
-                        <a href="#" data-bind="click: moveUp"><i class="fa fa-arrow-up"></i></a>
-                        <a href="#" data-bind="click: moveDown"><i class="fa fa-arrow-down"></i></a>
-                        <a href="#" data-bind="click: $parents[1].removeFile"><i class="fa fa-times"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-9">
-                <!-- ko template: { name: 'dbfile-controls' } --><!-- /ko -->
-            </div>
-        </div>
-        <!-- /ko -->
-        <!-- /ko -->
-    </div>
-</section>
 
 <script type="text/html" id="draftFiles-dbfile-icon">
     <!-- ko with: resource.FileVersion() -->
     
     <!-- ko if: File().isImage && File().isImage() -->
-    <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': 'DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: File().FileName, alt: File().FileName }, lazyImage: true" />
+    <img data-bind="attr: { 'src': 'DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', alt: File().FileName }" />
     <!-- /ko -->
     <!-- ko if: File().isImage && !File().isImage() -->
     <span data-bind="attr: { title: File().FileName }"><i class="fa fa-file fa-4x"></i></span>
@@ -61,48 +37,136 @@
     <!-- /ko -->
 </script>
 
-<script type="text/html" id="dbfile-controls">
-    <form role="form" class="form-horizontal">
-        <div class="form-group">
-            <label class="col-md-2 control-label">Titel</label>
-            <div class="col-md-10">
-                <input type="text" class="form-control" data-bind="value: resource.Title" />
+<script type="text/html" id="draftfile-node-template">
+    <ul data-bind="foreach: $data" class="list-unstyled tree-branch">
+        <li data-bind="if: !(entity() && entity().entityAspect && entity().entityAspect.entityState.isDeleted())">
+            <div class="tree-node" data-bind="css: { 'tree-node-selected': isSelected }">
+                <div class="tree-node-toggle pull-left">
+                    <a href="#" data-bind="click: toggleIsExpanded">
+                        <i class="fa fa-fw" data-bind="css: { 'fa-plus': !isExpanded() && hasChildNodes(), 'fa-minus': isExpanded() && hasChildNodes() }"></i>
+                    </a>
+                </div>
+                <div class="tree-node-label" data-bind="click: selectNode">
+                    <!-- ko template: { name: templateName } --><!-- /ko -->
+                </div>
+            </div>
+            <!-- ko if: isExpanded() && hasChildNodes() -->
+            <!-- ko template: { name: 'draftfile-node-template', data: childNodes() } --><!-- /ko -->
+            <!-- /ko -->
+        </li>
+    </ul>
+</script>
+
+<script type="text/html" id="draftfilegroup-label">
+    <i class="fa fa-fw" data-bind="css: { 'fa-folder-open-o': isExpanded(), 'fa-folder-o': !isExpanded() }"></i>
+    <span data-bind="text: entity().name"></span>
+</script>
+
+<script type="text/html" id="draftfilegroup-label-empty">
+    <i class="fa fa-fw" data-bind="css: { 'fa-folder-open-o': isExpanded(), 'fa-folder-o': !isExpanded() }"></i>
+    <em>Unbenannt</em>
+</script>
+
+<script type="text/html" id="draftfile-label">
+    <i class="fa fa-file-o fa-fw"></i> <span data-bind="text: title"></span>
+</script>
+
+<script type="text/html" id="draftfiles-group-template">
+    <div class="form-group">
+        <input type="text" data-bind="value: groupName" class="form-control input-lg" placeholder="Name der Gruppe" />
+    </div>
+
+    <div class="block-content-subnav">
+        <p>
+            <a href="#" data-bind="click: $parent.selectFiles"><span><i class="fa fa-plus"></i> Anhänge hinzufügen</span></a>
+        </p>
+    </div>
+
+    <div class="row draftfile-thumbnails" data-bind="foreach: childNodes">
+        <div class="col-xs-4 col-md-3 col-lg-2 thumbnails-fixed-size">
+            <div class="thumbnail-container">
+                <a class="thumbnail" data-bind="if: resource.FileVersion(), click: selectNode">
+                    <!-- ko template: { name: 'draftFiles-dbfile-icon' } --><!-- /ko -->
+                </a>
+                <div class="thumbnail-label">
+                    <div class="pull-right">
+                        <a class="btn-link" data-bind="click: $root.removeFile, clickBubble: false, attr: { title: entity().Name() + ' entfernen' }"><i class="fa fa-times"></i></a>
+                    </div>
+                    <span class="thumbnail-label-content" data-bind="text: entity().Name, attr: { title: entity().Name }"></span>
+                </div>
             </div>
         </div>
+    </div>
+</script>
 
-        <div class="form-group">
-            <label class="col-md-2 control-label">Beschreibung</label>
-            <div class="col-md-10">
-                <textarea data-bind="value: resource.Description" class="form-control" />
-            </div>
+<script type="text/html" id="draftfiles-file-template">
+    <div class="row">
+        <div class="col-md-8" data-bind="forceViewportHeight: { minWidth: 992 }">
+            <!-- ko if: resource.FileVersion() -->
+            <!-- ko template: { name: 'draftFiles-dbfile-preview' } --><!-- /ko -->
+            <!-- /ko -->
         </div>
+        <div class="col-md-4">
+            <form role="form">
+                <div class="form-group">
+                    <label class="control-label">Titel</label>
+                    <input type="text" class="form-control" data-bind="value: resource.Title" />
+                </div>
 
-        <!--<div class="form-group">
-            <label class="col-md-2">Akkreditierung</label>
-            <div class="col-md-10">
-                <input type="text" class="form-control" data-bind="value: resource.Credits" />
-            </div>
-        </div>-->
+                <div class="form-group">
+                    <label class="control-label">Beschreibung</label>
+                    <textarea data-bind="value: resource.Description" class="form-control" rows="3" />
+                </div>
 
-        <div class="form-group">
-            <label class="col-md-2 control-label">Bestimmung</label>
-            <div class="col-md-4">
-                <select class="form-control" data-bind="options: $parents[1].determinations, optionsText: 'title', optionsValue: 'name', value: draftFile.Determination, optionsCaption: 'Bitte wählen...'"></select>
-            </div>
-            <!--<label class="col-md-2 control-label">Gruppe</label>
-            <div class="col-md-4">
-                <input type="text" class="form-control" data-bind="value: draftFile.Group" />
-            </div>-->
-            <div class="col-md-6">
-                <p class="form-control-static" data-bind="text:embedSrc"></p>
-            </div>
+                <div class="form-group">
+                    <label class="control-label">Verwendung</label>
+                    <select class="form-control" data-bind="options: $parent.determinations, optionsText: 'title', optionsValue: 'name', value: entity().Determination, optionsCaption: 'Bitte wählen...'"></select>
+                </div>
+
+                <!-- ko if: showGroup -->
+                <div class="form-group">
+                    <label class="control-label">In Ordner verschieben <a href="#" class="space-left" data-bind="click: cancelSelectGroup" title="Abbrechen"><i class="fa fa-times-circle"></i></a></label>
+                    <select class="form-control" data-bind="options: $parent.groupNames, value: entity().Group, optionsCaption: 'Bitte wählen...', event: { change: groupNameChanged }"></select>
+                </div>
+                <!-- /ko -->
+
+                <ul class="list-unstyled">
+                    <!-- ko if: !showGroup() -->
+                    <li>                        
+                        <a href="#" data-bind="click: selectGroup"><i class="fa fa-arrows fa-fw"></i> In Ordner verschieben</a>
+                    </li>                    
+                    <!-- /ko -->
+                    <li>
+                        <a href="#" data-bind="click: $parent.removeFile"><i class="fa fa-times fa-fw"></i> Anhang entfernen</a>
+                    </li>
+                </ul>
+                <ul class="list-unstyled">
+                    <li>
+                        <a href="#" data-bind="attr: { href: 'DbFileContent/Inline/' + resource.FileVersion().Id() }" target="_blank"><i class="fa fa-external-link fa-fw"></i> Anhang öffnen</a>
+                    </li>
+                    <li>
+                        <a href="#" data-bind="attr: { href: 'DbFileContent/Download/' + resource.FileVersion().Id() }"><i class="fa fa-download fa-fw"></i> Anhang herunterladen</a>
+                    </li>
+                    <li>
+                        <a href="#" data-bind="click: $parent.navigateToFile"><i class="fa fa-arrow-right fa-fw"></i> Zu Datei wechseln</a>
+                    </li>
+                </ul>
+            </form>
         </div>
+    </div>
+</script>
 
-        <div class="form-group" data-bind="if: showGroup">
-            <label class="col-md-2 control-label">Gruppe</label>
-            <div class="col-md-4">
-                <select class="form-control" data-bind="options: $parents[1].groups, optionsValue: 'groupName', optionsTitle: 'groupName', value: draftFile.Group, optionsCaption: 'Bitte wählen...'"></select>
-            </div>
-        </div>
-    </form>
+<script type="text/html" id="draftFiles-dbfile-preview">
+    <!-- ko with: resource.FileVersion() -->
+    <!-- ko if: File().isImage && File().isImage() -->
+    <div class="file-preview image-preview" data-bind="stretchLineHeight: true">
+        <img data-bind="attr: { src: $root.server.mapPath('~/DbFileContent/Inline/' + Id() + '?h=' + Hash()) }" />
+    </div>
+    <!-- /ko -->
+    <!-- ko if: File().isImage && !File().isImage() -->
+    <div class="file-preview unknown-preview">
+        <span><i class="fa fa-file fa-5x"></i></span>
+    </div>
+    <!-- /ko -->
+    <!-- /ko -->
 </script>

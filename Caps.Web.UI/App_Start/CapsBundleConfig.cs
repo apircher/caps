@@ -17,8 +17,10 @@ namespace Caps.Web.UI.App_Start
               new StyleBundle("~/Content/css")
                 .Include("~/Content/durandal.css")
                 .Include("~/Content/app.css")
+                .Include("~/Content/app-drafts-editor.css")
                 .Include("~/Content/ie10mobile.css")
                 .Include("~/Content/toastr.css")
+                .Include("~/Content/typeahead.css")
               );
 
             bundles.Add(
@@ -36,6 +38,7 @@ namespace Caps.Web.UI.App_Start
                 .Include("~/Scripts/Markdown.Editor.js")
                 .Include("~/Scripts/typeahead.js")
                 .Include("~/Scripts/knockout.custom-bindings.js")
+                .Include("~/Scripts/string-extensions.js")
             );
         }
 

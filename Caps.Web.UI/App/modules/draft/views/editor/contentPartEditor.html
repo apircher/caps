@@ -1,11 +1,10 @@
 ﻿<div data-bind="forceViewportHeight: { spacers: '.contentpart-nav', minWidth: 992 }">
-    <!--<textarea class="form-control" data-bind="value: resource.Content"></textarea>-->
-
     <!-- ko compose: contentEditor --><!-- /ko -->
 </div>
 <div class="contentpart-nav">
     <div class="pull-right">
+        <strong data-bind="text: title" class="space-right"></strong> 
         <select data-bind="options: contentTypes, optionsText: 'title', optionsValue: 'value', value: contentPart.ContentType"></select>
     </div>
-    Inhalt: <span data-bind="text: title"></span>
+    <a href="#" data-bind="click: editor.showEditorMain"><i class="fa fa-columns"></i> Layoutübersicht</a>
 </div>

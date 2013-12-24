@@ -30,6 +30,12 @@ function (moduleFactory, routerFactory, model, app) {
             FileSelectionDialog.install();
         });
     });
+
+    app.on('caps:contentfile:navigateToFile', function (file) {
+        if (file) {
+            module.router.navigate('#files/detail/' + file.Id());
+        }
+    });
                 
     return module;
 });

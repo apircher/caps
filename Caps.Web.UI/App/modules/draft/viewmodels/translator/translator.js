@@ -3,16 +3,16 @@
  */
 define([
     'durandal/app',
-    '../module',
+    '../../module',
     'ko',
     'entityManagerProvider',
     'breeze',
     'Q',
-    './translator/navigation',
-    './translator/contentPartEditor',
-    './translator/draftFiles',
-    './translator/draftProperties',
-    './editorModel',
+    './navigation',
+    './contentPartEditor',
+    './draftFiles',
+    './draftProperties',
+    '../editor/editorModel',
     'localization'
 ],
 function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, ContentPartEditor, DraftFiles, DraftProperties, EditorModel, localization) {

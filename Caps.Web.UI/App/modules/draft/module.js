@@ -24,9 +24,9 @@ function (moduleFactory, routerFactory, model, app) {
             .map([
                 { route: '', moduleId: 'viewmodels/index', title: 'Inhalte', nav: false },
                 { route: 'create', moduleId: 'viewmodels/templateGallery', title: 'Vorlage wählen', nav: false },
-                { route: 'create/:templateName', moduleId: 'viewmodels/editor', title: 'Neuer Inhalt', nav: false },
-                { route: 'edit/:draftId', moduleId: 'viewmodels/editor', title: 'Inhalt bearbeiten', nav: false },
-                { route: 'translate/:draftId/:language', moduleId: 'viewmodels/translator', title: 'Übersetzung', nav: false }
+                { route: 'create/:templateName', moduleId: 'viewmodels/editor/editor', title: 'Neuer Inhalt', nav: false },
+                { route: 'edit/:draftId', moduleId: 'viewmodels/editor/editor', title: 'Inhalt bearbeiten', nav: false },
+                { route: 'translate/:draftId/:language', moduleId: 'viewmodels/translator/translator', title: 'Übersetzung', nav: false }
             ])
             .buildNavigationModel();
     };

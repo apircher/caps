@@ -151,7 +151,7 @@ function (require, ko, system) {
     };
 
     Draft.prototype.filesByGroupName = function (groupName) {
-        var files = ko.utils.arrayFilter(this.Files(), function (file) {
+        var files = ko.utils.arrayFilter(this.orderedFiles(), function (file) {
             var gn = file.Group() || '';
             return gn.toLowerCase() === groupName.toLowerCase();
         });
@@ -206,11 +206,16 @@ function (require, ko, system) {
     DraftContentPart.prototype.previewText = function (language, length) {
         language = language || 'de';
         length = length || 80;
-        var res = this.getResource(language);
-        if (res && res.Content()) {
-            var content = res.Content();
+        var content = this.localeContent(language);
+        if (content)
             return content.length > length ? content.substr(0, length - 3) + '...' : content;
-        }
+        return '';
+    };
+
+    DraftContentPart.prototype.localeContent = function (language) {
+        language = language || 'de';
+        var res = this.getResource(language);
+        if (res && res.Content()) return res.Content();
         return '';
     };
 

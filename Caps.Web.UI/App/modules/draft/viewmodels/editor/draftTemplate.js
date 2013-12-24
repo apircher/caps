@@ -15,7 +15,7 @@
             if (!templateCell || !templateCell.name) return '';
             var contentPart = self.editor.entity().findContentPart(templateCell.name);
             if (contentPart)
-                return contentPart.previewText('de');
+                return contentPart.previewText('de', 200);
         };
     }
 

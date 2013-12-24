@@ -1,12 +1,13 @@
-﻿<div id="draftTemplate" data-bind="if: editor.template()">
+﻿<div class="draft-template-container" data-bind="if: editor.template()">
     <!-- ko foreach: { data: editor.template().rows, as: 'row' } -->
-    <div class="row">
+    <div class="draft-template-row">
         <!-- ko foreach: { data:row.cells, as: 'cell' } -->
-        <div class="dt-content-part" data-bind="draftTemplateClass: cell, click: $parents[1].editContentPart">
+        <div class="draft-template-part" data-bind="draftTemplateClass: cell, click: $parents[1].editContentPart">
             <div>
-                <p>
+                <!--<p>
                     <a href="#" data-bind="click: $parents[1].editContentPart"><i class="fa fa-edit"></i> <span data-bind="text:title"></span></a>
-                </p>
+                </p>-->
+                <h4 data-bind="text:title"></h4>
                 <p>
                     <i data-bind="text: $parents[1].previewText($data)"></i>
                 </p>
@@ -17,8 +18,6 @@
     <!-- /ko -->
 </div>
 
-<div class="row">
-    <div class="col-md-12">
-        <p><a href="#" data-bind="click: editor.showTemplateEditor">Vorlage bearbeiten</a></p>
-    </div>
+<div class="draft-template-nav">
+    <p><a href="#" data-bind="click: editor.showTemplateEditor"><i class="fa fa-edit"></i> Vorlage bearbeiten</a></p>
 </div>

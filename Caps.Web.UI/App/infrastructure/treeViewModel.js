@@ -17,6 +17,10 @@
         });
     }
 
+    TreeViewModel.prototype.clear = function () {
+        this.root.childNodes.removeAll();
+    };
+
     TreeViewModel.prototype.createNode = function () {
         return new TreeNodeViewModel(this);
     };
@@ -36,7 +40,7 @@
             var n = self.findNodeByKey(s.key);
             if (n) n.restoreState(s);
         });
-        if (state.selectedKey) {
+        if (state.selectedKey !== null && state.selectedKey !== undefined) {
             var n = self.findNodeByKey(state.selectedKey);
             self.selectedNode(n);
         }
@@ -205,8 +209,11 @@
             deferEvaluation: true
         });
 
-        self.isSelected = ko.computed(function () {
-            return tree.selectedNode() === self;
+        self.isSelected = ko.computed({
+            read: function () {
+                return self.tree && self.tree.selectedNode() === self;
+            },
+            deferEvaluation: true
         });
 
         self.isExpanded = ko.observable(false);
@@ -214,6 +221,17 @@
         self.addChildNode = function (node) {
             self.childNodes.push(node);
             node.parentNode(self);
+        };
+
+        self.detachFromParentNode = function () {
+            if (self.isSelected()) {
+                var nextSelection = self.nextSibling() || self.previousSibling() || self.parentNode();
+                if (nextSelection)
+                    nextSelection.selectNode();
+            }
+
+            self.parentNode().childNodes.remove(self);
+            self.parentNode(null);
         };
 
         self.hasChildNodes = ko.computed(function () {

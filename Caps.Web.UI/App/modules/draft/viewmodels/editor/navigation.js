@@ -1,4 +1,4 @@
-﻿define(['require', 'ko'], function (require, ko) {
+﻿define(['require', 'ko', './editorModel'], function (require, ko, EditorModel) {
 
     function Navigation(editor) {
         var self = this;
@@ -10,6 +10,21 @@
             if (self.editor.currentContent())
                 return self.editor.currentContent().name;
             return undefined;
+        });
+
+        this.contentParts = ko.computed(function () {
+            if (self.editor.entity()) {
+                var contentParts = self.editor.entity().ContentParts();
+                contentParts.sort(sortByRanking);
+                return ko.utils.arrayMap(contentParts, function (p) {
+                    return new EditorModel.ContentPartViewModel(p, self.editor);
+                });
+            }
+            return [];
+
+            function sortByRanking(a, b) {
+                return a.Ranking() === b.Ranking() || a.Ranking() < b.Ranking() ? -1 : 1;
+            }
         });
 
         this.title = ko.computed(function () {

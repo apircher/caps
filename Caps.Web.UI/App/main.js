@@ -1,15 +1,4 @@
-﻿if (typeof String.prototype.endsWith !== 'function') {
-    String.prototype.endsWith = function (suffix) {
-        return this.indexOf(suffix, this.length - suffix.length) !== -1;
-    };
-}
-
-if (typeof String.prototype.startsWith != 'function') {
-    String.prototype.startsWith = function (str) {
-        return str && this.slice(0, str.length) == str;
-    };
-}
-
+﻿
 requirejs.config({
     paths: {
         'text': '../Scripts/text',
@@ -45,25 +34,10 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
     'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider', 'infrastructure/serverUtil',
     'knockout.extenders', 'infrastructure/validation', '../Scripts/safari.cancelZoom', 'infrastructure/contentEditing'],
     function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider, serverUtil) {
-
-        $(document).ajaxSend(function (event, request, settings) {
-            settings.url = serverUtil.mapPath(settings.url);
-        });
-
+        
         //>>excludeStart("build", true);
         system.debug(true);
         //>>excludeEnd("build");
-
-        app.title = 'CAPS';
-
-        app.configurePlugins({
-            router: true,
-            dialog: true,
-            widget: true,
-            fileSelection: true,
-            siteMapNodeSelection: true,
-            contentSelection: true
-        });
 
         // Plug Q´s promise mechanism into Durandal.
         system.defer = function (action) {
@@ -76,6 +50,24 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
             return deferred;
         };
 
+        $(document).ajaxSend(function (event, request, settings) {
+            settings.url = serverUtil.mapPath(settings.url);
+        });
+
+        // Handle unloading
+        $(window).bind('beforeunload', onBeforeUnload);
+
+        app.title = 'CAPS';
+
+        app.configurePlugins({
+            router: true,
+            dialog: true,
+            widget: true,
+            fileSelection: true,
+            siteMapNodeSelection: true,
+            contentSelection: true
+        });
+
         // Initialize Knockout Validation
         validation.init({
             insertMessages: false
@@ -83,9 +75,6 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
 
         // Localize
         localization.localize('de');
-
-        // Handle unloading
-        $(window).bind('beforeunload', onBeforeUnload);
 
         // Initialize application
         Q.fcall(antiForgeryToken.initToken)
