@@ -17,6 +17,8 @@ define([
 ],
 function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, ContentPartEditor, DraftFiles, DraftProperties, EditorModel, localization) {
 
+    var $window = $(window);
+
     function Translator() {
         var self = this,
             manager = entityManagerProvider.createManager(),
@@ -36,6 +38,8 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
         self.files = ko.observableArray();
 
         self.activate = function (draftId, language) {
+            module.on('module:compositionComplete', compositionComplete);
+
             self.draftId(draftId);
             self.language(new localization.Language(language));
 
@@ -46,6 +50,10 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
                     deferred.resolve();
                 });
             return deferred.promise;
+        };
+
+        self.deactivate = function () {
+            module.off('module:compositionComplete', compositionComplete);
         };
         
         self.navigateBack = function () {
@@ -85,6 +93,10 @@ function (app, module, ko, entityManagerProvider, breeze, Q, Navigation, Content
             var query = breeze.EntityQuery.from('Files').where('Id', '==', id).expand('Versions');
             return manager.executeQuery(query);
         };
+        
+        function compositionComplete(m, instance) {
+            $window.trigger('forceViewportHeight:refresh');
+        }
 
         function loadEntity(id) {
             var query = breeze.EntityQuery.from('Drafts').where('Id', '==', id)

@@ -21,12 +21,7 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
         isLoading = ko.observable(false),
         tagName = ko.observable(),
         addTagUIVisible = ko.observable(false),
-        uploadManager = createUploadManager(),
-        isActive = false;
-
-    module.on('module:activate', function () {
-        if (isActive) registerCompositionComplete();
-    });
+        uploadManager = createUploadManager();
 
     app.on('caps:sitemapnode:deleted', function (node) {
         var contentId = node.ContentId();
@@ -43,6 +38,11 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
                 datacontext.detachDraftFile(f);
             });
         }
+    });
+
+    var $window = $(window);
+    module.on('module:compositionComplete', function (m, instance) {
+        if (instance === vm) $window.trigger('forceViewportHeight:refresh');
     });
 
     var vm = {
@@ -68,8 +68,6 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
             currentFileId(fileId);
             tagName(null);
             addTagUIVisible(false);
-            registerCompositionComplete();
-            isActive = true;
             return getFile()
                 .then(function () {
                     versions(ko.utils.arrayMap(currentFile().Versions(), function (v) {
@@ -80,10 +78,6 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
                 .fail(function (err) {
                     alert(err.message);
                 });
-        },
-
-        deactivate: function() {
-            isActive = false;
         },
 
         refresh: function () {
@@ -225,15 +219,10 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
             },
             uploadDone: function (result, file) {
                 isLoading(false);
-                getFile();
+                getFile().then(function() {
+                    app.trigger('caps:contentfile:uploadDone', currentFile());
+                });
             }
-        });
-    }
-
-    var $window = $(window);
-    function registerCompositionComplete() {
-        composition.current.complete(function () {
-            $window.trigger('forceViewportHeight:refresh');
         });
     }
 

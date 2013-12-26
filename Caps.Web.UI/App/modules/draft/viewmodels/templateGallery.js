@@ -5,9 +5,10 @@
     'breeze', 
     'entityManagerProvider',
     'durandal/system',
-    'infrastructure/serverUtil'
+    'infrastructure/serverUtil',
+    '../stockTemplates'
 ],
-function (ko, datacontext, module, breeze, entityManagerProvider, system, server) {
+function (ko, datacontext, module, breeze, entityManagerProvider, system, server, stockTemplates) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
@@ -17,22 +18,28 @@ function (ko, datacontext, module, breeze, entityManagerProvider, system, server
     var draftName = ko.observable();
 
     function GalleryListItem(title, name, template, icon) {
-        this.title = title;
-        this.name = name;
-        this.template = template;
-        this.icon = icon;
+        var self = this;
+
+        self.title = title;
+        self.name = name;
+        self.template = template;
+        self.icon = icon;
+
+        self.isSelected = ko.computed(function () {
+            return selectedItem() === self;
+        });
     }
 
     function refreshListItems() {
         return system.defer(function (dfd) {
-            var stockTemplates = datacontext.getTemplates();
+            var stock = stockTemplates.all();
             fetchDraftTemplates().then(function (coll) {
                 var draftTemplateListItems = ko.utils.arrayMap(coll, function (t) {
                     var templateObj = parseTemplate(t.TemplateContent());
                     return new GalleryListItem(t.Name(), t.Name(), templateObj, server.mapPath('~/App/modules/draft/images/Template 3.png'));
                 });
 
-                var stockTemplateListItems = ko.utils.arrayMap(stockTemplates, function (t) {
+                var stockTemplateListItems = ko.utils.arrayMap(stock, function (t) {
                     var icon = server.mapPath('~/App/modules/draft/images/' + t.name + '.png');
                     return new GalleryListItem(t.name, t.name, t, icon);
                 });

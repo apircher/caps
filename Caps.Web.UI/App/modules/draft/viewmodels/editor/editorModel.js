@@ -199,7 +199,9 @@
                 var cell = template.findCell(contentPart.Name());
                 if (cell) return cell.title;
             }
-            return self.contentPart.Name();
+            if (self.contentPart)
+                return self.contentPart.Name();
+            return '';
         }
     }
 

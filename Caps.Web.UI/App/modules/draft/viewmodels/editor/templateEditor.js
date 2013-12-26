@@ -11,7 +11,7 @@
         function updateTemplateContent() {
             if (!editor.entity()) return;
 
-            var template = editor.entity().deserializeTemplate();
+            var template = editor.entity().template();
             var formattedTemplateContent = JSON.stringify(template, null, 4);
             self.templateContent(formattedTemplateContent);
         }
@@ -27,7 +27,6 @@
             }
 
             self.editor.entity().Template(JSON.stringify(modifiedTemplate));
-            self.editor.template(modifiedTemplate);
         });
 
         editor.entity.subscribe(updateTemplateContent);

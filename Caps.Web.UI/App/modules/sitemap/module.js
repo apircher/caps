@@ -19,7 +19,7 @@
             ])
             .buildNavigationModel();
     };
-
+    
     app.on('caps:started', function () {
         require(['modules/sitemap/viewmodels/siteMapNodeSelectionDialog'], function (SiteMapNodeSelectionDialog) {
             SiteMapNodeSelectionDialog.install();

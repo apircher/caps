@@ -11,9 +11,11 @@
     'authentication',
     '../datacontext',
     'durandal/composition',
-    'moment'
+    'moment',
+    'infrastructure/keyboardHandler',
+    'infrastructure/scrollState'
 ],
-function (module, ko, router, system, app, localization, SiteMapViewModel, PublicationViewModel, publicationService, authentication, datacontext, composition, moment) {
+function (module, ko, router, system, app, localization, SiteMapViewModel, PublicationViewModel, publicationService, authentication, datacontext, composition, moment, KeyboardHandler, ScrollState) {
     
     var website = ko.observable(),
         selectedSiteMap = ko.observable(),
@@ -22,7 +24,8 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         selectedTeaser = ko.observable(),
         properties = ko.observable(),
         isInitialized = false,
-        isActive = false;
+        keyboardHandler = new KeyboardHandler(module),
+        listScrollState = new ScrollState(module);
     
     selectedSiteMap.subscribe(selectedSiteMapChanged);
     selectedNode.subscribe(selectedNodeChanged);
@@ -33,14 +36,12 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
     app.on('caps:publication:created', refreshNodeIfSelected);
     app.on('caps:publication:refreshed', refreshNodeIfSelected);
 
-    module.on('module:activate', function () {
-        if (isActive) {
-            attachKeyHandler();
-            registerCompositionComplete();
+    var $window = $(window);
+    module.on('module:compositionComplete', function (m, instance) {
+        if (instance === vm) {
+            $window.trigger('forceViewportHeight:refresh');
+            listScrollState.activate();
         }
-    });
-    module.on('module:deactivate', function () {
-        if (isActive) detachKeyHandler();
     });
     
     var vm = {
@@ -53,6 +54,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         selectedNode: selectedNode,
         selectedPublication: selectedPublication,
         properties: properties,
+        listScrollState: listScrollState,
         teasers: ko.computed(function() {
             if (!selectedNode()) return [];
             var entities = ko.utils.arrayFilter(selectedNode().childNodes(), function (node) {
@@ -74,9 +76,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             if (params && params.p)
                 showPublication(params.p);
 
-            attachKeyHandler();
-            registerCompositionComplete();
-            isActive = true;
+            keyboardHandler.activate();
         },
 
         shouldActivate: function(router, oldActivationData, newActivationData) {
@@ -84,8 +84,8 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         },
 
         deactivate: function () {
-            detachKeyHandler();
-            isActive = false;
+            keyboardHandler.deactivate();
+            listScrollState.deactivate();
         },
 
         createSiteMapVersion: function () {
@@ -169,10 +169,6 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             function filterSelection(item) {
                 return !item.isTeaser() && item.Id() !== selectedNode().Id();
             }
-        },
-
-        handleKeyDown: function (e) {
-            if (isActive) selectedSiteMap().tree().handleKeyDown(e);
         }
     };
 
@@ -258,20 +254,10 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         }
     }
 
-    function attachKeyHandler() {
-        $(window).on('keydown', vm.handleKeyDown);
-    }
-
-    function detachKeyHandler() {
-        $(window).off('keydown', vm.handleKeyDown);
-    }
-
-    var $window = $(window);
-    function registerCompositionComplete() {
-        composition.current.complete(function () {
-            $window.trigger('forceViewportHeight:refresh');
-        });
-    }
+    keyboardHandler.keydown = function (e) {
+        if (selectedSiteMap() && selectedSiteMap().tree())
+            selectedSiteMap().tree().handleKeyDown(e);
+    };
 
     function showLatestSiteMap() {
         datacontext.fetchFirstWebsite().then(function (data) {

@@ -23,7 +23,7 @@
             return [];
 
             function sortByRanking(a, b) {
-                return a.Ranking() === b.Ranking() || a.Ranking() < b.Ranking() ? -1 : 1;
+                return a.templateCellIndex() === b.templateCellIndex() || a.templateCellIndex() < b.templateCellIndex() ? -1 : 1;
             }
         });
 

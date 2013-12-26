@@ -121,19 +121,7 @@ function (require, ko, system) {
             system.log(error.message);
         }
         if (!t) return undefined;
-
-        t.findCell = function (cellName) {
-            for (var r = 0; r < t.rows.length; r++) {
-                var row = t.rows[r];
-                for (var c = 0; c < row.cells.length; c++) {
-                    var cell = row.cells[c];
-                    if (cell.name.toLowerCase() === cellName.toLowerCase())
-                        return cell;
-                }
-            }
-            return undefined;
-        };
-
+        initializeDraftTemplate(t);
         return t;
     };
 
@@ -167,10 +155,67 @@ function (require, ko, system) {
     };
 
     /**
+     * Draft Template
+     */
+    function initializeDraftTemplate(t) {
+
+        t.findCell = function (cellName) {
+            var hit;
+            t.forEachCell(function (row, cell, ranking) {
+                if (cell.name.toLowerCase() === cellName.toLowerCase()) {
+                    hit = cell;
+                    return false;
+                }
+            });
+            return hit;
+        };
+
+        t.findCellIndex = function (cell) {
+            var index = 0;
+            t.forEachCell(function (row, c, ranking) {
+                if (c === cell) {
+                    index = ranking;
+                    return false;
+                }
+            });
+            return index;
+        };
+
+        t.forEachCell = function (callback) {
+            var ranking = 1, cancel = false;
+            for (var r = 0; r < t.rows.length && !cancel; r++) {
+                var row = t.rows[r];
+                for (var c = 0; c < row.cells.length; c++) {
+                    var cell = row.cells[c];
+                    if (callback.call(t, row, cell, ranking++) === false) {
+                        cancel = true;
+                        break;
+                    }
+                }
+            }
+        };
+
+        return t;
+    }
+
+    /**
      * DraftContentPart Entity
      */
     function DraftContentPart() {
         var self = this;
+    }
+
+    function InitializeDraftContentPart(draftContentPart) {
+
+        draftContentPart.templateCellIndex = ko.computed({
+            read: function () {
+                var cellIndex = 0,
+                    cell = draftContentPart.findTemplateCell();
+                if (cell) cellIndex = draftContentPart.Draft().template().findCellIndex(cell);
+                return cellIndex;
+            },
+            deferEvaluation: true
+        });
     }
 
     DraftContentPart.prototype.getResource = function (language) {
@@ -219,6 +264,15 @@ function (require, ko, system) {
         return '';
     };
 
+    DraftContentPart.prototype.findTemplateCell = function() {
+        var self = this;
+        if (!self.Draft() || !self.Draft().template())
+            return null;
+        var tmpl = self.Draft().template(),
+            cell = tmpl.findCell(self.Name());
+        return cell;
+    };
+
     /**
      * DraftFile Entity
      */
@@ -262,9 +316,11 @@ function (require, ko, system) {
 
         extendModel: function (metadataStore) {
             metadataStore.registerEntityTypeCtor('Draft', Draft, InitializeDraft);
-            metadataStore.registerEntityTypeCtor('DraftContentPart', DraftContentPart);
+            metadataStore.registerEntityTypeCtor('DraftContentPart', DraftContentPart, InitializeDraftContentPart);
             metadataStore.registerEntityTypeCtor('DraftFile', DraftFile);
-        }
+        },
+
+        initializeTemplate: initializeDraftTemplate
     };
 
 });

@@ -58,12 +58,17 @@ function (ko, markdown, urlHelper, ContentReferenceManager, contentControls) {
 
         return new TemplateContent(template.name, ko.utils.arrayMap(template.rows, function (row) {
             return new TemplateContentRow(ko.utils.arrayMap(row.cells, function (cell) {
-                var content = generateLocalizedContentForTemplateCell(draft, cell, language);
-                content = crmgr.replaceReferences(draft, content, language);
-                content = contentControls.replaceContentControls(content);
+                var content = createTemplateCellContent(draft, cell, language);
                 return new TemplateContentCell(cell.name, cell.title, cell.colspan, content);
             }));
         }));
+    }
+
+    function createTemplateCellContent(draft, cell, language) {
+        var content = generateLocalizedContentForTemplateCell(draft, cell, language);
+        content = crmgr.replaceReferences(draft, content, language);
+        content = contentControls.replaceContentControls(content);
+        return content;
     }
 
     function generateLocalizedContentForTemplateCell(draft, templateCell, language) {
@@ -195,6 +200,7 @@ function (ko, markdown, urlHelper, ContentReferenceManager, contentControls) {
         TemplateContentCell: TemplateContentCell,
 
         createTemplateContent: createTemplateContent,
+        createTemplateCellContent: createTemplateCellContent,
         createPublicationContent: prepareDraft
     };
 });

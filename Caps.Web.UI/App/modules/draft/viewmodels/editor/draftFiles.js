@@ -4,9 +4,10 @@
     'ko',
     './editorModel',
     'infrastructure/treeViewModel',
-    'infrastructure/serverUtil'
+    'infrastructure/serverUtil',
+    'infrastructure/keyboardHandler'
 ],
-function (app, module, ko, EditorModel, TreeModel, server) {
+function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
 
     var fileDeterminations = [
         {
@@ -25,13 +26,23 @@ function (app, module, ko, EditorModel, TreeModel, server) {
 
     function DraftFiles(editor) {
         var self = this,
-            fileGroups = ko.observableArray();
+            fileGroups = ko.observableArray(),
+            keyboardHandler = new KeyboardHandler(module);
 
         self.name = 'DraftFiles';
         self.editor = editor;
         self.server = server;
         self.determinations = ko.observableArray(fileDeterminations);
         self.tree = ko.observable();
+
+        self.deactivate = function () {
+            keyboardHandler.deactivate();
+        };
+
+        editor.currentContent.subscribe(function (nextValue) {
+            if (nextValue === self) keyboardHandler.activate();
+            else keyboardHandler.deactivate();
+        });
 
         self.editor.entity().Files.subscribe(function () {
             refreshFileGroups();
@@ -222,6 +233,10 @@ function (app, module, ko, EditorModel, TreeModel, server) {
             self.tree().expandRootNodes();
             self.tree().selectRootNode();
         }
+
+        keyboardHandler.keydown = function (e) {
+            if (self.tree()) self.tree().handleKeyDown(e);
+        };
     }
 
     return DraftFiles;

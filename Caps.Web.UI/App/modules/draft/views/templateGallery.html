@@ -1,8 +1,22 @@
 ﻿<div class="app-page bottom-fixed-navbar-container">
     <div class="page-content">
-        <h1>Entwurfs-Vorlage wählen</h1>
+        <h1>Wähle eine Vorlage</h1>
 
         <div class="row">
+            <div class="col-md-8">
+                <div class="row" data-bind="foreach: listItems">
+                    <div class="col-xs-4 col-md-3 col-lg-2" data-bind="css: { 'item-selected': isSelected }">
+                        <div class="thumbnail">
+                            <img data-bind="attr: { alt: name, src: icon }, click: $parent.selectTemplate" class="clickable" />
+                            <div class="caption">
+                                <h4 data-bind="text: title"></h4>
+                                <a href="#" data-bind="click: $parent.selectTemplate">Vorlage wählen</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-md-3">
                 <div class="form-group">
                     <label class="control-label">Name</label>
@@ -18,26 +32,9 @@
                 <!-- /ko -->
                 <!-- /ko -->
 
-                <!-- ko if: selectedItem() -->
-                <div class="form-group">
-                    <label class="control-label">Vorlage</label>
-                    <p class="form-control-static" data-bind="text: selectedItem().title"></p>
-                </div>
-                <!-- /ko -->
-
-            </div>
-            <div class="col-md-9">
-                <div class="row" data-bind="foreach: listItems">
-                    <div class="col-xs-4 col-md-3 col-lg-2">
-                        <div class="thumbnail">
-                            <img data-bind="attr: { alt: name, src: icon }, click: $parent.selectTemplate" class="clickable" />
-                            <div class="caption">
-                                <h4 data-bind="text: title"></h4>
-                                <a href="#" data-bind="click: $parent.selectTemplate">Vorlage wählen</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <p>
+                    <button class="btn btn-primary btn-lg" data-bind="click: createDraft">Erstellen</button>
+                </p>
             </div>
         </div>
     </div>
@@ -47,9 +44,6 @@
             <ul class="nav navbar-nav">
                 <li>
                     <a href="#" data-bind="click: cancel"><span><i class="fa fa-arrow-left"></i> Abbrechen</span></a>
-                </li>
-                <li>
-                    <a href="#" data-bind="click: createDraft"><span><i class="fa fa-arrow-right"></i> Weiter</span></a>
                 </li>
             </ul>
         </div>

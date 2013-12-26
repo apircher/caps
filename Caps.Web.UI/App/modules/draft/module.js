@@ -5,9 +5,10 @@ define([
     'infrastructure/moduleFactory',
     'infrastructure/moduleRouter',
     './entities',
-    'durandal/app'
+    'durandal/app',
+    'durandal/composition'
 ],
-function (moduleFactory, routerFactory, model, app) {
+function (moduleFactory, routerFactory, model, app, composition) {
 
     var module = moduleFactory.createModule({
         route: 'drafts*details',

@@ -29,7 +29,7 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
         scrollTop = ko.observable(0),
         searchControl = new FileSearchControl();
 
-    module.router.on('router:navigation:attached', function (currentActivation, currentInstruction, router) {
+    module.router.on('router:navigation:attached', function (currentActivation) {
         if (currentActivation == vm)  isInteractive(true);
     });
 

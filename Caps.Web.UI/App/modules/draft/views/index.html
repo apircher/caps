@@ -1,14 +1,14 @@
 ﻿<div id="drafts-index" class="app-page bottom-fixed-navbar-container">
-    
+
     <div class="container-fullwidth">
         <div class="row">
             <div class="col-md-4 col-lg-3 left-fixed-sidebar">
                 <!-- ko compose: { model: searchControl } --><!-- /ko -->
-                <div data-bind="forceViewportHeight: { minWidth: 992 }" class="panel-scroll-v">
+                <div data-bind="forceViewportHeight: { minWidth: 992 }, scrollTop: { observable: draftListScrollState.scrollTop, enabled: draftListScrollState.isEnabled }" class="panel-scroll-v">
                     <ul data-bind="foreach: items" class="data-list">
                         <li data-bind="css: { active: isSelected() }, click: $parent.selectDraft, scrollIntoViewTrigger: { source: scrollIntoViewRequest }">
                             <div class="pull-left">
-                                <i class="fa fa-file-text-o fa-fw"></i> 
+                                <i class="fa fa-file-text-o fa-fw"></i>
                             </div>
                             <div class="pull-right">
                                 <small data-bind="text: modifiedAt"></small>
@@ -30,8 +30,8 @@
             </div>
         </div>
     </div>
-        
-    <div class="navbar navbar-default navbar-fixed-bottom">        
+
+    <div class="navbar navbar-default navbar-fixed-bottom">
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
                 <li>

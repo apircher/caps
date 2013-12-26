@@ -28,7 +28,7 @@
     <!-- ko with: resource.FileVersion() -->
     
     <!-- ko if: File().isImage && File().isImage() -->
-    <img data-bind="attr: { 'src': 'DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', alt: File().FileName }" />
+    <img data-bind="attr: { 'src': 'DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160&h=' + Hash(), alt: File().FileName }" />
     <!-- /ko -->
     <!-- ko if: File().isImage && !File().isImage() -->
     <span data-bind="attr: { title: File().FileName }"><i class="fa fa-file fa-4x"></i></span>

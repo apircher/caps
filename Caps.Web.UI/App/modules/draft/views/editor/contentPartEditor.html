@@ -1,9 +1,16 @@
-﻿<div data-bind="forceViewportHeight: { spacers: '.contentpart-nav', minWidth: 992 }">
+﻿<div data-bind="forceViewportHeight: { spacers: '.contentpart-nav', minWidth: 992 }, css: { 'panel-scroll-v': showPreview() }">
+    <!-- ko if: !showPreview() -->
     <!-- ko compose: contentEditor --><!-- /ko -->
+    <!-- /ko -->
+
+    <!-- ko if: showPreview() -->
+        <div data-bind="html: previewContent"></div>
+    <!-- /ko -->
 </div>
 <div class="contentpart-nav">
     <div class="pull-right">
         <strong data-bind="text: title" class="space-right"></strong> 
+        <a href="#" class="space-right" data-bind="click: togglePreview"><i class="glyphicon glyphicon-eye-open" data-bind="css: { 'glyphicon-eye-open': !showPreview(), 'glyphicon-eye-close': showPreview() }"></i></a>
         <select data-bind="options: contentTypes, optionsText: 'title', optionsValue: 'value', value: contentPart.ContentType"></select>
     </div>
     <a href="#" data-bind="click: editor.showEditorMain"><i class="fa fa-columns"></i> Layoutübersicht</a>

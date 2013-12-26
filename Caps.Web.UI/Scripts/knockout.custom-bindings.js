@@ -141,7 +141,7 @@
                 if (th) window.clearTimeout(th);
                 th = window.setTimeout(function () {
                     ko.bindingHandlers.forceViewportHeight.setElementHeight($window, $elem, options);
-                }, 30);
+                }, 20);
             }
 
             $window.on('resize', setElementHeight);
@@ -160,7 +160,9 @@
         },
 
         setElementHeight: function ($window, $elem, options) {
-            
+
+            if (!$elem.is(':visible')) return;
+                        
             var viewportWidth = $window.width();
             var viewportHeight = $window.height();
 
@@ -455,32 +457,44 @@
         init: function (elem, valueAccessor) {
             var options = valueAccessor(),
                 observable = options.observable,
-                enabled = options.enabled;
+                enabled = options.enabled,
+                $elem = $(elem),
+                $container = $elem.css('overflow-y') == 'scroll' ? $elem : $window;
+
+            options.container = $container;
 
             function _saveScrollTop() {
-                if (ko.unwrap(enabled)) ko.bindingHandlers.scrollTop.saveScrollTop(observable);
+                if (ko.unwrap(enabled)) ko.bindingHandlers.scrollTop.saveScrollTop($elem, options);
             }
             function _restoreScrollTop() {
-                if (ko.unwrap(enabled)) ko.bindingHandlers.scrollTop.restoreScrollTop(observable);
+                if (ko.unwrap(enabled)) ko.bindingHandlers.scrollTop.restoreScrollTop($elem, options);
             }
 
             _restoreScrollTop();
-            $window.on('scroll resize', _saveScrollTop);
+
+            $container.on('scroll', _saveScrollTop);
+            $window.on('resize', _saveScrollTop);
+
             ko.utils.domNodeDisposal.addDisposeCallback(elem, function () {
-                $window.off('scroll resize', _saveScrollTop);
+                $container.off('scroll', _saveScrollTop);
+                $window.off('resize', _saveScrollTop);
             });
         },
 
         update: function (elem, valueAccessor) {
             var options = valueAccessor(),
                 observable = options.observable,
-                enabled = options.enabled;
-            if (ko.unwrap(enabled)) ko.bindingHandlers.scrollTop.restoreScrollTop(observable);
+                enabled = options.enabled,
+                $elem = $(elem),
+                $container = $elem.css('overflow-y') == 'scroll' ? $elem : $window;
+            options.container = $container;
+            if (ko.unwrap(enabled)) ko.bindingHandlers.scrollTop.restoreScrollTop($elem, options);
         },
 
-        saveScrollTop: function (o) {
+        saveScrollTop: function ($elem, options) {
+            var o = options.observable;
             if (ko.isObservable(o)) {
-                var st = $html.scrollTop() || $body.scrollTop();
+                var st = options.container === $window ? $html.scrollTop() || $body.scrollTop() : options.container.scrollTop();
                 console.log('saveScrollTop, offset=' + st);
                 if (ko.unwrap(o) !== st) {
                     o(st);
@@ -488,13 +502,15 @@
             }
         },
 
-        restoreScrollTop: function (o) {
+        restoreScrollTop: function ($elem, options) {
+            var o = options.observable;
             if (ko.isObservable(o) && o()) {
-                var st = $html.scrollTop() || $body.scrollTop();
+                var st = options.container === $window ? $html.scrollTop() || $body.scrollTop() : options.container.scrollTop();
                 if (ko.unwrap(o) !== st) {
-                    console.log('restoreScrollTop, offset=' + st);
+                    console.log('restoreScrollTop, offset=' + o());
                     window.setTimeout(function () {
-                        $('html, body').scrollTop(o());
+                        if (options.container === $window) $('html, body').scrollTop(o());
+                        else options.container.scrollTop(o());
                     }, 0);
                 }
             }

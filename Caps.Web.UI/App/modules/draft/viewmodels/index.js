@@ -15,9 +15,11 @@ define([
     './draftSearchControl',
     'infrastructure/interaction',
     'infrastructure/keyCode',
-    'durandal/composition'
+    'durandal/composition',
+    'infrastructure/keyboardHandler',
+    'infrastructure/scrollState'
 ],
-function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel, DeleteDraftCommand, DraftSearchControl, interaction, KeyCodes, composition) {
+function (module, datacontext, ko, app, moment, localization, publicationService, contentGenerator, SortModel, DeleteDraftCommand, DraftSearchControl, interaction, KeyCodes, composition, KeyboardHandler, ScrollState) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
@@ -26,7 +28,8 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         isLoading = ko.observable(false),
         deleteDraftCommand = new DeleteDraftCommand(),
         searchControl = new DraftSearchControl(),
-        isActive = false;
+        keyboardHandler = new KeyboardHandler(module),
+        draftListScrollState = new ScrollState(module);
     
     searchControl.refreshResults = function () {
         vm.refresh();
@@ -47,15 +50,13 @@ function (module, datacontext, ko, app, moment, localization, publicationService
 
     app.on('caps:publication:created', refetchPublicationsWhenSelected);
     app.on('caps:publication:refreshed', refetchPublicationsWhenSelected);
-
-    module.on('module:activate', function () {
-        if (isActive) {
-            attachKeyHandler();
-            registerCompositionComplete();
+    
+    var $window = $(window);
+    module.on('module:compositionComplete', function (m, instance) {
+        if (instance === vm) {
+            $window.trigger('forceViewportHeight:refresh');
+            draftListScrollState.activate();
         }
-    });
-    module.on('module:deactivate', function () {
-        if (isActive) detachKeyHandler();
     });
 
     function refetchPublicationsWhenSelected(sitemapNode) {
@@ -109,20 +110,21 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         draftPreview: draftPreview,
         isLoading: isLoading,
         searchControl: searchControl,
+        draftListScrollState: draftListScrollState,
 
         activate: function () {
             if (!initialized) {
                 initialized = true;
-                fetchListItems().then(selectFirstDraft);
+                fetchListItems().then(function () {
+                    selectFirstDraft();
+                });
             }
-            attachKeyHandler();
-            registerCompositionComplete();
-            isActive = true;
+            keyboardHandler.activate();
         },
 
         deactivate: function() {
-            isActive = false;
-            detachKeyHandler();
+            keyboardHandler.deactivate();
+            draftListScrollState.deactivate();
         },
 
         addDraft: function () {
@@ -169,12 +171,14 @@ function (module, datacontext, ko, app, moment, localization, publicationService
         publishDraft: function () {
             try {
                 var cnt = contentGenerator.createPublicationContent(draftPreview().entity());
+                draftListScrollState.deactivate();
                 app.selectSiteMapNode({ module: module, okTitle: 'Veröffentlichen' }).then(function (result) {
                     if (result.dialogResult) {
                         publicationService.publish(cnt, result.selectedNode).fail(function (error) {
                             alert(error.message);
                         });
                     }
+                    draftListScrollState.activate();
                 });
             }
             catch (error) {
@@ -188,32 +192,17 @@ function (module, datacontext, ko, app, moment, localization, publicationService
 
         deleteDraft: function () {
             deleteDraftCommand.execute(selectedItem().draftId());
-        },
-
-        handleKeyDown: function (e) {
-            var keyCode = e.keyCode;
-            if (keyCode === KeyCodes.keys.UP || keyCode === KeyCodes.keys.DOWN) {
-                e.preventDefault();
-                if (keyCode === KeyCodes.keys.UP) vm.selectPreviousDraft();
-                if (keyCode === KeyCodes.keys.DOWN) vm.selectNextDraft();
-            }
         }
     };
 
-    function attachKeyHandler() {
-        $(window).on('keydown', vm.handleKeyDown);
-    }
-
-    function detachKeyHandler() {
-        $(window).off('keydown', vm.handleKeyDown);
-    }
-
-    var $window = $(window);
-    function registerCompositionComplete() {
-        composition.current.complete(function () {
-            $window.trigger('forceViewportHeight:refresh');
-        });
-    }
+    keyboardHandler.keydown = function (e) {
+        var keyCode = e.keyCode;
+        if (keyCode === KeyCodes.keys.UP || keyCode === KeyCodes.keys.DOWN) {
+            e.preventDefault();
+            if (keyCode === KeyCodes.keys.UP) vm.selectPreviousDraft();
+            if (keyCode === KeyCodes.keys.DOWN) vm.selectNextDraft();
+        }
+    };
 
     /*
      * DraftPreviewViewModel class

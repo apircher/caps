@@ -6,9 +6,10 @@ define([
     'durandal/system',
     'infrastructure/moduleRegistry',
     'ko',
-    'infrastructure/utils'
+    'infrastructure/utils',
+    'durandal/composition'
 ],
-function (rootRouter, system, moduleRegistry, ko, utils) {
+function (rootRouter, system, moduleRegistry, ko, utils, composition) {
     
     function mapModuleRoutes(router) {
         ko.utils.arrayForEach(moduleRegistry.modules(), function (module) {
@@ -40,6 +41,13 @@ function (rootRouter, system, moduleRegistry, ko, utils) {
                 route: baseRoute
             });
         extendRouter(childRouter, module);
+
+        childRouter.on('router:navigation:complete', function (instance, instruction, router) {
+            composition.current.complete(function () {
+                module.trigger('module:compositionComplete', module, instance, instruction, router);
+            });
+        });
+
         return childRouter;
     }
 

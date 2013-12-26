@@ -53,7 +53,7 @@ namespace Caps.Web.UI.Controllers
                         if (!String.IsNullOrWhiteSpace(versionId))
                         {
                             var intVersionId = int.Parse(versionId);
-                            var fileVersion = db.FileVersions.Include("Content").Include("Thumbnails").FirstOrDefault(v => v.Id == intVersionId);
+                            var fileVersion = db.FileVersions.Include("File").Include("Content").Include("Thumbnails").FirstOrDefault(v => v.Id == intVersionId);
                             var file = files[0];
                             ReplaceFileVersion(fileVersion, file.Versions.First());
                             result.Add(file.FileName, fileVersion.File);

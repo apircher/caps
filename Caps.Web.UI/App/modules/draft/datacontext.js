@@ -5,9 +5,11 @@ define([
     'durandal/system',
     'entityManagerProvider',
     'ko',
-    'infrastructure/userQueryParser'
+    'infrastructure/userQueryParser',
+    './entities',
+    './stockTemplates'
 ],
-function (system, entityManagerProvider, ko, UserQueryParser) {
+function (system, entityManagerProvider, ko, UserQueryParser, Entities, stockTemplates) {
     
     var manager = entityManagerProvider.createManager(),
         EntityQuery = breeze.EntityQuery,
@@ -38,24 +40,21 @@ function (system, entityManagerProvider, ko, UserQueryParser) {
         return manager.executeQuery(query);
     }
 
-    var templates = null;
-    function getTemplates() {
-        if (!templates) templates = initTemplates();
-        return templates;
-    }
     function getTemplate(templateName) {
         return system.defer(function (dfd) {
-            var t = ko.utils.arrayFirst(getTemplates(), function (template) {
+            // Search stock templates.
+            var t = ko.utils.arrayFirst(stockTemplates.all(), function (template) {
                 return template.name.toLowerCase() === templateName.toLowerCase();
             });
-
             if (t) dfd.resolve(t);
 
+            // Search Database.
             var query = new EntityQuery().from('DraftTemplates').where('Name', '==', templateName);
             manager.executeQuery(query).then(function (data) {
                 if (!data.results || !data.results.length) dfd.resolve(null);
                 try {
                     t = JSON.parse(data.results[0].TemplateContent());
+                    Entities.initializeTemplate(t);
                 }
                 catch (error) {
                     dfd.reject(error);
@@ -65,69 +64,6 @@ function (system, entityManagerProvider, ko, UserQueryParser) {
             .fail(dfd.reject);
         })
         .promise();
-    }
-    function initTemplates()  {
-        var t = [];
-
-        // Template 1
-        t.push(buildTemplate('Template 1', [
-            buildRow([
-                buildCell('Header', 'Kopfbereich', 12)
-            ]),
-            buildRow([
-                buildCell('Main', 'Hauptteil', 8),
-                buildCell('Sidebar', 'Zusatzinformationen', 4)
-            ]),
-            buildRow([
-                buildCell('Footer', 'Fußbereich', 12)
-            ])
-        ]));
-
-        // Template 2
-        t.push(buildTemplate('Template 2', [
-            buildRow([
-                buildCell('Header', 'Kopfbereich', 12)
-            ]),
-            buildRow([
-                buildCell('Main', 'Hauptteil', 8),
-                buildCell('Sidebar', 'Zusatzinformationen', 4)
-            ])
-        ]));
-
-        // Template 3
-        t.push(buildTemplate('Template 3', [
-            buildRow([
-                buildCell('Header', 'Kopfbereich', 12, 'html')
-            ]),
-            buildRow([
-                buildCell('Main', 'Hauptteil', 12, 'text')
-            ])
-        ]));
-
-        function buildTemplate(name, rows) {
-            return {
-                'name': name,
-                'rows': rows
-            };
-        }
-
-        function buildRow(cells) {
-            return {
-                'cells': cells
-            };
-        }
-
-        function buildCell(name, title, colspan, contentType) {
-            contentType = contentType || 'markdown';
-            return {
-                'name': name,
-                'title': title,
-                'colspan': colspan,
-                'contentType': contentType
-            };
-        }
-
-        return t;
     }
 
     function fetchPublications(draftId, mgr) {
@@ -157,7 +93,6 @@ function (system, entityManagerProvider, ko, UserQueryParser) {
     return {
         getDrafts: getDrafts,
         getDraft: getDraft,
-        getTemplates: getTemplates,
         getTemplate: getTemplate,
         fetchPublications: fetchPublications,
         searchDrafts: searchDrafts,

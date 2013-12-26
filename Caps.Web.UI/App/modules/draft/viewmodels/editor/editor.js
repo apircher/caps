@@ -23,7 +23,7 @@ define([
 ],
 function (app, system, module, datacontext, DraftsModel, entityManagerProvider, breeze, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, TemplateEditor, DraftNotesEditor, EditorModel, authentication) {
 
-
+    var $window = $(window);
 
     // Editor Model
     function DraftEditor() {
@@ -42,12 +42,14 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
         self.currentNavigation = ko.observable();
         self.entity = ko.observable();
         self.entity.subscribe(onEntityChanged);
-        self.template = ko.observable();
+        self.template = ko.computed(function () { return self.entity() ? self.entity().template() : undefined; });
         self.isNewDraft = ko.observable(false);
         self.draftStates = DraftsModel.supportedDraftStates;
         self.lastContentPart = ko.observable();
 
         self.activate = function (draftIdOrTemplateName, queryString) {
+            module.on('module:compositionComplete', compositionComplete);
+            app.on('caps:contentfile:uploadDone', fileUploadDone);
             return system.defer(function (dfd) {
                 if (draftIdOrTemplateName && /^[0-9]+$/.test(draftIdOrTemplateName)) {
                     loadEntity(draftIdOrTemplateName)
@@ -64,6 +66,12 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
                 }
             })
             .promise();
+        };
+
+        self.deactivate = function () {
+            module.off('module:compositionComplete', compositionComplete);
+            app.off('caps:contentfile:uploadDone', fileUploadDone);
+            if (draftFilesVM) draftFilesVM.deactivate();
         };
 
         self.shouldActivate = function (router, currentData, newData) {
@@ -96,6 +104,7 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
         self.showContentPartEditor = function (contentPart) {
             var cpe = findContentPartEditor(contentPart);
             if (cpe) {
+                cpe.showPreview(false);
                 self.currentContent(cpe);
                 self.lastContentPart(contentPart);
             }
@@ -184,6 +193,25 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
             });
         };
 
+        function compositionComplete(m, instance) {
+            $window.trigger('forceViewportHeight:refresh');
+        }
+
+        function fileUploadDone(file) {
+            var fileId = file.Id(),
+                draftFiles = ko.utils.arrayFilter(self.entity().Files(), function (f) {
+                    var res = ko.utils.arrayFirst(f.Resources(), function (r) {
+                        return r.FileVersion() && r.FileVersion().FileId() === fileId;
+                    });
+                    return res != null;
+                });
+
+            if (draftFiles.length) {
+                var query = breeze.EntityQuery.from('Files').where('Id', '==', fileId).expand('Versions.File');
+                return manager.executeQuery(query);
+            }
+        }
+
         function createEntity(templateName, queryString, language) {
             language = language || 'de';
             datacontext.getTemplate(templateName).then(function (t) {
@@ -200,24 +228,18 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
 
                 self.entity(d);
 
-                for (var r = 0; r < template.rows.length; r++) {
-                    var row = template.rows[r];
-                    for (var c = 0; c < row.cells.length; c++) {
-                        var cell = row.cells[c];
-
-                        var contentPart = self.getOrCreateContentPart(cell);
-                        if (cell.content) {
-
-                            var regexPlaceHolders = /<%\s*([A-Za-z0-9_\.]+)\s*%>/gi;
-                            var content = cell.content.replace(regexPlaceHolders, function (hit, p1, offset, s) {
-                                if (queryString && queryString[p1]) return queryString[p1];
-                                return findTemplateParameterValue(p1) || 'Nicht gefunden';
-                            });
-                            contentPart.getResource('de').Content(content);
-                        }
+                template.forEachCell(function (row, cell, ranking) {
+                    var contentPart = self.getOrCreateContentPart(cell);
+                    contentPart.Ranking(ranking);
+                    if (cell.content) {
+                        var regexPlaceHolders = /<%\s*([A-Za-z0-9_\.]+)\s*%>/gi;
+                        var content = cell.content.replace(regexPlaceHolders, function (hit, p1, offset, s) {
+                            if (queryString && queryString[p1]) return queryString[p1];
+                            return findTemplateParameterValue(p1) || 'Nicht gefunden';
+                        });
+                        contentPart.getResource('de').Content(content);
                     }
-                }
-
+                });
             })
         }
 
@@ -279,16 +301,7 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
         function onEntityChanged() {
             var e = self.entity();
             if (e) {
-                // Init Template.
-                getTemplate();
                 e.entityAspect.propertyChanged.subscribe(trackChanges);
-            }
-        }
-
-        function getTemplate() {
-            var e = self.entity();
-            if (e) {
-                self.template(e.deserializeTemplate());
             }
         }
 

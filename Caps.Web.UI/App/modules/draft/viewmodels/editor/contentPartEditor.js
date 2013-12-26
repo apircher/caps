@@ -1,4 +1,4 @@
-﻿define(['require', 'ko'], function (require, ko) {
+﻿define(['require', 'ko', '../../contentGenerator'], function (require, ko, contentGenerator) {
 
     var contentEditorRegistry = {
         'text': './contentEditors/textEditor',
@@ -10,6 +10,7 @@
         var self = this;
         self.name = 'ContentPartEditor';
         self.editor = editor;
+        self.showPreview = ko.observable(false);
 
         self.contentPart = contentPart;
         self.resource = contentPart.getResource('de');
@@ -27,6 +28,13 @@
 
         setContentEditor(contentPart.ContentType());
         contentPart.ContentType.subscribe(setContentEditor);
+
+        self.togglePreview = function () {
+            self.previewContent(contentGenerator.createTemplateCellContent(self.editor.entity(), self.templateCell, self.resource.Language()));
+            self.showPreview(!self.showPreview());
+        };
+
+        self.previewContent = ko.observable();
 
         function setContentEditor(contentType) {
             if (contentEditorRegistry[contentType]) {
