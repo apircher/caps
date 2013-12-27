@@ -1,6 +1,6 @@
 ﻿<div class="row">
-    <div class="col-md-3">
-        <input class="form-control" type="text" placeholder="Name" title="Name" data-bind="value: editor.entity().Name" />
+    <div class="col-md-3" data-bind="css: { 'has-error': !editor.entity().Name.isValid() }">
+        <input class="form-control" type="text" placeholder="Name" data-bind="value: editor.entity().Name, tooltip: { title: editor.entity().Name.error(), placement: 'bottom', trigger: 'hover' }" />
     </div>
     <div class="col-md-9">
         <ul class="nav nav-tabs">

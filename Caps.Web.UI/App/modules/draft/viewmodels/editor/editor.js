@@ -36,16 +36,25 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
             templateEditorVM,
             draftNotesVM,
             contentPartEditors = [],
-            router = module.router;
+            router = module.router,
+            hasErrors = ko.observable();
 
         self.currentContent = ko.observable();
         self.currentNavigation = ko.observable();
         self.entity = ko.observable();
-        self.entity.subscribe(onEntityChanged);
         self.template = ko.computed(function () { return self.entity() ? self.entity().template() : undefined; });
         self.isNewDraft = ko.observable(false);
         self.draftStates = DraftsModel.supportedDraftStates;
         self.lastContentPart = ko.observable();
+
+        manager.hasChangesChanged.subscribe(function (args) {
+            module.routeConfig.hasUnsavedChanges(args.hasChanges);
+        });
+
+        manager.validationErrorsChanged.subscribe(function (args) {
+            var entity = args.entity;
+            hasErrors(entity.hasValidationErrors.call(entity));
+        });
 
         self.activate = function (draftIdOrTemplateName, queryString) {
             module.on('module:compositionComplete', compositionComplete);
@@ -68,7 +77,29 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
             .promise();
         };
 
+        self.canDeactivate = function () {
+            if (!manager.hasChanges()) return true;
+            return system.defer(function (dfd) {
+                var btnYes = 'Speichern', btnNo = 'Verwerfen', btnCancel = 'Abbrechen';
+                app.showMessage('Sollen die Änderungen gespeichert werden?', 'Änderungen speichern?', [btnYes, btnNo, btnCancel]).then(function (dialogResult) {
+                    if (dialogResult === btnCancel) 
+                        dfd.resolve(false);
+                    else if (dialogResult === btnYes) {
+                        var resultOrPromise = self.saveChanges();
+                        if (resultOrPromise && resultOrPromise.then)
+                            resultOrPromise.then(function () { dfd.resolve(true); });
+                        else
+                            dfd.resolve(false);
+                    }
+                    else
+                        dfd.resolve(true);
+                });
+            })
+            .promise();
+        };
+
         self.deactivate = function () {
+            module.routeConfig.hasUnsavedChanges(false);
             module.off('module:compositionComplete', compositionComplete);
             app.off('caps:contentfile:uploadDone', fileUploadDone);
             if (draftFilesVM) draftFilesVM.deactivate();
@@ -125,18 +156,26 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
         };
 
         self.showDraftsIndex = function () {
-            module.routeConfig.hasUnsavedChanges(false);
             module.router.navigate(module.routeConfig.hash);
         };
 
+        self.saveChangesAndNavigateBack = function () {
+            self.saveChanges().then(self.navigateBack);
+        };
+
         self.saveChanges = function () {
+            if (hasErrors()) {
+                app.showMessage('Der Inhalt kann noch nicht gespeichert werden. Prüfe die markierten Felder und ergänze oder korrigiere die Eingaben.', 'Noch nicht komplett', ['Ok']);
+                return false;
+            }
+
             self.entity().Modified().At(new Date());
             self.entity().Modified().By(authentication.user().userName());
 
             var deletedDraftFiles = manager.getEntities('DraftFile', breeze.EntityState.Deleted);
-            manager.saveChanges().then(function () {
+            return manager.saveChanges().then(function () {
                 app.trigger('caps:draft:saved', { entity: self.entity(), isNewDraft: self.isNewDraft(), deletedFiles: deletedDraftFiles });
-                self.showDraftsIndex();
+                module.routeConfig.hasUnsavedChanges(false);
             });
         };
 
@@ -296,17 +335,6 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
             }
             
             self.currentNavigation(navigationVM);
-        }
-        
-        function onEntityChanged() {
-            var e = self.entity();
-            if (e) {
-                e.entityAspect.propertyChanged.subscribe(trackChanges);
-            }
-        }
-
-        function trackChanges() {
-            module.routeConfig.hasUnsavedChanges(manager.hasChanges());
         }
 
         function findContentPartEditor(contentPart) {

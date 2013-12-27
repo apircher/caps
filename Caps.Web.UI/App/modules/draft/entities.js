@@ -32,6 +32,8 @@ function (require, ko, system) {
     }
 
     function InitializeDraft(draft) {
+        draft.Name.extend({ required: true });
+
         draft.template = ko.computed({
             read: function () {
                 return draft.deserializeTemplate();
@@ -152,6 +154,26 @@ function (require, ko, system) {
             return gn.toLowerCase() === determination.toLowerCase();
         });
         return files;
+    };
+
+    Draft.prototype.hasValidationErrors = function () {
+        var self = this;
+
+        if (self.entityAspect.hasValidationErrors)
+            return true;
+
+        if (ko.utils.arrayFirst(self.Files(), function (f) { return f.entityAspect.hasValidationErrors; })) return true;
+        if (ko.utils.arrayFirst(self.Translations(), function (r) { return r.entityAspect.hasValidationErrors; })) return true;
+        if (ko.utils.arrayFirst(self.ContentParts(), function (c) {
+
+            if (c.entityAspect.hasValidationErrors) return true;
+            if (ko.utils.arrayFirst(c.Resources, function (cr) { return cr.entityAspect.hasValidationErrors; })) return true;
+            return false;
+
+        })) return true;
+
+        return false;
+
     };
 
     /**
