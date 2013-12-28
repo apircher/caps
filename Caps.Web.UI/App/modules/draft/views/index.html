@@ -65,31 +65,40 @@
 <script type="text/html" id="DraftPreviewTemplate">
     <div class="row">
         <div class="col-md-12">
-            <p>
-                <small data-bind="text: entity().Modified().By"></small> <small data-bind="text: modifiedFromNow(), attr: { title: modifiedAt() }"></small>
-            </p>
-            <h4><!-- ko text: entity().Name() --><!-- /ko --> <small data-bind="text: 'v.' + entity().Version()"></small></h4>
-            <p>
-                <span>Status: </span>
-                <!-- ko text: entity().statusTitle() --><!-- /ko -->
-            </p>
+            <div class="pull-left">
+                <span class="large-icon">
+                    <i class="fa fa-file-text-o fa-5x fa-inverse"></i>
+                </span>
+            </div>
+            <div>
+                <p class="light-text">
+                    <small data-bind="text: entity().Modified().By"></small> <small data-bind="text: modifiedFromNow(), attr: { title: modifiedAt() }"></small> <small data-bind="text: 'v.' + entity().Version()"></small>
+                </p>
+                <h4><!-- ko text: entity().Name() --><!-- /ko --></h4>
+                <p>
+                    <span>Status: </span>
+                    <!-- ko text: entity().statusTitle() --><!-- /ko -->
+                </p>
+            </div>
         </div>
     </div>
     <section class="draft-preview-content">
-        <!-- ko foreach: { data: template().rows, as: 'row' } -->
-        <div class="row">
-            <!-- ko foreach: { data:row.cells, as: 'cell' } -->
-            <div data-bind="draftTemplateClass: cell">
-                <div class="template-preview-cell" data-bind="html: content"></div>
+        <div class="draft-preview-box">
+            <!-- ko foreach: { data: template().rows, as: 'row' } -->
+            <div class="row">
+                <!-- ko foreach: { data:row.cells, as: 'cell' } -->
+                <div data-bind="draftTemplateClass: cell">
+                    <div class="template-preview-cell" data-bind="html: content"></div>
+                </div>
+                <!-- /ko -->
             </div>
             <!-- /ko -->
         </div>
-        <!-- /ko -->
     </section>
     <!-- ko if: entity().Files().length > 0 -->
     <div class="row draft-preview-panel" data-bind="with: entity()">
         <div class="col-md-12">
-            <h6>Dateien (<!-- ko text: Files().length --><!-- /ko -->)</h6>
+            <h6>Anhänge (<!-- ko text: Files().length --><!-- /ko -->)</h6>
             <ul data-bind="foreach: Files()" class="list-inline">
                 <li><i class="fa fa-file"></i> <span data-bind="text: Name" /></li>
             </ul>

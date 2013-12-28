@@ -1,23 +1,55 @@
-﻿<div class="draft-template-container" data-bind="if: editor.template()">
-    <!-- ko foreach: { data: editor.template().rows, as: 'row' } -->
-    <div class="draft-template-row">
-        <!-- ko foreach: { data:row.cells, as: 'cell' } -->
-        <div class="draft-template-part" data-bind="draftTemplateClass: cell, click: $parents[1].editContentPart">
-            <div>
-                <!--<p>
-                    <a href="#" data-bind="click: $parents[1].editContentPart"><i class="fa fa-edit"></i> <span data-bind="text:title"></span></a>
-                </p>-->
-                <h4 data-bind="text:title"></h4>
-                <p>
-                    <i data-bind="text: $parents[1].previewText($data)"></i>
-                </p>
-            </div>
-        </div>
-        <!-- /ko -->
-    </div>
+﻿
+<div class="draft-template-container panel-scroll-v" data-bind="if: editor.template(), forceViewportHeight: { spacers: '.draft-template-nav', minWidth: 992 }">
+    <!-- ko if: !showPreview() -->
+    <!-- ko template: 'draft-template-layout-overview' --><!-- /ko -->
+    <!-- /ko -->
+    <!-- ko if: showPreview() -->
+    <!-- ko template: 'draft-template-layout-preview' --><!-- /ko -->
     <!-- /ko -->
 </div>
 
 <div class="draft-template-nav">
-    <p><a href="#" data-bind="click: editor.showTemplateEditor"><i class="fa fa-edit"></i> Vorlage bearbeiten</a></p>
+    <div class="pull-right">
+        <a href="#" data-bind="click: togglePreview"><i class="glyphicon" data-bind="css: { 'glyphicon-eye-open': !showPreview(), 'glyphicon-eye-close': showPreview() }"></i></a>
+    </div>
+    <div>
+        <a href="#" data-bind="click: editor.showTemplateEditor"><i class="fa fa-edit"></i> Vorlage bearbeiten</a>
+    </div>
 </div>
+
+<script type="text/html" id="draft-template-layout-overview">
+    <div class="draft-template-layout">
+        <!-- ko foreach: { data: editor.template().rows, as: 'row' } -->
+        <div class="draft-template-row">
+            <!-- ko foreach: { data:row.cells, as: 'cell' } -->
+            <div class="draft-template-part" data-bind="draftTemplateClass: cell, click: $parents[1].editContentPart">
+                <div>
+                    <!--<p>
+                        <a href="#" data-bind="click: $parents[1].editContentPart"><i class="fa fa-edit"></i> <span data-bind="text:title"></span></a>
+                    </p>-->
+                    <h4 data-bind="text:title"></h4>
+                    <p>
+                        <i data-bind="text: $parents[1].previewText($data)"></i>
+                    </p>
+                </div>
+            </div>
+            <!-- /ko -->
+        </div>
+        <!-- /ko -->
+    </div>
+</script>
+
+
+<script type="text/html" id="draft-template-layout-preview">
+    <div class="draft-template-preview">
+        <!-- ko foreach: { data: editor.template().rows, as: 'row' } -->
+        <div class="row">
+            <!-- ko foreach: { data:row.cells, as: 'cell' } -->
+            <div data-bind="draftTemplateClass: cell">
+                <div class="template-preview-cell" data-bind="html: $parents[1].prepareCellContent($data)"></div>
+            </div>
+            <!-- /ko -->
+        </div>
+        <!-- /ko -->
+    </div>
+</script>

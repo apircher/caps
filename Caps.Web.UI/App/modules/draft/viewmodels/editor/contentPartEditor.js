@@ -6,6 +6,8 @@
         'html': './contentEditors/htmlEditor'
     };
 
+    var $window = $(window);
+
     function ContentPartEditor(editor, contentPart) {        
         var self = this;
         self.name = 'ContentPartEditor';
@@ -32,6 +34,7 @@
         self.togglePreview = function () {
             self.previewContent(contentGenerator.createTemplateCellContent(self.editor.entity(), self.templateCell, self.resource.Language()));
             self.showPreview(!self.showPreview());
+            $window.trigger('forceViewportHeight:refresh');
         };
 
         self.previewContent = ko.observable();

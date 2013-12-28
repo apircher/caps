@@ -12,11 +12,11 @@ function (require, ko, system) {
     var draftStates = [
         {
             value: 'NEW',
-            title: 'Entwurf in Arbeit'
+            title: 'In Arbeit'
         },
         {
             value: 'RFT',   // Ready for Translation
-            title: 'Übersetzung in Arbeit'
+            title: 'Bereit zur Übersetzung'
         },
         {
             value: 'RFP',   // Ready for Publication

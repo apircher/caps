@@ -51,7 +51,7 @@
 <script type="text/html" id="insertImageDlg-dbfile-icon">
     <!-- ko with: resource.FileVersion() -->
     <!-- ko if: File().isImage && File().isImage() -->
-    <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=110x80', title: File().FileName, alt: File().FileName }, lazyImage: true" />
+    <img data-bind="attr: { 'src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=110x80&h=' + Hash(), title: File().FileName, alt: File().FileName }" />
     <!-- /ko -->
     <!-- ko if: File().isImage && !File().isImage() -->
     <span data-bind="attr: { title: File().FileName }"><i class="fa fa-file fa-4x"></i></span>

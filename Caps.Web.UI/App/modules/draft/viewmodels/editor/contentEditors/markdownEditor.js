@@ -18,6 +18,8 @@ function (app, ko, $, InsertLinkDialog, InsertImageDialog, module, Q) {
                 if (dialogResult.result) {
                     editorCallback(dialogResult.url);
                 }
+                else
+                    editorCallback(null);
             });
             return true;
         };
@@ -61,6 +63,43 @@ function (app, ko, $, InsertLinkDialog, InsertImageDialog, module, Q) {
 
     }
 
+    var markdownEditorButtonStrings = {
+        bold: "Fett <strong> Ctrl+B",
+        boldexample: "fetter Text",
+
+        italic: "Hervorhebung <em> Ctrl+I",
+        italicexample: "hervorgehobener Text",
+
+        link: "Link <a> Ctrl+L",
+        linkdescription: "Link-Text hier einfügen",
+        linkdialog: "",
+
+        quote: "Zitat <blockquote> Ctrl+Q",
+        quoteexample: "Zitat",
+
+        code: "Code Beispiel <pre><code> Ctrl+K",
+        codeexample: "Code hier einfügen",
+
+        image: "Bild <img> Ctrl+G",
+        imagedescription: "Bild-Beschreibung hier einfügen",
+        imagedialog: "",
+
+        olist: "Nummerierte Liste <ol> Ctrl+O",
+        ulist: "Liste <ul> Ctrl+U",
+        litem: "Listen-Element",
+
+        heading: "Überschrift <h1>/<h2> Ctrl+H",
+        headingexample: "Überschrift",
+
+        hr: "Horizontale Linie <hr> Ctrl+R",
+
+        undo: "Rückgängig - Ctrl+Z",
+        redo: "Wiederholen - Ctrl+Y",
+        redomac: "Wiederholen - Ctrl+Shift+Z",
+
+        help: "Markdown Hilfe"
+    };
+
     ko.bindingHandlers.pagedownEditor = {
         init: function (element, valueAccessor) {
             var contentEditor = ko.unwrap(valueAccessor()),
@@ -79,9 +118,10 @@ function (app, ko, $, InsertLinkDialog, InsertImageDialog, module, Q) {
             $preview.attr('id', 'wmd-preview' + idSuffix);
             
             var options = {
-                helpButton: { handler: contentEditor.showHelp }
+                strings: markdownEditorButtonStrings
+                //,helpButton: { handler: contentEditor.showHelp }
             };
-            var editor = new Markdown.Editor(converter, idSuffix, null);
+            var editor = new Markdown.Editor(converter, idSuffix, options);
 
             $textArea.val(contentEditor.content());
 

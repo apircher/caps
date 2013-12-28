@@ -1430,6 +1430,9 @@
                         icon.className = iconClass;
                         button.appendChild(icon);
                     }
+
+                    button.title = title;
+
                     return button;
                 };
 

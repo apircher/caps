@@ -193,6 +193,10 @@
                 $ce = $ce.parent();
             }
 
+            var borderTopWidth = $elem.css('border-top-width').replace('px', '');
+            var borderBottomWidth = $elem.css('border-bottom-width').replace('px', '');
+            viewportHeight -= (borderTopWidth + borderBottomWidth);
+
             if (viewportHeight > 0) {
                 $elem.height(viewportHeight + 'px');
                 $elem.trigger('stretchHeight:resized');

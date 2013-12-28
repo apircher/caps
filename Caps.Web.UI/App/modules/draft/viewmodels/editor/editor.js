@@ -184,7 +184,14 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
             var btnCancel = 'Abbrechen';
             app.showMessage('Soll der Entwurf wirklich gelöscht werden?', 'Entwurf löschen', [btnOk, btnCancel])
                 .then(function (result) {
-                    if (result === btnOk) deleteEntity();
+                    if (result === btnOk) {
+                        if (self.isNewDraft()) {
+                            manager.rejectChanges();
+                            self.navigateBack();
+                            return;
+                        }
+                        deleteEntity();
+                    }
                 });
         };
 

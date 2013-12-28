@@ -33,7 +33,10 @@
  */
 .draft-template-container {
     background:#eee;
-    margin:0 -15px;
+    margin:-15px -15px 0;
+    border-bottom:1px solid #eee;
+    padding:15px 0 0 0;
+    box-sizing: border-box;
 }
 
 .draft-template-row {
@@ -43,7 +46,11 @@
 }
 
 .draft-template-part {
-    padding:15px;
+    padding:0 0 15px 15px;
+}
+
+.draft-template-part:last-of-type {
+    padding-right:15px;
 }
 
     .draft-template-part > div {
@@ -54,7 +61,7 @@
         box-shadow: rgba(0,0,0,0.3) 3px 3px 5px;
         box-sizing:padding-box;
         padding:1em;
-        min-height:160px;
+        min-height:145px;
         overflow:hidden;
         text-overflow:ellipsis;
         border:1px solid transparent;
@@ -72,6 +79,18 @@
     position:relative;
     overflow:hidden;
     padding:15px 15px 15px 20px;
+}
+
+.draft-template-preview {
+    position:relative;
+    margin:0 35px 15px;
+    background:#fff;
+    box-shadow: rgba(0,0,0,0.3) 3px 3px 5px;
+    padding:15px;
+}
+
+.draft-template-layout {
+    margin:0 20px 15px;
 }
 
 /**
@@ -92,7 +111,9 @@
     top:0;
     left:0;
     right:0;
-    height:38px;
+    height:34px;
+    overflow:hidden;
+    white-space:nowrap;
 }
 
 .container-toolbar-top {
@@ -106,15 +127,40 @@
     padding:7px 0 0 20px;
 }
 
+.contentpart-preview {
+    position:relative;
+    margin:-15px -15px 0;
+    background:#eee;
+    padding:0 20px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.contentpart-preview > div {
+    margin:15px;
+    background:#fff;
+    box-shadow: rgba(0,0,0,0.3) 3px 3px 5px;
+    padding:30px 15px;
+}
+
+.contentpart-preview > div > :first-child {
+    margin-top:0;
+}
+
 /**
  * Draft Preview
  */
 .draft-preview {
 }
 
+.draft-preview-box {
+    position:relative;
+    background:#fff;
+    padding:15px;
+    box-shadow: rgba(0,0,0,0.3) 3px 3px 5px;
+    border:1px solid #eee;
+}
+
 .draft-preview-content {
-    border-top:1px solid #eee;
-    border-bottom:1px solid #eee;
 }
 
 .draft-preview-content.sitemap-index {
@@ -122,11 +168,15 @@
 }
 
 .draft-preview-panel {
-    padding:15px 0;
+    padding:15px 0 5px 15px;
 }
 
-.draft-preview-panel + .draft-preview-panel {
+.draft-preview-panel+.draft-preview-panel {
     padding-top:0;
+}
+
+.draft-preview-panel:last-of-type {
+    padding-bottom:20px;
 }
 
     .draft-preview .row {

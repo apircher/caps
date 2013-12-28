@@ -1,10 +1,10 @@
-﻿<div data-bind="forceViewportHeight: { spacers: '.contentpart-nav', minWidth: 992 }, css: { 'panel-scroll-v': showPreview() }">
+﻿<div data-bind="forceViewportHeight: { spacers: '.contentpart-nav', minWidth: 992 }, css: { 'panel-scroll-v': showPreview(), 'contentpart-preview': showPreview() }">
     <!-- ko if: !showPreview() -->
     <!-- ko compose: contentEditor --><!-- /ko -->
     <!-- /ko -->
 
     <!-- ko if: showPreview() -->
-        <div data-bind="html: previewContent"></div>
+    <div data-bind="html: previewContent"></div>
     <!-- /ko -->
 </div>
 <div class="contentpart-nav">
