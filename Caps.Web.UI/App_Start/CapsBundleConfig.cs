@@ -25,7 +25,7 @@ namespace Caps.Web.UI.App_Start
 
             bundles.Add(
               new ScriptBundle("~/Scripts/vendor")
-                .Include("~/Scripts/jquery-2.0.3.js")
+                .Include("~/Scripts/jquery-2.1.0.js")
                 .Include("~/Scripts/jquery.fileupload.js")
                 .Include("~/Scripts/jquery.ui.widget.js")
                 .Include("~/Scripts/knockout-3.0.0.js")

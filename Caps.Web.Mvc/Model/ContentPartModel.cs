@@ -9,24 +9,46 @@ using System.Web.Mvc;
 
 namespace Caps.Web.Mvc.Model
 {
+    /// <summary>
+    /// Represents the content of a certain layout cell.
+    /// </summary>
     public class ContentPartModel
     {
+        /// <summary>
+        /// The raw content of the layout cell.
+        /// </summary>
         public String Content { get; set; }
+        /// <summary>
+        /// The language of the cells content.
+        /// </summary>
         public String Language { get; set; }
+        /// <summary>
+        /// The usage of the content. Actually this can be seen as the cell name.
+        /// </summary>
         public String Usage { get; set; }
+        /// <summary>
+        /// A boolean value that holds true if the content is in a fallback language
+        /// instead of in the requested language. Otherwise it holds false.
+        /// </summary>
         public bool IsFallback { get; set; }
 
-        public String PrepareDisplay(DbSiteMapNode node, IUrlHelper urlHelper, ContentScriptManager scriptManager)
+        /// <summary>
+        /// Returns the content of the layout cell prepared for display.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="urlHelper"></param>
+        /// <param name="scriptManager"></param>
+        /// <returns></returns>
+        public String PrepareDisplay(DbSiteMapNode node, IUrlHelper urlHelper, ContentScriptManager scriptManager) 
         {
             var controlRegistry = DependencyResolver.Current.GetService<ContentControlRegistry>();
-            var content = Content;
-            if (!String.IsNullOrWhiteSpace(content))
+            var result = Content;
+            if (!String.IsNullOrWhiteSpace(result))
             {
                 var pp = new ContentPreprocessor(node, controlRegistry);
-                content = pp.PrepareDisplay(Usage, content, Language, urlHelper, scriptManager);
+                result = pp.PrepareDisplay(Usage, result, Language, urlHelper, scriptManager);
             }
-
-            return content;
+            return result;
         }
     }
 }

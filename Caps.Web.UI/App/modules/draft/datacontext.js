@@ -70,7 +70,7 @@ function (system, entityManagerProvider, ko, UserQueryParser, Entities, stockTem
         mgr = mgr || manager;
         return system.defer(function (dfd) {
             clearCachedPublications(draftId, mgr);
-            var pr = new breeze.Predicate('Content.EntityType', '==', 'Draft').and('Content.EntityKey', '==', draftId);
+            var pr = new breeze.Predicate('Content.EntityType', '==', 'Draft').and('Content.EntityKey', '==', draftId.toString());
             var query = new EntityQuery().from('SiteMapNodes')
                 .where(pr)
                 .expand('Content, SiteMap, SiteMap.SiteMapNodes, SiteMap.SiteMapNodes.Resources');

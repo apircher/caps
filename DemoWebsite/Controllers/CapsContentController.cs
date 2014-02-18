@@ -23,7 +23,7 @@ namespace DemoWebsite.Controllers
                 return HttpNotFound();
 
             var caps = DependencyResolver.Current.GetService<ContentService>();
-            var content = caps.GetContentById(idValue);
+            var content = caps.GetContent(idValue);
             ViewBag.Content = content;
 
             if (!String.IsNullOrWhiteSpace(content.TemplateName) && ViewExists(content.TemplateName))

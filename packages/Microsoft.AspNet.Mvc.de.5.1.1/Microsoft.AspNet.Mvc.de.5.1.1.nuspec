@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.AspNet.Mvc.de</id>
+    <version>5.1.1</version>
+    <title>Deutsche Ressourcen für Microsoft ASP.NET MVC</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://www.microsoft.com/web/webpi/eula/aspnetcomponent_rtw_DEU.htm</licenseUrl>
+    <projectUrl>http://www.asp.net/mvc</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Dieses Paket enthält die deutschen Satellitenassemblys für ASP.NET MVC.</description>
+    <summary>Deutsche Ressourcen für das Microsoft.AspNet.Mvc-Paket</summary>
+    <releaseNotes>Please visit http://go.microsoft.com/fwlink/?LinkId=389866 to view the release notes.</releaseNotes>
+    <copyright>© Microsoft Corporation. Alle Rechte vorbehalten.</copyright>
+    <language>de</language>
+    <tags>Microsoft AspNet Mvc AspNetMvc</tags>
+    <dependencies>
+      <dependency id="Microsoft.AspNet.Mvc" version="[5.1.1]" />
+    </dependencies>
+  </metadata>
+</package>

@@ -1,4 +1,5 @@
 ﻿using Caps.Data;
+using Caps.Data.ContentControls;
 using Caps.Data.Localization;
 using Caps.Web.Mvc.Model;
 using System;
@@ -10,16 +11,29 @@ using System.Threading.Tasks;
 
 namespace Caps.Web.Mvc
 {
+    /// <summary>
+    /// Provides an interface for websites to retrieve content.
+    /// </summary>
     public class ContentService
     {
         CapsDbContext db;
 
-        public ContentService(CapsDbContext db)
+        /// <summary>
+        /// Creates a new instance of the ContentService class.
+        /// </summary>
+        /// <param name="db"></param>
+        public ContentService(CapsDbContext db) 
         {
             this.db = db;
         }
 
-        public Caps.Data.Model.DbSiteMapNode GetCurrentNodeVersion(int id)
+        /// <summary>
+        /// Returns the currently published version of the sitemap 
+        /// node with the given permanent id.
+        /// </summary>
+        /// <param name="permanentId"></param>
+        /// <returns></returns>
+        public Caps.Data.Model.DbSiteMapNode GetCurrentNodeVersion(int permanentId) 
         {
             var currentSiteMap = db.GetCurrentSiteMap(db.Websites.First().Id);
             if (currentSiteMap == null)
@@ -29,12 +43,18 @@ namespace Caps.Web.Mvc
                 .Include("Resources")
                 .Include("Content.ContentParts.Resources")
                 .Include("Content.Files.Resources.FileVersion.File")
-                .FirstOrDefault(n => n.SiteMap.Id == currentSiteMap.Id && n.PermanentId == id);
+                .FirstOrDefault(n => n.SiteMap.Id == currentSiteMap.Id && n.PermanentId == permanentId);
         }
 
-        public ContentModel GetContentById(int id)
+        /// <summary>
+        /// Returns a localized ContentModel-Instance for the sitemap node with the given 
+        /// permanent id and the language set by Caps.Data.Localization.Language.CurrentLanguage.
+        /// </summary>
+        /// <param name="permanentId"></param>
+        /// <returns></returns>
+        public ContentModel GetContent(int permanentId, ContentScriptManager scriptManager = null) 
         {
-            var entity = GetCurrentNodeVersion(id);
+            var entity = GetCurrentNodeVersion(permanentId);
             if (entity == null)
                 throw new ContentNotFoundException();
 
@@ -63,19 +83,21 @@ namespace Caps.Web.Mvc
                     Ranking = f.Ranking,
                     Title = LocalizedFileTitle(f, r.Language),
                     Description = r.Description,
-                    Credits = r.Credits,
                     FileVersionId = r.DbFileVersionId.GetValueOrDefault(),
                     FileName = r.FileVersion != null ? r.FileVersion.File.FileName : String.Empty
                 }
                 , null, "de", "en")) : new List<ContentFileModel>();
 
-            return new ContentModel
+            var result = new ContentModel(scriptManager ?? new ContentScriptManager())
             {
                 SiteMapNode = entity,
                 ContentParts = contentParts.Where(c => c != null),
                 ContentFiles = contentFiles.Where(f => f != null)
             };
+
+            return result;
         }
+
         String LocalizedFileTitle(Caps.Data.Model.PublicationFile f, String language) {
             var result = f.GetValueForLanguage(language, r => r.Title, "de", "en");
             if (String.IsNullOrWhiteSpace(result))
@@ -86,6 +108,11 @@ namespace Caps.Web.Mvc
             return String.IsNullOrWhiteSpace(result) ? String.Empty : result;
         }
 
+        /// <summary>
+        /// Returns an IEnumerable of TeaserModel-Instances for the 
+        /// Teasers placed on the websites start page.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<TeaserModel> GetTeasers()
         {
             var currentSiteMap = db.GetCurrentSiteMap(db.Websites.First().Id);
