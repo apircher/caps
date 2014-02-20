@@ -433,7 +433,7 @@ define('durandal/app',["durandal/system","durandal/viewEngine","durandal/composi
 define('plugins/history',["durandal/system","jquery"],function(e,t){function n(e,t,n){if(n){var r=e.href.replace(/(javascript:|#).*$/,"");e.replace(r+"#"+t)}else e.hash="#"+t}var r=/^[#\/]|\s+$/g,i=/^\/+|\/+$/g,a=/msie [\w.]+/,o=/\/$/,s={interval:50,active:!1};return"undefined"!=typeof window&&(s.location=window.location,s.history=window.history),s.getHash=function(e){var t=(e||s).location.href.match(/#(.*)$/);return t?t[1]:""},s.getFragment=function(e,t){if(null==e)if(s._hasPushState||!s._wantsHashChange||t){e=s.location.pathname+s.location.search;var n=s.root.replace(o,"");e.indexOf(n)||(e=e.substr(n.length))}else e=s.getHash();return e.replace(r,"")},s.activate=function(n){s.active&&e.error("History has already been activated."),s.active=!0,s.options=e.extend({},{root:"/"},s.options,n),s.root=s.options.root,s._wantsHashChange=s.options.hashChange!==!1,s._wantsPushState=!!s.options.pushState,s._hasPushState=!!(s.options.pushState&&s.history&&s.history.pushState);var o=s.getFragment(),l=document.documentMode,u=a.exec(navigator.userAgent.toLowerCase())&&(!l||7>=l);s.root=("/"+s.root+"/").replace(i,"/"),u&&s._wantsHashChange&&(s.iframe=t('<iframe src="javascript:0" tabindex="-1" />').hide().appendTo("body")[0].contentWindow,s.navigate(o,!1)),s._hasPushState?t(window).on("popstate",s.checkUrl):s._wantsHashChange&&"onhashchange"in window&&!u?t(window).on("hashchange",s.checkUrl):s._wantsHashChange&&(s._checkUrlInterval=setInterval(s.checkUrl,s.interval)),s.fragment=o;var c=s.location,d=c.pathname.replace(/[^\/]$/,"$&/")===s.root;if(s._wantsHashChange&&s._wantsPushState){if(!s._hasPushState&&!d)return s.fragment=s.getFragment(null,!0),s.location.replace(s.root+s.location.search+"#"+s.fragment),!0;s._hasPushState&&d&&c.hash&&(this.fragment=s.getHash().replace(r,""),this.history.replaceState({},document.title,s.root+s.fragment+c.search))}return s.options.silent?void 0:s.loadUrl()},s.deactivate=function(){t(window).off("popstate",s.checkUrl).off("hashchange",s.checkUrl),clearInterval(s._checkUrlInterval),s.active=!1},s.checkUrl=function(){var e=s.getFragment();return e===s.fragment&&s.iframe&&(e=s.getFragment(s.getHash(s.iframe))),e===s.fragment?!1:(s.iframe&&s.navigate(e,!1),s.loadUrl(),void 0)},s.loadUrl=function(e){var t=s.fragment=s.getFragment(e);return s.options.routeHandler?s.options.routeHandler(t):!1},s.navigate=function(t,r){if(!s.active)return!1;if(void 0===r?r={trigger:!0}:e.isBoolean(r)&&(r={trigger:r}),t=s.getFragment(t||""),s.fragment!==t){s.fragment=t;var i=s.root+t;if(""===t&&"/"!==i&&(i=i.slice(0,-1)),s._hasPushState)s.history[r.replace?"replaceState":"pushState"]({},document.title,i);else{if(!s._wantsHashChange)return s.location.assign(i);n(s.location,t,r.replace),s.iframe&&t!==s.getFragment(s.getHash(s.iframe))&&(r.replace||s.iframe.document.open().close(),n(s.iframe.location,t,r.replace))}return r.trigger?s.loadUrl(t):void 0}},s.navigateBack=function(){s.history.back()},s});
 define('plugins/router',["durandal/system","durandal/app","durandal/activator","durandal/events","durandal/composition","plugins/history","knockout","jquery"],function(e,t,n,r,i,a,o,s){function l(e){return e=e.replace(b,"\\$&").replace(v,"(?:$1)?").replace(m,function(e,t){return t?e:"([^/]+)"}).replace(g,"(.*?)"),new RegExp("^"+e+"$",w?void 0:"i")}function u(e){var t=e.indexOf(":"),n=t>0?t-1:e.length;return e.substring(0,n)}function c(e,t){return-1!==e.indexOf(t,e.length-t.length)}function d(e,t){if(!e||!t)return!1;if(e.length!=t.length)return!1;for(var n=0,r=e.length;r>n;n++)if(e[n]!=t[n])return!1;return!0}function f(e){return e.queryString?e.fragment+"?"+e.queryString:e.fragment}var p,h,v=/\((.*?)\)/g,m=/(\(\?)?:\w+/g,g=/\*\w+/g,b=/[\-{}\[\]+?.,\\\^$|#\s]/g,y=/\/$/,w=!1,k=function(){function i(e,t){return e.router&&e.router.parent==t}function s(e){T&&T.config.isActive&&T.config.isActive(e)}function v(t,n){e.log("Navigation Complete",t,n);var r=e.getModuleId(S);r&&R.trigger("router:navigation:from:"+r),S=t,s(!1),T=n,s(!0);var a=e.getModuleId(S);a&&R.trigger("router:navigation:to:"+a),i(t,R)||R.updateDocumentTitle(t,n),E(!1),h.explicitNavigation=!1,h.navigatingBack=!1,R.trigger("router:navigation:complete",t,n,R)}function m(t,n){e.log("Navigation Cancelled"),R.activeInstruction(T),T&&R.navigate(f(T),!1),E(!1),h.explicitNavigation=!1,h.navigatingBack=!1,R.trigger("router:navigation:cancelled",t,n,R)}function g(t){e.log("Navigation Redirecting"),E(!1),h.explicitNavigation=!1,h.navigatingBack=!1,R.navigate(t,{trigger:!0,replace:!0})}function b(t,n,r){h.navigatingBack=!h.explicitNavigation&&S!=r.fragment,R.trigger("router:route:activating",n,r,R),t.activateItem(n,r.params).then(function(e){if(e){var a=S;if(v(n,r),i(n,R)){var o=r.fragment;r.queryString&&(o+="?"+r.queryString),n.router.loadUrl(o)}a==n&&(R.attached(),R.compositionComplete())}else t.settings.lifecycleData&&t.settings.lifecycleData.redirect?g(t.settings.lifecycleData.redirect):m(n,r);p&&(p.resolve(),p=null)}).fail(function(t){e.error(t)})}function w(t,n,r){var i=R.guardRoute(n,r);i?i.then?i.then(function(i){i?e.isString(i)?g(i):b(t,n,r):m(n,r)}):e.isString(i)?g(i):b(t,n,r):m(n,r)}function C(e,t,n){R.guardRoute?w(e,t,n):b(e,t,n)}function N(e){return T&&T.config.moduleId==e.config.moduleId&&S&&(S.canReuseForRoute&&S.canReuseForRoute.apply(S,e.params)||!S.canReuseForRoute&&S.router&&S.router.loadUrl)}function x(){if(!E()){var t=P.shift();P=[],t&&(E(!0),R.activeInstruction(t),N(t)?C(n.create(),S,t):e.acquire(t.config.moduleId).then(function(n){var r=e.resolveObject(n);C(_,r,t)}).fail(function(n){e.error("Failed to load routed module ("+t.config.moduleId+"). Details: "+n.message)}))}}function D(e){P.unshift(e),x()}function I(e,t,n){for(var r=e.exec(t).slice(1),i=0;i<r.length;i++){var a=r[i];r[i]=a?decodeURIComponent(a):null}var o=R.parseQueryString(n);return o&&r.push(o),{params:r,queryParams:o}}function F(t){R.trigger("router:route:before-config",t,R),e.isRegExp(t)?t.routePattern=t.route:(t.title=t.title||R.convertRouteToTitle(t.route),t.moduleId=t.moduleId||R.convertRouteToModuleId(t.route),t.hash=t.hash||R.convertRouteToHash(t.route),t.routePattern=l(t.route)),t.isActive=t.isActive||o.observable(!1),R.trigger("router:route:after-config",t,R),R.routes.push(t),R.route(t.routePattern,function(e,n){var r=I(t.routePattern,e,n);D({fragment:e,queryString:n,config:t,params:r.params,queryParams:r.queryParams})})}function M(t){if(e.isArray(t.route))for(var n=t.isActive||o.observable(!1),r=0,i=t.route.length;i>r;r++){var a=e.extend({},t);a.route=t.route[r],a.isActive=n,r>0&&delete a.nav,F(a)}else F(t);return R}var S,T,P=[],E=o.observable(!1),_=n.create(),R={handlers:[],routes:[],navigationModel:o.observableArray([]),activeItem:_,isNavigating:o.computed(function(){var e=_(),t=E(),n=e&&e.router&&e.router!=R&&e.router.isNavigating()?!0:!1;return t||n}),activeInstruction:o.observable(null),__router__:!0};return r.includeIn(R),_.settings.areSameItem=function(e,t,n,r){return e==t?d(n,r):!1},R.parseQueryString=function(e){var t,n;if(!e)return null;if(n=e.split("&"),0==n.length)return null;t={};for(var r=0;r<n.length;r++){var i=n[r];if(""!==i){var a=i.split("=");t[a[0]]=a[1]&&decodeURIComponent(a[1].replace(/\+/g," "))}}return t},R.route=function(e,t){R.handlers.push({routePattern:e,callback:t})},R.loadUrl=function(t){var n=R.handlers,r=null,i=t,o=t.indexOf("?");if(-1!=o&&(i=t.substring(0,o),r=t.substr(o+1)),R.relativeToParentRouter){var s=this.parent.activeInstruction();i=s.params.join("/"),i&&"/"==i.charAt(0)&&(i=i.substr(1)),i||(i=""),i=i.replace("//","/").replace("//","/")}i=i.replace(y,"");for(var l=0;l<n.length;l++){var u=n[l];if(u.routePattern.test(i))return u.callback(i,r),!0}return e.log("Route Not Found"),R.trigger("router:route:not-found",t,R),T&&a.navigate(f(T),{trigger:!1,replace:!0}),h.explicitNavigation=!1,h.navigatingBack=!1,!1},R.updateDocumentTitle=function(e,n){n.config.title?document.title=t.title?n.config.title+" | "+t.title:n.config.title:t.title&&(document.title=t.title)},R.navigate=function(e,t){return e&&-1!=e.indexOf("://")?(window.location.href=e,!0):(h.explicitNavigation=!0,a.navigate(e,t))},R.navigateBack=function(){a.navigateBack()},R.attached=function(){R.trigger("router:navigation:attached",S,T,R)},R.compositionComplete=function(){E(!1),R.trigger("router:navigation:composition-complete",S,T,R),x()},R.convertRouteToHash=function(e){if(R.relativeToParentRouter){var t=R.parent.activeInstruction(),n=t.config.hash+"/"+e;return a._hasPushState&&(n="/"+n),n=n.replace("//","/").replace("//","/")}return a._hasPushState?e:"#"+e},R.convertRouteToModuleId=function(e){return u(e)},R.convertRouteToTitle=function(e){var t=u(e);return t.substring(0,1).toUpperCase()+t.substring(1)},R.map=function(t,n){if(e.isArray(t)){for(var r=0;r<t.length;r++)R.map(t[r]);return R}return e.isString(t)||e.isRegExp(t)?(n?e.isString(n)&&(n={moduleId:n}):n={},n.route=t):n=t,M(n)},R.buildNavigationModel=function(t){for(var n=[],r=R.routes,i=t||100,a=0;a<r.length;a++){var o=r[a];o.nav&&(e.isNumber(o.nav)||(o.nav=++i),n.push(o))}return n.sort(function(e,t){return e.nav-t.nav}),R.navigationModel(n),R},R.mapUnknownRoutes=function(t,n){var r="*catchall",i=l(r);return R.route(i,function(o,s){var l=I(i,o,s),u={fragment:o,queryString:s,config:{route:r,routePattern:i},params:l.params,queryParams:l.queryParams};if(t)if(e.isString(t))u.config.moduleId=t,n&&a.navigate(n,{trigger:!1,replace:!0});else if(e.isFunction(t)){var c=t(u);if(c&&c.then)return c.then(function(){R.trigger("router:route:before-config",u.config,R),R.trigger("router:route:after-config",u.config,R),D(u)}),void 0}else u.config=t,u.config.route=r,u.config.routePattern=i;else u.config.moduleId=o;R.trigger("router:route:before-config",u.config,R),R.trigger("router:route:after-config",u.config,R),D(u)}),R},R.reset=function(){return T=S=void 0,R.handlers=[],R.routes=[],R.off(),delete R.options,R},R.makeRelative=function(t){return e.isString(t)&&(t={moduleId:t,route:t}),t.moduleId&&!c(t.moduleId,"/")&&(t.moduleId+="/"),t.route&&!c(t.route,"/")&&(t.route+="/"),t.fromParent&&(R.relativeToParentRouter=!0),R.on("router:route:before-config").then(function(e){t.moduleId&&(e.moduleId=t.moduleId+e.moduleId),t.route&&(e.route=""===e.route?t.route.substring(0,t.route.length-1):t.route+e.route)}),R},R.createChildRouter=function(){var e=k();return e.parent=R,e},R};return h=k(),h.explicitNavigation=!1,h.navigatingBack=!1,h.makeRoutesCaseSensitive=function(){w=!0},h.targetIsThisWindow=function(e){var t=s(e.target).attr("target");return!t||t===window.name||"_self"===t||"top"===t&&window===window.top?!0:!1},h.activate=function(t){return e.defer(function(n){if(p=n,h.options=e.extend({routeHandler:h.loadUrl},h.options,t),a.activate(h.options),a._hasPushState)for(var r=h.routes,i=r.length;i--;){var o=r[i];o.hash=o.hash.replace("#","")}s(document).delegate("a","click",function(e){if(a._hasPushState){if(!e.altKey&&!e.ctrlKey&&!e.metaKey&&!e.shiftKey&&h.targetIsThisWindow(e)){var t=s(this).attr("href");null==t||"#"===t.charAt(0)||/^[a-z]+:/i.test(t)||(h.explicitNavigation=!0,e.preventDefault(),a.navigate(t))}}else h.explicitNavigation=!0}),a.options.silent&&p&&(p.resolve(),p=null)}).promise()},h.deactivate=function(){a.deactivate()},h.install=function(){o.bindingHandlers.router={init:function(){return{controlsDescendantBindings:!0}},update:function(e,t,n,r,a){var s=o.utils.unwrapObservable(t())||{};if(s.__router__)s={model:s.activeItem(),attached:s.attached,compositionComplete:s.compositionComplete,activate:!1};else{var l=o.utils.unwrapObservable(s.router||r.router)||h;s.model=l.activeItem(),s.attached=l.attached,s.compositionComplete=l.compositionComplete,s.activate=!1}i.compose(e,s,a)}},o.virtualElements.allowedBindings.router=!0},h});
 //! moment.js
-//! version : 2.4.0
+//! version : 2.5.1
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
 //! license : MIT
 //! momentjs.com
@@ -445,7 +445,8 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
     ************************************/
 
     var moment,
-        VERSION = "2.4.0",
+        VERSION = "2.5.1",
+        global = this,
         round = Math.round,
         i,
 
@@ -460,8 +461,21 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         // internal storage for language config files
         languages = {},
 
+        // moment internal properties
+        momentProperties = {
+            _isAMomentObject: null,
+            _i : null,
+            _f : null,
+            _l : null,
+            _strict : null,
+            _isUTC : null,
+            _offset : null,  // optional. Combine with _isUTC
+            _pf : null,
+            _lang : null  // optional
+        },
+
         // check for nodeJS
-        hasModule = (typeof module !== 'undefined' && module.exports),
+        hasModule = (typeof module !== 'undefined' && module.exports && typeof require !== 'undefined'),
 
         // ASP.NET json date format regex
         aspNetJsonRegex = /^\/?Date\((\-?\d+)/i,
@@ -472,32 +486,40 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         isoDurationRegex = /^(-)?P(?:(?:([0-9,.]*)Y)?(?:([0-9,.]*)M)?(?:([0-9,.]*)D)?(?:T(?:([0-9,.]*)H)?(?:([0-9,.]*)M)?(?:([0-9,.]*)S)?)?|([0-9,.]*)W)$/,
 
         // format tokens
-        formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|X|zz?|ZZ?|.)/g,
+        formattingTokens = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|YYYYYY|YYYYY|YYYY|YY|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|mm?|ss?|S{1,4}|X|zz?|ZZ?|.)/g,
         localFormattingTokens = /(\[[^\[]*\])|(\\)?(LT|LL?L?L?|l{1,4})/g,
 
         // parsing token regexes
         parseTokenOneOrTwoDigits = /\d\d?/, // 0 - 99
         parseTokenOneToThreeDigits = /\d{1,3}/, // 0 - 999
-        parseTokenThreeDigits = /\d{3}/, // 000 - 999
-        parseTokenFourDigits = /\d{1,4}/, // 0 - 9999
-        parseTokenSixDigits = /[+\-]?\d{1,6}/, // -999,999 - 999,999
+        parseTokenOneToFourDigits = /\d{1,4}/, // 0 - 9999
+        parseTokenOneToSixDigits = /[+\-]?\d{1,6}/, // -999,999 - 999,999
         parseTokenDigits = /\d+/, // nonzero number of digits
         parseTokenWord = /[0-9]*['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}/i, // any word (or two) characters or numbers including two/three word month in arabic.
-        parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/i, // +00:00 -00:00 +0000 -0000 or Z
-        parseTokenT = /T/i, // T (ISO seperator)
+        parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/gi, // +00:00 -00:00 +0000 -0000 or Z
+        parseTokenT = /T/i, // T (ISO separator)
         parseTokenTimestampMs = /[\+\-]?\d+(\.\d{1,3})?/, // 123456789 123456789.123
 
-        // preliminary iso regex
-        // 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000)
-        isoRegex = /^\s*\d{4}-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d:?\d\d|Z)?)?$/,
+        //strict parsing regexes
+        parseTokenOneDigit = /\d/, // 0 - 9
+        parseTokenTwoDigits = /\d\d/, // 00 - 99
+        parseTokenThreeDigits = /\d{3}/, // 000 - 999
+        parseTokenFourDigits = /\d{4}/, // 0000 - 9999
+        parseTokenSixDigits = /[+-]?\d{6}/, // -999,999 - 999,999
+        parseTokenSignedNumber = /[+-]?\d+/, // -inf - inf
+
+        // iso 8601 regex
+        // 0000-00-00 0000-W00 or 0000-W00-0 + T + 00 or 00:00 or 00:00:00 or 00:00:00.000 + +00:00 or +0000 or +00)
+        isoRegex = /^\s*(?:[+-]\d{6}|\d{4})-(?:(\d\d-\d\d)|(W\d\d$)|(W\d\d-\d)|(\d\d\d))((T| )(\d\d(:\d\d(:\d\d(\.\d+)?)?)?)?([\+\-]\d\d(?::?\d\d)?|\s*Z)?)?$/,
 
         isoFormat = 'YYYY-MM-DDTHH:mm:ssZ',
 
         isoDates = [
-            'YYYY-MM-DD',
-            'GGGG-[W]WW',
-            'GGGG-[W]WW-E',
-            'YYYY-DDD'
+            ['YYYYYY-MM-DD', /[+-]\d{6}-\d{2}-\d{2}/],
+            ['YYYY-MM-DD', /\d{4}-\d{2}-\d{2}/],
+            ['GGGG-[W]WW-E', /\d{4}-W\d{2}-\d/],
+            ['GGGG-[W]WW', /\d{4}-W\d{2}/],
+            ['YYYY-DDD', /\d{4}-\d{3}/]
         ],
 
         // iso time formats and regexes
@@ -599,11 +621,15 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
             YYYYY : function () {
                 return leftZeroFill(this.year(), 5);
             },
+            YYYYYY : function () {
+                var y = this.year(), sign = y >= 0 ? '+' : '-';
+                return sign + leftZeroFill(Math.abs(y), 6);
+            },
             gg   : function () {
                 return leftZeroFill(this.weekYear() % 100, 2);
             },
             gggg : function () {
-                return this.weekYear();
+                return leftZeroFill(this.weekYear(), 4);
             },
             ggggg : function () {
                 return leftZeroFill(this.weekYear(), 5);
@@ -612,7 +638,7 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
                 return leftZeroFill(this.isoWeekYear() % 100, 2);
             },
             GGGG : function () {
-                return this.isoWeekYear();
+                return leftZeroFill(this.isoWeekYear(), 4);
             },
             GGGGG : function () {
                 return leftZeroFill(this.isoWeekYear(), 5);
@@ -669,7 +695,7 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
                     a = -a;
                     b = "-";
                 }
-                return b + leftZeroFill(toInt(10 * a / 6), 4);
+                return b + leftZeroFill(toInt(a / 60), 2) + leftZeroFill(toInt(a) % 60, 2);
             },
             z : function () {
                 return this.zoneAbbr();
@@ -679,10 +705,30 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
             },
             X    : function () {
                 return this.unix();
+            },
+            Q : function () {
+                return this.quarter();
             }
         },
 
         lists = ['months', 'monthsShort', 'weekdays', 'weekdaysShort', 'weekdaysMin'];
+
+    function defaultParsingFlags() {
+        // We need to deep clone this object, and es5 standard is not very
+        // helpful.
+        return {
+            empty : false,
+            unusedTokens : [],
+            unusedInput : [],
+            overflow : -2,
+            charsLeftOver : 0,
+            nullInput : false,
+            invalidMonth : null,
+            invalidFormat : false,
+            userInvalidated : false,
+            iso: false
+        };
+    }
 
     function padToken(func, count) {
         return function (a) {
@@ -732,9 +778,6 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
             seconds = normalizedInput.second || 0,
             milliseconds = normalizedInput.millisecond || 0;
 
-        // store reference to input for deterministic cloning
-        this._input = duration;
-
         // representation for dateAddRemove
         this._milliseconds = +milliseconds +
             seconds * 1e3 + // 1000
@@ -778,6 +821,17 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         return a;
     }
 
+    function cloneMoment(m) {
+        var result = {}, i;
+        for (i in m) {
+            if (m.hasOwnProperty(i) && momentProperties.hasOwnProperty(i)) {
+                result[i] = m[i];
+            }
+        }
+
+        return result;
+    }
+
     function absRound(number) {
         if (number < 0) {
             return Math.ceil(number);
@@ -788,12 +842,14 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
 
     // left zero fill a number
     // see http://jsperf.com/left-zero-filling for performance comparison
-    function leftZeroFill(number, targetLength) {
-        var output = number + '';
+    function leftZeroFill(number, targetLength, forceSign) {
+        var output = '' + Math.abs(number),
+            sign = number >= 0;
+
         while (output.length < targetLength) {
             output = '0' + output;
         }
-        return output;
+        return (sign ? (forceSign ? '+' : '') : '-') + output;
     }
 
     // helper function for _.addTime and _.subtractTime
@@ -864,8 +920,7 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
     function normalizeObjectUnits(inputObject) {
         var normalizedInput = {},
             normalizedProp,
-            prop,
-            index;
+            prop;
 
         for (prop in inputObject) {
             if (inputObject.hasOwnProperty(prop)) {
@@ -968,21 +1023,6 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         }
     }
 
-    function initializeParsingFlags(config) {
-        config._pf = {
-            empty : false,
-            unusedTokens : [],
-            unusedInput : [],
-            overflow : -2,
-            charsLeftOver : 0,
-            nullInput : false,
-            invalidMonth : null,
-            invalidFormat : false,
-            userInvalidated : false,
-            iso: false
-        };
-    }
-
     function isValid(m) {
         if (m._isValid == null) {
             m._isValid = !isNaN(m._d.getTime()) &&
@@ -1004,6 +1044,12 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
 
     function normalizeLanguage(key) {
         return key ? key.toLowerCase().replace('_', '-') : key;
+    }
+
+    // Return a moment from input, that is local/utc/zone equivalent to model.
+    function makeAs(input, model) {
+        return model._isUTC ? moment(input).zone(model._offset || 0) :
+            moment(input).local();
     }
 
     /************************************
@@ -1337,21 +1383,32 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
 
     // get the regex to find the next token
     function getParseRegexForToken(token, config) {
-        var a;
+        var a, strict = config._strict;
         switch (token) {
         case 'DDDD':
             return parseTokenThreeDigits;
         case 'YYYY':
         case 'GGGG':
         case 'gggg':
-            return parseTokenFourDigits;
+            return strict ? parseTokenFourDigits : parseTokenOneToFourDigits;
+        case 'Y':
+        case 'G':
+        case 'g':
+            return parseTokenSignedNumber;
+        case 'YYYYYY':
         case 'YYYYY':
         case 'GGGGG':
         case 'ggggg':
-            return parseTokenSixDigits;
+            return strict ? parseTokenSixDigits : parseTokenOneToSixDigits;
         case 'S':
+            if (strict) { return parseTokenOneDigit; }
+            /* falls through */
         case 'SS':
+            if (strict) { return parseTokenTwoDigits; }
+            /* falls through */
         case 'SSS':
+            if (strict) { return parseTokenThreeDigits; }
+            /* falls through */
         case 'DDD':
             return parseTokenOneToThreeDigits;
         case 'MMM':
@@ -1381,6 +1438,9 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         case 'hh':
         case 'mm':
         case 'ss':
+        case 'ww':
+        case 'WW':
+            return strict ? parseTokenTwoDigits : parseTokenOneOrTwoDigits;
         case 'M':
         case 'D':
         case 'd':
@@ -1389,9 +1449,7 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         case 'm':
         case 's':
         case 'w':
-        case 'ww':
         case 'W':
-        case 'WW':
         case 'e':
         case 'E':
             return parseTokenOneOrTwoDigits;
@@ -1402,8 +1460,10 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
     }
 
     function timezoneMinutesFromString(string) {
-        var tzchunk = (parseTokenTimezone.exec(string) || [])[0],
-            parts = (tzchunk + '').match(parseTimezoneChunker) || ['-', 0, 0],
+        string = string || "";
+        var possibleTzMatches = (string.match(parseTokenTimezone) || []),
+            tzChunk = possibleTzMatches[possibleTzMatches.length - 1] || [],
+            parts = (tzChunk + '').match(parseTimezoneChunker) || ['-', 0, 0],
             minutes = +(parts[1] * 60) + toInt(parts[2]);
 
         return parts[0] === '+' ? -minutes : minutes;
@@ -1452,6 +1512,7 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
             break;
         case 'YYYY' :
         case 'YYYYY' :
+        case 'YYYYYY' :
             datePartArray[YEAR] = toInt(input);
             break;
         // AM / PM
@@ -1536,8 +1597,9 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         //compute day of the year from weeks and weekdays
         if (config._w && config._a[DATE] == null && config._a[MONTH] == null) {
             fixYear = function (val) {
+                var int_val = parseInt(val, 10);
                 return val ?
-                  (val.length < 3 ? (parseInt(val, 10) > 68 ? '19' + val : '20' + val) : val) :
+                  (val.length < 3 ? (int_val > 68 ? 1900 + int_val : 2000 + int_val) : int_val) :
                   (config._a[YEAR] == null ? moment().weekYear() : config._a[YEAR]);
             };
 
@@ -1649,7 +1711,7 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
 
         for (i = 0; i < tokens.length; i++) {
             token = tokens[i];
-            parsedInput = (getParseRegexForToken(token, config).exec(string) || [])[0];
+            parsedInput = (string.match(getParseRegexForToken(token, config)) || [])[0];
             if (parsedInput) {
                 skipped = string.substr(0, string.indexOf(parsedInput));
                 if (skipped.length > 0) {
@@ -1721,7 +1783,7 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         for (i = 0; i < config._f.length; i++) {
             currentScore = 0;
             tempConfig = extend({}, config);
-            initializeParsingFlags(tempConfig);
+            tempConfig._pf = defaultParsingFlags();
             tempConfig._f = config._f[i];
             makeDateFromStringAndFormat(tempConfig);
 
@@ -1748,26 +1810,26 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
 
     // date from iso format
     function makeDateFromString(config) {
-        var i,
+        var i, l,
             string = config._i,
             match = isoRegex.exec(string);
 
         if (match) {
             config._pf.iso = true;
-            for (i = 4; i > 0; i--) {
-                if (match[i]) {
+            for (i = 0, l = isoDates.length; i < l; i++) {
+                if (isoDates[i][1].exec(string)) {
                     // match[5] should be "T" or undefined
-                    config._f = isoDates[i - 1] + (match[6] || " ");
+                    config._f = isoDates[i][0] + (match[6] || " ");
                     break;
                 }
             }
-            for (i = 0; i < 4; i++) {
+            for (i = 0, l = isoTimes.length; i < l; i++) {
                 if (isoTimes[i][1].exec(string)) {
                     config._f += isoTimes[i][0];
                     break;
                 }
             }
-            if (parseTokenTimezone.exec(string)) {
+            if (string.match(parseTokenTimezone)) {
                 config._f += "Z";
             }
             makeDateFromStringAndFormat(config);
@@ -1902,11 +1964,10 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
 
     //http://en.wikipedia.org/wiki/ISO_week_date#Calculating_a_date_given_the_year.2C_week_number_and_weekday
     function dayOfYearFromWeeks(year, week, weekday, firstDayOfWeekOfYear, firstDayOfWeek) {
-        var d = new Date(Date.UTC(year, 0)).getUTCDay(),
-            daysToAdd, dayOfYear;
+        var d = makeUTCDate(year, 0, 1).getUTCDay(), daysToAdd, dayOfYear;
 
         weekday = weekday != null ? weekday : firstDayOfWeek;
-        daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0);
+        daysToAdd = firstDayOfWeek - d + (d > firstDayOfWeekOfYear ? 7 : 0) - (d < firstDayOfWeek ? 7 : 0);
         dayOfYear = 7 * (week - 1) + (weekday - firstDayOfWeek) + daysToAdd + 1;
 
         return {
@@ -1923,10 +1984,6 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         var input = config._i,
             format = config._f;
 
-        if (typeof config._pf === 'undefined') {
-            initializeParsingFlags(config);
-        }
-
         if (input === null) {
             return moment.invalid({nullInput: true});
         }
@@ -1936,7 +1993,7 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         }
 
         if (moment.isMoment(input)) {
-            config = extend({}, input);
+            config = cloneMoment(input);
 
             config._d = new Date(+input._d);
         } else if (format) {
@@ -1953,37 +2010,47 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
     }
 
     moment = function (input, format, lang, strict) {
+        var c;
+
         if (typeof(lang) === "boolean") {
             strict = lang;
             lang = undefined;
         }
-        return makeMoment({
-            _i : input,
-            _f : format,
-            _l : lang,
-            _strict : strict,
-            _isUTC : false
-        });
+        // object construction must be done this way.
+        // https://github.com/moment/moment/issues/1423
+        c = {};
+        c._isAMomentObject = true;
+        c._i = input;
+        c._f = format;
+        c._l = lang;
+        c._strict = strict;
+        c._isUTC = false;
+        c._pf = defaultParsingFlags();
+
+        return makeMoment(c);
     };
 
     // creating with utc
     moment.utc = function (input, format, lang, strict) {
-        var m;
+        var c;
 
         if (typeof(lang) === "boolean") {
             strict = lang;
             lang = undefined;
         }
-        m = makeMoment({
-            _useUTC : true,
-            _isUTC : true,
-            _l : lang,
-            _i : input,
-            _f : format,
-            _strict : strict
-        }).utc();
+        // object construction must be done this way.
+        // https://github.com/moment/moment/issues/1423
+        c = {};
+        c._isAMomentObject = true;
+        c._useUTC = true;
+        c._isUTC = true;
+        c._l = lang;
+        c._i = input;
+        c._f = format;
+        c._strict = strict;
+        c._pf = defaultParsingFlags();
 
-        return m;
+        return makeMoment(c).utc();
     };
 
     // creating with unix timestamp (in seconds)
@@ -1993,18 +2060,21 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
 
     // duration
     moment.duration = function (input, key) {
-        var isDuration = moment.isDuration(input),
-            isNumber = (typeof input === 'number'),
-            duration = (isDuration ? input._input : (isNumber ? {} : input)),
+        var duration = input,
             // matching against regexp is expensive, do it on demand
             match = null,
             sign,
             ret,
-            parseIso,
-            timeEmpty,
-            dateTimeEmpty;
+            parseIso;
 
-        if (isNumber) {
+        if (moment.isDuration(input)) {
+            duration = {
+                ms: input._milliseconds,
+                d: input._days,
+                M: input._months
+            };
+        } else if (typeof input === 'number') {
+            duration = {};
             if (key) {
                 duration[key] = input;
             } else {
@@ -2043,7 +2113,7 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
 
         ret = new Duration(duration);
 
-        if (isDuration && input.hasOwnProperty('_lang')) {
+        if (moment.isDuration(input) && input.hasOwnProperty('_lang')) {
             ret._lang = input._lang;
         }
 
@@ -2090,7 +2160,8 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
 
     // compare moment object
     moment.isMoment = function (obj) {
-        return obj instanceof Moment;
+        return obj instanceof Moment ||
+            (obj != null &&  obj.hasOwnProperty('_isAMomentObject'));
     };
 
     // for typechecking Duration objects
@@ -2150,7 +2221,12 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         },
 
         toISOString : function () {
-            return formatMoment(moment(this).utc(), 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+            var m = moment(this).utc();
+            if (0 < m.year() && m.year() <= 9999) {
+                return formatMoment(m, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+            } else {
+                return formatMoment(m, 'YYYYYY-MM-DD[T]HH:mm:ss.SSS[Z]');
+            }
         },
 
         toArray : function () {
@@ -2227,7 +2303,7 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         },
 
         diff : function (input, units, asFloat) {
-            var that = this._isUTC ? moment(input).zone(this._offset || 0) : moment(input).local(),
+            var that = makeAs(input, this),
                 zoneDiff = (this.zone() - that.zone()) * 6e4,
                 diff, output;
 
@@ -2269,13 +2345,16 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         },
 
         calendar : function () {
-            var diff = this.diff(moment().zone(this.zone()).startOf('day'), 'days', true),
+            // We want to compare the start of today, vs this.
+            // Getting start-of-today depends on whether we're zone'd or not.
+            var sod = makeAs(moment(), this).startOf('day'),
+                diff = this.diff(sod, 'days', true),
                 format = diff < -6 ? 'sameElse' :
-                diff < -1 ? 'lastWeek' :
-                diff < 0 ? 'lastDay' :
-                diff < 1 ? 'sameDay' :
-                diff < 2 ? 'nextDay' :
-                diff < 7 ? 'nextWeek' : 'sameElse';
+                    diff < -1 ? 'lastWeek' :
+                    diff < 0 ? 'lastDay' :
+                    diff < 1 ? 'sameDay' :
+                    diff < 2 ? 'nextDay' :
+                    diff < 7 ? 'nextWeek' : 'sameElse';
             return this.format(this.lang().calendar(format, this));
         },
 
@@ -2375,8 +2454,8 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         },
 
         isSame: function (input, units) {
-            units = typeof units !== 'undefined' ? units : 'millisecond';
-            return +this.clone().startOf(units) === +moment(input).startOf(units);
+            units = units || 'ms';
+            return +this.clone().startOf(units) === +makeAs(input, this).startOf(units);
         },
 
         min: function (other) {
@@ -2418,7 +2497,9 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         },
 
         parseZone : function () {
-            if (typeof this._i === 'string') {
+            if (this._tzm) {
+                this.zone(this._tzm);
+            } else if (typeof this._i === 'string') {
                 this.zone(this._i);
             }
             return this;
@@ -2442,6 +2523,10 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         dayOfYear : function (input) {
             var dayOfYear = round((moment(this).startOf('day') - moment(this).startOf('year')) / 864e5) + 1;
             return input == null ? dayOfYear : this.add("d", (input - dayOfYear));
+        },
+
+        quarter : function () {
+            return Math.ceil((this.month() + 1.0) / 3.0);
         },
 
         weekYear : function (input) {
@@ -2714,7 +2799,7 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         // add `moment` as a global object via a string identifier,
         // for Closure Compiler "advanced" mode
         if (deprecate) {
-            this.moment = function () {
+            global.moment = function () {
                 if (!warned && console && console.warn) {
                     warned = true;
                     console.warn(
@@ -2724,8 +2809,9 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
                 }
                 return local_moment.apply(null, arguments);
             };
+            extend(global.moment, local_moment);
         } else {
-            this['moment'] = moment;
+            global['moment'] = moment;
         }
     }
 
@@ -2735,7 +2821,7 @@ define('plugins/router',["durandal/system","durandal/app","durandal/activator","
         makeGlobal(true);
     } else if (typeof define === "function" && define.amd) {
         define("moment", ['require','exports','module'],function (require, exports, module) {
-            if (module.config().noGlobal !== true) {
+            if (module.config && module.config() && module.config().noGlobal !== true) {
                 // If user provided noGlobal, he is aware of global
                 makeGlobal(module.config().noGlobal === undefined);
             }
@@ -3072,7 +3158,7 @@ define('modules/draft/commands/deleteDraft',["durandal/system","durandal/app","e
 define('modules/draft/contentGenerator',["ko","markdown","infrastructure/urlHelper","infrastructure/contentReferences","infrastructure/contentControls"],function(e,t,n,r,i){function a(e,t){var n=this;n.name=e,n.rows=t}function o(e){var t=this;t.cells=e}function s(e,t,n,r){var i=this;i.name=e,i.title=t,i.colspan=n,i.content=r}function l(t,n){var r=t.deserializeTemplate();return r?new a(r.name,e.utils.arrayMap(r.rows,function(r){return new o(e.utils.arrayMap(r.cells,function(e){var r=c(t,e,n);return new s(e.name,e.title,e.colspan,r)}))})):new a}function c(e,t,n){var r=d(e,t,n);return r=x.replaceReferences(e,r,n),r=i.replaceContentControls(r)}function d(e,t,n){var r=e.findContentPart(t.name);return r?u(r,n):""}function u(e,t){var n=e.getResource(t);return f(n,t)}function f(e){var t=e.Content(),n=e.ContentPart();return t=h(n.ContentType(),t)}function h(e,t){return"markdown"===e.toLowerCase()?(k=k||new Markdown.Converter,k.makeHtml(t)):"text"===e.toLowerCase()?"<pre>"+t+"</pre>":t}function p(e){return{entityType:"Draft",entityId:e.Id(),version:e.Version(),name:e.Name(),template:e.Template(),created:v(e.Created()),modified:v(e.Modified()),resources:m(e),contentParts:g(e),files:y(e)}}function v(e){return{at:e.At(),by:e.By()}}function m(t){var n=e.utils.arrayMap(t.Translations(),function(e){return{language:e.Language(),title:e.TranslatedName(),created:v(e.Created()),modified:v(e.Modified())}});return n.push({language:t.OriginalLanguage(),title:t.Name(),created:v(t.Created()),modified:v(t.Modified())}),n}function g(t){return e.utils.arrayMap(t.ContentParts(),function(e){return{name:e.Name(),contentType:e.ContentType(),ranking:e.Ranking(),resources:b(t,e.Resources())}})}function b(t,n){return e.utils.arrayMap(n,function(e){return{language:e.Language(),content:f(e,e.Language())}})}function y(t){return e.utils.arrayMap(t.Files(),function(e){return{name:e.Name(),isEmbedded:e.IsEmbedded(),determination:e.Determination(),group:e.Group(),ranking:e.Ranking(),resources:w(e.Resources())}})}function w(t){return e.utils.arrayMap(t,function(e){return{language:e.Language(),dbFileVersionId:e.DbFileVersionId(),title:e.Title(),description:e.Description(),credits:e.Credits()}})}var k,x=new r({replaceFileReference:function(e,t){var r=e.context,i=r.findDraftFile(e.fileName),a=i?i.getResource(t):void 0,o=a?a.FileVersion():void 0;return o?n.getFileUrl(e.fileName,o,e.query):""},replacePublicationReference:function(e,t){return n.getPublicationUrl(e.id,t,e.query)}});return{TemplateContent:a,TemplateContentRow:o,TemplateContentCell:s,createTemplateContent:l,createTemplateCellContent:c,createPublicationContent:p}});
 define('modules/draft/entities',["require","ko","durandal/system"],function(e,t,n){function r(){}function i(e){e.Name.extend({required:!0}),e.template=t.computed({read:function(){return e.deserializeTemplate()},deferEvaluation:!0}),e.fileGroupNames=t.computed(function(){return t.utils.arrayMap(e.Files(),function(e){return e.Group()||""})}),e.distinctFileGroupNames=t.computed(function(){return t.utils.arrayGetDistinctValues(e.fileGroupNames())}),e.orderedFiles=t.computed(function(){function t(e,t){return e.Group()===t.Group()?0:e.Group()<=t.Group()?-1:1}function n(e,t){return e.Ranking()===t.Ranking()?0:e.Ranking()<=t.Ranking()?-1:1}var r=e.Files();return r.sort(function(e,r){return e.Group()!==r.Group()?t(e,r):n(e,r)}),r}),e.statusTitle=t.computed(function(){if(!e.Status())return"";var n=e.Status().toLowerCase(),r=t.utils.arrayFirst(c,function(e){return e.value.toLowerCase()===n});return r?r.title:""})}function a(e){return e.findCell=function(t){var n;return e.forEachCell(function(e,r){return r.name.toLowerCase()===t.toLowerCase()?(n=r,!1):void 0}),n},e.findCellIndex=function(t){var n=0;return e.forEachCell(function(e,r,i){return r===t?(n=i,!1):void 0}),n},e.forEachCell=function(t){for(var n=1,r=!1,i=0;i<e.rows.length&&!r;i++)for(var a=e.rows[i],o=0;o<a.cells.length;o++){var s=a.cells[o];if(t.call(e,a,s,n++)===!1){r=!0;break}}},e}function o(){}function s(e){e.templateCellIndex=t.computed({read:function(){var t=0,n=e.findTemplateCell();return n&&(t=e.Draft().template().findCellIndex(n)),t},deferEvaluation:!0})}function l(){}var c=[{value:"NEW",title:"In Arbeit"},{value:"RFT",title:"Bereit zur Übersetzung"},{value:"RFP",title:"Bereit zur Veröffentlichung"}];return r.prototype.getTranslation=function(e){var n=e.toLowerCase();return t.utils.arrayFirst(this.Translations(),function(e){return e.Language().toLowerCase()===n})},r.prototype.getOrCreateTranslation=function(e,t){var n=e.toLowerCase(),r=this.getTranslation(e);return r?r:(r=t.createEntity("DraftTranslation",{DraftId:this.Id(),Language:n}),t.addEntity(r),this.Translations.push(r),r)},r.prototype.findContentPart=function(e){var n=t.utils.arrayFirst(this.ContentParts(),function(t){return t.Name().toLowerCase()===e.toLowerCase()});return n},r.prototype.findDraftFile=function(e,n){n=n||"de";var r=e.toLowerCase(),i=t.utils.arrayFirst(this.Files(),function(e){var t=e.getResource(n);return t?t.FileVersion()&&t.FileVersion().File().FileName().toLowerCase()===r:!1});return i},r.prototype.deserializeTemplate=function(){var e;try{e=JSON.parse(this.Template())}catch(t){n.log(t.message)}return e?(a(e),e):void 0},r.prototype.setDeleted=function(){for(;this.Translations().length;)this.Translations()[0].entityAspect.setDeleted();for(;this.ContentParts().length;)this.ContentParts()[0].setDeleted();for(;this.Files().length;)this.Files()[0].setDeleted();this.entityAspect.setDeleted()},r.prototype.filesByGroupName=function(e){var n=t.utils.arrayFilter(this.orderedFiles(),function(t){var n=t.Group()||"";return n.toLowerCase()===e.toLowerCase()});return n},r.prototype.filesByDetermination=function(e){var n=t.utils.arrayFilter(this.Files(),function(t){var n=t.Determination()||"";return n.toLowerCase()===e.toLowerCase()});return n},r.prototype.hasValidationErrors=function(){var e=this;return e.entityAspect.hasValidationErrors?!0:t.utils.arrayFirst(e.Files(),function(e){return e.entityAspect.hasValidationErrors})?!0:t.utils.arrayFirst(e.Translations(),function(e){return e.entityAspect.hasValidationErrors})?!0:t.utils.arrayFirst(e.ContentParts(),function(e){return e.entityAspect.hasValidationErrors?!0:t.utils.arrayFirst(e.Resources,function(e){return e.entityAspect.hasValidationErrors})?!0:!1})?!0:!1},o.prototype.getResource=function(e){var n=e.toLowerCase();return t.utils.arrayFirst(this.Resources(),function(e){return e.Language().toLowerCase()===n})},o.prototype.getOrCreateResource=function(e,t){var n=e.toLowerCase(),r=this.getResource(e);return r?r:(r=t.createEntity("DraftContentPartResource",{DraftContentPartId:this.Draft().Id(),Language:n,Content:""}),t.addEntity(r),this.Resources.push(r),r)},o.prototype.setDeleted=function(){for(;this.Resources().length;)this.Resources()[0].entityAspect.setDeleted();this.entityAspect.setDeleted()},o.prototype.previewText=function(e,t){e=e||"de",t=t||80;var n=this.localeContent(e);return n?n.length>t?n.substr(0,t-3)+"...":n:""},o.prototype.localeContent=function(e){e=e||"de";var t=this.getResource(e);return t&&t.Content()?t.Content():""},o.prototype.findTemplateCell=function(){var e=this;if(!e.Draft()||!e.Draft().template())return null;var t=e.Draft().template(),n=t.findCell(e.Name());return n},l.prototype.setDeleted=function(){for(;this.Resources().length;)this.Resources()[0].entityAspect.setDeleted();this.entityAspect.setDeleted()},l.prototype.getResource=function(e){var n=e.toLowerCase();return t.utils.arrayFirst(this.Resources(),function(e){return e.Language().toLowerCase()===n})},l.prototype.getOrCreateResource=function(e,t){var n=e.toLowerCase(),r=this.getResource(e);return r?r:(r=t.createEntity("DraftFileResource",{DraftFileId:this.Id(),Language:n}),t.addEntity(r),this.Resources.push(r),r)},{Draft:r,DraftContentPart:o,supportedDraftStates:c,extendModel:function(e){e.registerEntityTypeCtor("Draft",r,i),e.registerEntityTypeCtor("DraftContentPart",o,s),e.registerEntityTypeCtor("DraftFile",l)},initializeTemplate:a}});
 define('modules/draft/stockTemplates',["ko","./entities"],function(e,t){function n(){return i||(i=r()),i}function r(){function e(e,t){return{name:e,rows:t}}function n(e){return{cells:e}}function r(e,t,n,r){return r=r||"markdown",{name:e,title:t,colspan:n,contentType:r}}var i=[];return i.push(e("Template 1",[n([r("Header","Kopfbereich",12)]),n([r("Main","Hauptteil",8),r("Sidebar","Zusatzinformationen",4)]),n([r("Footer","Fußbereich",12)])])),i.push(e("Template 2",[n([r("Header","Kopfbereich",12)]),n([r("Main","Hauptteil",8),r("Sidebar","Zusatzinformationen",4)])])),i.push(e("Template 3",[n([r("Header","Kopfbereich",12,"html")]),n([r("Main","Hauptteil",12,"text")])])),i.forEach(function(e){t.initializeTemplate(e)}),i}var i=null;return{all:n}});
-define('modules/draft/datacontext',["durandal/system","entityManagerProvider","ko","infrastructure/userQueryParser","./entities","./stockTemplates"],function(e,t,n,r,i,a){function o(){var e=h.from("Drafts");return f.executeQuery(e)}function s(e,t){var n=h.from("Drafts");if(e&&e.length){var r=p.getBreezePredicate(e);r&&(n=n.where(r))}return n=n.orderBy(t||"Created.At desc"),f.executeQuery(n)}function l(e){var t=(new h).from("Drafts").where("Id","==",e).expand("Translations, ContentParts.Resources, Files.Resources.FileVersion.File");return f.executeQuery(t)}function c(t){return e.defer(function(e){var r=n.utils.arrayFirst(a.all(),function(e){return e.name.toLowerCase()===t.toLowerCase()});r&&e.resolve(r);var o=(new h).from("DraftTemplates").where("Name","==",t);f.executeQuery(o).then(function(t){t.results&&t.results.length||e.resolve(null);try{r=JSON.parse(t.results[0].TemplateContent()),i.initializeTemplate(r)}catch(n){e.reject(n)}e.resolve(r)}).fail(e.reject)}).promise()}function d(t,n){return n=n||f,e.defer(function(e){u(t,n);var r=new breeze.Predicate("Content.EntityType","==","Draft").and("Content.EntityKey","==",t),i=(new h).from("SiteMapNodes").where(r).expand("Content, SiteMap, SiteMap.SiteMapNodes, SiteMap.SiteMapNodes.Resources");n.executeQuery(i).then(function(t){e.resolve(t.results)}).fail(e.reject)}).promise()}function u(e,t){t=t||f;var n=new breeze.Predicate("Content.EntityType","==","Draft").and("Content.EntityKey","==",e),r=(new h).from("SiteMapNodes").where(n),i=t.executeQueryLocally(r);i.forEach(function(e){t.detachEntity(e)})}var f=t.createManager(),h=breeze.EntityQuery,p=new r;return p.translateColumnName=function(){return"Name"},{getDrafts:o,getDraft:l,getTemplate:c,fetchPublications:d,searchDrafts:s,isValidUserQuery:function(e){return p.validate(e)}}});
+define('modules/draft/datacontext',["durandal/system","entityManagerProvider","ko","infrastructure/userQueryParser","./entities","./stockTemplates"],function(e,t,n,r,i,a){function o(){var e=h.from("Drafts");return f.executeQuery(e)}function s(e,t){var n=h.from("Drafts");if(e&&e.length){var r=p.getBreezePredicate(e);r&&(n=n.where(r))}return n=n.orderBy(t||"Created.At desc"),f.executeQuery(n)}function l(e){var t=(new h).from("Drafts").where("Id","==",e).expand("Translations, ContentParts.Resources, Files.Resources.FileVersion.File");return f.executeQuery(t)}function c(t){return e.defer(function(e){var r=n.utils.arrayFirst(a.all(),function(e){return e.name.toLowerCase()===t.toLowerCase()});r&&e.resolve(r);var o=(new h).from("DraftTemplates").where("Name","==",t);f.executeQuery(o).then(function(t){t.results&&t.results.length||e.resolve(null);try{r=JSON.parse(t.results[0].TemplateContent()),i.initializeTemplate(r)}catch(n){e.reject(n)}e.resolve(r)}).fail(e.reject)}).promise()}function d(t,n){return n=n||f,e.defer(function(e){u(t,n);var r=new breeze.Predicate("Content.EntityType","==","Draft").and("Content.EntityKey","==",t.toString()),i=(new h).from("SiteMapNodes").where(r).expand("Content, SiteMap, SiteMap.SiteMapNodes, SiteMap.SiteMapNodes.Resources");n.executeQuery(i).then(function(t){e.resolve(t.results)}).fail(e.reject)}).promise()}function u(e,t){t=t||f;var n=new breeze.Predicate("Content.EntityType","==","Draft").and("Content.EntityKey","==",e),r=(new h).from("SiteMapNodes").where(n),i=t.executeQueryLocally(r);i.forEach(function(e){t.detachEntity(e)})}var f=t.createManager(),h=breeze.EntityQuery,p=new r;return p.translateColumnName=function(){return"Name"},{getDrafts:o,getDraft:l,getTemplate:c,fetchPublications:d,searchDrafts:s,isValidUserQuery:function(e){return p.validate(e)}}});
 define('text!modules/draft/module.html',[],function () { return '<div id="draftModule">\r\n    <!--ko router: { transition:\'entrance\', cacheViews:true }--><!--/ko-->\r\n</div>';});
 
 define('modules/draft/module',["infrastructure/moduleFactory","infrastructure/moduleRouter","./entities","durandal/app","durandal/composition"],function(e,t,n,r){function i(e){e.bindingHandlers.draftTemplateClass={init:function(t,n){var r=e.unwrap(n()),i=$(t);i.addClass("col-md-"+r.colspan)},update:function(t,n){var r=e.unwrap(n());$(t).addClass("col-md-"+r.colspan)}}}var a=e.createModule({route:"drafts*details",moduleId:"modules/draft/module",title:"Inhalte",nav:20,hash:"#drafts"});return a.extendModel=n.extendModel,a.initializeRouter=function(){a.router=t.createModuleRouter(a,"modules/draft","drafts").map([{route:"",moduleId:"viewmodels/index",title:"Inhalte",nav:!1},{route:"create",moduleId:"viewmodels/templateGallery",title:"Vorlage wählen",nav:!1},{route:"create/:templateName",moduleId:"viewmodels/editor/editor",title:"Neuer Inhalt",nav:!1},{route:"edit/:draftId",moduleId:"viewmodels/editor/editor",title:"Inhalt bearbeiten",nav:!1},{route:"translate/:draftId/:language",moduleId:"viewmodels/translator/translator",title:"Übersetzung",nav:!1}]).buildNavigationModel()},r.on("caps:started",function(){require(["ko","modules/draft/viewmodels/draftSelectionDialog"],function(e,t){i(e),t.install()})}),a.editDraft=function(e){a.router.navigate("#drafts/edit/"+e)},r.registerContentEditor("Draft",a,a.editDraft),r.on("caps:contentfile:navigateToResourceOwner",function(e){e.DraftFile&&a.router.navigate("#drafts/edit/"+e.DraftFile().DraftId())}),a});

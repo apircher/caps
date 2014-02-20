@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Caps.Web.UI.Infrastructure
+namespace Caps.Data
 {
     public class CapsDbContextProvider : EFContextProvider<CapsDbContext>
     {
