@@ -52,7 +52,8 @@ namespace Caps.Data.Migrations
                     UserName = "admin",
                     FirstName = "Vorname",
                     LastName = "NachName",
-                    Email = "admin@xyz.de"
+                    Email = "admin@xyz.de",
+                    CreationDate = DateTime.UtcNow
                 };
 
                 UserManager<Caps.Data.Model.Author> userManager = new UserManager<Caps.Data.Model.Author>(new UserStore<Caps.Data.Model.Author>(context));
