@@ -6,7 +6,8 @@ using System.Web;
 using System.Web.Security;
 using Caps.Web.UI.Infrastructure;
 using Caps.Data.Model;
-using WebMatrix.WebData;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Caps.Web.UI.Models
 {
@@ -19,15 +20,14 @@ namespace Caps.Web.UI.Models
         {
             UserName = author.UserName;
             Comment = author.Comment;
-            CreationDate = WebSecurity.GetCreateDate(author.UserName);
+            CreationDate = author.CreationDate;
             Email = author.Email;
             Phone = author.Phone;
-            IsApproved = WebSecurity.IsConfirmed(author.UserName);
             IsLockedOut = author.IsLockedOut();
             LastActivityDate = new DateTime(author.LastActivityDate.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
-            LastLockoutDate = new DateTime(WebSecurity.GetLastPasswordFailureDate(author.UserName).Ticks, DateTimeKind.Utc);
+            LastLockoutDate = new DateTime(author.LastLockoutDate.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
             LastLoginDate = new DateTime(author.LastLoginDate.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
-            LastPasswordChangedDate = new DateTime(WebSecurity.GetPasswordChangedDate(author.UserName).Ticks, DateTimeKind.Utc);
+            LastPasswordChangedDate = new DateTime(author.LastPasswordChangedDate.GetValueOrDefault(author.CreationDate).Ticks, DateTimeKind.Utc);
             Roles = author.GetRoles();
 
             FirstName = author.FirstName;
@@ -57,7 +57,7 @@ namespace Caps.Web.UI.Models
 
         public String[] Roles { get; set; }
 
-        public void UpdateAuthor(Author author)
+        public void UpdateAuthor(Author author, UserManager<Author> userManager)
         {
             author.Comment = Comment;
             author.Email = Email;
@@ -66,12 +66,12 @@ namespace Caps.Web.UI.Models
             author.FirstName = FirstName;
             author.LastName = LastName;
 
-            UpdateRoles(author);
+            UpdateRoles(author, userManager);
         }
 
-        void UpdateRoles(Author author)
+        void UpdateRoles(Author author, UserManager<Author> userManager)
         {
-            var currentRoles = System.Web.Security.Roles.GetRolesForUser(UserName);
+            var currentRoles = author.Roles.Select(r => r.Role.Name).ToArray();
 
             var rolesToAdd = new String[0];
             if (Roles != null)
@@ -80,9 +80,9 @@ namespace Caps.Web.UI.Models
 
             if (rolesToRemove.Contains("Administrator", StringComparer.OrdinalIgnoreCase) && author.IsLastUserInRole("Administrator"))
                 throw new InvalidOperationException("Der letzte Administrator kann nicht entfernt werden.");
-            
-            Array.ForEach(rolesToAdd, r => System.Web.Security.Roles.AddUserToRole(UserName, r));
-            Array.ForEach(rolesToRemove, r => System.Web.Security.Roles.RemoveUserFromRole(UserName, r));
+
+            Array.ForEach(rolesToAdd, r => userManager.AddToRole(author.Id, r));
+            Array.ForEach(rolesToRemove, r => userManager.RemoveFromRole(author.Id, r));
         }
     }
 

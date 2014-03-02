@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using WebMatrix.WebData;
 
 namespace Caps.Web.UI.Infrastructure
 {
@@ -12,7 +11,8 @@ namespace Caps.Web.UI.Infrastructure
     {
         public static Author GetCurrentAuthor(this CapsDbContext db)
         {
-            return db.Authors.FirstOrDefault(a => a.Id == WebSecurity.CurrentUserId);
+            var identity = System.Threading.Thread.CurrentPrincipal.Identity;
+            return db.Users.FirstOrDefault(a => a.UserName == identity.Name);
         }
     }
 }

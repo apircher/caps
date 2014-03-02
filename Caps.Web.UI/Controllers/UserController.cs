@@ -3,14 +3,13 @@ using Caps.Data.Model;
 using Caps.Web.UI.Infrastructure;
 using Caps.Web.UI.Infrastructure.WebApi;
 using Caps.Web.UI.Models;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using System.Web.Security;
-using WebMatrix.WebData;
 
 namespace Caps.Web.UI.Controllers
 {
@@ -18,15 +17,17 @@ namespace Caps.Web.UI.Controllers
     public class UserController : ApiController
     {
         CapsDbContext db;
+        UserManager<Author> userManager;
 
-        public UserController(CapsDbContext db) 
+        public UserController(CapsDbContext db, UserManager<Author> userManager) 
         {
             this.db = db;
+            this.userManager = userManager;
         }
 
         public IList<UserModel> GetAll()
         {
-            var authors = db.Authors.ToList();
+            var authors = db.Users.ToList();
             return authors.Select(u => new UserModel(u)).ToList();
         }
 
@@ -44,21 +45,30 @@ namespace Caps.Web.UI.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
 
             // Ensure unique username.
-            if (WebSecurity.UserExists(model.UserName))
+            var user = db.Users.FirstOrDefault(u => u.UserName == model.UserName);
+            if (user != null)
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { ErrorMessage = "Der Benutzername ist bereits vergeben.", ErrorId = "duplicate_username" });
 
             // Add the user.
             try
             {
-                WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new { Email = model.Email, FirstName = model.FirstName, LastName = model.LastName });
+                user = new Author
+                {
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName= model.LastName,
+                    CreationDate = DateTime.UtcNow
+                };
+                userManager.Create(user, model.Password);
             }
-            catch (MembershipCreateUserException)
+            catch (Exception)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { ErrorMessage = "Der Benutzer konnte nicht erstellt werden.", ErrorId = "createuser_exception" });
             }
 
             var author = db.GetAuthorByUserName(model.UserName);
-            model.UpdateAuthor(author);
+            model.UpdateAuthor(author, userManager);
             
             db.SaveChanges();
             return Request.CreateResponse(HttpStatusCode.OK, new UserModel(author));
@@ -69,13 +79,12 @@ namespace Caps.Web.UI.Controllers
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
 
-            if (!WebSecurity.UserExists(model.UserName))
-                return Request.CreateResponse(HttpStatusCode.BadRequest);
-
             var author = db.GetAuthorByUserName(model.UserName);
+            if (author == null)
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
             try
             {
-                model.UpdateAuthor(author);
+                model.UpdateAuthor(author, userManager);
             }
             catch (InvalidOperationException ex)
             {

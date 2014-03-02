@@ -1,4 +1,5 @@
 ﻿using Caps.Data.Model;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -8,15 +9,13 @@ using System.Threading.Tasks;
 
 namespace Caps.Data
 {
-    public class CapsDbContext : DbContext
+    public class CapsDbContext : IdentityDbContext<Author>
     {
         public CapsDbContext() : base("CapsDbContext")
         {
-            Configuration.ProxyCreationEnabled = false;
-            Configuration.LazyLoadingEnabled = false;
+            //Configuration.ProxyCreationEnabled = false;
+            //Configuration.LazyLoadingEnabled = false;
         }
-
-        public DbSet<Author> Authors { get; set; }
 
         public DbSet<DbFile> Files { get; set; }
         public DbSet<DbFileVersion> FileVersions { get; set; }
@@ -42,7 +41,7 @@ namespace Caps.Data
         
         public Author GetAuthorByUserName(String userName) 
         {
-            return Authors.FirstOrDefault(a => a.UserName == userName);
+            return Users.FirstOrDefault(a => a.UserName == userName);
         }
         public DbSiteMap GetCurrentSiteMap(int websiteId)
         {

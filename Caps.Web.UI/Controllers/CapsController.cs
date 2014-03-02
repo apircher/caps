@@ -1,7 +1,10 @@
 ﻿using Caps.Data;
+using Caps.Data.Model;
 using Caps.Web.UI.Infrastructure;
 using Caps.Web.UI.Infrastructure.Mvc;
 using Caps.Web.UI.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -9,7 +12,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
-using WebMatrix.WebData;
 
 namespace Caps.Web.UI.Controllers
 {
@@ -17,10 +19,12 @@ namespace Caps.Web.UI.Controllers
     public class CapsController : Controller
     {
         CapsDbContext db;
+        UserManager<Author> userManager;
 
-        public CapsController(CapsDbContext context) 
+        public CapsController(CapsDbContext context, UserManager<Author> userManager) 
         {
             this.db = context;
+            this.userManager = userManager;
         }
 
         //
@@ -46,12 +50,21 @@ namespace Caps.Web.UI.Controllers
         {
             if (Request.IsAuthenticated)
             {
-                var userName = User.Identity.Name;
-                if (WebSecurity.UserExists(userName) || !LockoutHelper.IsAuthorLockedOut(userName))
-                    return Json(new AuthenticatedUserModel(db.GetCurrentAuthor()));
+                var users = db.Users as System.Data.Entity.DbSet<Author>;
+                var user = users.Include("Roles.Role").FirstOrDefault(u => u.UserName == User.Identity.Name);
+                if (user != null && !userManager.IsUserLockedOut(user))
+                    return Json(new AuthenticatedUserModel(user));
             }
 
             return Json(new AuthenticatedUserModel());
+        }
+
+        private IAuthenticationManager AuthenticationManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().Authentication;
+            }
         }
 
         [HttpPost, ValidateJsonAntiForgeryToken]
@@ -59,19 +72,36 @@ namespace Caps.Web.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (LockoutHelper.IsAuthorLockedOut(model.UserName))
+                if (userManager.IsUserLockedOut(model.UserName))
                     return Json(new LogonResponseModel("ERROR_LOCKED"));
 
-                if (WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
-                {
-                    var author = db.GetAuthorByUserName(model.UserName);
-                    author.RegisterLogin();
-                    db.SaveChanges();
+                var user = userManager.FindByName(model.UserName);
+                LogonResponseModel logonResponse = new LogonResponseModel("ERROR_USER_OR_PASSWORD_INVALID");
 
-                    return Json(new LogonResponseModel(db.GetAuthorByUserName(model.UserName)));
+                if (user != null)
+                {
+                    var r = userManager.PasswordHasher.VerifyHashedPassword(user.PasswordHash, model.Password);
+                    if (r != PasswordVerificationResult.Failed)
+                    {
+                        var identity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
+                        AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = model.RememberMe }, identity);
+
+                        user.LastPasswordFailureDate = null;
+                        user.PasswordFailuresSinceLastSuccess = 0;
+
+                        user.RegisterLogin();
+
+                        logonResponse = new LogonResponseModel(user);
+                    }
+                    else
+                    {
+                        user.LastPasswordFailureDate = DateTime.UtcNow;
+                        user.PasswordFailuresSinceLastSuccess++;
+                    }
+                    db.SaveChanges();
                 }
 
-                return Json(new LogonResponseModel("ERROR_USER_OR_PASSWORD_INVALID"));
+                return Json(logonResponse);
             }
 
             return Json(new LogonResponseModel("Bad request"));
@@ -80,7 +110,7 @@ namespace Caps.Web.UI.Controllers
         [HttpPost, Authorize, ValidateJsonAntiForgeryToken]
         public JsonResult Logoff() 
         {
-            WebSecurity.Logout();
+            AuthenticationManager.SignOut();
             return Json(new LogonResponseModel());
         }
 
@@ -90,9 +120,19 @@ namespace Caps.Web.UI.Controllers
             if (!ModelState.IsValid)
                 return Json(new ChangePasswordResponse { Error = "Bad request" });
 
-            if (WebSecurity.ChangePassword(User.Identity.Name, model.OldPassword, model.NewPassword))
+            var user = userManager.Find(User.Identity.Name, model.OldPassword);
+            if (user == null)
+                return Json(new ChangePasswordResponse { Error = "Bad request" });
+
+            var r = userManager.ChangePassword(user.Id, model.OldPassword, model.NewPassword);
+            if (r.Succeeded)
+            {
+                user.LastPasswordChangedDate = DateTime.UtcNow;
+                db.SaveChanges();
+
                 return Json(new ChangePasswordResponse { Success = true });
-            
+            }
+
             return Json(new ChangePasswordResponse { Success = false, Error = "Internal error" });
         }
 

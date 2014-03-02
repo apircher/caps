@@ -31,11 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Breeze.ContextProvider">
-      <HintPath>..\packages\Breeze.Server.ContextProvider.1.4.8\lib\Breeze.ContextProvider.dll</HintPath>
+    <Reference Include="Breeze.ContextProvider, Version=1.4.0.0, Culture=neutral, PublicKeyToken=f6085f1a45e2ac59, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Breeze.Server.ContextProvider.1.4.9\lib\Breeze.ContextProvider.dll</HintPath>
     </Reference>
-    <Reference Include="Breeze.ContextProvider.EF6">
-      <HintPath>..\packages\Breeze.Server.ContextProvider.EF6.1.4.8\lib\Breeze.ContextProvider.EF6.dll</HintPath>
+    <Reference Include="Breeze.ContextProvider.EF6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f6085f1a45e2ac59, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Breeze.Server.ContextProvider.EF6.1.4.9\lib\Breeze.ContextProvider.EF6.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -44,6 +46,12 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.1.0.0\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.1.0.0\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -173,6 +181,18 @@
     <Compile Include="Migrations\201311231240223_AddDraftTemplate.Designer.cs">
       <DependentUpon>201311231240223_AddDraftTemplate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201403021159417_AuthorAspNetIdentity.cs" />
+    <Compile Include="Migrations\201403021159417_AuthorAspNetIdentity.Designer.cs">
+      <DependentUpon>201403021159417_AuthorAspNetIdentity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403021441474_AddAuthorPropertiesMissingInIdentity.cs" />
+    <Compile Include="Migrations\201403021441474_AddAuthorPropertiesMissingInIdentity.Designer.cs">
+      <DependentUpon>201403021441474_AddAuthorPropertiesMissingInIdentity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403021510470_AddAuthorPropertiesMissingInIdentity2.cs" />
+    <Compile Include="Migrations\201403021510470_AddAuthorPropertiesMissingInIdentity2.Designer.cs">
+      <DependentUpon>201403021510470_AddAuthorPropertiesMissingInIdentity2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
@@ -283,6 +303,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201311231240223_AddDraftTemplate.resx">
       <DependentUpon>201311231240223_AddDraftTemplate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403021159417_AuthorAspNetIdentity.resx">
+      <DependentUpon>201403021159417_AuthorAspNetIdentity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403021441474_AddAuthorPropertiesMissingInIdentity.resx">
+      <DependentUpon>201403021441474_AddAuthorPropertiesMissingInIdentity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403021510470_AddAuthorPropertiesMissingInIdentity2.resx">
+      <DependentUpon>201403021510470_AddAuthorPropertiesMissingInIdentity2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -15,7 +15,18 @@ namespace Caps.Web.UI.Infrastructure
                 int result;
                 if (int.TryParse(ConfigurationManager.AppSettings["LockoutPeriod"], out result))
                     return result;
-                return 15;
+                return 5;
+            }
+        }
+
+        public static int MaxInvalidLoginAttempts
+        {
+            get
+            {
+                int result;
+                if (int.TryParse(ConfigurationManager.AppSettings["MaxInvalidLoginAttempts"], out result))
+                    return result;
+                return 3;
             }
         }
     }

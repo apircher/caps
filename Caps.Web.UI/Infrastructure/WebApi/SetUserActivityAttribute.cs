@@ -7,7 +7,6 @@ using System.Web;
 using System.Web.Http.Filters;
 using System.Web.Security;
 using System.Net.Http;
-using WebMatrix.WebData;
 using Caps.Web.UI.Infrastructure;
 
 namespace Caps.Web.UI.Infrastructure.WebApi

@@ -36,7 +36,7 @@ namespace Caps.Web.UI.Controllers
         [HttpGet]
         public IQueryable<Author> Authors()
         {
-            return _contextProvider.Context.Authors;
+            return _contextProvider.Context.Users;
         }
 
         // ~/breeze/capsdata/Files

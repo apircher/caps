@@ -3,6 +3,9 @@
     function getAllUsers() {
         return promiseAjax('~/api/User').then(function (data) {
             return $.map(data, function (item) { return new model.User(item); });
+        })
+        .fail(function(error) {
+            alert(error.message);
         });
     }
 

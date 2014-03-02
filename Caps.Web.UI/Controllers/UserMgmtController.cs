@@ -1,23 +1,37 @@
-﻿using Caps.Web.UI.Infrastructure.WebApi;
+﻿using Caps.Data;
+using Caps.Data.Model;
+using Caps.Web.UI.Infrastructure.WebApi;
 using Caps.Web.UI.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Security;
-using WebMatrix.WebData;
 
 namespace Caps.Web.UI.Controllers
 {
     [Authorize, ValidateJsonAntiForgeryToken, SetUserActivity]
     public class UserMgmtController : ApiController
     {
+        UserManager<Author> userManager;
+        CapsDbContext db;
+
+        public UserMgmtController(UserManager<Author> userManager, CapsDbContext db)
+        {
+            this.userManager = userManager;
+            this.db = db;
+        }
+
         [HttpPost, Authorize(Roles = "Administrator")]
         public HttpResponseMessage IsUserNameUnique(PropertyValidationModel model)
         {
-            if (!WebSecurity.UserExists(model.Value))
+            var user = userManager.FindByName(model.Value);
+            if (user == null)
                 return Request.CreateResponse(HttpStatusCode.OK, true);
             return Request.CreateResponse(HttpStatusCode.OK, false);
         }
@@ -25,21 +39,25 @@ namespace Caps.Web.UI.Controllers
         [HttpGet]
         public HttpResponseMessage GetAllRoles()
         {
-            return Request.CreateResponse(HttpStatusCode.OK, Roles.GetAllRoles()); 
+            var allRoles = db.Roles.Select(r => r.Name).ToArray();
+            return Request.CreateResponse(HttpStatusCode.OK, allRoles); 
         }
 
         [HttpPost, Authorize(Roles = "Administrator")]
-        public HttpResponseMessage SetPassword(SetPasswordModel model)
+        public async Task<HttpResponseMessage> SetPassword(SetPasswordModel model)
         {
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
 
-            if (!WebSecurity.UserExists(model.UserName))
-                return Request.CreateResponse(HttpStatusCode.NotFound);
-            
-            var token = WebSecurity.GeneratePasswordResetToken(model.UserName);
-            WebSecurity.ResetPassword(token, model.NewPassword);
+            var user = userManager.FindByName(model.UserName);
+            if (user == null)
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
 
+            var store = new UserStore<Author>(db);
+            await store.SetPasswordHashAsync(user, userManager.PasswordHasher.HashPassword(model.NewPassword));
+            user.LastPasswordChangedDate = DateTime.UtcNow;
+
+            await store.UpdateAsync(user);
             return Request.CreateResponse(HttpStatusCode.OK);
         }
     }

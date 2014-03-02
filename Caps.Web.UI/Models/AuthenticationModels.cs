@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.Security;
-using WebMatrix.WebData;
 using Caps.Web.UI.Infrastructure;
 
 namespace Caps.Web.UI.Models
@@ -38,8 +37,8 @@ namespace Caps.Web.UI.Models
                 IsAuthenticated = true;
                 UserName = author.UserName;
                 Roles = author.GetRoles();
-                CreationDate = WebSecurity.GetCreateDate(author.UserName);
-                LastPasswordChangedDate = WebSecurity.GetPasswordChangedDate(author.UserName);
+                CreationDate = author.CreationDate;
+                LastPasswordChangedDate = author.LastPasswordChangedDate.GetValueOrDefault(author.CreationDate);
 
                 FirstName = author.FirstName;
                 LastName = author.LastName;

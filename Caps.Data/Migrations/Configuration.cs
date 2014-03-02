@@ -1,6 +1,8 @@
 namespace Caps.Data.Migrations
 {
     using Caps.Data.Utils;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
@@ -34,6 +36,46 @@ namespace Caps.Data.Migrations
             }
 
             SqlTableChangeTracking.InitializeChangeTracking(context);
+
+            AddUsersAndRoles(context);
+        }
+
+        bool AddUsersAndRoles(Caps.Data.CapsDbContext context)
+        {
+            if (!RoleExists("Administrator", context))
+            {
+                if (!CreateRole("Administrator", context))
+                    return false;
+
+                var initialUser = new Caps.Data.Model.Author
+                {
+                    UserName = "admin",
+                    FirstName = "Vorname",
+                    LastName = "NachName",
+                    Email = "admin@xyz.de"
+                };
+
+                UserManager<Caps.Data.Model.Author> userManager = new UserManager<Caps.Data.Model.Author>(new UserStore<Caps.Data.Model.Author>(context));
+                var r = userManager.Create(initialUser, "caps234");
+                if (!r.Succeeded) return false;
+
+                userManager.AddToRole(initialUser.Id, "Administrator");
+            }
+
+            return true;
+        }
+
+        bool RoleExists(String name, Caps.Data.CapsDbContext context)
+        {
+            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
+            return roleManager.FindByName(name) != null;
+        }
+
+        bool CreateRole(String name, Caps.Data.CapsDbContext context)
+        {
+            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
+            var r = roleManager.Create(new IdentityRole(name));
+            return r.Succeeded;
         }
     }
 }

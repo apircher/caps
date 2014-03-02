@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,14 +10,8 @@ using System.Threading.Tasks;
 namespace Caps.Data.Model
 {
     [Table("Author")]
-    public class Author
+    public class Author : IdentityUser
     {
-        [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        [MaxLength(20), Required]
-        public String UserName { get; set; }
-
         [MaxLength(50), Required]
         public String FirstName { get; set; }
         [MaxLength(50), Required]
@@ -27,8 +22,13 @@ namespace Caps.Data.Model
         [MaxLength(50)]
         public String Phone { get; set; }
 
+        public DateTime CreationDate { get; set; }
         public DateTime? LastLoginDate { get; set; }
         public DateTime? LastActivityDate { get; set; }
+        public DateTime? LastPasswordChangedDate { get; set; }
+        public DateTime? LastLockoutDate { get; set; }
+        public DateTime? LastPasswordFailureDate { get; set; }
+        public int PasswordFailuresSinceLastSuccess { get; set; }
         public String Comment { get; set; }
     }
 }

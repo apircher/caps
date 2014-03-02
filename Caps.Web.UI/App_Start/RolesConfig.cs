@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Security;
-using WebMatrix.WebData;
 
 namespace Caps.Web.UI.App_Start
 {
@@ -26,7 +25,8 @@ namespace Caps.Web.UI.App_Start
 
             if (!Roles.GetUsersInRole(roleName).Any())
             {
-                WebSecurity.CreateUserAndAccount(defaultUserName, defaultPassword, new { Email = email, FirstName = defaultFirstName, LastName = defaultLastName });
+                //WebSecurity.CreateUserAndAccount(defaultUserName, defaultPassword, new { Email = email, FirstName = defaultFirstName, LastName = defaultLastName });
+                //TODO: Add Identity Implementation
                 Roles.AddUserToRole(defaultUserName, roleName);
             }
         }

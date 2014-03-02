@@ -1,11 +1,12 @@
 ﻿using Caps.Data;
 using Caps.Data.Model;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Security;
-using WebMatrix.WebData;
 
 namespace Caps.Web.UI.Infrastructure
 {
@@ -21,18 +22,7 @@ namespace Caps.Web.UI.Infrastructure
 
         public static String[] GetRoles(this Author author)
         {
-            return Roles.GetRolesForUser(author.UserName);
-        }
-
-        /// <summary>
-        /// Returns true if the Author is currently locked out and false otherwhise.
-        /// </summary>
-        /// <param name="author">The Author in question.</param>
-        /// <param name="lockoutPeriod">The Lockout-Period in Minutes.</param>
-        /// <returns></returns>
-        public static bool IsLockedOut(this Author author, int lockoutPeriod)
-        {
-            return WebSecurity.IsAccountLockedOut(author.UserName, 5, TimeSpan.FromMinutes(lockoutPeriod));
+            return author.Roles.Select(r => r.Role.Name).ToArray();
         }
 
         /// <summary>
@@ -42,7 +32,13 @@ namespace Caps.Web.UI.Infrastructure
         /// <returns></returns>
         public static bool IsLockedOut(this Author author)
         {
-            return author.IsLockedOut(Settings.LockoutPeriod);
+            if (author.PasswordFailuresSinceLastSuccess < Settings.MaxInvalidLoginAttempts)
+                return false;
+
+            var lockedUntil = author.LastPasswordFailureDate.GetValueOrDefault(DateTime.MinValue)
+                .AddMinutes(Settings.LockoutPeriod);
+
+            return lockedUntil >= DateTime.UtcNow;
         }
 
         public static void RegisterActivity(this Author author)
@@ -56,12 +52,13 @@ namespace Caps.Web.UI.Infrastructure
 
         public static void DeleteAuthorAndAccount(this Author author, CapsDbContext db)
         {
-            // Remove all Roles.
-            Array.ForEach(author.GetRoles(), r => Roles.RemoveUserFromRole(author.UserName, r));
-            // Delete the Author
-            db.Authors.Remove(author);
             // Delete the account.
-            ((SimpleMembershipProvider)Membership.Provider).DeleteAccount(author.UserName);
+            var store = new UserStore<Author>(db);
+            var userManager = new UserManager<Author>(store);
+            // Remove all Roles.
+            Array.ForEach(author.GetRoles(), r => userManager.RemoveFromRole(author.Id, r));
+            // Delete the Author
+            db.Users.Remove(author);
         }
     }
 }

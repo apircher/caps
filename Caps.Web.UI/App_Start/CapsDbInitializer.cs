@@ -6,7 +6,6 @@ namespace Caps.Web.UI.App_Start
     using System.Collections.Generic;
     using System.Linq;
     using System.Web;
-    using WebMatrix.WebData;
 
     public static class CapsDbInitializer
     {
@@ -30,9 +29,8 @@ namespace Caps.Web.UI.App_Start
         {
             try
             {
-                WebSecurity.InitializeDatabaseConnection("CapsDbContext", "Author", "Id", "UserName", true);
-                RolesConfig.EnsureDefaultRoles();
-                RolesConfig.EnsureUserInRole("Administrator");
+                //RolesConfig.EnsureDefaultRoles();
+                //RolesConfig.EnsureUserInRole("Administrator");
             }
             catch (Exception ex)
             {
