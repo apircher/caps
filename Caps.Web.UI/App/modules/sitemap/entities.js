@@ -183,7 +183,7 @@ define(['ko', 'authentication'], function (ko, authentication) {
             Language: key
         });
         manager.addEntity(resource);
-        this.Resources.push(resource);
+        //this.Resources.push(resource);
         return resource;
     };
 

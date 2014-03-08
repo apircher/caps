@@ -1,15 +1,19 @@
 ﻿using Caps.Data;
-using Caps.Web.UI.Infrastructure.Mvc;
+using Caps.Web.UI.Infrastructure.WebApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
 
 namespace Caps.Web.UI.Controllers
 {
-    [Authorize, SetUserActivity, ValidateJsonAntiForgeryToken]
-    public class DbSiteMapNodeController : Controller
+    [Authorize]
+    [SetUserActivity]
+    [ValidateJsonAntiForgeryToken]
+    [RoutePrefix("api/sitemapnode")]
+    public class DbSiteMapNodeController : ApiController
     {
         CapsDbContext db;
 
@@ -18,12 +22,13 @@ namespace Caps.Web.UI.Controllers
             this.db = db;
         }
 
-        //
-        // GET: /DbSiteMapNode/
-        public ActionResult NextPermanentId()
+        // GET api/sitemapnode/nextpermanentid
+
+        [Route("nextpermanentid")]
+        public int GetNextPermanentId()
         {
             var maxPermanentId = db.SiteMapNodes.Select(n => n.PermanentId).Max();
-            return Json(maxPermanentId + 1);
+            return maxPermanentId + 1;
         }
-	}
+    }
 }

@@ -11,6 +11,7 @@ using System.Web.Http;
 namespace Caps.Web.UI.Controllers
 {
     [Authorize, SetUserActivity, ValidateJsonAntiForgeryToken]
+    [RoutePrefix("api/dbfile")]
     public class DbFileController : ApiController
     {
         CapsDbContext db;
@@ -51,7 +52,8 @@ namespace Caps.Web.UI.Controllers
         }
 
         [HttpPost]
-        public HttpResponseMessage AddTag(EntityTagModel model)
+        [Route("addtag")]
+        public HttpResponseMessage AddTag(EntityTagModel model) 
         {
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
@@ -79,7 +81,8 @@ namespace Caps.Web.UI.Controllers
         }
 
         [HttpPost]
-        public HttpResponseMessage RemoveTag(EntityTagModel model)
+        [Route("removetag")]
+        public HttpResponseMessage RemoveTag(EntityTagModel model) 
         {
             if (!ModelState.IsValid)
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
@@ -100,6 +103,19 @@ namespace Caps.Web.UI.Controllers
             }
 
             return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        [HttpPost]
+        [Route("metadata")]
+        public HttpResponseMessage GetFileMetadata(List<String> fileNames)
+        {
+            List<object> result = new List<object>();
+            Array.ForEach(fileNames.ToArray(), fileName =>
+            {
+                var query = db.Files.Where(f => f.FileName.ToLower() == fileName.ToLower());
+                result.Add(new { FileName = fileName, Count = query.Count() });
+            });
+            return Request.CreateResponse(HttpStatusCode.OK, result.ToArray());
         }
     }
 }

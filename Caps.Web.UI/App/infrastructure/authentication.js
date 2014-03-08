@@ -21,6 +21,16 @@ define([
             minRequiredPasswordLength: 6
         };
 
+    /*
+     * Handles global ajax events to send the tokens back to the server.
+     */
+    $(document).ajaxSend(function (event, request, settings) {
+        var accessToken = sessionStorage["accessToken"] || localStorage["accessToken"];
+        if (accessToken) {
+            request.setRequestHeader('Authorization', "Bearer " + accessToken);
+        }
+    });
+
     var isAuthenticated = ko.computed(function () {
         return user().isAuthenticated();
     });
@@ -30,10 +40,10 @@ define([
      */
     function getMetadata() {
         return system.defer(function (dfd) {
-            $.ajax('~/Caps/GetAuthenticationMetadata', { method: 'post' })
+            $.ajax('~/api/account/authmetadata', { method: 'get' })
                 .then(function (data) {
-                    metadata.lockoutPeriod = data.LockoutPeriod;
-                    metadata.minRequiredPasswordLength = data.MinRequiredPasswordLength;
+                    metadata.lockoutPeriod = data.lockoutPeriod;
+                    metadata.minRequiredPasswordLength = data.minRequiredPasswordLength;
                     dfd.resolve();
                 })
                 .fail(function (error) {
@@ -49,15 +59,20 @@ define([
      */
     function getUser() {
         return system.defer(function (dfd) {
-            $.ajax('~/Caps/GetCurrentUser', { method: 'post' })
+            $.ajax('~/api/account/userinfo', { method: 'get' })
                 .then(function (data) {
-                    user(new UserModel(data.IsAuthenticated, data.UserName, data.Roles, data));
+                    user(new UserModel(data.isAuthenticated, data.userName, data.roles, data));
                     if (data.IsAuthenticated) app.trigger('caps:authentication:loggedOn', user());
                     dfd.resolve(user());
                 })
                 .fail(function (error) {
-                    system.log('getCurrentUser failed: ' + error.message);
-                    dfd.reject(error);
+                    system.log('getCurrentUser failed: ' + error.responseJSON.message);
+                    if (error.status == 401) {
+                        user(new UserModel(false));
+                        dfd.resolve(user());
+                    }
+                    else
+                        dfd.reject(error);
                 });
         })
         .promise();
@@ -85,16 +100,20 @@ define([
      */
     function logon(userName, password, rememberMe) {
         return system.defer(function (dfd) {
-            $.ajax('~/Caps/Logon', { method: 'post', data: { UserName: userName, Password: password, RememberMe: rememberMe } })
+            $.ajax('~/Token?rememberMe=' + rememberMe, { method: 'post', data: { grant_type: 'password', UserName: userName, Password: password } })
                 .done(logonResultAvailable)
                 .fail(logonFailed);
 
             function logonResultAvailable(data) {
-                if (data.IsAuthenticated !== true) {
+                if (!data.userName || !data.access_token) {
                     logonFailed(new Error(_logonResponseToDisplayMessage(data)));
                     return;
                 }
+
+                var storage = rememberMe ? localStorage : sessionStorage;
+                storage["accessToken"] = data.access_token;
                 system.log('logon successful');
+
                 Q.fcall(antiForgeryToken.initToken)
                     .then(getUser)
                     .then(function () {
@@ -105,7 +124,7 @@ define([
             }
 
             function logonFailed(error) {
-                system.log('logon failed: ' + error.message);
+                system.log('logon failed: ' + error.message || error.error);
                 dfd.reject(error);
             }
         })
@@ -117,12 +136,14 @@ define([
      */
     function logoff() {
         return system.defer(function (dfd) {
-            $.ajax('~/Caps/Logoff', { method: 'post' })
+            $.ajax('~/api/account/logout', { method: 'post' })
                 .then(antiForgeryToken.initToken)
                 .then(function () {
                     system.log('logoff successful');
                     app.trigger('caps:authentication:loggedOff');
                     user(new UserModel());
+                    localStorage.removeItem("accessToken");
+                    sessionStorage.removeItem("accessToken");
                     dfd.resolve();
                 })
                 .fail(dfd.reject);
@@ -135,7 +156,7 @@ define([
      */
     function changePassword(oldPassword, newPassword) {
         return system.defer(function (dfd) {
-            $.ajax('~/Caps/ChangePassword', { method: 'post', data: { OldPassword: oldPassword, NewPassword: newPassword } })
+            $.ajax('~/api/account/changepassword', { method: 'post', data: { OldPassword: oldPassword, NewPassword: newPassword } })
                 .then(getUser)
                 .then(dfd.resolve)
                 .fail(dfd.reject);
@@ -195,11 +216,11 @@ define([
         this.isAuthenticated = ko.observable(isAuthenticated || false);
         this.userName = ko.observable(userName || '');
         this.roles = ko.observable(roles || []);
-        this.creationDate = ko.observable(data.CreationDate || new Date());
-        this.lastPasswordChangedDate = ko.observable(data.LastPasswordChangedDate);
+        this.creationDate = ko.observable(data.creationDate || new Date());
+        this.lastPasswordChangedDate = ko.observable(data.lastPasswordChangedDate);
 
-        this.firstName = ko.observable(data.FirstName || '');
-        this.lastName = ko.observable(data.LastName || '');
+        this.firstName = ko.observable(data.firstName || '');
+        this.lastName = ko.observable(data.lastName || '');
 
         this.displayName = ko.computed(function () {
             if (self.firstName().length > 0)

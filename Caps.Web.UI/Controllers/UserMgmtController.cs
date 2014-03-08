@@ -16,6 +16,7 @@ using System.Web.Security;
 namespace Caps.Web.UI.Controllers
 {
     [Authorize, ValidateJsonAntiForgeryToken, SetUserActivity]
+    [RoutePrefix("api/usermgmt")]
     public class UserMgmtController : ApiController
     {
         UserManager<Author> userManager;
@@ -28,6 +29,7 @@ namespace Caps.Web.UI.Controllers
         }
 
         [HttpPost, Authorize(Roles = "Administrator")]
+        [Route("IsUsernameUnique")]
         public HttpResponseMessage IsUserNameUnique(PropertyValidationModel model)
         {
             var user = userManager.FindByName(model.Value);
@@ -37,6 +39,7 @@ namespace Caps.Web.UI.Controllers
         }
 
         [HttpGet]
+        [Route("GetAllRoles")]
         public HttpResponseMessage GetAllRoles()
         {
             var allRoles = db.Roles.Select(r => r.Name).ToArray();
@@ -44,6 +47,7 @@ namespace Caps.Web.UI.Controllers
         }
 
         [HttpPost, Authorize(Roles = "Administrator")]
+        [Route("SetPassword")]
         public async Task<HttpResponseMessage> SetPassword(SetPasswordModel model)
         {
             if (!ModelState.IsValid)

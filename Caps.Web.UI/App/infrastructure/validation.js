@@ -13,7 +13,7 @@ function (ko, validation, $) {
 
 			$.ajax({
 				async: false,
-				url: '~/rpc/UserMgmt/IsUserNameUnique',
+				url: '~/api/usermgmt/IsUsernameUnique',
 				type: 'POST',
 				data: { value: val, param: param },
 				success: function (response) {

@@ -146,7 +146,7 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
 
     function getFileInfo(fileNames) {
         return system.defer(function (dfd) {
-            $.ajax('DbFileMetadata/GetFileInfo', { method: 'post', traditional: true, data: { 'fileNames': fileNames } }).done(getSucceeded).fail(dfd.reject);
+            $.ajax('api/dbfile/metadata', { method: 'post', traditional: true, data: { 'fileNames': fileNames } }).done(getSucceeded).fail(dfd.reject);
 
             function getSucceeded(result) {
                 

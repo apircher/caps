@@ -114,8 +114,8 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         createSiteMapNode: function () {
             if (!selectedSiteMap() || !selectedNode()) return;
             datacontext.createSiteMapNode(selectedSiteMap().entity(), selectedNode()).then(function (node) {
-                siteMap.refreshTree();
-                siteMap.selectNodeByKey(node.Id());
+                selectedSiteMap().refreshTree();
+                selectedSiteMap().selectNodeByKey(node.Id());
             })
             .fail(handleError);
         },

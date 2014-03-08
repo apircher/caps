@@ -54,6 +54,7 @@ namespace Caps.Web.UI.App_Start
         private static void RegisterServices(IKernel kernel)
         {
             kernel.Bind<Caps.Data.CapsDbContext>().ToSelf().InRequestScope();
+
             kernel.Bind<Microsoft.AspNet.Identity.IUserStore<Caps.Data.Model.Author>>()
                 .ToConstructor(u => new Microsoft.AspNet.Identity.EntityFramework.UserStore<Caps.Data.Model.Author>(kernel.Get<Caps.Data.CapsDbContext>()))
                 .InRequestScope();

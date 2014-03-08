@@ -30,7 +30,7 @@ namespace Caps.Web.UI.Models
         public AuthenticatedUserModel()
         {
         }
-        public AuthenticatedUserModel(Author author)
+        public AuthenticatedUserModel(Author author, bool hasRegistered, String loginProvider)
         {
             if (author != null)
             {
@@ -43,6 +43,9 @@ namespace Caps.Web.UI.Models
                 FirstName = author.FirstName;
                 LastName = author.LastName;
             }
+
+            HasRegistered = hasRegistered;
+            LoginProvider = loginProvider;
         }
 
         public bool IsAuthenticated { get; set; }
@@ -53,6 +56,9 @@ namespace Caps.Web.UI.Models
 
         public String FirstName { get; set; }
         public String LastName { get; set; }
+
+        public bool HasRegistered { get; set; }
+        public String LoginProvider { get; set; }
     }
 
     public class LogonResponseModel : AuthenticatedUserModel
@@ -61,7 +67,7 @@ namespace Caps.Web.UI.Models
         {
         }
         public LogonResponseModel(Author author)
-            : base(author) 
+            : base(author, true, "Local") 
         {
         }
         public LogonResponseModel(String error) 

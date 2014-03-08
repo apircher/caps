@@ -10,7 +10,7 @@
     }
 
     function getAllRoles() {
-        return promiseAjax('~/rpc/UserMgmt/GetAllRoles');
+        return promiseAjax('~/api/usermgmt/GetAllRoles');
     }
 
     function getUser(userName) {
@@ -33,7 +33,7 @@
     }
 
     function setPassword(userName, newPassword) {
-        return promiseAjax('~/rpc/UserMgmt/SetPassword', { method: 'post', data: { UserName: userName, NewPassword: newPassword } });
+        return promiseAjax('~/api/usermgmt/SetPassword', { method: 'post', data: { UserName: userName, NewPassword: newPassword } });
     }
 
     function promiseAjax(url, options) {

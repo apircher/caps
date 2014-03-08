@@ -8,23 +8,23 @@
         var self = this;
         data = data || {};
 
-        this.userName = ko.observable(data.UserName || '').extend({ required: true });
-        this.password = ko.observable(data.Password || '');
-        this.comment = ko.observable(data.Comment || '');
-        this.creationDate = ko.observable(data.CreationDate || new Date());
-        this.email = ko.observable(data.Email || '').extend({ required: true, email: true });
-        this.phone = ko.observable(data.Phone || '');
-        this.isApproved = ko.observable(data.IsApproved || false);
-        this.isLockedOut = ko.observable(data.IsLockedOut || false);
-        this.lastActivityDate = ko.observable(data.LastActivityDate);
-        this.lastLockoutDate = ko.observable(data.LastLockoutDate);
-        this.lastLoginDate = ko.observable(data.LastLoginDate);
-        this.lastPasswordChangedDate = ko.observable(data.LastPasswordChangedDate);
+        this.userName = ko.observable(data.userName || '').extend({ required: true });
+        this.password = ko.observable(data.password || '');
+        this.comment = ko.observable(data.comment || '');
+        this.creationDate = ko.observable(data.creationDate || new Date());
+        this.email = ko.observable(data.email || '').extend({ required: true, email: true });
+        this.phone = ko.observable(data.phone || '');
+        this.isApproved = ko.observable(data.isApproved || false);
+        this.isLockedOut = ko.observable(data.isLockedOut || false);
+        this.lastActivityDate = ko.observable(data.lastActivityDate);
+        this.lastLockoutDate = ko.observable(data.lastLockoutDate);
+        this.lastLoginDate = ko.observable(data.lastLoginDate);
+        this.lastPasswordChangedDate = ko.observable(data.lastPasswordChangedDate);
 
-        this.firstName = ko.observable(data.FirstName || '').extend({ required: true });
-        this.lastName = ko.observable(data.LastName || '').extend({ required: true });
+        this.firstName = ko.observable(data.firstName || '').extend({ required: true });
+        this.lastName = ko.observable(data.lastName || '').extend({ required: true });
 
-        this.roles = ko.observableArray(data.Roles || []);
+        this.roles = ko.observableArray(data.roles || []);
         
         this.isOnline = ko.computed(function () {
             if (!self.lastActivityDate())
