@@ -54,6 +54,9 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
             settings.url = serverUtil.mapPath(settings.url);
         });
 
+        addStorageUtils(app);
+        app.restoreSessionStorageFromLocalStorage();
+
         // Handle unloading
         $(window).bind('beforeunload', onBeforeUnload);
 
@@ -120,5 +123,33 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
                     '</div>'
                 ].join('\n');
             });
+        }
+
+        function addStorageUtils(app) {
+            app.archiveSessionStorageToLocalStorage = function () {
+                var backup = {};
+
+                for (var i = 0; i < sessionStorage.length; i++) {
+                    backup[sessionStorage.key(i)] = sessionStorage[sessionStorage.key(i)];
+                }
+
+                localStorage["sessionStorageBackup"] = JSON.stringify(backup);
+                sessionStorage.clear();
+            };
+
+            app.restoreSessionStorageFromLocalStorage = function () {
+                var backupText = localStorage["sessionStorageBackup"],
+                    backup;
+
+                if (backupText) {
+                    backup = JSON.parse(backupText);
+
+                    for (var key in backup) {
+                        sessionStorage[key] = backup[key];
+                    }
+
+                    localStorage.removeItem("sessionStorageBackup");
+                }
+            };
         }
     });

@@ -11,7 +11,9 @@
         password = ko.observable().extend({ required: true }),
         rememberMe = ko.observable(false),
         userNameFocused = ko.observable(false),
-        isLoggingOn = ko.observable(false);
+        isLoggingOn = ko.observable(false),
+        isLoadingExternalLoginProviders = ko.observable(false),
+        externalLoginProviders = ko.observableArray();
 
     function logon() {
         isLoggingOn(true);
@@ -39,6 +41,17 @@
             $(this).focus();
         });
     }
+
+    function loadExternalLoginProviders() {
+        isLoadingExternalLoginProviders(true);
+        authentication.getExternalLoginProviders('/', true).then(function (data) {
+            var vms = ko.utils.arrayMap(data, function (item) {
+                return new ExternalLoginProviderViewModel(item);
+            });
+            externalLoginProviders(vms);
+            isLoadingExternalLoginProviders(false);
+        });
+    }
     
     var vm = {
         userName: userName,
@@ -51,13 +64,34 @@
         userNameFocused: userNameFocused,
         activate: function () {
             reset();
+            loadExternalLoginProviders();
             setFocus();
         },
         compositionComplete: function (view) {
             setFocus();
-        }
+        },
+        isLoadingExternalLoginProviders: isLoadingExternalLoginProviders,
+        externalLoginProviders: externalLoginProviders
     };
 
     ko.validation.group(vm);
     return vm;
+
+
+    function ExternalLoginProviderViewModel(data) {
+        var self = this;
+
+        // Data
+        self.name = ko.observable(data.name);
+
+        // Operations
+        self.login = function () {
+            sessionStorage["state"] = data.state;
+            sessionStorage["loginUrl"] = data.url;
+            // IE doesn't reliably persist sessionStorage when navigating to another URL. Move sessionStorage temporarily
+            // to localStorage to work around this problem.
+            app.archiveSessionStorageToLocalStorage();
+            window.location = data.url;
+        };
+    }
 });

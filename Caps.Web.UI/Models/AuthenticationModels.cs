@@ -15,22 +15,12 @@ namespace Caps.Web.UI.Models
         public int MinRequiredPasswordLength { get; set; }
     }
 
-    public class LoginModel
-    {
-        [Required]
-        public String UserName { get; set; }
-        [Required]
-        public String Password { get; set; }
-
-        public bool RememberMe { get; set; }
-    }
-
     public class AuthenticatedUserModel
     {
         public AuthenticatedUserModel()
         {
         }
-        public AuthenticatedUserModel(Author author, bool hasRegistered, String loginProvider)
+        public AuthenticatedUserModel(String loginProvider, String providerKey, String userName, Author author, bool hasRegistered)
         {
             if (author != null)
             {
@@ -43,6 +33,8 @@ namespace Caps.Web.UI.Models
                 FirstName = author.FirstName;
                 LastName = author.LastName;
             }
+            else
+                UserName = userName;
 
             HasRegistered = hasRegistered;
             LoginProvider = loginProvider;
@@ -61,33 +53,75 @@ namespace Caps.Web.UI.Models
         public String LoginProvider { get; set; }
     }
 
-    public class LogonResponseModel : AuthenticatedUserModel
+    public class AccountManagementModel
     {
-        public LogonResponseModel() 
-        {
-        }
-        public LogonResponseModel(Author author)
-            : base(author, true, "Local") 
-        {
-        }
-        public LogonResponseModel(String error) 
-        {
-            Error = error;
-        }
-        public String Error { get; set; }
+        public String LocalLoginProvider { get; set; }
+        public String UserName { get; set; }
+        public IEnumerable<AuthorLoginInfoModel> Logins { get; set; }
+        public IEnumerable<ExternalLoginModel> LoginProviders { get; set; }
+    }
+
+    public class AuthorLoginInfoModel
+    {
+        public String LoginProvider { get; set; }
+        public String ProviderKey { get; set; }
+    }
+
+    public class ExternalLoginModel
+    {
+        public String Name { get; set; }
+        public String Url { get; set; }
+        public String State { get; set; }
+    }
+
+    public class AddExternalLoginModel
+    {
+        [Required]
+        [Display(Name = "Externes Zugriffstoken")]
+        public String ExternalAccessToken { get; set; }
+    }
+
+    public class RemoveLoginModel
+    {
+        [Required]
+        [Display(Name = "Anmeldeanbieter")]
+        public String LoginProvider { get; set; }
+
+        [Required]
+        [Display(Name = "Anbieterschlüssel")]
+        public String ProviderKey { get; set; }
     }
 
     public class ChangePasswordModel
     {
         [Required]
+        [DataType(DataType.Password)]
+        [Display(Name="Aktuelles Passwort")]
         public String OldPassword { get; set; }
+
         [Required]
+        [StringLength(100, ErrorMessage = "Das neue Passwort muss mindestens {2} Zeichen lang sein.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Neues Passwort")]
         public String NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Neues Passwort bestätigen")]
+        [Compare("NewPassword", ErrorMessage = "Das neue Passwort stimmt nicht mit dem Bestätigungspasswort überein.")]
+        public String ConfirmPassword { get; set; }
     }
 
-    public class ChangePasswordResponse
+    public class SetLocalPasswordModel
     {
-        public bool Success { get; set; }
-        public String Error { get; set; }
+        [Required]
+        [StringLength(100, ErrorMessage = "\"{0}\" muss mindestens {2} Zeichen lang sein.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Neues Passwort")]
+        public string NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Neues Passwort bestätigen")]
+        [Compare("NewPassword", ErrorMessage = "Das neue Passwort stimmt nicht mit dem Bestätigungspasswort überein.")]
+        public string ConfirmPassword { get; set; }
     }
 }

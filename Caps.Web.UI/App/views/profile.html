@@ -4,18 +4,44 @@
         <h2><!-- ko text: user().fullName --><!-- /ko --> <small>Mein Profil</small></h2>
         <div class="well">
             <p>
+                <!-- ko if: hasLocalPassword -->
                 Letzte Passwort-Änderung: <span data-bind="text: lastPasswordChangedDateFormatted, attr: { title: moment(user().lastPasswordChangedDate()).format('LLLL') }"></span><br />
                 <a href="#" data-bind="click: changePassword">Passwort ändern</a>
+                <!-- /ko -->
+                <!-- ko if: !hasLocalPassword() -->
+                <a href="#" data-bind="click: addLocalPassword">Lokales Passwort erstellen</a>
+                <!-- /ko -->
             </p>
         </div>
-    </div>    
+
+        <h3>Registrierte Logins</h3>
+        <ul data-bind="foreach: logins">
+            <li>
+                <span data-bind="text: loginProvider"></span>
+                <!-- ko if: !removing() && canRemove() -->
+                <a href="#" data-bind="click: remove">Entfernen</a>
+                <!-- /ko -->
+                <!-- ko if: removing -->
+                <em>Wird entfernt...</em>
+                <!-- /ko -->
+            </li>
+        </ul>
+
+        <h3>Externe Anmeldung hinzufügen</h3>
+        <ul data-bind="foreach: externalLoginProviders()">
+            <li>
+                <span data-bind="text: name"></span> <a href="#" data-bind="click: login">Hinzufügen</a>
+            </li>
+        </ul>
+    </div>
 
     <div class="navbar navbar-default navbar-fixed-bottom">
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
                 <li>
                     <a href="#" data-bind="click: logOff">
-                        <i class="fa fa-power-off fa-fw"></i> Abmelden</a>
+                        <i class="fa fa-power-off fa-fw"></i> Abmelden
+                    </a>
                 </li>
             </ul>
         </div>

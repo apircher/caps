@@ -1,10 +1,12 @@
 ﻿using Caps.Data;
 using Caps.Data.Model;
+using Caps.Web.UI.Infrastructure;
 using Caps.Web.UI.Infrastructure.WebApi;
 using Caps.Web.UI.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.OAuth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +23,8 @@ namespace Caps.Web.UI.Controllers
     [SetUserActivity]
     public class AccountController : ApiController
     {
+        private const string LocalLoginProvider = "Lokal";
+
         UserManager<Author> userManager;
         ISecureDataFormat<AuthenticationTicket> accessTokenFormat;
         CapsDbContext db;
@@ -40,11 +44,14 @@ namespace Caps.Web.UI.Controllers
         public AuthenticatedUserModel GetUserInfo()
         {
             ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
+
+            String loginProvider = externalLogin != null ? externalLogin.LoginProvider : LocalLoginProvider;
+            String providerKey = externalLogin != null ? externalLogin.ProviderKey : User.Identity.GetUserName();
+            String userName = externalLogin != null ? externalLogin.UserName : User.Identity.GetUserName();
+
             var user = userManager.FindByName(User.Identity.GetUserName());
             return new AuthenticatedUserModel(
-                user, 
-                externalLogin == null, 
-                externalLogin != null ? externalLogin.LoginProvider : null
+                loginProvider, providerKey, userName, user, externalLogin != null
             );
         }
 
@@ -91,7 +98,179 @@ namespace Caps.Web.UI.Controllers
             return GetErrorResult(r) ?? Ok();
         }
 
+        // POST api/account/setpassword
 
+        [Route("setpassword")]
+        [ValidateJsonAntiForgeryToken]
+        public async Task<IHttpActionResult> SetPassword(SetLocalPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await userManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
+            return GetErrorResult(result) ?? Ok();
+        }
+
+        // POST api/account/addexternallogin
+
+        [Route("addexternallogin")]
+        [ValidateJsonAntiForgeryToken]
+        public async Task<IHttpActionResult> AddExternalLogin(AddExternalLoginModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+            AuthenticationTicket ticket = accessTokenFormat.Unprotect(model.ExternalAccessToken);
+
+            if (ticket == null || ticket.Identity == null || (ticket.Properties != null
+                && ticket.Properties.ExpiresUtc.HasValue
+                && ticket.Properties.ExpiresUtc.Value < DateTimeOffset.UtcNow))
+                return BadRequest("Fehler bei der externen Anmeldung");
+
+            ExternalLoginData externalData = ExternalLoginData.FromIdentity(ticket.Identity);
+            if (externalData == null)
+                return BadRequest("Die externe Anmeldung ist bereits einem Konto zugeordnet.");
+
+            var result = await userManager.AddLoginAsync(User.Identity.GetUserId(),
+                new UserLoginInfo(externalData.LoginProvider, externalData.ProviderKey));
+
+            var errorResult = GetErrorResult(result);
+            if (errorResult != null)
+                return errorResult;
+
+            return Ok();
+        }
+
+        // POST api/account/removelogin
+
+        [Route("removelogin")]
+        [ValidateJsonAntiForgeryToken]
+        public async Task<IHttpActionResult> RemoveLogin(RemoveLoginModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            IdentityResult result;
+            if (model.LoginProvider == LocalLoginProvider)
+                result = await userManager.RemovePasswordAsync(User.Identity.GetUserId());
+            else
+                result = await userManager.RemoveLoginAsync(User.Identity.GetUserId(), new UserLoginInfo(model.LoginProvider, model.ProviderKey));
+            
+            return GetErrorResult(result) ?? Ok();
+        }
+
+        // GET api/account/managementinfo
+
+        [Route("managementinfo")]
+        public async Task<AccountManagementModel> GetAccountManagementInfo(String returnUrl, bool generateState = false)
+        {
+            var user = await userManager.FindByIdAsync(User.Identity.GetUserId());
+            
+            if (user == null) return null;
+
+            var logins = user.Logins.Select(linkedAccount =>
+            {
+                return new AuthorLoginInfoModel
+                {
+                    LoginProvider = linkedAccount.LoginProvider,
+                    ProviderKey = linkedAccount.ProviderKey
+                };
+            }).ToList();
+
+            if (user.PasswordHash != null)
+            {
+                logins.Add(new AuthorLoginInfoModel
+                {
+                    LoginProvider = LocalLoginProvider,
+                    ProviderKey = user.UserName
+                });
+            }
+
+            return new AccountManagementModel
+            {
+                LocalLoginProvider = LocalLoginProvider,
+                UserName = user.UserName,
+                Logins = logins,
+                LoginProviders = GetExternalLoginProviders(returnUrl, generateState)
+            };
+        }
+
+        // GET api/account/externallogins
+
+        [AllowAnonymous]
+        [Route("externallogins")]
+        public IEnumerable<ExternalLoginModel> GetExternalLoginProviders(String returnUrl, bool generateState = false)
+        {
+            var descriptions = Authentication.GetExternalAuthenticationTypes();
+            var logins = new List<ExternalLoginModel>();
+            var state = generateState ? RandomOAuthStateGenerator.Generate(256) : null;
+
+            foreach (var description in descriptions)
+            {
+                var vm = new ExternalLoginModel
+                {
+                    Name = description.Caption,
+                    Url = Url.Route("ExternalLogin", new
+                    {
+                        provider = description.AuthenticationType,
+                        response_type = "token",
+                        client_id = Startup.PublicClientId,
+                        redirect_uri = new Uri(Request.RequestUri, returnUrl).AbsoluteUri,
+                        state = state
+                    }),
+                    State = state
+                };
+                logins.Add(vm);
+            }
+
+            return logins;
+        }
+
+        // GET api/account/externallogin
+
+        [OverrideAuthentication]
+        [HostAuthentication(DefaultAuthenticationTypes.ExternalCookie)]
+        [AllowAnonymous]
+        [Route("externallogin", Name = "ExternalLogin")]
+        public async Task<IHttpActionResult> GetExternalLogin(String provider, String error = null)
+        {
+            if (error != null)
+                return Redirect(Url.Content("~/") + "#error=" + Uri.EscapeDataString(error));
+
+            if (!User.Identity.IsAuthenticated)
+                return new ChallengeResult(provider, this);
+
+            ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
+            if (externalLogin == null)
+                return InternalServerError();
+
+            if (externalLogin.LoginProvider != provider)
+            {
+                Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+                return new ChallengeResult(provider, this);
+            }
+
+            var user = await userManager.FindAsync(new UserLoginInfo(externalLogin.LoginProvider, externalLogin.ProviderKey));
+            bool hasRegistered = user != null;
+
+            if (hasRegistered)
+            {
+                Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+                ClaimsIdentity oAuthIdentity = await userManager.CreateIdentityAsync(user, OAuthDefaults.AuthenticationType);
+                ClaimsIdentity cookieIdentity = await userManager.CreateIdentityAsync(user, CookieAuthenticationDefaults.AuthenticationType);
+                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.UserName);
+                Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
+            }
+            else
+            {
+                IEnumerable<Claim> claims = externalLogin.GetClaims();
+                ClaimsIdentity identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
+                Authentication.SignIn(identity);
+            }
+
+            return Ok();
+        }
 
         private IAuthenticationManager Authentication
         {

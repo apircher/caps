@@ -9,8 +9,9 @@ define([
     'plugins/router',
     'ko',
     'infrastructure/antiForgeryToken',
-    'moment'
-], function (Q, system, app, router, ko, antiForgeryToken, moment) {
+    'moment',
+    'infrastructure/utils'
+], function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
     
     var user = ko.observable(new UserModel()),
         logonModuleId = 'viewmodels/login',
@@ -21,11 +22,26 @@ define([
             minRequiredPasswordLength: 6
         };
 
+    function setAccessToken(token, rememberMe) {
+        var storage = rememberMe ? localStorage : sessionStorage;
+        storage["accessToken"] = token;
+    }
+
+    function getAccessToken() {
+        return sessionStorage["accessToken"] || localStorage["accessToken"];
+    }
+
+    function clearAccessToken() {
+        localStorage.removeItem("accessToken");
+        sessionStorage.removeItem("accessToken");
+    }
+
+
     /*
      * Handles global ajax events to send the tokens back to the server.
      */
     $(document).ajaxSend(function (event, request, settings) {
-        var accessToken = sessionStorage["accessToken"] || localStorage["accessToken"];
+        var accessToken = getAccessToken();
         if (accessToken) {
             request.setRequestHeader('Authorization', "Bearer " + accessToken);
         }
@@ -78,6 +94,55 @@ define([
         .promise();
     }
 
+    function getAccountManagementInfo(returnUrl, generateState) {
+        return system.defer(function (dfd) {
+            $.ajax('~/api/account/managementinfo', { method: 'get', data: { returnUrl: returnUrl, generateState: generateState } })
+                .then(function (data) {
+                    dfd.resolve(data);
+                })
+                .fail(function (error) {
+                    dfd.reject(error);
+                });
+        })
+        .promise();
+    }
+
+    function getExternalLoginProviders(returnUrl, generateState) {
+        return system.defer(function (dfd) {
+            $.ajax('~/api/account/externallogins', { method: 'get', data: { returnUrl: returnUrl, generateState: generateState } })
+                .then(dfd.resolve)
+                .fail(dfd.reject);
+        })
+        .promise();
+    }
+
+    function addExternalLogin(externalAccessToken) {
+        return system.defer(function (dfd) {
+            $.ajax('~/api/account/addexternallogin', { method: 'post', data: { externalAccessToken: externalAccessToken } })
+                .then(dfd.resolve)
+                .fail(dfd.reject);
+        })
+        .promise();
+    }
+
+    function removeLogin(loginProvider, providerKey) {
+        return system.defer(function (dfd) {
+            $.ajax('~/api/account/removelogin', { method: 'post', data: { loginProvider: loginProvider, providerKey: providerKey } })
+                .then(dfd.resolve)
+                .fail(dfd.reject);
+        })
+        .promise();
+    }
+
+    function setPassword(data) {
+        return system.defer(function (dfd) {
+            $.ajax('~/api/account/setpassword', { method: 'post', data: data })
+                .then(dfd.resolve)
+                .fail(dfd.reject);
+        })
+        .promise();
+    }
+
     /*
      * Fetches metadata for the authenticated user if the cached data is expired.
      */ 
@@ -110,8 +175,7 @@ define([
                     return;
                 }
 
-                var storage = rememberMe ? localStorage : sessionStorage;
-                storage["accessToken"] = data.access_token;
+                setAccessToken(data.access_token, rememberMe);
                 system.log('logon successful');
 
                 Q.fcall(antiForgeryToken.initToken)
@@ -137,13 +201,12 @@ define([
     function logoff() {
         return system.defer(function (dfd) {
             $.ajax('~/api/account/logout', { method: 'post' })
+                .then(clearAccessToken)
                 .then(antiForgeryToken.initToken)
                 .then(function () {
                     system.log('logoff successful');
                     app.trigger('caps:authentication:loggedOff');
                     user(new UserModel());
-                    localStorage.removeItem("accessToken");
-                    sessionStorage.removeItem("accessToken");
                     dfd.resolve();
                 })
                 .fail(dfd.reject);
@@ -154,9 +217,9 @@ define([
     /*
      * Changes the current users password.
      */
-    function changePassword(oldPassword, newPassword) {
+    function changePassword(data) {
         return system.defer(function (dfd) {
-            $.ajax('~/api/account/changepassword', { method: 'post', data: { OldPassword: oldPassword, NewPassword: newPassword } })
+            $.ajax('~/api/account/changepassword', { method: 'post', data: data })
                 .then(getUser)
                 .then(dfd.resolve)
                 .fail(dfd.reject);
@@ -292,18 +355,82 @@ define([
         return response.Error || defaultMessage;
     }
 
+    function cleanUpLocation() {
+        window.location.hash = "";
+
+        if (typeof (history.pushState) !== "undefined") {
+            history.pushState("", document.title, location.pathname);
+        }
+    }
+
+    function navigateToLogin() {
+
+    }
+
     return {
         metadata: metadata,
         user: user,
         logon: logon,
         logoff: logoff,
         changePassword: changePassword,
+        setPassword: setPassword,
         isAuthenticated: isAuthenticated,
-        initialize: function () {
-            return getMetadata().then(getUser);
+        initialize: function () {            
+            var fragment = utils.getFragment(),
+                externalAccessToken,
+                externalError;
 
+            return getMetadata()
+                .then(getLoggedInUser);
+
+            function getLoggedInUser() {
+                return system.defer(function(dfd) {
+                    if (sessionStorage["associatingExternalLogin"]) {
+                        sessionStorage.removeItem("associatingExternalLogin");
+                        if (typeof (fragment.error) !== "undefined") {
+                            externalAccessToken = null;
+                            externalError = fragment.error;
+                        } else if (typeof (fragment.access_token) !== "undefined") {
+                            externalAccessToken = fragment.access_token;
+                            externalError = null;
+                        } else {
+                            externalAccessToken = null;
+                            externalError = null;
+                        }
+                        cleanUpLocation();
+                        getUser().then(function (data) {
+                            if (data.userName) {
+                                window.location.hash = '#profile';
+                                addExternalLogin(externalAccessToken).then(dfd.resolve(data));
+                            }
+                            else
+                                dfd.reject();
+                        })
+                        .fail(dfd.reject);
+                    }
+                    else if (typeof (fragment.error) !== "undefined") {
+                        cleanUpLocation();
+                        dfd.reject(new Error(fragment.error));
+                    }
+                    else if (typeof (fragment.access_token) !== "undefined") {
+                        cleanUpLocation();
+                        setAccessToken(fragment.access_token);
+
+                        Q.fcall(antiForgeryToken.initToken)
+                            .then(getUser().then(dfd.resolve));
+                    }
+                    else
+                        getUser().then(function (data) {
+                            dfd.resolve(data);
+                        });
+                })
+                .promise();
+            }
         },
 
-        UserModel: UserModel
+        UserModel: UserModel,
+        getAccountManagementInfo: getAccountManagementInfo,
+        getExternalLoginProviders: getExternalLoginProviders,
+        removeLogin: removeLogin
     };
 });

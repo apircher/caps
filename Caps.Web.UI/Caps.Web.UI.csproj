@@ -96,6 +96,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Owin.Security.Cookies.2.1.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Owin.Security.Google">
+      <HintPath>..\packages\Microsoft.Owin.Security.Google.2.1.0\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Owin.Security.OAuth, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Owin.Security.OAuth.2.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
@@ -228,11 +231,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\ApplicationOAuthProvider.cs" />
+    <Compile Include="Infrastructure\ChallengeResult.cs" />
     <Compile Include="Infrastructure\Mvc\Helpers\VersionHelpers.cs" />
     <Compile Include="Infrastructure\AuthorExtensions.cs" />
     <Compile Include="Infrastructure\LockoutHelper.cs" />
     <Compile Include="Infrastructure\MultipartStreamProviderExtensions.cs" />
     <Compile Include="Infrastructure\PredicateBuilder.cs" />
+    <Compile Include="Infrastructure\RandomOAuthStateGenerator.cs" />
     <Compile Include="Infrastructure\Settings.cs" />
     <Compile Include="Infrastructure\DbContextExtensions.cs" />
     <Compile Include="Infrastructure\Mvc\SetUserActivityAttribute.cs" />
@@ -262,6 +267,8 @@
     <Content Include="App\modules\contentfile\viewmodels\fileUploadDialog.js" />
     <Content Include="App\modules\contentfile\views\fileUploadDialog.html" />
     <Content Include="App\modules\draft\stockTemplates.js" />
+    <Content Include="App\viewmodels\setPasswordDialog.js" />
+    <Content Include="App\views\setPasswordDialog.html" />
     <Content Include="Content\app-drafts-editor.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />

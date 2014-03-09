@@ -1,23 +1,23 @@
-﻿<div id="login-form" class="app-page"> 
-    
+﻿<div id="login-form" class="app-page">
+
     <div class="container">
-    
+
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
                 <h3>Anmelden</h3>
             </div>
         </div>
 
-        <form data-bind="submit: logon, enable: !isBusy()">            
+        <form data-bind="submit: logon, enable: !isBusy()">
             <div class="row">
                 <div class="col-md-6 col-md-offset-3">
-                <!-- ko composeEditor: { field: userName, title: 'Benutzername', valueUpdate: 'afterkeydown', popoverTrigger: 'hover', popoverPlacement: 'bottom', css: 'form-control autofocus' } --><!-- /ko -->    
+                    <!-- ko composeEditor: { field: userName, title: 'Benutzername', valueUpdate: 'afterkeydown', popoverTrigger: 'hover', popoverPlacement: 'bottom', css: 'form-control autofocus' } --><!-- /ko -->
                 </div>
-            </div> 
+            </div>
 
             <div class="row">
                 <div class="col-md-6 col-md-offset-3">
-                <!-- ko composeEditor: { field: password, title: 'Passwort', valueUpdate: 'afterkeydown', type: 'password', popoverTrigger: 'hover', popoverPlacement: 'bottom', css: 'form-control' } --><!-- /ko -->  
+                    <!-- ko composeEditor: { field: password, title: 'Passwort', valueUpdate: 'afterkeydown', type: 'password', popoverTrigger: 'hover', popoverPlacement: 'bottom', css: 'form-control' } --><!-- /ko -->
                 </div>
             </div>
 
@@ -42,5 +42,19 @@
                 </div>
             </div>
         </form>
-    </div>       
+
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <h3>oder mit einem der folgenden:</h3>
+                <!-- ko if: isLoadingExternalLoginProviders -->
+                <em>Wird geladen...</em>
+                <!-- /ko -->
+                <!-- ko if: !isLoadingExternalLoginProviders() -->
+                <ul data-bind="foreach: externalLoginProviders" class="list-unstyled">
+                    <li><a class="btn btn-default" href="#" data-bind="click: login, text: name"></a></li>
+                </ul>
+                <!-- /ko -->
+            </div>
+        </div>
+    </div>
 </div>
