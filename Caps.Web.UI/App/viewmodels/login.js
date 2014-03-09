@@ -20,7 +20,7 @@
             router.redirectFromLogonView();
         })
         .fail(function (err) {
-            app.showMessage(err.Error || err.message, 'Fehlgeschlagen');
+            app.showMessage(err.responseJSON.error_description, 'Fehlgeschlagen');
         })
         .done(function () {
             isLoggingOn(false);

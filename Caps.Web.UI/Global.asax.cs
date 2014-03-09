@@ -23,8 +23,6 @@ namespace Caps.Web.UI
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             CapsBundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            CapsDbInitializer.InitializeWebSecurity();
         }
     }
 }

@@ -49,6 +49,13 @@ namespace Caps.Web.UI.Infrastructure
                 }
                 else
                 {
+                    if (LockoutHelper.IsUserLockedOut(userManager, user))
+                    {
+                        context.SetError("invalid_grant", "Das Konto wurde aufgrund zu vieler ungültiger Anmeldeversuche vorübergehend gesperrt. Die Sperre wird nach " 
+                            + Settings.LockoutPeriod.ToString() + " Minuten automatisch aufgehoben");
+                        return;
+                    }
+
                     var r = userManager.PasswordHasher.VerifyHashedPassword(user.PasswordHash, context.Password);
                     if (r == PasswordVerificationResult.Failed)
                     {

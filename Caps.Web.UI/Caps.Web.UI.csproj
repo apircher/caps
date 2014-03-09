@@ -212,7 +212,6 @@
     <Compile Include="App_Start\CapsBundleConfig.cs" />
     <Compile Include="App_Start\CapsDbInitializer.cs" />
     <Compile Include="App_Start\NinjectWebCommon.cs" />
-    <Compile Include="App_Start\RolesConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AntiForgeryTokenController.cs" />
