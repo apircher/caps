@@ -91,6 +91,11 @@
             // IE doesn't reliably persist sessionStorage when navigating to another URL. Move sessionStorage temporarily
             // to localStorage to work around this problem.
             app.archiveSessionStorageToLocalStorage();
+
+            // Store loginSuccessRoute
+            if (router.logonSuccessRoute)
+                localStorage["logonSuccessRoute"] = router.logonSuccessRoute.config.hash;
+
             window.location = data.url;
         };
     }

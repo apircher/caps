@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Caps.Data.Utils;
 
 namespace Caps.Data.Model
 {
@@ -22,6 +23,7 @@ namespace Caps.Data.Model
         [MaxLength(50)]
         public String Phone { get; set; }
 
+        [DateTimeKind(DateTimeKind.Utc)]
         public DateTime CreationDate { get; set; }
         public DateTime? LastLoginDate { get; set; }
         public DateTime? LastActivityDate { get; set; }

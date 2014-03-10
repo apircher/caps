@@ -1,7 +1,7 @@
 ﻿define(['Q', 'knockout', 'jquery', 'modules/user/entities'], function (Q, ko, $, model) {
     
     function getAllUsers() {
-        return promiseAjax('~/api/User').then(function (data) {
+        return promiseAjax('~/api/usermgmt/GetAllUsers').then(function (data) {
             return $.map(data, function (item) { return new model.User(item); });
         })
         .fail(function(error) {
@@ -14,26 +14,26 @@
     }
 
     function getUser(userName) {
-        return promiseAjax('~/api/User/' + userName).then(function (data) {
+        return promiseAjax('~/api/usermgmt/GetUser/', { method: 'get', data: { userName: userName } }).then(function (data) {
             return new model.User(data);
         });
     }
 
     function createUser(user) {
-        return promiseAjax('~/api/User', { method: 'put', data: user.toDto() });
+        return promiseAjax('~/api/usermgmt/CreateUser', { method: 'post', data: user.toDto() });
     }
 
     function updateUser(user) {
-        return promiseAjax('~/api/User/' + user.userName(), { method: 'post', data: user.toDto() });
+        return promiseAjax('~/api/usermgmt/UpdateUser', { method: 'post', data: user.toDto() });
     }
 
     function deleteUser(user) {
-        return promiseAjax('~/api/User', { method: 'delete', data: user.toDto() })
+        return promiseAjax('~/api/usermgmt/DeleteUser', { method: 'post', data: user.toDto() })
             .then(function () { return user; });
     }
 
-    function setPassword(userName, newPassword) {
-        return promiseAjax('~/api/usermgmt/SetPassword', { method: 'post', data: { UserName: userName, NewPassword: newPassword } });
+    function setPassword(userName, newPassword, confirmPassword) {
+        return promiseAjax('~/api/usermgmt/SetPassword', { method: 'post', data: { UserName: userName, NewPassword: newPassword, ConfirmPassword: confirmPassword } });
     }
 
     function promiseAjax(url, options) {

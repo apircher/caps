@@ -96,7 +96,16 @@ namespace Caps.Web.UI.Models
     {
         [Required]
         public String UserName { get; set; }
+
         [Required]
+        [StringLength(100, ErrorMessage = "Das neue Passwort muss mindestens {2} Zeichen lang sein.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Neues Passwort")]
         public String NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Neues Passwort bestätigen")]
+        [Compare("NewPassword", ErrorMessage = "Das neue Passwort stimmt nicht mit dem Bestätigungspasswort überein.")]
+        public String ConfirmPassword { get; set; }
     }
 }

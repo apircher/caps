@@ -32,6 +32,10 @@
             return moment() <= moment(self.lastActivityDate()).add('minutes', 15);
         });
 
+        this.creationDateFormatted = ko.computed(function () {
+            return moment(self.creationDate()).fromNow();
+        });
+
         this.hasEverLoggedIn = ko.computed(function () {
             return self.lastLoginDate() > self.creationDate();
         });
@@ -94,29 +98,29 @@
     User.prototype.refresh = function (data) {
         data = data || {};
 
-        this.comment(data.Comment || '');
-        this.creationDate(data.CreationDate || new Date());
-        this.email(data.Email || '');
-        this.isApproved(data.IsApproved || false);
-        this.isLockedOut(data.IsLockedOut || false);
-        this.lastActivityDate(data.LastActivityDate);
-        this.lastLockoutDate(data.LastLockoutDate);
-        this.lastLoginDate(data.LastLoginDate);
-        this.lastPasswordChangedDate(data.LastPasswordChangedDate);
-        this.firstName(data.FirstName || '');
-        this.lastName(data.LastName || '');
+        this.comment(data.comment || '');
+        this.creationDate(data.creationDate || new Date());
+        this.email(data.email || '');
+        this.isApproved(data.isApproved || false);
+        this.isLockedOut(data.isLockedOut || false);
+        this.lastActivityDate(data.lastActivityDate);
+        this.lastLockoutDate(data.lastLockoutDate);
+        this.lastLoginDate(data.lastLoginDate);
+        this.lastPasswordChangedDate(data.lastPasswordChangedDate);
+        this.firstName(data.firstName || '');
+        this.lastName(data.lastName || '');
     };
 
     User.prototype.toDto = function () {
         var dto = {
-            UserName: this.userName(),
-            Password: this.password(),
-            Comment: this.comment(),
-            Email: this.email(),
-            Roles: this.roles(),
-            FirstName: this.firstName(),
-            LastName: this.lastName(),
-            Phone: this.phone()
+            userName: this.userName(),
+            password: this.password(),
+            comment: this.comment(),
+            email: this.email(),
+            roles: this.roles(),
+            firstName: this.firstName(),
+            lastName: this.lastName(),
+            phone: this.phone()
         };
         return dto;
     };

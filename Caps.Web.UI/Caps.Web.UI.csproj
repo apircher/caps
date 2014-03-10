@@ -225,7 +225,6 @@
     <Compile Include="Controllers\DbFileUploadController.cs" />
     <Compile Include="Controllers\DbFileVersionController.cs" />
     <Compile Include="Controllers\DbSiteMapNodeController.cs" />
-    <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\UserMgmtController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

@@ -54,7 +54,9 @@
         },
 
         save: function () {
-            saveChanges().then(navigateBack);
+            saveChanges().then(function () {
+                navigateBack();
+            });
         },
 
         cancel: function () {
@@ -156,6 +158,7 @@
 
     function handleAjaxError(err) {
         app.showMessage('Bei der Ausführung der Aktion ist ein Fehler aufgetreten.', 'Fehler aufgetreten');
+        throw new Error(err);
     }
 
     function navigateBack() {

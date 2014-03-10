@@ -15,6 +15,9 @@ namespace Caps.Data
         {
             //Configuration.ProxyCreationEnabled = false;
             //Configuration.LazyLoadingEnabled = false;
+
+            ((System.Data.Entity.Infrastructure.IObjectContextAdapter)this).ObjectContext.ObjectMaterialized += 
+                (sender, e) => Caps.Data.Utils.DateTimeKindAttribute.Apply(e.Entity);
         }
 
         public DbSet<DbFile> Files { get; set; }

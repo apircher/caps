@@ -223,6 +223,7 @@
     <Compile Include="Model\Tag.cs" />
     <Compile Include="Model\Website.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\DateTimeKindAttribute.cs" />
     <Compile Include="Utils\PollingCacheDependency.cs" />
     <Compile Include="Utils\SqlTableChangeTracking.cs" />
     <Compile Include="Utils\StringExtensions.cs" />

@@ -1,6 +1,18 @@
 ﻿define([
-    '../datacontext', '../entities', 'knockout', 'Q', 'modules/user/module', '../commands/deleteUser', 'durandal/app', 'moment', './setPasswordDialog', 'authentication', 'toastr', 'infrastructure/screen'
-], function (datacontext, model, ko, Q, module, deleteUserCommand, app, moment, SetPasswordDialog, authentication, toastr, screen) {
+    '../datacontext',
+    '../entities',
+    'knockout',
+    'Q',
+    'modules/user/module',
+    '../commands/deleteUser',
+    'durandal/app',
+    'moment',
+    './setPasswordDialog',
+    'authentication',
+    'toastr',
+    'infrastructure/screen'
+],
+function (datacontext, model, ko, Q, module, deleteUserCommand, app, moment, SetPasswordDialog, authentication, toastr, screen) {
 
     var vm = {
         user: ko.observable(),
@@ -52,12 +64,12 @@
     }
     function changePassword() {
         SetPasswordDialog.show()
-            .then(function (newPassword) {
-                if (newPassword) setPassword(newPassword);
+            .then(function (data) {
+                if (data) setPassword(data.newPassword, data.confirmPassword);
             });
     }
-    function setPassword(newPassword) {
-        datacontext.setPassword(vm.userName(), newPassword)
+    function setPassword(newPassword, confirmPassword) {
+        datacontext.setPassword(vm.userName(), newPassword, confirmPassword)
             .then(refreshUser)
             .then(function () {
                 toastr.success('Das Passwort wurde erfolgreich geändert.', 'Passwort geändert', {

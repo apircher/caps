@@ -358,13 +358,17 @@ define([
     function cleanUpLocation() {
         window.location.hash = "";
 
-        if (typeof (history.pushState) !== "undefined") {
-            history.pushState("", document.title, location.pathname);
+        if (typeof (history.pushState) !== 'undefined') {
+            history.pushState('', document.title, location.pathname);
         }
     }
 
-    function navigateToLogin() {
-
+    function restoreLogonSuccessRoute() {
+        var lsr = localStorage['logonSuccessRoute'];
+        if (lsr) {
+            localStorage.removeItem('logonSuccessRoute');
+            window.location.hash = lsr;
+        }
     }
 
     return {
@@ -417,7 +421,13 @@ define([
                         setAccessToken(fragment.access_token);
 
                         Q.fcall(antiForgeryToken.initToken)
-                            .then(getUser().then(dfd.resolve));
+                            .then(function () {
+                                getUser().then(function (data) {
+                                    restoreLogonSuccessRoute();
+                                    router.redirectFromLogonView();
+                                    dfd.resolve(data);
+                                });
+                            });
                     }
                     else
                         getUser().then(function (data) {
