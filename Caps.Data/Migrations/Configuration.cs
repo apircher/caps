@@ -25,9 +25,12 @@ namespace Caps.Data.Migrations
         {
             //  This method will be called after migrating to the latest version.
 
-            context.Websites.AddOrUpdate(
-                new Caps.Data.Model.Website { Name = "Caps Website", Url = "http://caps.luxbox.net" }
-            );
+            if (!context.Websites.Any())
+            {
+                context.Websites.AddOrUpdate(
+                    new Caps.Data.Model.Website { Name = "Caps Website", Url = "http://caps.luxbox.net" }
+                );
+            }
 
             foreach (var draft in context.Drafts)
             {

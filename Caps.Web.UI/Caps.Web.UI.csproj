@@ -226,11 +226,13 @@
     <Compile Include="Controllers\DbFileVersionController.cs" />
     <Compile Include="Controllers\DbSiteMapNodeController.cs" />
     <Compile Include="Controllers\UserMgmtController.cs" />
+    <Compile Include="Controllers\WebsiteController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\ApplicationOAuthProvider.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
+    <Compile Include="Infrastructure\DtoExtensions.cs" />
     <Compile Include="Infrastructure\Mvc\Helpers\VersionHelpers.cs" />
     <Compile Include="Infrastructure\AuthorExtensions.cs" />
     <Compile Include="Infrastructure\LockoutHelper.cs" />
@@ -241,6 +243,7 @@
     <Compile Include="Infrastructure\DbContextExtensions.cs" />
     <Compile Include="Infrastructure\Mvc\SetUserActivityAttribute.cs" />
     <Compile Include="Infrastructure\Mvc\ValidateJsonAntiForgeryTokenAttribute.cs" />
+    <Compile Include="Infrastructure\ThumbnailHelper.cs" />
     <Compile Include="Infrastructure\WebApi\IDependencyScopeExtensions.cs" />
     <Compile Include="Infrastructure\WebApi\SetUserActivityAttribute.cs" />
     <Compile Include="Infrastructure\WebApi\ValidateJsonAntiForgeryTokenAttribute.cs" />
@@ -607,9 +610,13 @@
       <Project>{156683f3-9173-47bc-928f-1d31b7fcd45f}</Project>
       <Name>Caps.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Caps.Web.Mvc\Caps.Web.Mvc.csproj">
-      <Project>{a988693b-d4bc-4b62-a345-a166b9fc66cc}</Project>
-      <Name>Caps.Web.Mvc</Name>
+    <ProjectReference Include="..\Caps.HttpClient\Caps.Consumer.csproj">
+      <Project>{17692b66-b8b9-49ac-9fb6-9fa6d499528f}</Project>
+      <Name>Caps.Consumer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Caps.Web.Imaging\Caps.Web.Imaging.csproj">
+      <Project>{49aae045-ce05-42e1-8f50-c8ea8a3f8f59}</Project>
+      <Name>Caps.Web.Imaging</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -9,8 +9,6 @@ using System.Web.Http;
 using Caps.Web.UI.Infrastructure;
 using Caps.Web.UI.Infrastructure.WebApi;
 using Caps.Data.Model;
-using Caps.Web.Mvc;
-using Caps.Web.Mvc.Imaging;
 using System.Collections.Specialized;
 
 namespace Caps.Web.UI.Controllers
