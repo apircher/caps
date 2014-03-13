@@ -62,11 +62,18 @@ namespace Caps.Consumer.Mvc.SiteMap
         {
             get
             {
-                var language = Language.CurrentLanguage;
-                var provider = this.Provider as Caps.Consumer.Mvc.Providers.CapsSiteMapProvider;
-                if (provider != null && provider.IsBuildingSiteMap)
-                    language = Language.DefaultLanguage;
-                return base.Url.Replace(LanguagePlaceHolder, language);
+                var url = base.Url;
+                if (url.Contains('~'))
+                    url = System.Web.VirtualPathUtility.ToAbsolute(url);
+                if (url.ToLowerInvariant().Contains(LanguagePlaceHolder.ToLowerInvariant()))
+                {
+                    var language = Language.CurrentLanguage;
+                    var provider = this.Provider as Caps.Consumer.Mvc.Providers.CapsSiteMapProvider;
+                    if (provider != null && provider.IsBuildingSiteMap)
+                        language = Language.DefaultLanguage;
+                    url = url.Replace(LanguagePlaceHolder, language);
+                }
+                return url;
             }
             set
             {

@@ -1,7 +1,10 @@
-﻿using Caps.Consumer.Mvc.Attributes;
+﻿using Caps.Consumer;
+using Caps.Consumer.Mvc.Attributes;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -10,21 +13,21 @@ namespace DemoWebsite2.Controllers
     [SetCulture]
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View();
-        }
+            var rootNode = SiteMap.RootNode as Caps.Consumer.Mvc.SiteMap.CapsSiteMapNode;
+            if (rootNode != null)
+            {
+                CapsHttpClient client = new CapsHttpClient(new Uri(ConfigurationManager.AppSettings["caps:Url"]),
+                    ConfigurationManager.AppSettings["caps:AppKey"],
+                    ConfigurationManager.AppSettings["caps:AppSecret"]);
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
+                await client.InitAccessTokens();
 
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
+                var svc = new ContentService(client);
+                var content = await svc.GetContent(1, rootNode.PermanentId);
+                ViewBag.Content = content;
+            }
 
             return View();
         }

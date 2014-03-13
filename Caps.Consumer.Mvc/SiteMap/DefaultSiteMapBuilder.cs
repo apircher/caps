@@ -71,15 +71,14 @@ namespace Caps.Consumer.Mvc.SiteMap
 
             var rootNode = new CapsSiteMapNode(provider, "root");
             rootNode.Title = rootNodeEntity.Name;
-            rootNode.Url = "~/";
+            rootNode.Url = Url.LocalizeAction("Index", "Home", CapsSiteMapNode.LanguagePlaceHolder);
             rootNode.PermanentId = rootNodeEntity.PermanentId;
             rootNode.Entity = rootNodeEntity;
             rootNode.Name = rootNodeEntity.Name.UrlEncode();
             rootNode.ContentVersion = rootNodeEntity.Content != null ? rootNodeEntity.Content.ContentVersion : 0;
             rootNode.AddResources(rootNodeEntity.Resources.Select(r =>
                 new Tuple<String, CapsSiteMapNodeResource>(r.Language, new CapsSiteMapNodeResource { Title = r.Title, MetaKeywords = r.Keywords, MetaDescription = r.Description })));
-
-            indexUrlToSiteMapNode.Add("~/", rootNode);
+            indexUrlToSiteMapNode.Add(rootNode.Url, rootNode);
 
             foreach (var entity in rootNodeEntity.ChildNodes.OrderBy(n => n.Ranking))
                 MapNode(entity, provider, rootNode, addNodeAction);

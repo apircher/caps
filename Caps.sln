@@ -22,7 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caps.Web.Imaging", "Caps.We
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caps.Consumer.Mvc", "Caps.Consumer.Mvc\Caps.Consumer.Mvc.csproj", "{66935581-FDD0-4A45-9357-24E8E93A9B91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoWebsite2", "DemoWebsite2\DemoWebsite2.csproj", "{902D3F0F-0DEC-4E96-9C03-A3F1669E0959}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoWebsite", "DemoWebsite2\DemoWebsite.csproj", "{902D3F0F-0DEC-4E96-9C03-A3F1669E0959}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

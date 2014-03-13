@@ -21,7 +21,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Caps Demo", "Index", "Home", null, new { @class = "navbar-brand" })
+                <a href="@Url.LocalizeAction("Index", "Home", Language.CurrentLanguage)" class="navbar-brand">Caps Demo</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -53,7 +53,7 @@
                 </p>
             </div>
 
-            <p>&copy; @DateTime.Now.Year - Meine ASP.NET-Anwendung</p>
+            <p>&copy; @DateTime.Now.Year - Caps Demo Website</p>
         </footer>
     </div>
 
