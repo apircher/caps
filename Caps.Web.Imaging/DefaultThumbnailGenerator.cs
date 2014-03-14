@@ -12,7 +12,7 @@ namespace Caps.Web.Imaging
     {
         public override ThumbnailGeneratorResult GenerateThumbnail(byte[] sourceImage, int boxWidth, int boxHeight)
         {
-            var settings = new ImageResizer.ResizeSettings(boxWidth, boxHeight, FitMode.Max, null);
+            var settings = new ImageResizer.ResizeSettings(boxWidth, boxHeight, FitMode.Crop, null);
             return CreateImageResizerThumbnail(sourceImage, settings);
         }
 

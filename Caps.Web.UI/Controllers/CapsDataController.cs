@@ -22,7 +22,7 @@ namespace Caps.Web.UI.Controllers
 
         public CapsDataController()
         {
-            _contextProvider = new CapsDbContextProvider(User);
+            _contextProvider = new CapsDbContextProvider();
         }
 
         // ~/breeze/capsdata/Metadata

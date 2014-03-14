@@ -104,7 +104,7 @@ namespace Caps.Consumer.Mvc.SiteMap
 
                 siteMapNode = CreateNode(provider, entity, entity.Id.ToString("x", CultureInfo.InvariantCulture), url, entity.Name);
                 siteMapNode.PermanentId = entity.PermanentId;
-                siteMapNode.Entity = null; // Caps.Data.Dto.DbSiteMapNodeDto.Create(entity);
+                siteMapNode.Entity = entity;
                 siteMapNode.Name = entity.Name.UrlEncode();
                 siteMapNode.ContentVersion = entity.Content != null ? entity.Content.ContentVersion : 0;
 
@@ -156,7 +156,7 @@ namespace Caps.Consumer.Mvc.SiteMap
                 return VirtualPathUtility.ToAbsolute(url);
             }
 
-            if (entity.IsNodeType("Teaser"))
+            if (entity.IsNodeType("Teaser") && !String.IsNullOrWhiteSpace(entity.Redirect))
             {
                 int redirectId = int.Parse(entity.Redirect);
                 var linkedNode = nodeList.FirstOrDefault(n => n.PermanentId == redirectId);

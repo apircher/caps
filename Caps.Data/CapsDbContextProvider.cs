@@ -11,10 +11,8 @@ namespace Caps.Data
 {
     public class CapsDbContextProvider : EFContextProvider<CapsDbContext>
     {
-        System.Security.Principal.IPrincipal user;
-        public CapsDbContextProvider(System.Security.Principal.IPrincipal user)
+        public CapsDbContextProvider()
         {
-            this.user = user;
         }
 
         protected override Dictionary<Type, List<EntityInfo>> BeforeSaveEntities(Dictionary<Type, List<EntityInfo>> saveMap)
@@ -59,9 +57,9 @@ namespace Caps.Data
                 foreach (var entry in newDrafts)
                 {
                     var draft = entry.Entity as Draft;
-                    draft.Created.By = user.Identity.Name;
+                    draft.Created.By = User.Identity.Name;
                     draft.Created.At = DateTime.UtcNow;
-                    draft.Modified.By = user.Identity.Name;
+                    draft.Modified.By = User.Identity.Name;
                     draft.Modified.At = DateTime.UtcNow;
                 }
 
@@ -71,7 +69,7 @@ namespace Caps.Data
                     entry.ForceUpdate = true;
 
                     var draft = entry.Entity as Draft;
-                    draft.Modified.By = user.Identity.Name;
+                    draft.Modified.By = User.Identity.Name;
                     draft.Modified.At = DateTime.UtcNow;
                     draft.Version++;
                 }
@@ -83,9 +81,9 @@ namespace Caps.Data
                 foreach (var entry in newTranslations)
                 {
                     var translation = entry.Entity as DraftTranslation;
-                    translation.Created.By = user.Identity.Name;
+                    translation.Created.By = User.Identity.Name;
                     translation.Created.At = DateTime.UtcNow;
-                    translation.Modified.By = user.Identity.Name;
+                    translation.Modified.By = User.Identity.Name;
                     translation.Modified.At = DateTime.UtcNow;
                 }
 
@@ -95,7 +93,7 @@ namespace Caps.Data
                     entry.ForceUpdate = true;
 
                     var translation = entry.Entity as DraftTranslation;
-                    translation.Modified.By = user.Identity.Name;
+                    translation.Modified.By = User.Identity.Name;
                     translation.Modified.At = DateTime.UtcNow;
                 }
             }
@@ -110,9 +108,9 @@ namespace Caps.Data
                 {
                     var sitemapNode = entry.Entity as DbSiteMapNode;
                     sitemapNode.Created.At = DateTime.UtcNow;
-                    sitemapNode.Created.By = user.Identity.Name;
+                    sitemapNode.Created.By = User.Identity.Name;
                     sitemapNode.Modified.At = DateTime.UtcNow;
-                    sitemapNode.Modified.By = user.Identity.Name;
+                    sitemapNode.Modified.By = User.Identity.Name;
 
                     // Ensure a unique PermanentId.
                     if (sitemapNode.PermanentId == 0 || Context.SiteMapNodes.Any(n => n.SiteMapId == sitemapNode.SiteMapId && n.PermanentId == sitemapNode.PermanentId))
@@ -124,7 +122,7 @@ namespace Caps.Data
                 {
                     var sitemapNode = entry.Entity as DbSiteMapNode;
                     sitemapNode.Modified.At = DateTime.UtcNow;
-                    sitemapNode.Modified.By = user.Identity.Name;
+                    sitemapNode.Modified.By = User.Identity.Name;
                 }
             }
         }
@@ -176,6 +174,14 @@ namespace Caps.Data
             var t = entity.GetType();
             if (!saveMap.ContainsKey(t)) saveMap.Add(t, new List<EntityInfo>());
             saveMap[t].Add(nfo);
+        }
+
+        System.Security.Principal.IPrincipal User
+        {
+            get
+            {
+                return System.Threading.Thread.CurrentPrincipal;
+            }
         }
     }
 }

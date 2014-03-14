@@ -132,8 +132,8 @@ namespace Caps.Consumer.ContentControls
 
             if (Regex.IsMatch(query, @"(\?|&amp;|&)download=1"))
                 return GetFileSrc(fileName, language, false);
-            
-            if (Regex.IsMatch(query, @"(\?|&amp;|&)thumbnail=1", RegexOptions.IgnoreCase))
+
+            if (Regex.IsMatch(query, @"(\?|&amp;|&)thumbnail=1", RegexOptions.IgnoreCase) || Regex.IsMatch(query, @"(\?|&amp;|&)size=", RegexOptions.IgnoreCase))
             {
                 var sizeRegex = new Regex(@"(\?|&amp;|&)size=(?'size'[0-9]+x[0-9]+)", RegexOptions.IgnoreCase);
                 var size = "200x160";
