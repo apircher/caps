@@ -123,6 +123,21 @@ namespace Caps.Consumer
                 return await response.Content.ReadAsAsync<DbThumbnail>();
             return null;
         }
+
+        /// <summary>
+        /// Returns a IEnumerable&lt;TeaserModel&gt;-Instance that contains all 
+        /// teasers placed on the start page.
+        /// </summary>
+        /// <param name="websiteId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<TeaserModel>> GetTeasers(int websiteId)
+        {
+            var response = await client.GetAsync("api/websites/" + websiteId.ToString() + "/teasers");
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadAsAsync<IEnumerable<TeaserModel>>();
+            return null;
+        }
+
     }
 
     public class ContentNotFoundException : Exception

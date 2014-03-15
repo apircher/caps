@@ -203,7 +203,8 @@ namespace Caps.Web.UI.Infrastructure
                 Version = model.Version,
                 PublishedFrom = model.PublishedFrom,
                 PublishedBy = model.PublishedBy,
-                SiteMapNodes = CreateCollection(model.SiteMapNodes)
+                // Serialize only root nodes. Other nodes are in the Hierarchy.
+                SiteMapNodes = CreateCollection(model.SiteMapNodes.Where(n => !n.ParentNodeId.HasValue).ToList())
             };
         }
 

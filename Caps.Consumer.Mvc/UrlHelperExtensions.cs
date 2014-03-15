@@ -57,7 +57,7 @@ namespace Caps.Consumer.Mvc
 
         public static String Action(this UrlHelper helper, DbFile file)
         {
-            return helper.Action("ContentFile", "CapsContent", new { area = "", id = file.Id, name = file.FileName });
+            return helper.Action("ContentFile", "Caps", new { area = "", id = file.Id, name = file.FileName });
         }
 
         public static String ToAbsolute(this UrlHelper helper, String url)

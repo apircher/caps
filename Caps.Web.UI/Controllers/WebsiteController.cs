@@ -19,9 +19,11 @@ namespace Caps.Web.UI.Controllers
     {
         CapsDbContext db;
 
-        public WebsiteController(CapsDbContext db)
+        public WebsiteController()
         {
-            this.db = db;
+            this.db = new CapsDbContext();
+            this.db.Configuration.ProxyCreationEnabled = false;
+            this.db.Configuration.LazyLoadingEnabled = false;
         }
 
         // GET api/websites
@@ -76,6 +78,54 @@ namespace Caps.Web.UI.Controllers
                 .FirstOrDefault(n => n.SiteMap.Id == currentSiteMap.Id && n.PermanentId == permanentId);
 
             return Ok(Dto.Create(content));
+        }
+
+        // GET api/websites/{websiteId}/teasers
+
+        [Route("{websiteId}/teasers")]
+        public IHttpActionResult GetTeasers(int websiteId)
+        {
+            var currentSiteMap = db.GetCurrentSiteMap(websiteId);
+            if (currentSiteMap == null)
+                return null;
+            
+            var rootNode = currentSiteMap.SiteMapNodes.FirstOrDefault(n => n.ParentNodeId == null && n.NodeType.ToLower() == "root");
+            if (rootNode == null)
+                return null;
+            
+            var teasers = (from node in db.SiteMapNodes
+                           join node2 in db.SiteMapNodes on node.Redirect.Trim() equals System.Data.Entity.SqlServer.SqlFunctions.StringConvert((double)node2.PermanentId).Trim()
+                           orderby node.Ranking
+                           where
+                               node.NodeType.ToLower() == "teaser" &&
+                               node.SiteMapId == currentSiteMap.Id &&
+                               node2.SiteMapId == currentSiteMap.Id &&
+                               node.ParentNodeId == rootNode.Id
+                           select new
+                           {
+                               Teaser = node,
+                               TeasedContent = node2
+                           })
+                          .ToList();
+
+
+            var publicationIds = teasers.Select(t => t.TeasedContent.ContentId)
+                .Union(teasers.Select(t => t.Teaser.ContentId))
+                .Distinct()
+                .ToList();
+
+            var publications = db.Publications
+                .Include("ContentParts.Resources")
+                .Include("Files.Resources.FileVersion.File")
+                .Where(p => publicationIds.Contains(p.Id)).ToList();
+
+            var teaserDtos = teasers.Select(t => new TeaserModel
+            {
+                Teaser = Dto.Create(t.Teaser),
+                TeasedContent = Dto.Create(t.TeasedContent)
+            });
+
+            return Ok(teaserDtos);
         }
 
         // GET api/websites/{websiteId}/fileversions/{fileVersionId}
