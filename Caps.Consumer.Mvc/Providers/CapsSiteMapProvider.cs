@@ -149,9 +149,12 @@ namespace Caps.Consumer.Mvc.Providers
                 {
                     if (routeValues.ContainsKey("language"))
                         routeValues["language"] = CapsSiteMapNode.LanguagePlaceHolder;
+                    if (routeValues.ContainsKey("name"))
+                        routeValues["name"] = CapsSiteMapNode.LocalizedNamePlaceHolder;
 
                     VirtualPathData vpd = routeData.Route.GetVirtualPath(new RequestContext(httpContext, routeData), routeValues);
-                    url = "~/" + vpd.VirtualPath.Replace(CapsSiteMapNode.LanguagePlaceHolder, Language.DefaultLanguage);
+                    url = "~/" + vpd.VirtualPath
+                        .Replace(CapsSiteMapNode.LanguagePlaceHolder, Language.DefaultLanguage);
                     node = base.FindSiteMapNode(VirtualPathUtility.ToAbsolute(url));
                 }
             }

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Caps.Consumer.Localization;
+using Caps.Consumer.Mvc.Utils;
 
 namespace Caps.Consumer.Mvc
 {
@@ -33,6 +35,17 @@ namespace Caps.Consumer.Mvc
                 routeValues["language"] = language;
             else
                 routeValues.Add("language", language);
+
+            if (routeValues.ContainsKey("name"))
+            {
+                var provider = System.Web.SiteMap.Provider as Caps.Consumer.Mvc.Providers.CapsSiteMapProvider;
+                if (provider != null)
+                {
+                    var node = provider.CurrentNode as Caps.Consumer.Mvc.SiteMap.CapsSiteMapNode;
+                    if (node != null)
+                        routeValues["name"] = node.Entity.GetValueForLanguage(language, r => r.Title, String.Empty, Language.DefaultLanguage).UrlEncode();
+                }
+            }
 
             return routeValues;
         }

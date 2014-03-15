@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Caps.Consumer.Mvc.Utils;
 
 namespace Caps.Consumer.Mvc.SiteMap
 {
     public class CapsSiteMapNode : System.Web.SiteMapNode
     {
         public const String LanguagePlaceHolder = "--language--";
+        public const String LocalizedNamePlaceHolder = "--localized-name--";
 
         String nodeType;
         Dictionary<String, CapsSiteMapNodeResource> resources = new Dictionary<string, CapsSiteMapNodeResource>();
@@ -65,14 +67,23 @@ namespace Caps.Consumer.Mvc.SiteMap
                 var url = base.Url;
                 if (url.Contains('~'))
                     url = System.Web.VirtualPathUtility.ToAbsolute(url);
+
+                var provider = this.Provider as Caps.Consumer.Mvc.Providers.CapsSiteMapProvider;
                 if (url.ToLowerInvariant().Contains(LanguagePlaceHolder.ToLowerInvariant()))
                 {
                     var language = Language.CurrentLanguage;
-                    var provider = this.Provider as Caps.Consumer.Mvc.Providers.CapsSiteMapProvider;
                     if (provider != null && provider.IsBuildingSiteMap)
                         language = Language.DefaultLanguage;
                     url = url.Replace(LanguagePlaceHolder, language);
                 }
+
+                if (url.ToLowerInvariant().Contains(LocalizedNamePlaceHolder.ToLowerInvariant()))
+                {
+                    var localizedName = GetLocalizedValue<CapsSiteMapNodeResource, String>(Language.CurrentLanguage, r => r.Title, base.Title).UrlEncode();
+                    if (provider != null && !provider.IsBuildingSiteMap)
+                        url = url.Replace(LocalizedNamePlaceHolder, localizedName);
+                }
+
                 return url;
             }
             set

@@ -43,6 +43,13 @@ namespace DemoWebsite2
             );
 
             routes.MapRoute(
+                name: "LocalizedDefault",
+                url: "{language}/{controller}/{action}/{id}",
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional, language = "de" },
+                constraints: new { language = @"^(en|de|es|" + CapsSiteMapNode.LanguagePlaceHolder + ")$" }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

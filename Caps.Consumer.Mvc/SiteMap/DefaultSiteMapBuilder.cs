@@ -141,7 +141,7 @@ namespace Caps.Consumer.Mvc.SiteMap
             if (entity.IsNodeTypeIn("Page"))
             {
                 routeData.Add("id", entity.PermanentId.ToString("x"));
-                routeData.Add("name", entity.Name.UrlEncode());
+                routeData.Add("name", CapsSiteMapNode.LocalizedNamePlaceHolder); // entity.Name.UrlEncode());
                 routeData.Add("language", CapsSiteMapNode.LanguagePlaceHolder);
                 return Url.Action("Index", "Caps", routeData);
             }
