@@ -11,13 +11,16 @@ namespace Caps.Consumer
 {
     public class CapsHttpClient : HttpClient
     {
+        static CacheCow.Common.ICacheStore globalStore = new CacheCow.Client.InMemoryCacheStore();
+
         String userName;
         String password;
 
         AntiForgeryTokensModel antiForgeryToken;
         String accessToken;
 
-        public CapsHttpClient(Uri serviceUri, String userName, String password) 
+        public CapsHttpClient(Uri serviceUri, String userName, String password) :
+            base(new CacheCow.Client.CachingHandler(globalStore) { InnerHandler = new HttpClientHandler() })
         {
             this.userName = userName;
             this.password = password;

@@ -57,6 +57,11 @@ namespace DemoWebsite2.Controllers
 
             if (inline)
             {
+                String etag = Convert.ToBase64String(fileVersion.Hash);
+                String clientEtag = Request.Headers["If-None-Match"];
+                if (String.Equals(etag, clientEtag))
+                    return new HttpStatusCodeResult(System.Net.HttpStatusCode.NotModified);
+
                 Response.AddHeader("Content-Disposition", "inline; filename=" + file.FileName);
                 return new FileContentResult(fileVersion.Content.Data, file.ContentType);
             }
@@ -72,6 +77,11 @@ namespace DemoWebsite2.Controllers
             var thumbnail = await svc.GetThumbnail(1, id, size);
             if (thumbnail == null)     // TODO: Return default document thumbnail...
                 return HttpNotFound();
+
+            String etag = Convert.ToBase64String(thumbnail.OriginalFileHash);
+            String clientEtag = Request.Headers["If-None-Match"];
+            if (String.Equals(etag, clientEtag))
+                return new HttpStatusCodeResult(System.Net.HttpStatusCode.NotModified);
 
             return new FileContentResult(thumbnail.Data, thumbnail.ContentType);
         }

@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using WebApi.OutputCache.V2;
 
 namespace Caps.Web.UI.Controllers
 {
@@ -113,8 +114,25 @@ namespace Caps.Web.UI.Controllers
         // ~/breeze/capsdata/SaveChanges
         public SaveResult SaveChanges(JObject saveBundle)
         {
-            return _contextProvider.SaveChanges(saveBundle);
+            var r = _contextProvider.SaveChanges(saveBundle);
+
+            if (HasSiteMapOrContentChanged(r))
+            {
+                var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+                cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCachekey((WebsiteController t) => t.GetCurrentSiteMap(0)));
+                cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCachekey((WebsiteController t) => t.GetContent(0, 0)));
+                cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCachekey((WebsiteController t) => t.GetTeasers(0)));                
+            }
+
+            return r;
         }
 
+        bool HasSiteMapOrContentChanged(SaveResult r)
+        {
+            if (r.Entities.Any(e => e is DbSiteMap || e is DbSiteMapNode || e is DbSiteMapNodeResource || e is Publication))
+                return true;
+
+            return false;
+        }
     }
 }

@@ -8,11 +8,11 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using WebApi.OutputCache.V2;
 
 namespace Caps.Web.UI.Controllers
 {
     [Authorize]
-    [SetUserActivity]
     [ValidateJsonAntiForgeryToken]
     [RoutePrefix("api/websites")]
     public class WebsiteController : ApiController
@@ -29,6 +29,7 @@ namespace Caps.Web.UI.Controllers
         // GET api/websites
 
         [Route("")]
+        [CacheOutput(ServerTimeSpan = 3600, ClientTimeSpan = 0, MustRevalidate = true)]
         public IHttpActionResult GetWebsites()
         {
             var websites = db.Websites.ToList();
@@ -39,6 +40,7 @@ namespace Caps.Web.UI.Controllers
         // GET api/websites/{websiteId}
 
         [Route("{websiteId:int}")]
+        [CacheOutput(ServerTimeSpan = 3600, ClientTimeSpan = 0, MustRevalidate = true)]
         public IHttpActionResult GetWebsite(int websiteId)
         {
             var website = db.Websites.FirstOrDefault(w => w.Id == websiteId);
@@ -51,6 +53,7 @@ namespace Caps.Web.UI.Controllers
         // GET api/websites/{websiteId}/sitemap
 
         [Route("{websiteId:int}/sitemap")]
+        [CacheOutput(ServerTimeSpan = 3600, ClientTimeSpan = 0, MustRevalidate = true)]
         public IHttpActionResult GetCurrentSiteMap(int websiteId)
         {
             var siteMap = db.SiteMaps.Include("SiteMapNodes").Include("SiteMapNodes.Resources").Include("SiteMapNodes.Content")
@@ -65,6 +68,7 @@ namespace Caps.Web.UI.Controllers
         // GET api/websites/{websiteId}/content/{permanentId}
 
         [Route("{websiteId}/content/{permanentId}")]
+        [CacheOutput(ServerTimeSpan = 3600, ClientTimeSpan = 0, MustRevalidate = true)]
         public IHttpActionResult GetContent(int websiteId, int permanentId)
         {
             var currentSiteMap = db.GetCurrentSiteMap(websiteId);
@@ -83,6 +87,7 @@ namespace Caps.Web.UI.Controllers
         // GET api/websites/{websiteId}/teasers
 
         [Route("{websiteId}/teasers")]
+        [CacheOutput(ServerTimeSpan = 3600, ClientTimeSpan = 0, MustRevalidate = true)]
         public IHttpActionResult GetTeasers(int websiteId)
         {
             var currentSiteMap = db.GetCurrentSiteMap(websiteId);
@@ -131,6 +136,7 @@ namespace Caps.Web.UI.Controllers
         // GET api/websites/{websiteId}/fileversions/{fileVersionId}
 
         [Route("{websiteId}/fileversions/{fileVersionId}")]
+        [CacheOutput(ServerTimeSpan = 3600, ClientTimeSpan = 0, MustRevalidate = true)]
         public IHttpActionResult GetContentFileVersion(int websiteId, int fileVersionId)
         {
             var fileVersion = db.FileVersions
@@ -145,6 +151,7 @@ namespace Caps.Web.UI.Controllers
         // GET api/websites/{websiteId}/fileversions/{fileVersionId}/thumbnails/{nameOrSize}
 
         [Route("{websiteId}/fileversions/{fileVersionId}/thumbnails/{nameOrSize}")]
+        [CacheOutput(ServerTimeSpan = 3600, ClientTimeSpan = 0, MustRevalidate = true)]
         public IHttpActionResult GetThumbnail(int websiteId, int fileVersionId, String nameOrSize)
         {
             var latestVersion = db.FileVersions

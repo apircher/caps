@@ -123,7 +123,7 @@ namespace Caps.Consumer.Mvc.Providers
                 //    HttpRuntime.Cache.Insert(cacheKey, "", dependency, Cache.NoAbsoluteExpiration, Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable,
                 //        (key, item, reason) => ResetSiteMap());
                 //}
-                HttpRuntime.Cache.Insert(cacheKey, "", null, DateTime.Now.Add(TimeSpan.FromSeconds(30)), Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable,
+                HttpRuntime.Cache.Insert(cacheKey, "", null, DateTime.Now.Add(TimeSpan.FromSeconds(10)), Cache.NoSlidingExpiration, CacheItemPriority.NotRemovable,
                         (key, item, reason) => ResetSiteMap());
 
                 return rootNode;

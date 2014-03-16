@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CacheCow.Client</name>
+    </assembly>
+    <members>
+        <member name="M:CacheCow.Client.CacheStoreQuotaManager.#ctor(CacheCow.Client.ICacheMetadataProvider,System.Action{CacheCow.Client.CacheItemMetadata})">
+            <summary>
+            
+            </summary>
+            <param name="metadataProvider">Most likely implemented by the cache store itself</param>
+            <param name="remover">This is a method most likely on the cache store which does not call
+            back on ItemRemoved. This is very important.</param>
+        </member>
+        <member name="P:CacheCow.Client.CacheStoreSettings.TotalQuota">
+            <summary>
+            Total number of bytes that can be used up by the cache.
+            If 0 then no limit
+            </summary>
+        </member>
+        <member name="P:CacheCow.Client.CacheStoreSettings.PerDomainQuota">
+            <summary>
+            Quota per hostname (domain) in bytes. www.google.com will be a different host to google.com
+            </summary>
+        </member>
+        <member name="M:CacheCow.Client.CachingHandler.IsFreshOrStaleAcceptable(System.Net.Http.HttpResponseMessage,System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Returns whether resource is fresh or if stale, it is acceptable to be stale
+            null --> dont know, cannot be determined
+            true --> yes, is OK if stale
+            false --> no, it is not OK to be stale 
+            </summary>
+            <param name="cachedResponse"></param>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="P:CacheCow.Client.CachingHandler.UseConditionalPut">
+            <summary>
+            Whether to use cache's ETag or Last-Modified
+            to make conditional PUT according to RFC2616 13.3
+            If no cache available on the resource, no conditional is used
+            </summary>
+        </member>
+        <member name="P:CacheCow.Client.CachingHandler.MustRevalidateByDefault">
+            <summary>
+            true by default;
+            If true, then as soon as a resource is stale, GET calls will always be
+            conditional GET regardless of presence of must-revalidate in the response.
+            If false, conditional GET is called only if max-age defined by request or
+            must-revalidate is defined in the response.
+            </summary>
+        </member>
+        <member name="P:CacheCow.Client.CachingHandler.ResponseValidator">
+            <summary>
+            Inspects the response and returns ResponseValidationResult
+            based on the rules defined
+            </summary>
+        </member>
+        <member name="P:CacheCow.Client.CachingHandler.ResponseStoragePreparationRules">
+            <summary>
+            Applies a few rules and prepares the response
+            for storage in the CacheStore
+            </summary>
+        </member>
+        <member name="T:CacheCow.Client.MessageContentHttpMessageSerializer">
+            <summary>
+            Default implementation of IHttpMessageSerializer using proprietry format
+            Does not close the stream since the stream can be used to store other objects
+            so it has to be closed in the client
+            </summary>
+        </member>
+    </members>
+</doc>
