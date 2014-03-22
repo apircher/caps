@@ -18,7 +18,7 @@ namespace Caps.Consumer.Mvc
             if (contentPart != null)
             {
                 CapsUrlHelper urlHelper = new CapsUrlHelper(helper.ViewContext.RequestContext);
-                var controlRegistry = DependencyResolver.Current.GetService<ContentControlRegistry>();
+                var controlRegistry = CapsConfiguration.ContentControlRegistryFactory();
                 var rawContent = contentPart.PrepareDisplay(content.SiteMapNode, urlHelper, content.ScriptManager, controlRegistry);
                 return helper.Raw(rawContent);
             }

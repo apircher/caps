@@ -50,7 +50,7 @@
                             <i class="fa fa-star fa-4x"></i>
                         </div>
                         <div class="list-icons-label">
-                             <!-- ko text: entity.localeTitle('de') --><!-- /ko -->
+                            <!-- ko text: entity.localeTitle('de') --><!-- /ko -->
                         </div>
                     </li>
                 </ul>
@@ -72,7 +72,6 @@
                     <!-- /ko -->
                 </section>
                 <!-- /ko -->
-
                 <!-- ko if: selectedPublication() && selectedPublication().files().length -->
                 <div data-bind="with: selectedPublication()">
                     <h5>Dateien (<!-- ko text: files().length --><!-- /ko -->)</h5>
@@ -83,6 +82,24 @@
                     </ul>
                 </div>
                 <!-- /ko -->
+            </div>
+
+            <div class="col-md-3 col-lg-2 fixed-sidebar right-fixed-sidebar sitemap-index-sidebar" data-bind="if: properties()">
+                <h5 data-bind="text: properties().entity.localeTitle('de')"></h5>
+                <!-- ko with: properties() -->
+                <!-- ko if: entity.canHaveContent() -->
+                <ul class="list-unstyled">
+                    <!-- ko if: hasContent -->
+                    <li>
+                        <a href="#" data-bind="click: editContent"><i class="fa fa-edit fa-fw"></i> <span data-bind="attr: { title: contentSummary() + ' ' + authorSummary() }">Inhalt bearbeiten</span></a>
+                    </li>
+                    <!-- /ko -->
+                    <li>
+                        <a href="#" data-bind="click: selectContent"><i class="fa fa-arrow-right fa-fw"></i> Inhalt festlegen...</a>
+                    </li>
+                </ul>
+                <!-- /ko -->
+                <!-- /ko -->
                 <!-- ko if: selectedPublication() && selectedNode() && selectedNode().canLinkTo() -->
                 <div>
                     <h5>Adresse</h5>
@@ -91,29 +108,12 @@
                     </p>
                 </div>
                 <!-- /ko -->
-            </div>
-
-            <div class="col-md-3 col-lg-2 fixed-sidebar right-fixed-sidebar sitemap-index-sidebar" data-bind="if: properties()">
+                <ul class="list-unstyled">
+                    <li>
+                        <a href="#" data-bind="click: properties().edit"><i class="fa fa-edit fa-fw"></i> Eigenschaften</a>
+                    </li>
+                </ul>
                 <!-- ko with: properties() -->
-                <h5 data-bind="text: entity.localeTitle('de')"></h5>
-                <ul class="list-unstyled">
-                    <li>
-                        <a href="#" data-bind="click: edit"><i class="fa fa-edit fa-fw"></i> Eigenschaften</a>
-                    </li>
-                </ul>
-                <!-- ko if: entity.canHaveContent() -->
-                <h5>Inhalt</h5>       
-                <ul class="list-unstyled">
-                    <!-- ko if: hasContent -->
-                    <li>
-                        <a href="#" data-bind="click: editContent"><i class="fa fa-edit fa-fw"></i> <span data-bind="text: contentSummary, attr: { title: authorSummary }"></span></a>
-                    </li>
-                    <!-- /ko -->
-                    <li>
-                        <a href="#" data-bind="click: selectContent"><i class="fa fa-arrow-right fa-fw"></i> Inhalt festlegen</a>
-                    </li>
-                </ul>
-                <!-- /ko -->
                 <!-- ko if: hasOptions -->
                 <h5>Optionen</h5>
                 <ul class="list-unstyled">
@@ -158,7 +158,7 @@
 </div>
 
 <script type="text/html" id="NodesTemplate">
-    <ul data-bind="foreach: $data" class="list-unstyled tree-branch">            
+    <ul data-bind="foreach: $data" class="list-unstyled tree-branch">
         <!-- ko if: !(entity() && entity().NodeType().toLowerCase() === 'teaser') -->
         <li data-bind="if: !entity().entityAspect.entityState.isDeleted()">
             <div class="tree-node" data-bind="css: { 'tree-node-selected': isSelected }, scrollIntoViewTrigger: { source: scrollIntoViewRequest }">
@@ -175,7 +175,7 @@
             <!-- ko if: isExpanded() && hasChildNodes() -->
             <!-- ko template: { name: 'NodesTemplate', data: childNodes() } --><!-- /ko -->
             <!-- /ko -->
-        </li>        
-        <!-- /ko -->    
+        </li>
+        <!-- /ko -->
     </ul>
 </script>

@@ -14,6 +14,8 @@ namespace Caps.Web.UI.App_Start
     {
         static void InitializeDatabase()
         {
+            //Caps.Data.CapsDbContext.SetDbInitializer();
+
             try
             {
                 using (var context = new Caps.Data.CapsDbContext())
@@ -88,6 +90,7 @@ namespace Caps.Web.UI.App_Start
         }
     }
 
+    [Serializable]
     public class CapsDbInitializerException : Exception
     {
         public CapsDbInitializerException()

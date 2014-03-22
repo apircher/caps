@@ -19,6 +19,11 @@ namespace Caps.Consumer.ContentControls
             if (String.IsNullOrWhiteSpace(fileGroup))
                 return document.CreateComment("Caps Slideshow: No filegroup-Attribute specified.");
 
+            String size = node.GetAttributeValueOrDefault("size");
+            if (String.IsNullOrWhiteSpace(size))
+                size = "300x300";
+            
+
             var content = siteMapNode.Content;
             if (content == null)
                 return document.CreateComment(String.Format("Caps Slideshow: No content available."));
@@ -34,13 +39,15 @@ namespace Caps.Consumer.ContentControls
             if (files.Count == 1)
             {
                 var file = files.First();
-                return document.CreateSlideImage(file, language, GetSlideImageSrc(urlHelper, file, language), "caps-slide1");
+                var container = document.CreateDiv(controlId, "caps-slideshow");
+                container.AppendChild(document.CreateSlideImage(file, language, GetSlideImageSrc(urlHelper, file, language, size), "caps-slide1"));
+                return container;
             }
 
-            return CreateImageList(document, controlId, files, urlHelper, language);
+            return CreateImageList(document, controlId, files, size, urlHelper, language);
         }
 
-        protected virtual XmlNode CreateImageList(XmlDocument document, String controlId, IEnumerable<PublicationFile> files, IUrlHelper urlHelper, String language)
+        protected virtual XmlNode CreateImageList(XmlDocument document, String controlId, IEnumerable<PublicationFile> files, String imageSize, IUrlHelper urlHelper, String language)
         {
             var container = document.CreateDiv(controlId, "caps-slideshow");
             var list = document.CreateElement("ul");
@@ -48,7 +55,7 @@ namespace Caps.Consumer.ContentControls
             foreach (var file in files)
             {
                 var item = document.CreateElement("li");
-                var image = CreateSlideImage(document, file, language, GetSlideImageSrc(urlHelper, file, language), urlHelper);
+                var image = CreateSlideImage(document, file, language, imageSize, GetSlideImageSrc(urlHelper, file, language, imageSize), urlHelper);
                 item.AppendChild(image);
                 list.AppendChild(item);
             }
@@ -57,20 +64,20 @@ namespace Caps.Consumer.ContentControls
             return container;
         }
 
-        protected virtual XmlNode CreateSlideImage(XmlDocument document, PublicationFile file, String language, String src, IUrlHelper urlHelper)
+        protected virtual XmlNode CreateSlideImage(XmlDocument document, PublicationFile file, String language, String size, String src, IUrlHelper urlHelper)
         {
-            return document.CreateSlideImage(file, language, GetSlideImageSrc(urlHelper, file, language), "caps-slide");
+            return document.CreateSlideImage(file, language, GetSlideImageSrc(urlHelper, file, language, size), "caps-slide");
         }
 
-        protected virtual String GetSlideImageSrc(IUrlHelper urlHelper, PublicationFile file, String language)
+        protected virtual String GetSlideImageSrc(IUrlHelper urlHelper, PublicationFile file, String language, String size)
         {
             var sqlFile = file.FileVersionForLanguage(language, "de", "en");
-            return urlHelper.Action("Thumbnail", "CapsContent", new
+            return urlHelper.Action("Thumbnail", "Caps", new
             {
                 area = "",
                 id = sqlFile.Id,
                 name = System.Web.HttpUtility.UrlEncode(sqlFile.File.FileName),
-                size = "300x300"
+                size = size
             });
         }
     }

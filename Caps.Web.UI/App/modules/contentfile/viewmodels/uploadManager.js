@@ -57,7 +57,7 @@ function (ko, system) {
 
         self.uploadDone = function (e, data) {
             ko.utils.arrayForEach(data.result, function (r) {
-                var file = ko.utils.arrayFirst(data.files, function (f) { return f.name === r.FileName; });
+                var file = ko.utils.arrayFirst(data.files, function (f) { return f.name === r.fileName; });
                 if (options.uploadDone && typeof options.uploadDone === 'function')
                     options.uploadDone(r, file);
             });

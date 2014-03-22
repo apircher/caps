@@ -49,5 +49,9 @@ namespace Caps.Consumer.Model
         /// The actual file name.
         /// </summary>
         public String FileName { get; set; }
+        /// <summary>
+        /// The file size in bytes.
+        /// </summary>
+        public int FileSize { get; set; }
     }
 }

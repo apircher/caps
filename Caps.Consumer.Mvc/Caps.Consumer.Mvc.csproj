@@ -64,6 +64,7 @@
     <Compile Include="SiteMap\SiteMapExtensions.cs" />
     <Compile Include="UrlHelperExtensions.cs" />
     <Compile Include="Utils\AsyncHelpers.cs" />
+    <Compile Include="Utils\FileSizeFormattingHelper.cs" />
     <Compile Include="Utils\PollingCacheDependency.cs" />
     <Compile Include="Utils\RouteUtils.cs" />
     <Compile Include="Utils\StringExtensions.cs" />

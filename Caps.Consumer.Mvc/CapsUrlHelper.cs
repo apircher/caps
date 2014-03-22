@@ -37,7 +37,7 @@ namespace Caps.Consumer.Mvc
         public static String GetPart(this Caps.Consumer.Model.ContentModel model, String usage)
         {
             var urlHelper = new CapsUrlHelper(System.Web.HttpContext.Current.Request.RequestContext);
-            var controlRegistry = DependencyResolver.Current.GetService<ContentControlRegistry>();
+            var controlRegistry = CapsConfiguration.ContentControlRegistryFactory();
             return model.GetPart(usage, urlHelper, controlRegistry);
         }
     }

@@ -13,12 +13,7 @@ namespace Caps.Data.Migrations
     {
         public Configuration()
         {
-//#if DEBUG
-//            AutomaticMigrationsEnabled = true;
-//            AutomaticMigrationDataLossAllowed = true;
-//#else
-//            AutomaticMigrationsEnabled = false;
-//#endif
+            //AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(Caps.Data.CapsDbContext context)
@@ -31,6 +26,8 @@ namespace Caps.Data.Migrations
                     new Caps.Data.Model.Website { Name = "Caps Website", Url = "http://caps.luxbox.net" }
                 );
             }
+
+            Caps.Data.Model.StockDraftTemplates.Seed(context);
 
             foreach (var draft in context.Drafts)
             {

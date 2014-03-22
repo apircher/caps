@@ -56,13 +56,13 @@ function (dialog, ko, FileListItem, system, datacontext, VirtualListModel, FileS
             },
             uploadDone: function (result, file) {
                 var listItem = file.listItem;
-                datacontext.fetchFile(result.Id).then(function () {
-                    listItem.data(datacontext.localGetFile(result.Id));
+                datacontext.fetchFile(result.id).then(function () {
+                    listItem.data(datacontext.localGetFile(result.id));
                     listItem.isUploading(false);
                     listItem.isSelected(true);
                 })
                 .fail(function (err) {
-                    toastr.error('Die Datei ' + r.FileName + ' konnte nicht geladen werden.');
+                    toastr.error('Die Datei ' + result.fileName + ' konnte nicht geladen werden.');
                 });
             }
         });

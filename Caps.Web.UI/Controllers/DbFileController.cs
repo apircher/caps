@@ -21,36 +21,6 @@ namespace Caps.Web.UI.Controllers
             this.db = db;
         }
 
-        public HttpResponseMessage Delete(int id)
-        {
-            var file = db.Files
-                .Include("Versions.Content")
-                .Include("Versions.Thumbnails")
-                .Include("Versions.Properties")
-                .FirstOrDefault(f => f.Id == id);
-            if (file == null)
-                return Request.CreateResponse(HttpStatusCode.NotFound);
-
-            try
-            {
-                Array.ForEach(file.Versions.ToArray(), v =>
-                {
-                    if (v.Thumbnails != null) Array.ForEach(v.Thumbnails.ToArray(), t => db.Thumbnails.Remove(t));
-                    if (v.Properties != null) Array.ForEach(v.Properties.ToArray(), p => db.FileProperties.Remove(p));
-                    db.FileContents.Remove(v.Content);
-                    db.FileVersions.Remove(v);
-                });
-                db.Files.Remove(file);
-                db.SaveChanges();
-            }
-            catch (System.Data.Common.DbException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex);
-            }
-
-            return Request.CreateResponse(HttpStatusCode.OK);
-        }
-
         [HttpPost]
         [Route("addtag")]
         public HttpResponseMessage AddTag(EntityTagModel model) 
@@ -116,6 +86,38 @@ namespace Caps.Web.UI.Controllers
                 result.Add(new { FileName = fileName, Count = query.Count() });
             });
             return Request.CreateResponse(HttpStatusCode.OK, result.ToArray());
+        }
+
+        [HttpDelete]
+        [Route("{id:int}")]
+        public HttpResponseMessage DeleteFile(int id)
+        {
+            var file = db.Files
+                .Include("Versions.Content")
+                .Include("Versions.Thumbnails")
+                .Include("Versions.Properties")
+                .FirstOrDefault(f => f.Id == id);
+            if (file == null)
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+
+            try
+            {
+                Array.ForEach(file.Versions.ToArray(), v =>
+                {
+                    if (v.Thumbnails != null) Array.ForEach(v.Thumbnails.ToArray(), t => db.Thumbnails.Remove(t));
+                    if (v.Properties != null) Array.ForEach(v.Properties.ToArray(), p => db.FileProperties.Remove(p));
+                    db.FileContents.Remove(v.Content);
+                    db.FileVersions.Remove(v);
+                });
+                db.Files.Remove(file);
+                db.SaveChanges();
+            }
+            catch (System.Data.Common.DbException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
     }
 }

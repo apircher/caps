@@ -178,7 +178,7 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
             list.removeItem(item);
         }
         function deleteFailed(err) {
-            dialog.showMessage('Die Datei konnte nicht gelöscht werden.', 'Nicht erfolgreich');
+            app.showMessage('Die Datei konnte nicht gelöscht werden.', 'Nicht erfolgreich');
         }
     }
 
@@ -207,10 +207,10 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
                 }
             },
             uploadDone: function (result, file) {
-                var listItem = file.listItem || list.findItem(function (f) { return f.data() && f.data().Id() === result.Id; });
-                datacontext.fetchFile(result.Id).then(function () {
+                var listItem = file.listItem || list.findItem(function (f) { return f.data() && f.data().Id() === result.id; });
+                datacontext.fetchFile(result.id).then(function () {
                     if (listItem) {
-                        listItem.data(datacontext.localGetFile(result.Id));
+                        listItem.data(datacontext.localGetFile(result.id));
                         listItem.isUploading(false);
                     }
                 })

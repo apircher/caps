@@ -73,7 +73,8 @@ namespace Caps.Consumer
                     Title = LocalizedFileTitle(f, r.Language),
                     Description = r.Description,
                     FileVersionId = r.DbFileVersionId.GetValueOrDefault(),
-                    FileName = r.FileVersion != null ? r.FileVersion.File.FileName : String.Empty
+                    FileName = r.FileVersion != null ? r.FileVersion.File.FileName : String.Empty,
+                    FileSize = r.FileVersion != null ? r.FileVersion.FileSize : 0
                 }
                 , null, "de", "en")) : new List<ContentFileModel>();
 

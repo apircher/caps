@@ -235,7 +235,8 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
         }
 
         keyboardHandler.keydown = function (e) {
-            if (self.tree()) self.tree().handleKeyDown(e);
+            var curElement = document.activeElement;
+            if (self.tree() && !(curElement && (curElement.tagName == 'INPUT' || curElement.tagName == 'TEXTAREA'))) self.tree().handleKeyDown(e);
         };
     }
 

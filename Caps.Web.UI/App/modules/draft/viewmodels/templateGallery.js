@@ -5,10 +5,9 @@
     'breeze', 
     'entityManagerProvider',
     'durandal/system',
-    'infrastructure/serverUtil',
-    '../stockTemplates'
+    'infrastructure/serverUtil'
 ],
-function (ko, datacontext, module, breeze, entityManagerProvider, system, server, stockTemplates) {
+function (ko, datacontext, module, breeze, entityManagerProvider, system, server) {
 
     var listItems = ko.observableArray(),
         selectedItem = ko.observable(),
@@ -32,19 +31,13 @@ function (ko, datacontext, module, breeze, entityManagerProvider, system, server
 
     function refreshListItems() {
         return system.defer(function (dfd) {
-            var stock = stockTemplates.all();
             fetchDraftTemplates().then(function (coll) {
                 var draftTemplateListItems = ko.utils.arrayMap(coll, function (t) {
                     var templateObj = parseTemplate(t.TemplateContent());
                     return new GalleryListItem(t.Name(), t.Name(), templateObj, server.mapPath('~/App/modules/draft/images/Template 3.png'));
                 });
 
-                var stockTemplateListItems = ko.utils.arrayMap(stock, function (t) {
-                    var icon = server.mapPath('~/App/modules/draft/images/' + t.name + '.png');
-                    return new GalleryListItem(t.name, t.name, t, icon);
-                });
-
-                var result = stockTemplateListItems.concat(draftTemplateListItems);
+                var result = draftTemplateListItems;
                 listItems(result);
                 dfd.resolve();
             })

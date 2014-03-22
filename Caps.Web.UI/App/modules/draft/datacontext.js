@@ -6,10 +6,9 @@ define([
     'entityManagerProvider',
     'ko',
     'infrastructure/userQueryParser',
-    './entities',
-    './stockTemplates'
+    './entities'
 ],
-function (system, entityManagerProvider, ko, UserQueryParser, Entities, stockTemplates) {
+function (system, entityManagerProvider, ko, UserQueryParser, Entities) {
     
     var manager = entityManagerProvider.createManager(),
         EntityQuery = breeze.EntityQuery,
@@ -42,12 +41,6 @@ function (system, entityManagerProvider, ko, UserQueryParser, Entities, stockTem
 
     function getTemplate(templateName) {
         return system.defer(function (dfd) {
-            // Search stock templates.
-            var t = ko.utils.arrayFirst(stockTemplates.all(), function (template) {
-                return template.name.toLowerCase() === templateName.toLowerCase();
-            });
-            if (t) dfd.resolve(t);
-
             // Search Database.
             var query = new EntityQuery().from('DraftTemplates').where('Name', '==', templateName);
             manager.executeQuery(query).then(function (data) {

@@ -13,6 +13,8 @@ namespace Caps.Consumer.ContentControls
         public ContentControlRegistry()
         {
             controls = new Dictionary<String, IContentControl>();
+
+            RegisterControl("slideshow", new Slideshow());
         }
 
         public void RegisterControl(String tagName, IContentControl control)

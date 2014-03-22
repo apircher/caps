@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CapsConfiguration.cs" />
     <Compile Include="CapsHttpClient.cs" />
     <Compile Include="ContentControls\ContentControl.cs" />
     <Compile Include="ContentControls\ContentControlRegistry.cs" />
