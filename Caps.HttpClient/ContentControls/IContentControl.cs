@@ -16,6 +16,7 @@ namespace Caps.Consumer.ContentControls
     public interface IUrlHelper
     {
         String Action(String action, String controller, object routeData);
+        String RouteUrl(String routeName, object routeData);
         String Publication(int permanentId);
         String Content(String contentPath);
     }

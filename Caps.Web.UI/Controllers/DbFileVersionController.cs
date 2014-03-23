@@ -10,6 +10,7 @@ using System.Web.Http;
 namespace Caps.Web.UI.Controllers
 {
     [Authorize, SetUserActivity, ValidateJsonAntiForgeryToken]
+    [RoutePrefix("api/dbfileversion")]
     public class DbFileVersionController : ApiController
     {
         CapsDbContext db;
@@ -19,6 +20,50 @@ namespace Caps.Web.UI.Controllers
             this.db = db;
         }
 
+        [Route("{id:int}/thumbnails")]
+        public HttpResponseMessage GetThumbnails(int id)
+        {
+            var fileVersion = db.FileVersions.Include("Thumbnails").FirstOrDefault(v => v.Id == id);
+            if (fileVersion == null)
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+
+            var thumbnailInfo = fileVersion.Thumbnails.Select(t => new Caps.Data.Model.DbThumbnail
+            {
+                Id = t.Id,
+                FileVersionId = t.FileVersionId,
+                Name = t.Name,
+                OriginalFileHash = t.OriginalFileHash,
+                Width = t.Width,
+                Height = t.Height,
+                ContentType = t.ContentType
+            });
+
+            return Request.CreateResponse(HttpStatusCode.OK, thumbnailInfo.ToList());
+
+        }
+
+        [HttpDelete]
+        [Route("{id:int}/thumbnail/{thumbnailId:int}")]
+        public HttpResponseMessage DeleteThumbnail(int id, int thumbnailId)
+        {
+            var thumbnail = db.Thumbnails.FirstOrDefault(t => t.Id == thumbnailId);
+            if (thumbnail == null)
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+
+            db.Thumbnails.Remove(thumbnail);
+            try
+            {
+                db.SaveChanges();
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (System.Data.Common.DbException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpDelete]
+        [Route("{id:int}")]
         public HttpResponseMessage Delete(int id)
         {
             var fileVersion = db.FileVersions

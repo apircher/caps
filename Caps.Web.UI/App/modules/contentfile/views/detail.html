@@ -1,12 +1,12 @@
 ﻿<div class="app-page bottom-fixed-navbar-container">
 
     <!-- ko if: file() -->
-    <div class="col-md-8 col-lg-9" data-bind="forceViewportHeight: { minWidth: 992 }">
+    <div class="col-md-8 col-lg-9 fixed-container" data-bind="forceViewportHeight: { minWidth: 992 }">
         <!-- ko template: { name: previewTemplate, data: fileVersion().entity } -->
         <!-- /ko -->
     </div>
 
-    <div class="col-md-4 col-lg-3">
+    <div class="col-md-4 col-lg-3 col-md-offset-8 col-lg-offset-9">
         <h4 class="break-h"><span data-bind="text: file().FileName"></span> <small>Details</small></h4>
         <div>
             <p>
@@ -79,6 +79,13 @@
                 <i class="fa fa-tag"></i> <span data-bind="text: Tag().Name"></span>
             </li>
         </ul>
+
+        <h4>Thumbnails</h4>
+        <ul data-bind="foreach: thumbnails" class="list-unstyled">
+            <li>
+                <span data-bind="text:name"></span> <a href="#" data-bind="click: deleteThumbnail">Löschen</a>
+            </li>
+        </ul>
         
         <!-- ko if: versions().length > 1 -->
         <h4>Weitere Versionen <small>(<!-- ko text: versions().length - 1 --><!-- /ko -->)</small></h4>
@@ -107,7 +114,7 @@
                         <i class="fa fa-arrow-left"></i> Alle Dateien</a>
                 </li>
                 <li>
-                    <a class="fileinput-button">
+                    <a class="btn-fileinput">
                         <span><i class="fa fa-repeat"></i> Datei ersetzen</span>
                         <!-- ko with: uploadManager -->
                         <input type="file" name="files" data-url="~/api/DbFileUpload"

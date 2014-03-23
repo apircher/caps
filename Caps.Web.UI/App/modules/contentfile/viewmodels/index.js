@@ -187,7 +187,7 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
             beforeUpload: function(files, data, callback) {
                 var fileNames = ko.utils.arrayMap(files, function (f) { return f.name; });
                 datacontext.getFileInfo(fileNames).then(function (result) {
-                    var existingFiles = ko.utils.arrayFilter(result, function (r) { return r.Count > 0; });
+                    var existingFiles = ko.utils.arrayFilter(result, function (r) { return r.count > 0; });
                     if (existingFiles.length > 0) {
                         var dlgVm = new FileUploadDialog(result);
                         app.showDialog(dlgVm).then(function (dialogResult) {

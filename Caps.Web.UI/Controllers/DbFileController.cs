@@ -77,7 +77,7 @@ namespace Caps.Web.UI.Controllers
 
         [HttpPost]
         [Route("metadata")]
-        public HttpResponseMessage GetFileMetadata(List<String> fileNames)
+        public HttpResponseMessage GetFileMetadata([FromBody]List<String> fileNames)
         {
             List<object> result = new List<object>();
             Array.ForEach(fileNames.ToArray(), fileName =>

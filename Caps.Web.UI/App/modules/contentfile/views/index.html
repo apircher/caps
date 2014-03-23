@@ -1,15 +1,15 @@
 ﻿<div id="files-index" class="app-page bottom-fixed-navbar-container" data-bind="scrollTop: { observable: scrollTop, enabled: isInteractive }">
 
-    <div class="page-content subnav-fixed-top-container subnav-extrapadding">
+    <div class="panel-padding-h subnav-fixed-top-container">
         <div id="files-toolbar" class="toolbar row subnav-fixed-top">
             <div class="col-md-offset-6 col-md-6 col-lg-offset-8 col-lg-4">
                 <!-- ko compose: searchControl --><!-- /ko -->
             </div>
         </div>
 
-        <div id="drop-zone" class="row" data-bind="click: resetSelectedItem">
+        <div id="drop-zone" data-bind="click: resetSelectedItem, forceViewportHeight: { minWidth: 992 }">
 
-            <div class="thumbnails-fixed-size" data-bind="lazyLoad: { data: list.items(), loadHandler: loadHandler }">
+            <div class="row thumbnails-fixed-size" data-bind="lazyLoad: { data: list.items(), loadHandler: loadHandler }">
                 <div class="col-sm-6 col-md-3 col-lg-2">
                     <div class="thumbnail-container" data-bind="css: { 'item-checked': isSelected, 'item-selected': isSelectedItem  }">
                         <a href="#" class="thumbnail" data-bind="doubleTap: true, event: { dbltap: $parent.showDetail }, click: selectItem, clickBubble: false">
@@ -45,7 +45,6 @@
                     <!-- ko if: !(window.FileReader && Modernizr.draganddrop) -->
                     Füge Dateien hinzu, indem Du unten auf "Dateien hinzufügen" klickst.
                     <!-- /ko -->
-
                 </p>
             </div>
         </div>
@@ -54,7 +53,7 @@
             <div class="navbar-panel pull-left">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a class="fileinput-button">
+                        <a class="btn-fileinput">
                             <span><i class="fa fa-plus"></i> Dateien hinzufügen</span>
                             <!-- ko with: uploadManager -->
                             <input type="file" name="files" data-url="~/api/DbFileUpload"

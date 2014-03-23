@@ -193,7 +193,8 @@ namespace Caps.Consumer.ContentControls
                 area = "",
                 id = sqlFile.Id,
                 name = System.Web.HttpUtility.UrlEncode(sqlFile.File.FileName),
-                size = size
+                size = size,
+                v = Convert.ToBase64String(sqlFile.Hash)
             });
         }
     }

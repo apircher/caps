@@ -16,7 +16,7 @@ namespace Caps.Web.UI.App_Start
             bundles.Add(
               new StyleBundle("~/Content/css")
                 .Include("~/Content/durandal.css")
-                .Include("~/Content/app.css")
+                .Include("~/Content/app-theme.css")
                 .Include("~/Content/app-drafts-editor.css")
                 .Include("~/Content/ie10mobile.css")
                 .Include("~/Content/toastr.css")

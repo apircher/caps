@@ -3,11 +3,11 @@
         <h4>Dateien hinzufügen</h4>
     </div>
     <div class="modal-body">
-        <p class="message" data-bind="if: existingFiles.length > 1">Es wurden <strong data-bind="text: existingFiles.length"></strong> Namenskonflikte festgestellt. Was möchtest du tun?</p>
-        <p class="message" data-bind="if: existingFiles.length <= 1">Es wurde ein Namenskonflikt festgestellt. Was möchtest du tun?</p>
+        <p class="message" data-bind="if: existingFiles.length > 1">Es wurden <strong data-bind="text: existingFiles.length"></strong> Namenskonflikte festgestellt. Was möchtest Du tun?</p>
+        <p class="message" data-bind="if: existingFiles.length <= 1">Es wurde ein Namenskonflikt festgestellt. Was möchtest Du tun?</p>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary btn-lg btn-block" data-bind="click: addFiles">
+        <button class="btn btn-primary btn-lg btn-block text-left" data-bind="click: addFiles">
             <i class="fa fa-plus fa-lg pull-left"></i> 
             <div>
                 Eine neue Datei anlegen<br />
@@ -15,16 +15,16 @@
             </div>
         </button>
         
-        <button class="btn btn-default btn-lg btn-block" data-bind="click: replaceFiles">
-            <i class="fa fa-refresh fa-lg pull-left"></i> 
+        <button class="btn btn-default btn-lg btn-block text-left" data-bind="click: replaceFiles">
+            <i class="fa fa-refresh fa-lg pull-left"></i>
             <div>
                 Die letzte Version der Datei ersetzen<br />
                 <small>Alle mit der letzten Version verknüpften Inhalte werden die neue Datei verwenden.</small>
             </div>
         </button>
 
-        <button class="btn btn-default btn-lg btn-block" data-bind="click: cancel">
-            <i class="fa fa-times fa-lg pull-left"></i> 
+        <button class="btn btn-default btn-lg btn-block text-left" data-bind="click: cancel">
+            <i class="fa fa-times fa-lg pull-left"></i>
             <div>
                 Abbrechen<br />
                 <small>Es werden keine Dateien übertragen.</small>

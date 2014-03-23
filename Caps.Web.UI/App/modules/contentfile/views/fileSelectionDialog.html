@@ -1,5 +1,5 @@
 ﻿<div class="app-page bottom-fixed-navbar-container">
-    <div class="page-content subnav-fixed-top-container subnav-extrapadding">
+    <div class="panel-padding-h subnav-fixed-top-container subnav-extrapadding">
 
         <div class="toolbar row subnav-fixed-top">
             <div class="col-md-6 col-lg-8">
@@ -24,7 +24,7 @@
                             <span data-bind="attr: { title: FileName }"><i class="fa fa-file fa-4x"></i></span>
                             <!-- /ko -->
                             <!-- /ko -->
-                            <!-- /ko -->                            
+                            <!-- /ko -->
                             <!-- ko if: isUploading() -->
                             <span><i class="fa fa-spinner fa-spin fa-4x"></i></span>
                             <!-- /ko -->
@@ -59,7 +59,7 @@
                     <a href="#" data-bind="click: selectOk"><span><i class="fa fa-save fa-fw"></i> Hinzufügen</span></a>
                 </li>
                 <li>
-                    <a class="fileinput-button">
+                    <a class="btn-fileinput">
                         <span><i class="fa fa-plus"></i> Dateien hochladen</span>
                         <!-- ko with: uploadManager -->
                         <input type="file" name="files" data-url="~/api/DbFileUpload"

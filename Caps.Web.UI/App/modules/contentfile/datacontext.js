@@ -48,8 +48,28 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
     // Fetch a single DbFile-Entity.
     function fetchFile(id) {
         var query = EntityQuery.from('Files').where('Id', '==', id)
-            .expand('Tags.Tag, Versions, Versions.Properties, Versions.DraftFileResources.DraftFile, Versions.PublicationFileResources.PublicationFile');
+            .expand('Tags.Tag, Versions.Properties, Versions.DraftFileResources.DraftFile, Versions.PublicationFileResources.PublicationFile');
         return manager.executeQuery(query);
+    }
+
+    function getThumbnailInfo(fileVersionId) {
+        return system.defer(function (dfd) {
+            $.ajax('api/dbfileversion/' + fileVersionId + '/thumbnails', { method: 'get' }).done(getSucceeded).fail(dfd.reject);
+
+            function getSucceeded(data) {
+                dfd.resolve(data);
+            }
+        })
+        .promise();
+    }
+
+    function deleteThumbnail(fileVersionId, thumbnailId) {
+        return system.defer(function (dfd) {
+            $.ajax('api/dbfileVersion/' + fileVersionId + '/thumbnail/' + thumbnailId, { method: 'delete' })
+                .done(dfd.resolve)
+                .fail(dfd.reject);
+        })
+        .promise();
     }
 
     // Fetch a single DbFile-Entity from local cache.
@@ -146,7 +166,7 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
 
     function getFileInfo(fileNames) {
         return system.defer(function (dfd) {
-            $.ajax('api/dbfile/metadata', { method: 'post', traditional: true, data: { 'fileNames': fileNames } }).done(getSucceeded).fail(dfd.reject);
+            $.ajax('api/dbfile/metadata', { method: 'post', dataType: 'json', data: { '': fileNames } }).done(getSucceeded).fail(dfd.reject);
 
             function getSucceeded(result) {
                 
@@ -171,6 +191,8 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
         detachDraftFileResources: detachDraftFileResources,
         detachDraftFile: detachDraftFile,
         getFileInfo: getFileInfo,
+        getThumbnailInfo: getThumbnailInfo,
+        deleteThumbnail: deleteThumbnail,
 
         isValidUserQuery: function (searchWords) {
             return parser.validate(searchWords);

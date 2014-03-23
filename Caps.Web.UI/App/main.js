@@ -31,9 +31,9 @@ define('markdown', function () { return Markdown; });
 define('toastr', function () { return toastr; });
 
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authentication', 'infrastructure/antiForgeryToken',
-    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider', 'infrastructure/serverUtil',
+    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider', 'infrastructure/serverUtil', 'durandal/composition',
     'knockout.extenders', 'infrastructure/validation', '../Scripts/safari.cancelZoom', 'infrastructure/contentEditing'],
-    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider, serverUtil) {
+    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider, serverUtil, composition) {
         
         //>>excludeStart("build", true);
         system.debug(true);
@@ -78,6 +78,9 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
 
         // Localize
         localization.localize('de');
+
+        // Register binding handlers for deferred execution
+        composition.addBindingHandler('forceViewportHeight');
 
         // Initialize application
         Q.fcall(antiForgeryToken.initToken)

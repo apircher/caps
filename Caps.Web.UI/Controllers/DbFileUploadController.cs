@@ -10,6 +10,7 @@ using Caps.Web.UI.Infrastructure;
 using Caps.Web.UI.Infrastructure.WebApi;
 using Caps.Data.Model;
 using System.Collections.Specialized;
+using WebApi.OutputCache.V2;
 
 namespace Caps.Web.UI.Controllers
 {
@@ -51,7 +52,10 @@ namespace Caps.Web.UI.Controllers
                         if (!String.IsNullOrWhiteSpace(versionId))
                         {
                             var intVersionId = int.Parse(versionId);
-                            var fileVersion = db.FileVersions.Include("File").Include("Content").Include("Thumbnails").FirstOrDefault(v => v.Id == intVersionId);
+                            var fileVersion = db.FileVersions
+                                .Include("File").Include("Content").Include("Thumbnails")
+                                .Include("PublicationFileResources.PublicationFile")
+                                .FirstOrDefault(v => v.Id == intVersionId);
                             var file = files[0];
                             ReplaceFileVersion(fileVersion, file.Versions.First());
                             result.Add(file.FileName, fileVersion.File);
@@ -114,12 +118,20 @@ namespace Caps.Web.UI.Controllers
             fileVersion.Modified.By = User.Identity.Name;
 
             Array.ForEach(fileVersion.Thumbnails.ToArray(), t => db.Thumbnails.Remove(t));
+
+            if (fileVersion.PublicationFileResources.Any())
+                InvalidateCache();
         }
 
         DbFile ReplaceLatestVersionWithFileName(String fileName, DbFileVersion data)
         {
             var key = fileName.ToLower();
-            var dbFile = db.Files.Include("Versions.Content").Include("Versions.Thumbnails").FirstOrDefault(f => f.FileName.ToLower() == key);
+            var dbFile = db.Files
+                .Include("Versions.Content")
+                .Include("Versions.Thumbnails")
+                .Include("Versions.PublicationFileResources.PublicationFile")
+                .FirstOrDefault(f => f.FileName.ToLower() == key);
+
             if (dbFile != null)
             {
                 var fileVersion = dbFile.GetLatestVersion();
@@ -135,6 +147,12 @@ namespace Caps.Web.UI.Controllers
             var existingFile = db.Files.Where(f => f.FileName.ToLower() == key).FirstOrDefault();
             if (existingFile != null)
             {
+                var publicationFileResources = db.Files.Where(f => f.Versions.Any(z => z.PublicationFileResources.Any()))
+                    .Select(f => f.Versions.Where(x => x.PublicationFileResources.Any()).Select(y => y.PublicationFileResources))
+                    .ToList();
+                if (publicationFileResources.Any())
+                    InvalidateCache();
+
                 var bytes = data.Content.Data;
                 var v = existingFile.AddNewVersion(bytes, User.Identity.Name);
                 if (existingFile.IsImage) HandleNewImageFile(v);
@@ -165,6 +183,14 @@ namespace Caps.Web.UI.Controllers
                 return StorageAction.Add;
 
             return StorageAction.UnSet;
+        }
+
+        void InvalidateCache()
+        {
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+            cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCachekey((WebsiteController t) => t.GetContent(0, 0)));
+            cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCachekey((WebsiteController t) => t.GetContentFileVersion(0, 0)));
+            cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCachekey((WebsiteController t) => t.GetThumbnail(0, 0, null)));
         }
     }
 }

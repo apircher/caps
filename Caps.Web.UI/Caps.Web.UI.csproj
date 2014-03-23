@@ -279,6 +279,9 @@
     <Content Include="App\viewmodels\setPasswordDialog.js" />
     <Content Include="App\views\setPasswordDialog.html" />
     <Content Include="Content\app-drafts-editor.css" />
+    <Content Include="Content\app-theme.css">
+      <DependentUpon>app-theme.less</DependentUpon>
+    </Content>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -358,6 +361,10 @@
     <Content Include="Fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\app-theme.less" />
+    <Content Include="Content\app-theme.css.map">
+      <DependentUpon>app-theme.css</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\caps-pirchersoftware - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\caps-pirchersoftware - Web Deploy.pubxml" />
     <Content Include="Scripts\bootstrap.js" />

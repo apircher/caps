@@ -74,10 +74,11 @@ namespace Caps.Consumer.ContentControls
             var sqlFile = file.FileVersionForLanguage(language, "de", "en");
             return urlHelper.Action("Thumbnail", "Caps", new
             {
-                area = "",
                 id = sqlFile.Id,
                 name = System.Web.HttpUtility.UrlEncode(sqlFile.File.FileName),
-                size = size
+                size = size,
+                v = Convert.ToBase64String(sqlFile.Hash),
+                language = language
             });
         }
     }

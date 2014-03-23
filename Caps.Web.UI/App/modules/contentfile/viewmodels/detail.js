@@ -21,7 +21,8 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
         isLoading = ko.observable(false),
         tagName = ko.observable(),
         addTagUIVisible = ko.observable(false),
-        uploadManager = createUploadManager();
+        uploadManager = createUploadManager(),
+        thumbnails = ko.observableArray();
 
     app.on('caps:sitemapnode:deleted', function (node) {
         var contentId = node.ContentId();
@@ -52,6 +53,7 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
         versions: versions,
         isLoading: isLoading,
         uploadManager: uploadManager,
+        thumbnails: thumbnails,
 
         uploadedFromNowBy: ko.computed(function () {
             if (!currentVersion() || !currentVersion().entity) return '';
@@ -74,6 +76,7 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
                         return new fileVersionViewModel(v);
                     }));
                     currentVersion(versions()[0]);
+                    refreshThumbnails(currentVersion().entity.Id());
                 })
                 .fail(function (err) {
                     alert(err.message);
@@ -212,6 +215,20 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
         };
     }
 
+    function thumbnailViewModel(data) {
+        var self = this;
+
+        self.name = ko.computed(function () {
+            return data.name;
+        });
+
+        self.deleteThumbnail = function () {
+            datacontext.deleteThumbnail(data.fileVersionId, data.id).then(function () {
+                thumbnails.remove(self);
+            });
+        };
+    }
+
     function createUploadManager() {
         return new UploadManager({
             uploadStarted: function (file, batchIndex, replace) {
@@ -223,6 +240,13 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
                     app.trigger('caps:contentfile:uploadDone', currentFile());
                 });
             }
+        });
+    }
+
+    function refreshThumbnails(fileVersionId) {
+        thumbnails([]);
+        datacontext.getThumbnailInfo(fileVersionId).then(function (data) {
+            thumbnails(ko.utils.arrayMap(data, function(d) { return new thumbnailViewModel(d); }));
         });
     }
 

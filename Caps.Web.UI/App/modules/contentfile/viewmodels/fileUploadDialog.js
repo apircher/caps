@@ -2,7 +2,7 @@
 
     function FileUploadDialog(fileInfo) {
         this.fileInfo = fileInfo;
-        this.existingFiles = ko.utils.arrayFilter(fileInfo, function (r) { return r.Count > 0; });
+        this.existingFiles = ko.utils.arrayFilter(fileInfo, function (r) { return r.count > 0; });
     }
 
     FileUploadDialog.prototype.addFiles = function () {
