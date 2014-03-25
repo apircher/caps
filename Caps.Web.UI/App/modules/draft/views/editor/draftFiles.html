@@ -151,6 +151,11 @@
                         <a href="#" data-bind="click: $parent.navigateToFile"><i class="fa fa-arrow-right fa-fw"></i> Zu Datei wechseln</a>
                     </li>
                 </ul>
+                
+                <div class="form-group">
+                    <label class="control-label">Adresse</label>
+                    <p data-bind="text: 'caps://content-file/' + encodeURIComponent(resource.FileVersion().File().FileName())" class="form-control-static"></p>
+                </div>
             </form>
         </div>
     </div>

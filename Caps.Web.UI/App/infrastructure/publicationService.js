@@ -132,8 +132,8 @@ function (system, app, entityManagerProvider, breeze, ko) {
             EntityType: contentData.entityType,
             EntityKey: contentData.entityId,
             ContentVersion: contentData.version,
-            ContentDate: contentData.modified.at,
-            AuthorName: contentData.created.by,
+            ContentDate: new Date(),
+            AuthorName: contentData.modified.by,
             Template: contentData.template
         });
         self.manager.addEntity(publication);

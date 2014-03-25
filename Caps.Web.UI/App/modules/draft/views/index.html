@@ -132,7 +132,7 @@
             <ul data-bind="foreach: publications()" class="list-unstyled">
                 <li>
                     <i class="fa fa-share-square-o"></i> <span data-bind="text: title" /> 
-                    (<em data-bind="text: createdBy"></em> <em data-bind="text: createdAt"></em>, <em data-bind="text: contentVersion"></em>)
+                    (<em data-bind="text: modifiedBy"></em> <em data-bind="text: modifiedAt"></em>, <em data-bind="text: contentVersion"></em>)
                     <!-- ko if: isOutdated -->
                     &nbsp;<a href="#" data-bind="click: republish"><i class="fa fa-refresh"></i> Aktualisieren</a>
                     <!-- /ko -->

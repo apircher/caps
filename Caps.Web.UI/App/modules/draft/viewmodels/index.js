@@ -84,7 +84,7 @@ function (module, datacontext, ko, app, moment, localization, publicationService
                     preview = new DraftPreviewViewModel(entity, template);
 
                 draftPreview(preview);
-                fetchPublications(draftId, preview);
+                fetchPublications(draftId, draftPreview());
             });
     }
 
@@ -304,6 +304,18 @@ function (module, datacontext, ko, app, moment, localization, publicationService
 
         self.createdBy = ko.computed(function () {
             return self.sitemapNode().Created().By();
+        });
+
+        self.modifiedAt = ko.computed(function () {
+            if (!self.sitemapNode().Content())
+                return '';
+            return moment.utc(self.sitemapNode().Content().ContentDate()).fromNow();
+        });
+
+        self.modifiedBy = ko.computed(function () {
+            if (!self.sitemapNode().Content())
+                return '';
+            return self.sitemapNode().Content().AuthorName();
         });
 
         self.isOutdated = ko.computed(function () {

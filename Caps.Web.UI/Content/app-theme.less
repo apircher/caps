@@ -375,8 +375,8 @@ html, body, .navbar {
         }
 
 .messageBox.dialog-large {
-    min-width:650px;
-    max-width:100%;
+    min-width:280px;
+    max-width:320px;
 }      
 .messageBox.dialog-large .panel-scroll-v { 
     height:270px;
@@ -387,6 +387,19 @@ html, body, .navbar {
 }
 .messageBox.dialog-large .modal-body {
     padding:0 @gridPadding;
+}
+
+@media(min-width: 768px) {
+    .messageBox.dialog-large {
+        min-width:500px;
+        max-width:700px;
+    }   
+}
+@media(min-width: 1200px) {
+    .messageBox.dialog-large {
+        min-width:900px;
+        max-width:1100px;
+    }   
 }
 
 @media (max-width: 320px) {

@@ -60,7 +60,7 @@ function (app, dialog) {
         }
 
         function buildUrl(fileName, thumbnail, width, height) {
-            var url = 'caps://content-file/' + fileName;
+            var url = 'caps://content-file/' + encodeURIComponent(fileName);
             if (thumbnail) url += '?size=' + (width || 0) + 'x' + (height || 0);
             return url;
         }

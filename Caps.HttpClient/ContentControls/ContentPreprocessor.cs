@@ -169,7 +169,7 @@ namespace Caps.Consumer.ContentControls
             {
                 area = "",
                 id = sqlFile.Id,
-                name = System.Web.HttpUtility.UrlEncode(sqlFile.File.FileName),
+                name = sqlFile.File.FileName,
                 inline = inline
             });
         }
@@ -192,7 +192,7 @@ namespace Caps.Consumer.ContentControls
             {
                 area = "",
                 id = sqlFile.Id,
-                name = System.Web.HttpUtility.UrlEncode(sqlFile.File.FileName),
+                name = sqlFile.File.FileName,
                 size = size,
                 v = Convert.ToBase64String(sqlFile.Hash)
             });

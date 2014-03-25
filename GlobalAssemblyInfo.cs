@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // die mit einer Assembly verknüpft sind.
 [assembly: AssemblyCompany("Pircher Software")]
 [assembly: AssemblyProduct("Caps")]
-[assembly: AssemblyCopyright("Copyright ©  2013, Pircher Software")]
+[assembly: AssemblyCopyright("Copyright ©  2014, Pircher Software")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -21,5 +21,5 @@ using System.Runtime.InteropServices;
 // Sie können alle Werte angeben oder die standardmäßigen Build- und Revisionsnummern 
 // übernehmen, indem Sie "*" eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.108")]
-[assembly: AssemblyFileVersion("1.0.0.108")]
+[assembly: AssemblyVersion("1.0.0.111")]
+[assembly: AssemblyFileVersion("1.0.0.111")]

@@ -15,8 +15,8 @@ namespace Caps.Consumer.ContentControls
         {
             var document = node.OwnerDocument;
 
-            String fileGroup = node.GetAttributeValueOrDefault("filegroup");
-            if (String.IsNullOrWhiteSpace(fileGroup))
+            String fileGroupSelector = node.GetAttributeValueOrDefault("filegroup");
+            if (String.IsNullOrWhiteSpace(fileGroupSelector))
                 return document.CreateComment("Caps Slideshow: No filegroup-Attribute specified.");
 
             String size = node.GetAttributeValueOrDefault("size");
@@ -28,13 +28,10 @@ namespace Caps.Consumer.ContentControls
             if (content == null)
                 return document.CreateComment(String.Format("Caps Slideshow: No content available."));
 
-            var files = content.GetContentFiles("Picture")
-                .Where(p => String.Equals(p.Group, fileGroup, StringComparison.OrdinalIgnoreCase))
-                .OrderBy(p => p.Ranking)
-                .ToList();
+            var files = SelectFiles(content, fileGroupSelector).ToList();
 
             if (files.Count == 0)
-                return document.CreateComment(String.Format("Caps Slideshow: No files in group {0}.", fileGroup));
+                return document.CreateComment(String.Format("Caps Slideshow: No slides found for '{0}'.", fileGroupSelector));
 
             if (files.Count == 1)
             {
@@ -45,6 +42,21 @@ namespace Caps.Consumer.ContentControls
             }
 
             return CreateImageList(document, controlId, files, size, urlHelper, language);
+        }
+
+        protected virtual IEnumerable<PublicationFile> SelectFiles(Publication publication, XmlNode node)
+        {
+            var fileGroupSelector = node.GetAttributeValueOrDefault("filegroup");
+            if (String.IsNullOrWhiteSpace(fileGroupSelector))
+                return null;
+            return SelectFiles(publication, fileGroupSelector);
+        }
+        protected virtual IEnumerable<PublicationFile> SelectFiles(Publication publication, String fileGroupSelector)
+        {
+            var groupNames = fileGroupSelector.Split(',').Select(s => s.Trim());
+            return publication.GetContentFiles("Picture")
+                .Where(p => groupNames.Any(gn => String.Equals(p.Group, gn, StringComparison.OrdinalIgnoreCase)))
+                .OrderBy(p => p.Ranking);
         }
 
         protected virtual XmlNode CreateImageList(XmlDocument document, String controlId, IEnumerable<PublicationFile> files, String imageSize, IUrlHelper urlHelper, String language)
@@ -75,7 +87,7 @@ namespace Caps.Consumer.ContentControls
             return urlHelper.Action("Thumbnail", "Caps", new
             {
                 id = sqlFile.Id,
-                name = System.Web.HttpUtility.UrlEncode(sqlFile.File.FileName),
+                name = sqlFile.File.FileName,
                 size = size,
                 v = Convert.ToBase64String(sqlFile.Hash),
                 language = language
@@ -91,7 +103,17 @@ namespace Caps.Consumer.ContentControls
             if (sqlFile == null)
                 return document.CreateComment("Caps Slideshow: File not found.");
             var title = file.GetValueForLanguage(language, r => r.Title, "en", "de");
-            return document.CreateImage(src, title, cssClass);
+            var imgNode = document.CreateImage(src, title, cssClass);
+
+            if (!String.IsNullOrWhiteSpace(title))
+                imgNode.AppendAttribute("data-title", title);
+
+            var descripion = file.GetValueForLanguage(language, r => r.Description, "en", "de");
+            if (!String.IsNullOrWhiteSpace(descripion))
+                imgNode.AppendAttribute("data-description", descripion);
+
+            imgNode.AppendAttribute("data-group", file.Group);
+            return imgNode;
         }
     }
 }
