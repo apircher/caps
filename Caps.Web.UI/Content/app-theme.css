@@ -232,9 +232,9 @@ body,
 .subnav-fixed-top {
   position: fixed;
   left: 0;
+  right: 0;
   top: 50px;
   height: 50px;
-  width: 100%;
   padding: 15px 15px 0;
   z-index: 100;
   background: #fff;
@@ -457,9 +457,6 @@ body,
 .toolbar {
   padding: 15px;
 }
-.toolbar .input-group-btn {
-  padding: 0 10px;
-}
 .toolbar .input-group-btn > a,
 .toolbar .input-group-btn > a:hover {
   text-decoration: none;
@@ -487,9 +484,9 @@ body,
   .toolbar h3 {
     margin: .25em 0 .5em;
   }
-  .toolbar input[type=text].form-control {
-    margin: 5px 0 15px;
-  }
+  /*.toolbar input[type=text].form-control {
+            margin: 5px 0 @gridPadding;
+        }*/
   .toolbar .nav-tabs {
     margin-bottom: -2px;
   }
@@ -670,9 +667,6 @@ ul.tree-branch a:hover {
   .dragdrop-placeholder p {
     padding: 3em;
   }
-  #drop-zone {
-    padding-right: 15px;
-  }
 }
 /**
  * ContentFile Previews
@@ -706,8 +700,10 @@ ul.tree-branch a:hover {
   text-align: center;
   padding: 2em;
 }
-#files-index .subnav-fixed-top-container {
-  padding-top: 50px;
+@media (min-width: 992px) {
+  #files-index .subnav-fixed-top-container {
+    padding-top: 50px;
+  }
 }
 @media (max-width: 992px) {
   .image-preview {

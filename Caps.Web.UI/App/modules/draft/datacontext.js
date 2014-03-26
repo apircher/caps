@@ -83,12 +83,27 @@ function (system, entityManagerProvider, ko, UserQueryParser, Entities) {
         cachedEntities.forEach(function (entity) { mgr.detachEntity(entity); });
     }
 
+    function detachEntity(entity) {
+        manager.detachEntity(entity);
+    }
+    function detachDraftFile(entity) {
+        var query = new EntityQuery().from('DraftFiles').where('Id', '==', entity.Id());
+        var results = manager.executeQueryLocally(query);
+        if (results && results.length) {
+            results.forEach(function (r) {
+                if (r.Resources()) r.Resources().forEach(function (res) { manager.detachEntity(res); });
+                manager.detachEntity(r);
+            });
+        }
+    }
+
     return {
         getDrafts: getDrafts,
         getDraft: getDraft,
         getTemplate: getTemplate,
         fetchPublications: fetchPublications,
         searchDrafts: searchDrafts,
+        detachDraftFile: detachDraftFile,
 
         isValidUserQuery: function (searchWords) {
             return parser.validate(searchWords);

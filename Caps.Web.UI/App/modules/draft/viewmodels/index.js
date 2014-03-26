@@ -36,12 +36,21 @@ function (module, datacontext, ko, app, moment, localization, publicationService
     };
 
     app.on('caps:draft:saved', function (args) {
+        if (args.deletedFiles && args.deletedFiles.length) {
+            args.deletedFiles.forEach(function (f) {
+                datacontext.detachDraftFile(f);
+            });
+        }
+
         var draft = args.entity;
         if (selectedItem() && selectedItem().draftId() === draft.Id())
             showPreview(selectedItem().draftId());
 
         if (args.isNewDraft) {
             fetchListItems().then(function () { vm.selectDraftById(draft.Id()); });            
+        }
+        else {
+            vm.selectDraftById(draft.Id());
         }
     });
     app.on('caps:draft:deleted', function (args) {

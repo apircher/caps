@@ -78,7 +78,14 @@ namespace Caps.Consumer.ContentControls
 <!ENTITY Uuml ""&#220;"">
 <!ENTITY uuml ""&#252;"">
 ]> 
-<caps:content xmlns:caps=""http://schemas.pircher-software.com/caps/1"">{0}</caps:content>", content);
+<caps:content xmlns:caps=""http://schemas.pircher-software.com/caps/1"">{0}</caps:content>", ConvertToXhtml(content));
+        }
+        String ConvertToXhtml(String content)
+        {
+            var rx = new Regex(@"<br\s*>", RegexOptions.IgnoreCase);
+            content = rx.Replace(content, "<br />");
+
+            return content;
         }
 
         String ProcessMarkdown(String content)

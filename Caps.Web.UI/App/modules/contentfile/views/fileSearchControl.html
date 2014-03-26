@@ -1,7 +1,7 @@
 ﻿<div class="input-group">
     <!-- Filter Dropdown -->
     <div class="input-group-btn" data-bind="event: { 'show.bs.dropdown': beginSetFilter }">
-        <a id="A1" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn-dropdown">
+        <a id="A1" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn btn-default dropdown-toggle">
             <span><i class="fa fa-filter"></i></span>
             <b class="caret" />
         </a>
@@ -42,11 +42,11 @@
     <!-- Searchwords -->
     <input type="text" data-bind="delayedSearch: { searchObservable: searchWords, searchHandler: search }" class="form-control hide-ms-clear" placeholder="Suche" />
     <!-- Sort Button/Dropdown -->
-    <div class="input-group-btn btn-group split-btn">
-        <a href="#" role="button" data-bind="click: sortOptions.toggleSortDirection">
+    <div class="input-group-btn">
+        <a href="#" role="button" data-bind="click: sortOptions.toggleSortDirection" class="btn btn-default">
             <span><i data-bind="css: { 'fa-sort-alpha-asc': sortOptions.sortDirection() == 'asc', 'fa-sort-alpha-desc': sortOptions.sortDirection() != 'asc' }" class="fa fa-sort-alpha-asc"></i></span>
         </a>
-        <a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn-dropdown">
+        <a id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn btn-default dropdown-toggle">
             <b class="caret" />
         </a>
         <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dLabel">

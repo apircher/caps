@@ -167,7 +167,8 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
                     t.root.addChildNode(groupNode);
                     var groupFiles = draft.filesByGroupName(fileGroup.name());
                     ko.utils.arrayForEach(groupFiles, function (f) {
-                        groupNode.addChildNode(createFileNode(t, f));
+                        var n = createFileNode(t, f);
+                        if (n) groupNode.addChildNode(n);
                     });
                 });
                 if (ts && self.tree()) self.tree().restoreState(ts);
@@ -201,6 +202,8 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
         }
 
         function createFileNode(tree, file) {
+            if (!file) return null;
+
             var fileNode = new EditorModel.DraftFileNode(file, file.getOrCreateResource('de'), tree);
             fileNode.title = file.Name();
             fileNode.templateName = ko.observable('draftfile-label');
