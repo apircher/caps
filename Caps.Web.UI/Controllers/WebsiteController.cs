@@ -81,6 +81,17 @@ namespace Caps.Web.UI.Controllers
                 .Include("Content.Files.Resources.FileVersion.File")
                 .FirstOrDefault(n => n.SiteMap.Id == currentSiteMap.Id && n.PermanentId == permanentId);
 
+            if (String.Equals(content.NodeType, "CONTAINER", StringComparison.OrdinalIgnoreCase))
+            {
+                // Fetch Subnodes.
+                var subnodes = db.SiteMapNodes
+                    .Include("Resources")
+                    .Include("Content.ContentParts.Resources")
+                    .Include("Content.Files.Resources.FileVersion.File")
+                    .Where(n => n.ParentNodeId == content.Id)
+                    .ToList();
+            }
+
             return Ok(Dto.Create(content));
         }
 

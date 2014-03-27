@@ -17,7 +17,7 @@ namespace Caps.Consumer.Mvc.SiteMap
 {
     public class DefaultSiteMapBuilder : ISiteMapBuilder
     {
-        static String[] supportedNodeTypes = new String[] { "ROOT", "Page", "Action", "Teaser" };
+        static String[] supportedNodeTypes = new String[] { "ROOT", "Page", "Action", "Teaser", "CONTAINER" };
 
         bool disposed;
         Website website;
@@ -119,7 +119,7 @@ namespace Caps.Consumer.Mvc.SiteMap
                     new Tuple<String, CapsSiteMapNodeResource>(r.Language, new CapsSiteMapNodeResource { Title = r.Title, MetaKeywords = r.Keywords, MetaDescription = r.Description })));
                 siteMapNode.NodeType = entity.NodeType;
 
-                if (entity.ChildNodes != null)
+                if (entity.ChildNodes != null && !entity.IsNodeTypeIn("CONTAINER"))
                 {
                     foreach (var childEntity in entity.ChildNodes.OrderBy(n => n.Ranking))
                         MapNode(childEntity, provider, siteMapNode, addNodeAction);
@@ -138,12 +138,9 @@ namespace Caps.Consumer.Mvc.SiteMap
         protected virtual String GetUrl(DbSiteMapNode entity)
         {
             var routeData = new RouteValueDictionary();
-            if (entity.IsNodeTypeIn("Page"))
+            if (entity.IsNodeTypeIn("ROOT"))
             {
-                routeData.Add("id", entity.PermanentId.ToString("x"));
-                routeData.Add("name", CapsSiteMapNode.LocalizedNamePlaceHolder); // entity.Name.UrlEncode());
-                routeData.Add("language", CapsSiteMapNode.LanguagePlaceHolder);
-                return Url.Action("Index", "Caps", routeData);
+                return Url.Action("Index", "Home", routeData);
             }
 
             if (entity.IsNodeType("Action"))
@@ -164,7 +161,10 @@ namespace Caps.Consumer.Mvc.SiteMap
                     return GetUrl(linkedNode) + String.Format("?ref={0}", entity.Id);
             }
 
-            return Url.Action("Index", "Home", routeData);
+            routeData.Add("id", entity.PermanentId.ToString("x"));
+            routeData.Add("name", CapsSiteMapNode.LocalizedNamePlaceHolder);
+            routeData.Add("language", CapsSiteMapNode.LanguagePlaceHolder);
+            return Url.Action("Index", "Caps", routeData);
         }
         protected virtual DateTime GetSiteMapExpiration()
         {
