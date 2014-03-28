@@ -160,6 +160,27 @@ namespace Caps.Consumer.Mvc.Providers
             }
             return node;
         }
+        public SiteMapNode FindSiteMapNodeByLocalizedName(String name)
+        {
+            EnsureSiteMapBuilt();
+            var key = name.UrlEncode();
+            var n = nodeNameIndex.Values.FirstOrDefault(v =>
+            {
+                var capsNode = v as CapsSiteMapNode;
+                if (capsNode == null)
+                    return false;
+                return capsNode.AllResources().Where(r => !String.IsNullOrWhiteSpace(r.Title))
+                    .Any(r => String.Equals(r.Title.UrlEncode(), key, StringComparison.OrdinalIgnoreCase));
+            });
+            if (n != null)
+                return n;
+            if (nodeNameIndex.ContainsKey(key))
+            {
+                var capsNode = nodeNameIndex[key] as CapsSiteMapNode;
+                if (capsNode != null) return capsNode;
+            }
+            return null;
+        }
         public DbSiteMapNode FindSiteMapNodeByName(String name)
         {
             EnsureSiteMapBuilt();

@@ -105,23 +105,34 @@ namespace Caps.Consumer
                         IsFallback = !String.Equals(Language.CurrentLanguage, r.Language, StringComparison.OrdinalIgnoreCase)
                     };
                 }
-                , null, "de", "en")) : new List<ContentPartModel>();
+                , null, "en", "de")) : new List<ContentPartModel>();
 
-            var contentFiles = entity.Content != null ? entity.Content.Files.Select(f =>
-                f.GetValueForLanguage(Language.CurrentLanguage, r => new ContentFileModel
+            var contentFiles = new List<ContentFileModel>();
+            if (entity.Content != null)
+            {
+                contentFiles = entity.Content.Files.Select(f =>
                 {
-                    Name = f.Name,
-                    Language = r.Language,
-                    Determination = f.Determination,
-                    Group = f.Group,
-                    Ranking = f.Ranking,
-                    Title = LocalizedFileTitle(f, r.Language),
-                    Description = r.Description,
-                    FileVersionId = r.DbFileVersionId.GetValueOrDefault(),
-                    FileName = r.FileVersion != null ? r.FileVersion.File.FileName : String.Empty,
-                    FileSize = r.FileVersion != null ? r.FileVersion.FileSize : 0
-                }
-                , null, "de", "en")) : new List<ContentFileModel>();
+
+                    var fileVersion = f.GetValueForLanguage(Language.CurrentLanguage, r => r.FileVersion, null, "de", "en");
+                    var title = LocalizedFileTitle(f, Language.CurrentLanguage);
+                    var description = f.GetValueForLanguage(Language.CurrentLanguage, r => r.Description, String.Empty, "de", "en");
+
+                    return new ContentFileModel
+                    {
+                        Name = f.Name,
+                        Language = Language.CurrentLanguage,
+                        Determination = f.Determination,
+                        Group = f.Group,
+                        Ranking = f.Ranking,
+                        Title = title,
+                        Description = description,
+                        FileVersionId = fileVersion != null ? fileVersion.Id : 0,
+                        FileSize = fileVersion != null ? fileVersion.FileSize : 0,
+                        FileName = fileVersion != null && fileVersion.File != null ? fileVersion.File.FileName : String.Empty
+                    };
+                })
+                .ToList();
+            }
 
             var result = new ContentModel(scriptManager ?? new ContentScriptManager())
             {

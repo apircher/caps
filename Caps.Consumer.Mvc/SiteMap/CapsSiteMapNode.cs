@@ -133,6 +133,10 @@ namespace Caps.Consumer.Mvc.SiteMap
                     resources.Add(lang, resource.Item2);
             }
         }
+        public IEnumerable<CapsSiteMapNodeResource> AllResources()
+        {
+            return resources.Values;
+        }
 
         public bool IsNodeType(String nodeType)
         {
