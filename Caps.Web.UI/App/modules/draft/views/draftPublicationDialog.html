@@ -1,0 +1,54 @@
+﻿<div class="app-page bottom-fixed-navbar-container">
+    <div class="panel-padding-h">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Inhalt <em data-bind="text: draft().Name"></em> <em>(<!-- ko text: 'v.' + draft().Version() --><!-- /ko -->)</em> veröffentlichen</h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel-padding-v">
+                    <h4>Neue Veröffentlichung</h4>
+                    <!-- ko compose: siteMapTree --><!-- /ko -->
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="panel-padding-v">
+                    <!-- ko if: publications().length > 0 -->
+                    <h4>Vorhandene Veröffentlichungen (<!-- ko text: publications().length --><!-- /ko -->)</h4>
+                    <div class="space-tb">
+                        <ul data-bind="foreach: publications()" class="list-unstyled">
+                            <li>
+                                <i class="fa fa-share-square-o"></i> <span data-bind="text: title" />
+                                (<em data-bind="text: modifiedBy"></em> <em data-bind="text: modifiedAt"></em>, <em data-bind="text: contentVersion"></em>)
+                                <!-- ko if: isOutdated -->
+                                &nbsp;<a href="#" data-bind="click: republish"><i class="fa fa-refresh"></i> Aktualisieren</a>
+                                <!-- /ko -->
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- ko if: hasOutdatedPublications -->
+                    <div class="space-tb">
+                        <a href="#" class="btn btn-default"><i class="fa fa-refresh"></i> Alle aktualisieren</a>
+                    </div>
+                    <!-- /ko -->
+                    <!-- /ko -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="navbar navbar-default navbar-fixed-bottom">
+        <div class="navbar-panel pull-left">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#" data-bind="click: selectCancel"><span><i class="fa fa-arrow-left fa-fw"></i> Zurück</span></a>
+                </li>
+                <li>
+                    <a href="#" data-bind="click: selectOk"><span><i class="fa fa-save fa-fw"></i> Neue Veröffentlichung erstellen</span></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

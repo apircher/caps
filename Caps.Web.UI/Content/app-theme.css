@@ -494,6 +494,11 @@ body,
 /** 
  *  Treeview
  */
+@media (min-width: 320px) {
+  .tree {
+    max-width: 320px;
+  }
+}
 ul.tree-branch ul {
   margin-left: 15px;
 }
@@ -893,6 +898,9 @@ ul.data-list li.active {
 }
 .space-left {
   margin-left: 15px;
+}
+.space-tb {
+  padding: 15px 0;
 }
 span.large-icon {
   padding: 5px 15px;

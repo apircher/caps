@@ -52,8 +52,6 @@ namespace Caps.Consumer.Mvc.SiteMap
                 ConfigurationManager.AppSettings["caps:AppKey"], 
                 ConfigurationManager.AppSettings["caps:AppSecret"]);
 
-            await client.InitAccessTokens();
-
             // Get Websites
             var websites = await client.GetWebsites();
             if (websites == null || websites.Length == 0)

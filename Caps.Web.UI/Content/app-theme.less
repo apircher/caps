@@ -570,6 +570,15 @@ html, body, .navbar {
 @treeNodePadding: 2px;
 @treeIconWidth: 18px;
 
+.tree {
+}
+
+@media(min-width: @appMinWidth) {
+    .tree {
+        max-width: 320px;
+    }
+}
+
 ul.tree-branch ul {
     margin-left:@gridPadding;
 }
@@ -1033,6 +1042,10 @@ ul.data-list {
 
 .space-left {
     margin-left: @gridPadding;
+}
+
+.space-tb {
+    padding:@gridPadding 0;
 }
 
 span.large-icon {

@@ -21,9 +21,6 @@ namespace DemoWebsite2.Controllers
                 CapsHttpClient client = new CapsHttpClient(new Uri(ConfigurationManager.AppSettings["caps:Url"]),
                     ConfigurationManager.AppSettings["caps:AppKey"],
                     ConfigurationManager.AppSettings["caps:AppSecret"]);
-
-                await client.InitAccessTokens();
-
                 var svc = new ContentService(client);
                 var content = await svc.GetContent(1, rootNode.PermanentId);
                 ViewBag.Content = content;

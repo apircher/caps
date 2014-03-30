@@ -70,31 +70,49 @@
                     <i class="fa fa-file-text-o fa-5x fa-inverse"></i>
                 </span>
             </div>
-            <div>
+            <div class="pull-left">
                 <p class="light-text">
                     <small data-bind="text: entity().Modified().By"></small> <small data-bind="text: modifiedFromNow(), attr: { title: modifiedAt() }"></small> <small data-bind="text: 'v.' + entity().Version()"></small>
                 </p>
                 <h4><!-- ko text: entity().Name() --><!-- /ko --></h4>
-                <p>
-                    <span>Status: </span>
-                    <!-- ko text: entity().statusTitle() --><!-- /ko -->
-                </p>
+                <ul class="list-inline">
+                    <li>
+                        <span>Status: </span>
+                        <!-- ko text: entity().statusTitle() --><!-- /ko -->
+                    </li>
+                    <!-- ko if: supportedTranslations.length -->
+                    <li>
+                        <span>Sprache: </span>
+                        <!-- ko text: originalLanguage.localeName('de') --><!-- /ko -->
+                    </li>
+                    <li>
+                        <span>Übersetzungen: </span>
+                        <!-- ko foreach: supportedTranslations -->
+                        <a data-bind="text: localeName('de'), click: $parent.translateDraft" href="#"></a>
+                        <!-- /ko -->
+                    </li>
+                    <!-- /ko -->
+                </ul>
             </div>
         </div>
     </div>
-    <section class="draft-preview-content">
-        <div class="draft-preview-box">
-            <!-- ko foreach: { data: template().rows, as: 'row' } -->
-            <div class="row">
-                <!-- ko foreach: { data:row.cells, as: 'cell' } -->
-                <div data-bind="draftTemplateClass: cell">
-                    <div class="template-preview-cell" data-bind="html: content"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <section class="draft-preview-content">
+                <div class="draft-preview-box">
+                    <!-- ko foreach: { data: template().rows, as: 'row' } -->
+                    <div class="row">
+                        <!-- ko foreach: { data:row.cells, as: 'cell' } -->
+                        <div data-bind="draftTemplateClass: cell">
+                            <div class="template-preview-cell" data-bind="html: content"></div>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                    <!-- /ko -->
                 </div>
-                <!-- /ko -->
-            </div>
-            <!-- /ko -->
+            </section>
         </div>
-    </section>
+    </div>
     <!-- ko if: entity().Files().length > 0 -->
     <div class="row draft-preview-panel" data-bind="with: entity()">
         <div class="col-md-12">
@@ -102,18 +120,6 @@
             <ul data-bind="foreach: Files()" class="list-inline">
                 <li><i class="fa fa-file"></i> <span data-bind="text: Name" /></li>
             </ul>
-        </div>
-    </div>
-    <!-- /ko -->
-    <!-- ko if: supportedTranslations.length -->
-    <div class="row draft-preview-panel">
-        <div class="col-md-12">
-            <h6>Übersetzungen (Original: <!-- ko text: originalLanguage.localeName('de') --><!-- /ko -->)</h6>            
-            <p>
-                <!-- ko foreach: supportedTranslations -->
-                <a data-bind="text: localeName('de'), click: $parent.translateDraft" href="#"></a>
-                <!-- /ko -->
-            </p>
         </div>
     </div>
     <!-- /ko -->

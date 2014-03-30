@@ -62,7 +62,7 @@ function (system, entityManagerProvider, ko, UserQueryParser, Entities) {
     function fetchPublications(draftId, mgr) {
         mgr = mgr || manager;
         return system.defer(function (dfd) {
-            clearCachedPublications(draftId, mgr);
+            //clearCachedPublications(draftId, mgr);
             var pr = new breeze.Predicate('Content.EntityType', '==', 'Draft').and('Content.EntityKey', '==', draftId.toString());
             var query = new EntityQuery().from('SiteMapNodes')
                 .where(pr)

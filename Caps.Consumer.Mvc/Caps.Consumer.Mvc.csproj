@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\SetCultureAttribute.cs" />
+    <Compile Include="CapsControllerBase.cs" />
     <Compile Include="CapsUrlHelper.cs" />
     <Compile Include="HtmlHelperExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
