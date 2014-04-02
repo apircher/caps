@@ -181,14 +181,14 @@ namespace Caps.Consumer.Mvc.Providers
             }
             return null;
         }
-        public DbSiteMapNode FindSiteMapNodeByName(String name)
+        public SiteMapNode FindSiteMapNodeByName(String name)
         {
             EnsureSiteMapBuilt();
             var key = name.UrlEncode();
             if (nodeNameIndex.ContainsKey(key))
             {
                 var capsNode = nodeNameIndex[key] as CapsSiteMapNode;
-                if (capsNode != null) return capsNode.Entity;
+                if (capsNode != null) return capsNode;
             }
             return null;
         }

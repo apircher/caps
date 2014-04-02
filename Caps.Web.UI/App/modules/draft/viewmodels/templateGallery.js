@@ -82,12 +82,12 @@ function (ko, datacontext, module, breeze, entityManagerProvider, system, server
             if (selectedItem()) {
                 var url = '#drafts/create/' + selectedItem().name;
                 var queryString = [];
-                if (draftName()) queryString.push('name=' + escape(draftName()));
+                if (draftName()) queryString.push('name=' + encodeURIComponent(draftName()));
 
                 var template = selectedItem().template;
                 if (template.parameters) {
                     template.parameters.forEach(function (p) {
-                        if (p.value) queryString.push(p.name + '=' + escape(p.value));
+                        if (p.value) queryString.push(p.name + '=' + encodeURIComponent(p.value));
                     });
                 }
 

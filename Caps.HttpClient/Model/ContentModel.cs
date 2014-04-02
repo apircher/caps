@@ -122,6 +122,20 @@ namespace Caps.Consumer.Model
         }
 
         /// <summary>
+        /// Returns an enumerator that iterates over all the associated 
+        /// files that are marked as Picture.
+        /// </summary>
+        public IEnumerable<ContentFileModel> Pictures
+        {
+            get
+            {
+                if (ContentFiles == null || !ContentFiles.Any())
+                    return new List<ContentFileModel>();
+                return ContentFiles.Where(f => String.Equals(f.Determination, "Picture", StringComparison.OrdinalIgnoreCase)).OrderBy(f => f.Ranking).ToList();
+            }
+        }
+
+        /// <summary>
         /// Returns a ContentScriptManager-Instance that 
         /// coordinates the script-output of the ContentPart-Instances.
         /// </summary>

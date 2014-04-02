@@ -77,8 +77,14 @@ function (ko, system) {
         };
 
         self.filesDropped = function (e, data) {
-            if (e.dataTransfer.dropEffect === 'copy')
+            var evt;
+            if (e && e.delegatedEvent) evt = e.delegatedEvent;
+            else evt = e;
+
+            if (evt && evt.dataTransfer && evt.dataTransfer.dropEffect === 'copy')
                 return false;
+
+            self.filesSelected(e, data);
         };
     }
 

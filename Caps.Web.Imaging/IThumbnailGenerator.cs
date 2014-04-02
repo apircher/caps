@@ -8,6 +8,6 @@ namespace Caps.Web.Imaging
 {
     public interface IThumbnailGenerator
     {
-        ThumbnailGeneratorResult GenerateThumbnail(byte[] sourceImage, int boxWidth, int boxHeight);
+        ThumbnailGeneratorResult GenerateThumbnail(byte[] sourceImage, ThumbnailSettings settings);
     }
 }

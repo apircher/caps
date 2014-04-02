@@ -146,7 +146,7 @@ namespace Caps.Consumer
 
         static String LocalizedFileTitle(PublicationFile f, String language)
         {
-            var result = f.GetValueForLanguage(language, r => r.Title, "de", "en");
+            var result = f.GetValueForLanguage(language, r => r.Title, String.Empty, "de", "en");
             if (String.IsNullOrWhiteSpace(result))
             {
                 var v = f.FileVersionForLanguage(language, "de", "en");

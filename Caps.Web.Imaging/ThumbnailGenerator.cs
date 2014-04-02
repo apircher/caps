@@ -16,7 +16,7 @@ namespace Caps.Web.Imaging
         /// <param name="boxWidth"></param>
         /// <param name="boxHeight"></param>
         /// <returns></returns>
-        public abstract ThumbnailGeneratorResult GenerateThumbnail(byte[] sourceImage, int boxWidth, int boxHeight);
+        public abstract ThumbnailGeneratorResult GenerateThumbnail(byte[] sourceImage, ThumbnailSettings settings);
 
         /// <summary>
         /// Registers a named thumbnail generator.

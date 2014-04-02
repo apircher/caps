@@ -17,7 +17,7 @@ namespace Caps.Consumer.Mvc.SiteMap
 {
     public class DefaultSiteMapBuilder : ISiteMapBuilder
     {
-        static String[] supportedNodeTypes = new String[] { "ROOT", "Page", "Action", "Teaser", "CONTAINER" };
+        static String[] supportedNodeTypes = new String[] { "ROOT", "Page", "Action", "Teaser", "CONTAINER", "SUB_NAV_CONTAINER" };
 
         bool disposed;
         Website website;
@@ -79,7 +79,7 @@ namespace Caps.Consumer.Mvc.SiteMap
             indexUrlToSiteMapNode.Add(rootNode.Url, rootNode);
 
             foreach (var entity in rootNodeEntity.ChildNodes.OrderBy(n => n.Ranking))
-                MapNode(entity, provider, rootNode, addNodeAction);
+                TryMapNode(entity, provider, rootNode, addNodeAction);
 
             return new CapsSiteMapBuilderResult
             {
@@ -90,6 +90,19 @@ namespace Caps.Consumer.Mvc.SiteMap
             };
         }
 
+        bool TryMapNode(DbSiteMapNode entity, StaticSiteMapProvider provider, SiteMapNode parentNode, Action<SiteMapNode, SiteMapNode> addNodeAction)
+        {
+            try
+            {
+                MapNode(entity, provider, parentNode, addNodeAction);
+                return true;
+            }
+            catch (Exception)
+            {
+                //TODO: Log Exception
+                return false;
+            }
+        }
         void MapNode(DbSiteMapNode entity, StaticSiteMapProvider provider, SiteMapNode parentNode, Action<SiteMapNode, SiteMapNode> addNodeAction)
         {
             CapsSiteMapNode siteMapNode = null;
@@ -117,10 +130,10 @@ namespace Caps.Consumer.Mvc.SiteMap
                     new Tuple<String, CapsSiteMapNodeResource>(r.Language, new CapsSiteMapNodeResource { Title = r.Title, MetaKeywords = r.Keywords, MetaDescription = r.Description })));
                 siteMapNode.NodeType = entity.NodeType;
 
-                if (entity.ChildNodes != null && !entity.IsNodeTypeIn("CONTAINER"))
+                if (entity.ChildNodes != null)
                 {
                     foreach (var childEntity in entity.ChildNodes.OrderBy(n => n.Ranking))
-                        MapNode(childEntity, provider, siteMapNode, addNodeAction);
+                        TryMapNode(childEntity, provider, siteMapNode, addNodeAction);
                 }
             }
         }

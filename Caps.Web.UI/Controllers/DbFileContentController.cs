@@ -47,7 +47,7 @@ namespace Caps.Web.UI.Controllers
             if (!file.IsImage) // TODO: Return default document thumbnail...
                 throw new HttpException("Thumbnails can only be created for images.");
 
-            var thumbnail = latestVersion.GetOrCreateThumbnail(thumbnailName);
+            var thumbnail = latestVersion.GetOrCreateThumbnail(thumbnailName, Imaging.ThumbnailFitMode.Default);
             if (thumbnail == null)
                 throw new HttpException("An error occured while creating the thumbnail.");
             

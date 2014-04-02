@@ -13,14 +13,14 @@ namespace Caps.Web.UI.Infrastructure
 {
     public static class ThumbnailHelpers
     {
-        public static DbThumbnail CreateThumbnail(this DbFileVersion fileVersion, int maxWidth, int maxHeight)
+        public static DbThumbnail CreateThumbnail(this DbFileVersion fileVersion, int maxWidth, int maxHeight, ThumbnailFitMode fitMode = ThumbnailFitMode.Default)
         {
             String name = String.Format("{0}x{1}", maxWidth, maxHeight);
-            return fileVersion.CreateThumbnail(name, maxWidth, maxHeight);
+            return fileVersion.CreateThumbnail(name, maxWidth, maxHeight, fitMode);
         }
-        public static DbThumbnail CreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, int? maxWidth, int? maxHeight)
+        public static DbThumbnail CreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, int? maxWidth, int? maxHeight, ThumbnailFitMode fitMode)
         {
-            var t = GetThumbnail(fileVersion.Content.Data, maxWidth, maxHeight, thumbnailName);
+            var t = GetThumbnail(fileVersion.Content.Data, maxWidth, maxHeight, fitMode, thumbnailName);
             var thumbnail = new DbThumbnail();
             thumbnail.ContentType = fileVersion.File.ContentType;
             thumbnail.Data = t.Data;
@@ -32,7 +32,7 @@ namespace Caps.Web.UI.Infrastructure
             return thumbnail;
         }
 
-        public static DbThumbnail GetOrCreateThumbnail(this DbFileVersion fileVersion, String thumbnailName)
+        public static DbThumbnail GetOrCreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, ThumbnailFitMode fitMode)
         {
             int maxWidth, maxHeight;
             if (!TryParseDimensions(thumbnailName, out maxWidth, out maxHeight))
@@ -40,9 +40,9 @@ namespace Caps.Web.UI.Infrastructure
                 maxWidth = 220;
                 maxHeight = 160;
             }
-            return fileVersion.GetOrCreateThumbnail(thumbnailName, maxWidth, maxHeight);
+            return fileVersion.GetOrCreateThumbnail(thumbnailName, maxWidth, maxHeight, fitMode);
         }
-        public static DbThumbnail GetOrCreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, int? maxWidth, int? maxHeight)
+        public static DbThumbnail GetOrCreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, int? maxWidth, int? maxHeight, ThumbnailFitMode fitMode)
         {
             var thumbnail = fileVersion.Thumbnails.FirstOrDefault(t => String.Equals(t.Name, thumbnailName, StringComparison.OrdinalIgnoreCase));
             if (thumbnail == null || !thumbnail.OriginalFileHash.SequenceEqual(fileVersion.Hash))
@@ -50,7 +50,7 @@ namespace Caps.Web.UI.Infrastructure
                 if (thumbnail != null)
                     fileVersion.Thumbnails.Remove(thumbnail);
 
-                var newThumbnail = fileVersion.CreateThumbnail(thumbnailName, maxWidth, maxHeight);
+                var newThumbnail = fileVersion.CreateThumbnail(thumbnailName, maxWidth, maxHeight, fitMode);
                 fileVersion.Thumbnails.Add(newThumbnail);
 
                 thumbnail = newThumbnail;
@@ -85,7 +85,7 @@ namespace Caps.Web.UI.Infrastructure
             if (String.IsNullOrWhiteSpace(s))
                 return false;
 
-            var match = Regex.Match(s, @"^(?<width>\d{1,4})x(?<height>\d{1,4})$");
+            var match = Regex.Match(s, @"^(?<width>-?\d{1,4})x(?<height>-?\d{1,4})$");
             if (match.Success)
             {
                 width = int.Parse(match.Groups["width"].Value);
@@ -94,10 +94,24 @@ namespace Caps.Web.UI.Infrastructure
             }
             return false;
         }
-        static ThumbnailGeneratorResult GetThumbnail(byte[] imageBytes, int? maxWidth, int? maxHeight, String generatorName = null)
+        static ThumbnailGeneratorResult GetThumbnail(byte[] imageBytes, int? maxWidth, int? maxHeight, ThumbnailFitMode fitMode = ThumbnailFitMode.Default, String generatorName = null)
         {
             var generator = ThumbnailGenerator.GetNamedGenerator(generatorName);
-            return generator.GenerateThumbnail(imageBytes, maxWidth.GetValueOrDefault(220), maxHeight.GetValueOrDefault(160));
+            var settings = new ThumbnailSettings
+            {
+                Width = maxWidth.GetValueOrDefault(220),
+                Height = maxHeight.GetValueOrDefault(160),
+                FitMode = fitMode
+            };
+            return generator.GenerateThumbnail(imageBytes, settings);
+        }
+
+        static ThumbnailFitMode ConvertToFitMode(String s)
+        {
+            ThumbnailFitMode mode = ThumbnailFitMode.Default;
+            if (Enum.TryParse<ThumbnailFitMode>(s, out mode))
+                return mode;
+            return ThumbnailFitMode.Default;
         }
 
     }
