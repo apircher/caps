@@ -66,9 +66,9 @@ namespace Caps.Consumer
         /// </summary>
         /// <param name="fileVersionId"></param>
         /// <returns></returns>
-        public async Task<DbThumbnail> GetThumbnail(int websiteId, int fileVersionId, String nameOrSize)
+        public async Task<DbThumbnail> GetThumbnail(int websiteId, int fileVersionId, String nameOrSize, String fitMode = "Default")
         {
-            var response = await client.GetAsync("api/websites/" + websiteId.ToString() + "/fileversions/" + fileVersionId.ToString() + "/thumbnails/" + nameOrSize);
+            var response = await client.GetAsync("api/websites/" + websiteId.ToString() + "/fileversions/" + fileVersionId.ToString() + "/thumbnails/" + nameOrSize + "?fitMode=" + fitMode);
             if (response.IsSuccessStatusCode)
                 return await response.Content.ReadAsAsync<DbThumbnail>();
             return null;

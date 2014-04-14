@@ -23,9 +23,6 @@ namespace DemoConsoleApplication
         {
             using (var client = new CapsHttpClient(new Uri("http://localhost:57004"), "apircher", "p@ssword"))
             {
-                var success = await client.InitAccessTokens();
-                Console.WriteLine("Tokens initialized: {0}", success);
-
                 var user = await client.GetUserInfo();
                 Console.WriteLine("Logged in as: {0} {1}", user.FirstName, user.LastName);
 

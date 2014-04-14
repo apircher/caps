@@ -17,7 +17,7 @@ namespace DemoWebsite2
             routes.MapRoute(
                 name: "CapsThumbnail",
                 url: "thumbnail/{id}/{name}",
-                defaults: new { controller = "Caps", action = "Thumbnail", name = UrlParameter.Optional, size = "250x250" },
+                defaults: new { controller = "Caps", action = "Thumbnail", name = UrlParameter.Optional },
                 constraints: new { id = @"^\d+$", name = @"^([a-zA-Z_%\+0-9]+)\.([a-zA-Z0-9]+)$" }
             );
 

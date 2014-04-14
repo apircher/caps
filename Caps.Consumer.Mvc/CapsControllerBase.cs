@@ -86,7 +86,7 @@ namespace Caps.Consumer.Mvc
 
         protected bool CheckClientETag(DbThumbnail thumbnail)
         {
-            String etag = Convert.ToBase64String(thumbnail.OriginalFileHash);
+            String etag = Convert.ToBase64String(thumbnail.OriginalFileHash) + "_" + thumbnail.Name;
             String clientEtag = Request.Headers["If-None-Match"];
             return String.Equals(etag, clientEtag);
         }
@@ -100,7 +100,7 @@ namespace Caps.Consumer.Mvc
         protected void SetClientETag(DbThumbnail thumbnail)
         {
             Response.Cache.SetCacheability(HttpCacheability.ServerAndPrivate);
-            Response.Cache.SetETag(Convert.ToBase64String(thumbnail.OriginalFileHash));
+            Response.Cache.SetETag(Convert.ToBase64String(thumbnail.OriginalFileHash) + "_" + thumbnail.Name);
         }
     }
 }

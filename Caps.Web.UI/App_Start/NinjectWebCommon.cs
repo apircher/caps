@@ -58,6 +58,8 @@ namespace Caps.Web.UI.App_Start
             kernel.Bind<Microsoft.AspNet.Identity.IUserStore<Caps.Data.Model.Author>>()
                 .ToConstructor(u => new Microsoft.AspNet.Identity.EntityFramework.UserStore<Caps.Data.Model.Author>(kernel.Get<Caps.Data.CapsDbContext>()))
                 .InRequestScope();
+
+            kernel.Bind<Caps.Web.UI.Controllers.IAntiForgeryTokenProvider>().To<Caps.Web.UI.Controllers.DefaultAntiForgeryTokenProvider>();
         }        
     }
 }

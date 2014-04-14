@@ -138,9 +138,17 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
             var newGroupNames = ko.utils.arrayFilter(distinctGroupNames, function (groupName) {
                 return !hasGroup(groupName);
             });
+
+            var selectedGroup = selectedGroupNode();
             ko.utils.arrayForEach(newGroupNames, function (groupName) {
                 fileGroups.push(createFileGroup(groupName));
             });
+
+            var tree = self.tree();
+            if (!selectedGroup && tree) {
+                tree.selectRootNode();
+                tree.expandRootNodes();
+            }
 
             function hasGroup(groupName) {
                 return ko.utils.arrayFirst(fileGroups(), function (g) { return g.name().toLowerCase() === groupName.toLowerCase(); }) ? true : false;
@@ -211,13 +219,15 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
         }
 
         function findSelectedGroupName() {
-            if (!self.tree() || !self.tree().selectedNode())
-                return '';
-            var node = self.tree().selectedNode();
-            if (node.nodeType === 'group')
-                return node.title();
+            var node = selectedGroupNode();
+            return node ? node.title() : '';
+        }
 
-            return node.parentNode().title();
+        function selectedGroupNode() {
+            if (!self.tree() || !self.tree().selectedNode())
+                return null;
+            var node = self.tree().selectedNode();
+            return node.nodeType === 'group' ? node : node.parentNode();
         }
 
         function createFileGroup(groupName) {

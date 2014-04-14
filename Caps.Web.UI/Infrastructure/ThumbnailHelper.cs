@@ -40,6 +40,9 @@ namespace Caps.Web.UI.Infrastructure
                 maxWidth = 220;
                 maxHeight = 160;
             }
+            else
+                thumbnailName += "_" + fitMode.ToString();
+            
             return fileVersion.GetOrCreateThumbnail(thumbnailName, maxWidth, maxHeight, fitMode);
         }
         public static DbThumbnail GetOrCreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, int? maxWidth, int? maxHeight, ThumbnailFitMode fitMode)

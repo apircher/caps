@@ -272,7 +272,7 @@ namespace Caps.Web.UI.Controllers
             return Ok();
         }
 
-        private IAuthenticationManager Authentication
+        protected virtual IAuthenticationManager Authentication
         {
             get { return Request.GetOwinContext().Authentication; }
         }

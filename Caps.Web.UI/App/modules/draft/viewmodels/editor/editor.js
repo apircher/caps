@@ -57,7 +57,6 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
         });
 
         self.activate = function (draftIdOrTemplateName, queryString) {
-            module.on('module:compositionComplete', compositionComplete);
             app.on('caps:contentfile:uploadDone', fileUploadDone);
             return system.defer(function (dfd) {
                 if (draftIdOrTemplateName && /^[0-9]+$/.test(draftIdOrTemplateName)) {
@@ -100,7 +99,6 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
 
         self.deactivate = function () {
             module.routeConfig.hasUnsavedChanges(false);
-            module.off('module:compositionComplete', compositionComplete);
             app.off('caps:contentfile:uploadDone', fileUploadDone);
             if (draftFilesVM) draftFilesVM.deactivate();
         };
@@ -238,10 +236,6 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
                 return draftFile;
             });
         };
-
-        function compositionComplete(m, instance) {
-            $window.trigger('forceViewportHeight:refresh');
-        }
 
         function fileUploadDone(file) {
             var fileId = file.Id(),

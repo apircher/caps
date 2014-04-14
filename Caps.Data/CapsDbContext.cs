@@ -22,27 +22,27 @@ namespace Caps.Data
                 (sender, e) => Caps.Data.Utils.DateTimeKindAttribute.Apply(e.Entity);
         }
 
-        public DbSet<DbFile> Files { get; set; }
-        public DbSet<DbFileVersion> FileVersions { get; set; }
-        public DbSet<DbFileProperty> FileProperties { get; set; }
-        public DbSet<DbFileContent> FileContents { get; set; }
-        public DbSet<DbThumbnail> Thumbnails { get; set; }
-        public DbSet<DbFileTag> FileTags { get; set; }
+        public virtual DbSet<DbFile> Files { get; set; }
+        public virtual DbSet<DbFileVersion> FileVersions { get; set; }
+        public virtual DbSet<DbFileProperty> FileProperties { get; set; }
+        public virtual DbSet<DbFileContent> FileContents { get; set; }
+        public virtual DbSet<DbThumbnail> Thumbnails { get; set; }
+        public virtual DbSet<DbFileTag> FileTags { get; set; }
 
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<Website> Websites { get; set; }
-        public DbSet<DbSiteMap> SiteMaps { get; set; }
-        public DbSet<DbSiteMapNode> SiteMapNodes { get; set; }
-        public DbSet<Publication> Publications { get; set; }
+        public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<Website> Websites { get; set; }
+        public virtual DbSet<DbSiteMap> SiteMaps { get; set; }
+        public virtual DbSet<DbSiteMapNode> SiteMapNodes { get; set; }
+        public virtual DbSet<Publication> Publications { get; set; }
 
-        public DbSet<Draft> Drafts { get; set; }
-        public DbSet<DraftTranslation> DraftTranslations { get; set; }
-        public DbSet<DraftContentPart> DraftContentParts { get; set; }
-        public DbSet<DraftContentPartResource> DraftContentPartResources { get; set; }
-        public DbSet<DraftFile> DraftFiles { get; set; }
-        public DbSet<DraftFileResource> DraftFileResources { get; set; }
+        public virtual DbSet<Draft> Drafts { get; set; }
+        public virtual DbSet<DraftTranslation> DraftTranslations { get; set; }
+        public virtual DbSet<DraftContentPart> DraftContentParts { get; set; }
+        public virtual DbSet<DraftContentPartResource> DraftContentPartResources { get; set; }
+        public virtual DbSet<DraftFile> DraftFiles { get; set; }
+        public virtual DbSet<DraftFileResource> DraftFileResources { get; set; }
 
-        public DbSet<DraftTemplate> DraftTemplates { get; set; }
+        public virtual DbSet<DraftTemplate> DraftTemplates { get; set; }
         
         public Author GetAuthorByUserName(String userName) 
         {

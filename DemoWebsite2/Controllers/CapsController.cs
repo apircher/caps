@@ -76,9 +76,9 @@ namespace DemoWebsite2.Controllers
                 return new FileContentResult(fileVersion.Content.Data, file.ContentType) { FileDownloadName = file.FileName };
         }
 
-        public async Task<ActionResult> Thumbnail(int id, String name, String size)
+        public async Task<ActionResult> Thumbnail(int id, String name, String size = "250x250", String fitMode = "Default")
         {
-            var thumbnail = await ContentService.GetThumbnail(1, id, size);
+            var thumbnail = await ContentService.GetThumbnail(1, id, size, fitMode);
             if (thumbnail == null)     // TODO: Return default document thumbnail...
                 return HttpNotFound();
 

@@ -70,6 +70,7 @@ namespace Caps.Consumer.Localization
                 return defaultLanguage;
             return language;
         }
+
         public static String CurrentLanguage
         {
             get
@@ -78,6 +79,7 @@ namespace Caps.Consumer.Localization
                 return CultureToLanguage(cultureCode);
             }
         }
+
         public static String DefaultLanguage
         {
             get
