@@ -148,6 +148,14 @@ function (require, ko, system) {
         return files;
     };
 
+    Draft.prototype.rankingByGroupName = function (groupName) {
+        var files = ko.utils.arrayFilter(this.orderedFiles(), function (file) {
+            var gn = file.Group() || '';
+            return gn.toLowerCase() === groupName.toLowerCase();
+        });
+        return files.length > 0 ? files[0].Ranking() : 10000;
+    };
+
     Draft.prototype.filesByDetermination = function (determination) {
         var files = ko.utils.arrayFilter(this.Files(), function (file) {
             var gn = file.Determination() || '';

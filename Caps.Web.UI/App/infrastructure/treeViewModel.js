@@ -1,4 +1,4 @@
-﻿define(['ko', 'infrastructure/interaction', 'infrastructure/keyCode'], function (ko, interaction, KeyCodes) {
+﻿define(['ko', 'infrastructure/interaction', 'infrastructure/keyCode', 'durandal/events'], function (ko, interaction, KeyCodes, Events) {
 
     /*
      * TreeViewModel class
@@ -15,6 +15,8 @@
         self.selectedKey = ko.computed(function () {
             return self.selectedNode() ? self.selectedNode().key() : undefined;
         });
+
+        Events.includeIn(self);
     }
 
     TreeViewModel.prototype.clear = function () {
@@ -238,9 +240,17 @@
             return self.childNodes() && self.childNodes().length;
         });
 
-        self.nextSibling = ko.computed({
+        self.siblings = ko.computed({
             read: function () {
                 var siblings = self.parentNode() ? self.parentNode().childNodes() : (self.tree ? self.tree.rootNodes() : [self]);
+                return siblings;
+            },
+            deferEvaluation: true
+        });
+
+        self.nextSibling = ko.computed({
+            read: function () {
+                var siblings = self.siblings();
                 var index = siblings.indexOf(self);
 
                 if (index < siblings.length - 1)
@@ -252,7 +262,7 @@
 
         self.previousSibling = ko.computed({
             read: function () {
-                var siblings = self.parentNode() ? self.parentNode().childNodes() : (self.tree ? self.tree.rootNodes() : [self]);
+                var siblings = self.siblings();
                 var index = siblings.indexOf(self);
 
                 if (index > 0)
@@ -303,6 +313,34 @@
 
         self.scrollIntoView();
     };
+
+    TreeNodeViewModel.prototype.moveUp = function () {
+        var self = this;
+        moveTreeNode.call(self, -1);
+    };
+
+    TreeNodeViewModel.prototype.moveDown = function () {
+        var self = this;
+        moveTreeNode.call(self, 1);
+    };
+
+    function moveTreeNode(direction) {
+        var self = this,
+            siblings = self.siblings().slice(0),
+            index = siblings.indexOf(self),
+            newIndex = index + (direction >= 0 ? 1 : -1);
+
+        if (newIndex >= 0 && newIndex < siblings.length) {
+            siblings.splice(index, 1);
+            siblings.splice(newIndex, 0, self);
+
+            var parent = self.parentNode() || (self.tree ? self.tree.root() : undefined);
+            if (parent) {
+                parent.childNodes(siblings);
+                if (self.tree) self.tree.trigger('tree:nodeMoved', self);
+            }
+        }
+    }
     
     return {
         TreeViewModel: TreeViewModel,

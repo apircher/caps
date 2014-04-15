@@ -7,7 +7,7 @@
         <div class="draftfiles-sidebar-nav">
             <ul class="list-inline">
                 <li><a href="#" data-bind="click: addGroup" title="Neue Gruppe"><i class="fa fa-folder"></i> Neu</a></li>
-                <!-- ko if: tree() && tree().selectedNode() && tree().selectedNode().nodeType === 'file' -->
+                <!-- ko if: tree() && tree().selectedNode() -->
                 <li><a href="#" title="Nach oben" data-bind="click: moveSelectedNodeUp"><i class="fa fa-arrow-up"></i></a></li>
                 <li><a href="#" title="Nach unten" data-bind="click: moveSelectedNodeDown"><i class="fa fa-arrow-down"></i></a></li>
                 <!-- /ko -->

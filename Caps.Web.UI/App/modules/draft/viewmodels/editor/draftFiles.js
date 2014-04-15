@@ -55,7 +55,11 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
 
         self.sortedFileGroups = ko.computed(function () {
             var groups = fileGroups();
-            groups.sort(function (a, b) { return a.name().toLowerCase().localeCompare(b.name().toLowerCase()); });
+            groups.sort(function (a, b) {
+                var rankingA = editor.entity().rankingByGroupName(a.name()),
+                    rankingB = editor.entity().rankingByGroupName(b.name());
+                return rankingA === rankingB ? 0 : (rankingA < rankingB ? -1 : 1);
+            });
             return groups;
         });
         
@@ -65,10 +69,12 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
                 title: 'Anhänge hinzufügen'
             }).then(function (result) {
                 if (result.dialogResult) {
-                    var groupName = findSelectedGroupName();
+                    var groupName = findSelectedGroupName(),
+                        ranking = editor.entity().rankingByGroupName(groupName);
                     ko.utils.arrayForEach(result.selectedFiles, function (file) {
-                        editor.createDraftFile(file, groupName);
+                        editor.createDraftFile(file, groupName, ranking++);
                     });
+                    saveDraftFileRankings();
                 }
             });
         };
@@ -80,6 +86,7 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
             var groupNode = self.tree().findNodeByKey(name);
             if (groupNode) {
                 groupNode.selectNode();
+                groupNode.isExpanded(true);
             }
 
             function uniqueGroupName(baseName) {
@@ -182,6 +189,10 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
                 if (ts && self.tree()) self.tree().restoreState(ts);
             };
 
+            t.on('tree:nodeMoved', function (node) {
+                saveDraftFileRankings();
+            });
+
             self.tree(t);
         }
 
@@ -236,6 +247,21 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
             };
             g.Id = ko.computed(function () { return g.name(); });
             return g;
+        }
+
+        function saveDraftFileRankings() {
+            var t = self.tree(),
+                r = 0;
+            if (t) {
+                ko.utils.arrayForEach(t.rootNodes(), function (groupNode) {
+                    ko.utils.arrayForEach(groupNode.childNodes(), function (draftFileNode) {
+                        var entity = draftFileNode.entity(),
+                            ranking = r++;
+                        if (entity.Ranking() !== ranking)
+                            entity.Ranking(ranking);
+                    });
+                });
+            }
         }
 
         initializeFileGroups();

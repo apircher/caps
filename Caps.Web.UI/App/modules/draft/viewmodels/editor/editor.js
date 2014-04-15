@@ -216,7 +216,7 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
             return cp;
         };
 
-        self.createDraftFile = function (file, groupName) {
+        self.createDraftFile = function (file, groupName, ranking) {
             var query = breeze.EntityQuery.from('Files').where('Id', '==', file.Id()).expand('Versions.File');
             return manager.executeQuery(query).then(function (data) {
                 var dbFile = data.results[0];
@@ -231,6 +231,7 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
                 draftFile.Resources.push(resource);
 
                 draftFile.DraftId(self.entity().Id());
+                draftFile.Ranking(ranking);
 
                 self.entity().Files.push(draftFile);
                 return draftFile;
