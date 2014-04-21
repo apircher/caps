@@ -61,13 +61,11 @@
         <form role="form">
             <div class="input-group">
                 <input type="text" class="form-control hide-ms-clear" data-bind="typeahead: tagNames, value: tagName, event: { 'typeahead:selected': updateTagName, 'typeahead:autocompleted': updateTagName }" />
-                <span class="input-group-btn">
-                    <button data-bind="click: addTag" class="btn btn-default">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </span>
+                <div class="input-group-btn">
+                    <button data-bind="click: addTag" class="btn btn-default">Ok</button>
+                </div>
             </div>
-            <p class="form-control-static"><a data-bind="click: cancelAddTag" href="#">Abbrechen</a></p>
+            <p class="form-control-buttons"><a data-bind="click: cancelAddTag" href="#">Abbrechen</a></p>
         </form>
         <br />
         <!-- /ko -->        
@@ -118,7 +116,8 @@
                         <span><i class="fa fa-repeat"></i> Datei ersetzen</span>
                         <!-- ko with: uploadManager -->
                         <input type="file" name="files" data-url="~/api/DbFileUpload"
-                               data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: null, formData: { storageAction: 'replace', versionId: $parent.fileVersion().entity.Id() } }">
+                               data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: null, formData: { storageAction: 'replace', versionId: $parent.fileVersion().entity.Id() } }"
+                               data-storage-option="replace">
                         <!-- /ko -->
                     </a>
                 </li>

@@ -57,7 +57,7 @@
                             <span><i class="fa fa-plus"></i> Dateien hinzufügen</span>
                             <!-- ko with: uploadManager -->
                             <input type="file" name="files" data-url="~/api/DbFileUpload"
-                                   data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: $('#drop-zone'), drop: filesDropped, change: filesSelected }" multiple>
+                                   data-bind="fileupload: { change: filesSelected, add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, drop: filesDropped, dropZone: $('#drop-zone') }" multiple>
                             <!-- /ko -->
                         </a>
                     </li>

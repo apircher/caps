@@ -39,4 +39,7 @@
 
 <script type="text/html" id="module-tile">
     <a href="#" data-bind="click: $parent.showModule"><!-- ko text: title --><!-- /ko --> <span class="module-unsaved-data" data-bind="visible: hasUnsavedChanges">*</span></a>    
+    <div class="module-tile-progress" data-bind="css: { 'active': hasLongRunningTasks() }">
+        <div data-bind="style: { width: taskInfo().progress + '%' }"></div>
+    </div>
 </script>

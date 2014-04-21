@@ -1,4 +1,9 @@
-﻿define([
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+define([
     'durandal/app',
     'authentication',
     'plugins/router',
@@ -10,7 +15,9 @@
     'infrastructure/screen',
     'Q',
     './setPasswordDialog'
-], function (app, authentication, router, dialog, ChangePasswordDialog, moment, ko, toastr, screen, Q, SetPasswordDialog) {
+],
+function (app, authentication, router, dialog, ChangePasswordDialog, moment, ko, toastr, screen, Q, SetPasswordDialog) {
+    'use strict';
 
     var user = authentication.user;
     var logins = ko.observableArray();

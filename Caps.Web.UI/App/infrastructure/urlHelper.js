@@ -1,11 +1,18 @@
-﻿define(['infrastructure/serverUtil'], function (server) {
-    
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+define([
+    'infrastructure/serverUtil'
+],
+function (server) {
+    'use strict';
+
     /*
      * UrlHelper class
      */
-
     function UrlHelper() {
-
     }
 
     UrlHelper.prototype.getFileUrl = function (fileName, fileVersion, querystring) {
@@ -32,6 +39,5 @@
         return '#sitemap?p=' + externalId;
     };
 
-    var instance = new UrlHelper();
-    return instance;
+    return new UrlHelper(); // Returns a singleton.
 });

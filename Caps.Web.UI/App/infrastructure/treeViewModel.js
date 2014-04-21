@@ -1,6 +1,21 @@
-﻿define(['ko', 'infrastructure/interaction', 'infrastructure/keyCode', 'durandal/events'], function (ko, interaction, KeyCodes, Events) {
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
 
-    /*
+/**
+ * Provides a model to represent hierarchical data in a tree structure.
+ */
+define([
+    'ko',
+    'infrastructure/interaction',
+    'infrastructure/keyCode',
+    'durandal/events'
+],
+function (ko, interaction, KeyCodes, Events) {
+    'use strict';
+
+    /**
      * TreeViewModel class
      */
     function TreeViewModel() {
@@ -86,10 +101,9 @@
     };
 
     TreeViewModel.prototype.handleKeyDown = function (e) {
-        direction = KeyCodes.getDirection(e.keyCode);
         var self = this;
 
-        if (direction) {
+        if (isDirection(e.keyCode)) {
             e.preventDefault();
 
             if (!self.selectedNode()) {
@@ -98,18 +112,22 @@
             }
 
             var n = self.selectedNode();
-            if (direction === 'down') moveDown(n);
-            if (direction === 'up') moveUp(n);
-            if (direction === 'left') moveLeft(n);
-            if (direction === 'right') moveRight(n);
+            if (e.keyCode === KeyCodes.DOWN) moveDown(n);
+            if (e.keyCode === KeyCodes.UP) moveUp(n);
+            if (e.keyCode === KeyCodes.LEFT) moveLeft(n);
+            if (e.keyCode === KeyCodes.RIGHT) moveRight(n);
 
             if (self.selectedNode())
                 self.selectedNode().ensureVisible();
         }
 
-        if (e.keyCode === KeyCodes.keys.SPACEBAR && self.selectedNode()) {
+        if (e.keyCode === KeyCodes.SPACEBAR && self.selectedNode()) {
             e.preventDefault();
             self.selectedNode().toggleIsExpanded();
+        }
+
+        function isDirection(keyCode) {
+            return keyCode === KeyCodes.UP || keyCode === KeyCodes.DOWN || keyCode === KeyCodes.LEFT || keyCode === KeyCodes.RIGHT;
         }
 
         function moveDown(node) {
@@ -188,7 +206,7 @@
         }
     };
 
-    /*
+    /**
      * TreeNodeViewModel class
      */
     function TreeNodeViewModel(tree, parentNode) {
@@ -228,8 +246,10 @@
         self.detachFromParentNode = function () {
             if (self.isSelected()) {
                 var nextSelection = self.nextSibling() || self.previousSibling() || self.parentNode();
-                if (nextSelection)
+                if (nextSelection && !(nextSelection === self.tree.root))
                     nextSelection.selectNode();
+                else
+                    self.tree.selectedNode(null);
             }
 
             self.parentNode().childNodes.remove(self);

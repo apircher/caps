@@ -136,12 +136,8 @@
 
             setElementHeight();
 
-            var th;
             function setElementHeight() {
-                if (th) window.clearTimeout(th);
-                th = window.setTimeout(function () {
-                    ko.bindingHandlers.forceViewportHeight.setElementHeight($window, $elem, options);
-                }, 20);
+                ko.bindingHandlers.forceViewportHeight.setElementHeight($window, $elem, options);
             }
 
             $window.on('resize', setElementHeight);

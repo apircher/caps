@@ -1,4 +1,12 @@
-﻿define([
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Provides services for publishing content.
+ */
+define([
     'durandal/system',
     'durandal/app',
     'entityManagerProvider',
@@ -6,11 +14,12 @@
     'ko'
 ],
 function (system, app, entityManagerProvider, breeze, ko) {
+    'use strict';
 
     var EntityQuery = breeze.EntityQuery;
 
-    /*
-     * Class Publisher
+    /**
+     * Publisher class
      */
     function Publisher() {
         var self = this;

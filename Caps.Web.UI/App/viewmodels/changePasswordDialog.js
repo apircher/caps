@@ -1,4 +1,15 @@
-﻿define(['plugins/dialog', 'knockout', 'durandal/app'], function (dialog, ko, app) {
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+define([
+    'plugins/dialog',
+    'knockout',
+    'durandal/app'
+],
+function (dialog, ko, app) {
+    'use strict';
 
     var ChangePasswordDialog = function () {
         var self = this;

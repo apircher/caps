@@ -1,4 +1,9 @@
-﻿define([
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+define([
     'durandal/system',
     'durandal/app',
     'infrastructure/datacontext',
@@ -8,6 +13,7 @@
     'plugins/router'
 ],
 function (system, app, datacontext, entityManagerProvider, ko, breeze, router) {
+    'use strict';
 
     var website = ko.observable(),
         EntityQuery = breeze.EntityQuery,

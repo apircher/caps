@@ -1,5 +1,10 @@
-﻿/*
- * moduleLoader.js
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Provides functions for loading cms modules.
  */
 define([
     'durandal/system',
@@ -7,6 +12,7 @@ define([
     'Q'
 ],
 function (system, registry, Q) {
+    'use strict';
 
     function convertNameToModuleId(name) {
         return 'modules/' + name + '/module';

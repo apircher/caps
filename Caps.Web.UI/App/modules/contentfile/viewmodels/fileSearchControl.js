@@ -1,4 +1,9 @@
-﻿define([
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+define([
     'ko',
     'infrastructure/filterModel',
     'infrastructure/listSortModel',
@@ -6,7 +11,11 @@
     '../datacontext'
 ],
 function (ko, FilterModel, SortModel, tagService, datacontext) {
+    'use strict';
 
+    /**
+     * FileSearchControl class
+     */
     function FileSearchControl() {
         var self = this;
 
@@ -15,6 +24,10 @@ function (ko, FilterModel, SortModel, tagService, datacontext) {
         self.tagFilterOptions = null;
         self.filterOptions = ko.observable();
         self.currentFilter = '';
+
+        self.hasFilterOptions = ko.computed(function () {
+            return tagService.tags() && tagService.tags().length > 0;
+        });
                 
         self.beginSetFilter = function () {
             self.tagFilterOptions = self.tagFilterOptions || self.createTagFilterOptions();

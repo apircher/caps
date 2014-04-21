@@ -9,8 +9,8 @@
                 <!-- ko compose: searchControl --><!-- /ko -->
             </div>
         </div>
-
-        <div>
+        
+        <div id="fileSelectionDialog-drop-zone" data-bind="forceViewportHeight: { minWidth: 992 }">
             <div class="row thumbnails-fixed-size" data-bind="lazyLoad: { data: list.items(), loadHandler: loadHandler }">
                 <div class="col-sm-6 col-md-3 col-lg-2">
                     <div class="thumbnail-container" data-bind="css: { 'item-checked': isSelected  }">
@@ -50,6 +50,11 @@
     </div>
 
     <div class="navbar navbar-default navbar-fixed-bottom">
+        <div class="navbar-panel pull-right">
+            <div class="navbar-text" data-bind="visible: uploadManager.isUploading">
+                Upload: <span data-bind="text: uploadManager.progress"></span> %
+            </div>
+        </div>
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
                 <li>
@@ -63,7 +68,7 @@
                         <span><i class="fa fa-plus"></i> Dateien hochladen</span>
                         <!-- ko with: uploadManager -->
                         <input type="file" name="files" data-url="~/api/DbFileUpload"
-                               data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: $('#drop-zone'), drop: filesDropped }" multiple>
+                               data-bind="fileupload: { change: filesSelected, add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, drop: filesDropped, dropZone: $('#fileSelectionDialog-drop-zone') }" multiple>
                         <!-- /ko -->
                     </a>
                 </li>

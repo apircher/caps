@@ -1,5 +1,11 @@
-﻿/*
- * moduleRouter.js
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/*
+ * Provides a factory for creating routers for cms modules and 
+ * infrastructure for initializing those routers.
  */
 define([
     'plugins/router',
@@ -10,6 +16,7 @@ define([
     'durandal/composition'
 ],
 function (rootRouter, system, moduleRegistry, ko, utils, composition) {
+    'use strict';
     
     function mapModuleRoutes(router) {
         ko.utils.arrayForEach(moduleRegistry.modules(), function (module) {
@@ -32,7 +39,6 @@ function (rootRouter, system, moduleRegistry, ko, utils, composition) {
 
     /**
     * Module Router Factory
-    *
     */
     function createModuleRouter(module, baseModuleId, baseRoute) {
         var childRouter = rootRouter.createChildRouter()

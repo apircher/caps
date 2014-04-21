@@ -1,11 +1,17 @@
-﻿/*
- * filterModel.js
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Provides a model for general filters like a Tag-Filter.
  */
 define([
     'require',
     'ko'
 ],
 function (require, ko) {
+    'use strict';
     
     /**
      * FilterItem Class
@@ -34,10 +40,12 @@ function (require, ko) {
     function FilterOptions(filterItems) {
         var self = this;
 
-        if (filterItems && filterItems.length > 0) {
+        if (filterItems && filterItems.length) {
             filterItems.sort(function (f1, f2) { return f1.title.localeCompare(f2.title); });
         }
+
         self.filters = ko.observableArray(filterItems || []);
+
         self.selectedFilters = ko.computed(function () {
             return ko.utils.arrayFilter(self.filters(), function (item) {
                 return item.isSelected();
@@ -54,17 +62,25 @@ function (require, ko) {
             });
         };
 
+        self.showOthers = ko.observable(true);
+
+        self.toggleShowOthers = function () {
+            self.showOthers(!self.showOthers());
+        };
+
         self.allSelected = ko.computed({
             read: function () {
                 for (var i = 0; i < self.filters().length; i++) {
                     if (!self.filters()[i].isSelected()) return false;
                 }
+                if (!self.showOthers()) return false;
                 return true;
             },
             write: function (val) {
                 ko.utils.arrayForEach(self.filters(), function (f) {
                     if (f.isSelected() !== val) f.isSelected(val);
                 });
+                self.showOthers(val);
             }
         });
 
@@ -77,7 +93,9 @@ function (require, ko) {
         var items = ko.utils.arrayMap(this.filters(), function (filter) {
             return filter.clone();
         });
-        return new FilterOptions(items);
+        var fo = new FilterOptions(items);
+        fo.showOthers(this.showOthers());
+        return fo;
     };
 
     FilterOptions.prototype.createOrUpdateFilter = function (title, name, value) {
@@ -109,8 +127,10 @@ function (require, ko) {
         var items = this.selectedFilters();
         var result = '';
         for (var i = 0; i < items.length; i++) {
-            result += items[i].value + (i < items.length - 1 ? '|' : '');
+            var key = items[i].value;
+            if (key) result += key + (i < items.length - 1 ? '|' : '');
         }
+        if (this.showOthers()) result += '|others';
         return result;
     };
 

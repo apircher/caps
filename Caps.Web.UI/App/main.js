@@ -31,9 +31,10 @@ define('markdown', function () { return Markdown; });
 define('toastr', function () { return toastr; });
 
 define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authentication', 'infrastructure/antiForgeryToken',
-    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'plugins/router', 'jquery', 'entityManagerProvider', 'infrastructure/serverUtil', 'durandal/composition',
+    'knockout.validation', 'localization', 'infrastructure/moduleLoader', 'infrastructure/moduleRegistry', 'plugins/router', 'jquery', 'entityManagerProvider', 'infrastructure/serverUtil', 'durandal/composition',
     'knockout.extenders', 'infrastructure/validation', '../Scripts/safari.cancelZoom', 'infrastructure/contentEditing'],
-    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, router, $, entityManagerProvider, serverUtil, composition) {
+    function (app, viewLocator, system, Q, authentication, antiForgeryToken, validation, localization, moduleLoader, moduleRegistry, router, $, entityManagerProvider, serverUtil, composition) {
+        'use strict';
         
         //>>excludeStart("build", true);
         system.debug(true);
@@ -99,13 +100,24 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
                 app.trigger('caps:started');
             })
             .done();
-
+        
         function onBeforeUnload() {
             var options = {
                 message: 'Mindestens ein Bereich enthält ungespeicherte Änderungen.',
                 cancel: false
             };
+
             app.trigger('app:beforeunload', options);
+
+            ko.utils.arrayForEach(moduleRegistry.modules(), function (module) {
+                if (module.routeConfig.hasUnsavedChanges()) {
+                    options.cancel = true;
+                    options.message = 'Das Modul ' + module.routeConfig.title + ' enthält ungespeicherte Änderungen.';
+                    module.router.navigateToModule();
+                    return false;
+                }
+            });
+
             if (options.cancel)
                 return options.message;
         }

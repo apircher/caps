@@ -31,6 +31,8 @@ namespace Caps.Web.UI.Models
             var itemProperty = Expression.Property(item, "TagId");
             var method = typeof(int).GetMethod("Equals", new[] { typeof(int) });
 
+            var showItemsWithoutTags = value.Values.Any(s => String.Equals(s, "others"));
+
             List<int> tagIds = value.Values.Select(s =>
             {
                 int i;
@@ -41,22 +43,41 @@ namespace Caps.Web.UI.Models
             .Where(i => i >= 0)
             .ToList();
 
-            List<Expression> ve = tagIds.Select(v =>
-            {
-                var expr = Expression.Constant(v, typeof(int));
-                return Expression.Call(itemProperty, method, new[] { expr });
-            })
-            .Cast<Expression>()
-            .ToList();
-
-            var lambda = Expression.Lambda<Func<DbFileTag, bool>>(
-                ve.Cast<Expression>().Aggregate((e1, e2) => Expression.OrElse(e1, e2)), item);
-
+            Expression outerLambda = null, outerMethodExpr = null;
             var outerItem = Expression.Parameter(typeof(DbFile), "m");
             var outerProperty = Expression.Property(outerItem, "Tags");
-            var outerMethodExpr = Expression.Call(typeof(Enumerable), "Any", new[] { typeof(DbFileTag) }, outerProperty, lambda);
-            var outerLambda = Expression.Lambda<Func<DbFile, bool>>(outerMethodExpr, outerItem);
 
+            if (tagIds.Any())
+            {
+                List<Expression> ve = tagIds.Select(v =>
+                {
+                    var expr = Expression.Constant(v, typeof(int));
+                    return Expression.Call(itemProperty, method, new[] { expr });
+                })
+                .Cast<Expression>()
+                .ToList();
+
+                var lambda = Expression.Lambda<Func<DbFileTag, bool>>(
+                    ve.Cast<Expression>().Aggregate((e1, e2) => Expression.OrElse(e1, e2)), item);
+
+                outerMethodExpr = Expression.Call(typeof(Enumerable), "Any", new[] { typeof(DbFileTag) }, outerProperty, lambda);
+            }
+
+            if (showItemsWithoutTags)
+            {
+                var anyExpr2 = Expression.Call(typeof(Enumerable), "Any", new[] { typeof(DbFileTag) }, outerProperty);
+                var notAnyExpr = Expression.Not(anyExpr2);
+
+                //var objectEquals = typeof(object).GetMethod("Equals", new[] { typeof(object) });
+                //var nullConst = Expression.Constant(null);
+                //var nullCheckExpr = Expression.Call(outerProperty, objectEquals, new[] { nullConst });
+                if (outerMethodExpr != null)
+                    outerMethodExpr = Expression.OrElse(notAnyExpr, outerMethodExpr);
+                else
+                    outerMethodExpr = notAnyExpr;
+            }
+
+            outerLambda = Expression.Lambda<Func<DbFile, bool>>(outerMethodExpr, outerItem);
             return outerLambda;
         }
     }

@@ -1,5 +1,9 @@
-﻿/*
- * infrastructure/datacontext.js
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
  * Provides functions to retrieve entities that could be used in every module.
  */
 define([
@@ -9,11 +13,12 @@ define([
     'durandal/app'
 ],
 function (breeze, provider, system, app) {
+    'use strict';
 
     var manager = provider.createManager(),
         EntityQuery = breeze.EntityQuery;
 
-    /*
+    /**
      * Fetch all Website-Entities.
      */
     function getWebsites() {
@@ -21,7 +26,7 @@ function (breeze, provider, system, app) {
         return manager.executeQuery(query);
     }
 
-    /*
+    /**
      * Fetch all SiteMap-Entities for a given Website.
      */
     function getSiteMaps(websiteId) {
@@ -29,7 +34,7 @@ function (breeze, provider, system, app) {
         return manager.executeQuery(query);
     }
 
-    /*
+    /**
      * Fetch all Tag-Entities.
      */
     function getTags() {
@@ -37,7 +42,7 @@ function (breeze, provider, system, app) {
         return manager.executeQuery(query);
     }
 
-    /*
+    /**
      * Tries to fetch a Tag-Entity with the given name.
      * Returns a new entity if no match was found.
      */

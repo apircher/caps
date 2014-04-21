@@ -1,12 +1,22 @@
-﻿define([
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Represents the datacontext for the contentfile module.
+ */
+define([
     'durandal/system',
+    'durandal/app',
     'breeze',
     'entityManagerProvider',
     'jquery',
     'infrastructure/userQueryParser'
 ],
-function (system, breeze, entityManagerProvider, $, UserQueryParser) {
-
+function (system, app, breeze, entityManagerProvider, $, UserQueryParser) {
+    'use strict';
+    
     var manager = entityManagerProvider.createManager(),
         EntityQuery = breeze.EntityQuery;
 
@@ -135,6 +145,13 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
         manager.detachEntity(entity);
     }
 
+    function detachContentFile(entity) {
+        entity.Versions().forEach(function (v) {
+            detachEntity(v);
+        });
+        detachEntity(entity);
+    }
+
     function detachDraftFileResources(entity) {
         var resources = manager.getEntities('DraftFileResource');
         resources.forEach(function (r) {
@@ -176,6 +193,22 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
         .promise();
     }
 
+    app.on('caps:sitemapnode:deleted', function (node) {
+        var contentId = node.ContentId();
+        detachPublicationFileResources(contentId);
+    });
+
+    app.on('caps:draft:deleted', function (draft) {
+        detachDraftFileResources(draft);
+    });
+
+    app.on('caps:draft:saved', function (data) {
+        if (data.deletedFiles && data.deletedFiles.length) {
+            data.deletedFiles.forEach(function (f) {
+                detachDraftFile(f);
+            });
+        }
+    });
 
     return {
         getFiles: getFiles,
@@ -193,6 +226,7 @@ function (system, breeze, entityManagerProvider, $, UserQueryParser) {
         getFileInfo: getFileInfo,
         getThumbnailInfo: getThumbnailInfo,
         deleteThumbnail: deleteThumbnail,
+        detachContentFile: detachContentFile,
 
         isValidUserQuery: function (searchWords) {
             return parser.validate(searchWords);

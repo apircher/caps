@@ -1,14 +1,20 @@
-﻿/*
- * listSortModel.js
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Provides a model for sorting lists by a certain column.
  */
 define([
     'require',
     'ko'
 ],
 function (require, ko) {
+    'use strict';
     
     /**
-     * ListColumn Class
+     * ListColumn class
      */
     function ListColumn(name, title, owner) {
         var self = this;
@@ -29,7 +35,7 @@ function (require, ko) {
     }
 
     /**
-     * SortOptions Class
+     * SortOptions class
      */
     function SortOptions(columns, changeHandler, defaultSortColumn, defaultSortDirection) {
         var self = this;

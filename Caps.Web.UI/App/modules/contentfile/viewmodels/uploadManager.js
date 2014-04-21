@@ -1,14 +1,23 @@
-﻿define([
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+define([
     'ko',
-    'durandal/system'
+    'durandal/system',
+    'durandal/app'
 ],
-function (ko, system) {
+function (ko, system, app) {
+    'use strict';
     
-    /*
+    /**
      * UploadManager Class
      */
     function UploadManager(options) {
         var self = this;
+
+        options = $.extend({}, options);
 
         self.isUploading = ko.observable(false);
         self.progress = ko.observable(0);
@@ -16,40 +25,45 @@ function (ko, system) {
         self.lastSelection = ko.observableArray();
         self.pendingUploads = [];
         self.beforeUploadCalled = false;
+        self.batchIndex = 0;
+
+        self.currentUploads = ko.observableArray();
 
         self.filesSelected = function (e, data) {
             self.lastSelection(data.files);
             self.pendingUploads = [];
             self.beforeUploadCalled = false;
+            self.batchIndex = 0;
         };
 
         self.addFiles = function (e, data) {
-            if (options.beforeUpload && typeof options.beforeUpload === 'function') {
+            var storageOption = data.fileInput ? data.fileInput.data('storage-option') : '';
+            if (storageOption !== 'replace' && system.isFunction(options.beforeUpload)) {
                 self.pendingUploads.push(data);
-                if (!self.beforeUploadCalled) {
-                    self.beforeUploadCalled = true;
-                    options.beforeUpload.call(this, self.lastSelection(), data, beginUpload);
-                }
+                triggerBeforeUploadCalled(self.lastSelection(), beginUpload);
             }
             else
                 beginUpload();
 
-            function beginUpload(storageOptions) {
+            function beginUpload(storageOptions, existingFiles) {
                 self.isUploading(true);
 
                 if (self.pendingUploads.length)
-                    self.pendingUploads.forEach(function (d) { submitFiles(d, storageOptions); });
+                    self.pendingUploads.forEach(function (d) {
+                        submitFiles(d, storageOptions, existingFiles);
+                    });
                 else
-                    submitFiles(data, storageOptions);
+                    submitFiles(data, storageOptions, existingFiles);
             }
 
-            function submitFiles(data, storageOptions) {
-                var i = 0;
+            function submitFiles(data, storageOptions, existingFiles) {
                 ko.utils.arrayForEach(data.files, function (f) {
-                    if (options.uploadStarted && typeof options.uploadStarted === 'function')
-                        options.uploadStarted(f, i++, storageOptions);
+                    var hasExistingFile = false;
+                    if (existingFiles) {
+                        hasExistingFile = !!ko.utils.arrayFirst(existingFiles, function (ef) { return f.name === ef.fileName; });
+                    }
+                    triggerUploadStarted(f, self.batchIndex++, hasExistingFile ? storageOptions : undefined);
                 });
-
                 if (storageOptions) data.formData = storageOptions;
                 data.submit();
             }
@@ -58,8 +72,7 @@ function (ko, system) {
         self.uploadDone = function (e, data) {
             ko.utils.arrayForEach(data.result, function (r) {
                 var file = ko.utils.arrayFirst(data.files, function (f) { return f.name === r.fileName; });
-                if (options.uploadDone && typeof options.uploadDone === 'function')
-                    options.uploadDone(r, file);
+                triggerUploadDone(r, file);
             });
             self.isUploading(false);
         };
@@ -86,6 +99,33 @@ function (ko, system) {
 
             self.filesSelected(e, data);
         };
+
+        function triggerBeforeUploadCalled(files, callback) {
+            if (!self.beforeUploadCalled) {
+                self.beforeUploadCalled = true;
+                options.beforeUpload.call(this, files, callback);
+            }
+
+            app.trigger('uploadManager:beforeUpload', files, callback);
+        }
+
+        function triggerUploadStarted(file, index, storageOptions) {
+            if (system.isFunction(options.uploadStarted))
+                options.uploadStarted(file, index, storageOptions);
+
+            app.trigger('uploadManager:uploadStarted', file, index, storageOptions);
+
+            self.currentUploads.push(file);
+        }
+
+        function triggerUploadDone(data, file) {
+            if (system.isFunction(options.uploadDone))
+                options.uploadDone(data, file);
+
+            app.trigger('uploadManager:uploadDone', file, data);
+
+            self.currentUploads.remove(file);
+        }
     }
 
     return UploadManager;

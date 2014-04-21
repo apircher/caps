@@ -1,16 +1,25 @@
-﻿define([
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+define([
     'plugins/dialog',
     'ko',
     './fileListItem',
     'durandal/system',
+    'durandal/app',
     '../datacontext',
     'infrastructure/virtualListModel',
     './fileSearchControl',
-    './uploadManager',
     'toastr',
 ],
-function (dialog, ko, FileListItem, system, datacontext, VirtualListModel, FileSearchControl, UploadManager, toastr) {
+function (dialog, ko, FileListItem, system, app, datacontext, VirtualListModel, FileSearchControl, toastr) {
+    'use strict';
 
+    /**
+     * FileSelectionDialog class
+     */
     function FileSelectionDialog(options) {
         var self = this;
         options = options || {};
@@ -22,11 +31,28 @@ function (dialog, ko, FileListItem, system, datacontext, VirtualListModel, FileS
         self.selectedFiles = self.list.selectedItems;
         self.initialized = false;
         self.searchControl = new FileSearchControl();
+        self.uploadManager = app.uploadManager;
 
         self.searchControl.refreshResults = function () {
             self.list.resetSelection();
             self.list.removeAll();
             self.loadPage(1);
+        };
+
+        self.activate = function () {
+            console.log('Activating FileSelectionDialog');
+            if (!self.initialized) {
+                self.initialized = true;
+                self.loadPage(1);
+            }
+            app.on('uploadManager:uploadStarted', uploadManager_uploadStarted);
+            app.on('uploadManager:uploadDone', uploadManager_uploadDone);
+        };
+
+        self.deactivate = function () {
+            console.log('Deactivating FileSelectionDialog');
+            app.off('uploadManager:uploadStarted', uploadManager_uploadStarted);
+            app.off('uploadManager:uploadDone', uploadManager_uploadDone);
         };
 
         self.loadHandler = function (element, e) {
@@ -49,31 +75,27 @@ function (dialog, ko, FileListItem, system, datacontext, VirtualListModel, FileS
             }
         };
 
-        self.uploadManager = new UploadManager({
-            uploadStarted: function (file, batchIndex) {
-                file.listItem = self.list.insertItem(undefined, batchIndex);
-                file.listItem.isUploading(true);
-            },
-            uploadDone: function (result, file) {
-                var listItem = file.listItem;
-                datacontext.fetchFile(result.id).then(function () {
-                    listItem.data(datacontext.localGetFile(result.id));
-                    listItem.isUploading(false);
-                    listItem.isSelected(true);
-                })
-                .fail(function (err) {
-                    toastr.error('Die Datei ' + result.fileName + ' konnte nicht geladen werden.');
-                });
+        function uploadManager_uploadStarted(file, batchIndex, storageOptions) {
+            var replace = storageOptions && storageOptions.storageAction && (storageOptions.storageAction === 'replace');
+            if (!replace) {
+                var listItem = self.list.insertItem(undefined, batchIndex);
+                listItem.isUploading(true);
+                listItem.tempData = file;
             }
-        });
-    }
-
-    FileSelectionDialog.prototype.activate = function () {
-        if (!this.initialized) {
-            this.initialized = true;
-            this.loadPage(1);
         }
-    };
+
+        function uploadManager_uploadDone(file, result) {
+            var listItem = self.list.findItem(function (f) { return f.tempData === file || (f.data() && f.data().Id() === result.id); });
+            datacontext.fetchFile(result.id).then(function () {
+                listItem.data(datacontext.localGetFile(result.id));
+                listItem.isUploading(false);
+                listItem.isSelected(true);
+            })
+            .fail(function (err) {
+                toastr.error('Die Datei ' + result.fileName + ' konnte nicht geladen werden.');
+            });
+        }
+    }
 
     FileSelectionDialog.prototype.loadPage = function (pageNumber) {
         var self = this,

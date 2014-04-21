@@ -177,6 +177,9 @@ body,
     margin-left: 0;
   }
 }
+.nav.navbar-nav > li > a {
+  outline: none;
+}
 /* Bottom Navbar */
 .bottom-fixed-navbar-container {
   padding-bottom: 50px;
@@ -188,6 +191,20 @@ body,
   .navbar.navbar-fixed-bottom {
     position: relative;
     margin-top: 15px;
+  }
+}
+.bottom-fixed-navbar-l2 {
+  background: #fff;
+  padding: 5px 0;
+}
+@media (min-width: 992px) {
+  .bottom-fixed-navbar-l2 {
+    position: fixed;
+    bottom: 50px;
+    width: 100%;
+  }
+  .bottom-fixed-navbar-container-l2 {
+    padding-bottom: 50px;
   }
 }
 /**
@@ -234,7 +251,7 @@ body,
   left: 0;
   right: 0;
   top: 50px;
-  height: 50px;
+  height: 55px;
   padding: 15px 15px 0;
   z-index: 100;
   background: #fff;
@@ -790,7 +807,7 @@ a.no-underline:hover {
 }
 .dropdown-buttons {
   padding: 0 10px 4px;
-  text-align: right;
+  margin-top: 15px;
 }
 .dropdown-buttons > button {
   min-width: 80px;
@@ -910,6 +927,32 @@ span.large-icon {
 }
 .light-text {
   color: #999;
+}
+.module-tile-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #333;
+  display: none;
+}
+.module-tile-progress > div {
+  position: relative;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  height: 3px;
+  background: #3a7921;
+}
+.module-tile-progress.active {
+  display: block;
+}
+.tt-query.form-control {
+  border-radius: 4px 0 0 4px !important;
+}
+.form-control-buttons {
+  margin: 7.5px 0 0;
 }
 /**
   * Login View

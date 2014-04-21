@@ -1,4 +1,18 @@
-﻿define(['ko'], function (ko) {
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Provides logic to localize third party tools or frameworks like
+ * moment.js and knockout.validation.
+ * 
+ * Also provides a model for representing languages and 
+ * multilanguage-capabilities of Websites.
+ */
+
+define(['ko'], function (ko) {
+    'use strict';
 
     var validationStrings = {
         'de': {
@@ -78,7 +92,7 @@
         });
     }
     
-    /*
+    /**
      * Language Class
      */
     var languageNames = {
@@ -103,7 +117,7 @@
         return resourceSet[culture];
     };
 
-    /*
+    /**
      * WebsiteLocalization Class
      */
     function WebsiteLocalization() {
@@ -126,7 +140,6 @@
             localizeKnockoutValidation(culture);
             localizeMoment(culture);
         },
-
         website: wl
     };
 

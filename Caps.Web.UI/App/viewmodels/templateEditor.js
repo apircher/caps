@@ -1,4 +1,12 @@
-﻿define([
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Provides a viewmodel for editing draft templates.
+ */
+define([
     'ko',
     'entityManagerProvider',
     'plugins/router',
@@ -6,46 +14,77 @@
     'durandal/app'
 ],
 function (ko, entityManagerProvider, router, breeze, app) {
+    'use strict';
 
-    var template = ko.observable(),
-        manager = entityManagerProvider.createManager(),
-        EntityQuery = breeze.EntityQuery;
+    var EntityQuery = breeze.EntityQuery;
 
-    function createTemplate(websiteId) {
-        var entity = manager.createEntity('DraftTemplate', { Name: 'Neue Vorlage', WebsiteId: websiteId });
-        manager.addEntity(entity);
+    // Default content for new draft templates.
+    var defaultTemplateContent = {
+        'name': '',
+        'rows': [
+            {
+                'cells': [
+                    {
+                        'name': '',
+                        'title': '',
+                        'colspan': 12,
+                        'contentType': 'markdown',
+                        'content': ''
+                    }
+                ]
+            }
+        ],
+        'parameters': [
+            {
+                'name': '',
+                'title': '',
+                'type': 'String',
+                'value': ''
+            }
+        ]
+    };
 
-        template(entity);
-    }
+    function TemplateEditorViewModel() {
+        var self = this,
+            manager = entityManagerProvider.createManager(),
+            template = ko.observable();
 
-    function loadTemplate(id) {
-        var query = new EntityQuery().from('DraftTemplates').where('Id', '==', id);
-        return manager.executeQuery(query).then(function (data) {
-            var t = data.results[0];
-            template(t);
+        self.template = template;
+        self.title = ko.computed(function () {
+            var t = template();
+            return t && t.Name().length ? t.Name() : 'Neue Vorlage';
         });
-    }
 
-    return {
-        activate: function (websiteId, id) {
+        /**
+         * Activates the current TemplateEditorViewModel-Instance.
+         */
+        self.activate = function (websiteId, id) {
             if (!id) createTemplate(websiteId);
             else loadTemplate(id);
-        },
+        };
 
-        template: template,
-
-        navigateBack: function () {
+        /**
+         * Navigates to the previous view.
+         */
+        self.navigateBack = function () {
             router.navigateBack();
-        },
+        };
 
-        saveChanges: function () {
+        /**
+         * Saves the changes and navigates back
+         * to the previous view.
+         */
+        self.saveChanges = function () {
             manager.saveChanges().then(router.navigateBack);
-        },
+        };
 
-        deleteTemplate: function () {
+        /**
+         * Deletes the current draft template and
+         * navigates back to the previous view.
+         */
+        self.deleteTemplate = function () {
             var btnOk = 'Vorlage löschen',
                 btnCancel = 'Abbrechen';
-
             app.showMessage('Soll die Vorlage wirklich gelöscht werden?', 'Vorlage löschen', [btnOk, btnCancel])
                 .then(function (result) {
                     if (result === btnOk) {
@@ -56,10 +95,32 @@ function (ko, entityManagerProvider, router, breeze, app) {
                         });
                     }
                 });
-        },
+        };
 
-        title: ko.computed(function () {
-            return template() && template().Name().length ? template().Name() : 'Neue Vorlage';
-        })
-    };
+        /**
+         * Creates a new draft template in the local breeze context.
+         */
+        function createTemplate(websiteId) {
+            var entity = manager.createEntity('DraftTemplate', {
+                Name: 'Neue Vorlage',
+                WebsiteId: websiteId,
+                TemplateContent: JSON.stringify(defaultTemplateContent, null, 4)
+            });
+            manager.addEntity(entity);
+            template(entity);
+        }
+
+        /**
+         * Load the draft template with the given id into the local breeze context.
+         */
+        function loadTemplate(id) {
+            var query = new EntityQuery().from('DraftTemplates').where('Id', '==', id);
+            return manager.executeQuery(query).then(function (data) {
+                var t = data.results[0];
+                template(t);
+            });
+        }
+    }
+
+    return TemplateEditorViewModel;
 });

@@ -44,9 +44,12 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
             else keyboardHandler.deactivate();
         });
 
+        var autoRefreshTree = true;
         self.editor.entity().Files.subscribe(function () {
-            refreshFileGroups();
-            self.tree().refresh();
+            if (autoRefreshTree) {
+                refreshFileGroups();
+                self.tree().refresh();
+            }
         });
 
         self.groupNames = ko.computed(function () {
@@ -118,6 +121,31 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
                     file.entity().setDeleted();
                 }
             });
+        };
+
+        self.deleteGroup = function () {
+            var group = selectedGroupNode();
+            if (!group) return;
+
+            var attachmentsToRemove = ko.utils.arrayMap(group.childNodes(), function (n) { return n.entity(); });
+            if (attachmentsToRemove.length > 0) {
+                var btnOk = 'Gruppe löschen', btnCancel = 'Abbrechen';
+                app.showMessage('Soll die Gruppe "' + group.title() + '" wirklich gelöscht werden?', 'Gruppe löschen', [btnOk, btnCancel]).then(function (dialogResult) {
+                    if (dialogResult === btnOk) deleteGroupConfirmed();
+                });
+            }
+            else
+                deleteGroupConfirmed();
+
+            function deleteGroupConfirmed() {
+                fileGroups.remove(group.entity());
+                group.detachFromParentNode();
+                autoRefreshTree = false;
+                ko.utils.arrayForEach(attachmentsToRemove, function (attachment) {
+                    attachment.setDeleted();
+                });
+                autoRefreshTree = true;
+            }
         };
 
         self.contentTemplateName = function () {

@@ -1,6 +1,15 @@
-﻿define(['ko'], function (ko) {
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
 
-    /*
+define([
+    'ko'
+],
+function (ko) {
+    'use strict';
+
+    /**
      * FileListItem Class
      */
     function FileListItem(data, list) {

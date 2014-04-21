@@ -1,4 +1,10 @@
-﻿define(function () {
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+define(function () {
+    'use strict';
     
     function compareArrays(first, second) {
         if (!first || !second)

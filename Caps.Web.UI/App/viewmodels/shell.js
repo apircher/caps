@@ -1,5 +1,9 @@
-﻿/*
- * shell.js
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
  * Defines the view model for the application shell.
  */
 define([
@@ -11,17 +15,7 @@ define([
     'ko'
 ],
 function (router, app, authentication, moduleRouter, moduleRegistry, ko) {
-    
-    app.on('app:beforeunload', function (options) {
-        ko.utils.arrayForEach(moduleRegistry.modules(), function (module) {
-            if (module.routeConfig.hasUnsavedChanges()) {
-                options.cancel = true;
-                options.message = 'Das Modul ' + module.routeConfig.title + ' enthält ungespeicherte Änderungen.';
-                module.router.navigateToModule();
-                return false;
-            }
-        });
-    });
+    'use strict';
 
     return {
         router: router,

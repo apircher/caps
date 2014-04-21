@@ -1,4 +1,17 @@
-﻿define(['knockout', 'infrastructure/datacontext', 'durandal/system', 'authentication'], function (ko, datacontext, system, authentication) {
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+define([
+    'knockout',
+    'infrastructure/datacontext',
+    'durandal/system',
+    'authentication'
+],
+function (ko, datacontext, system, authentication) {
+    'use strict';
+
     var welcome = function () {
         this.displayName = 'Willkommen bei CAPS';
         this.description = 'Caps ist ein einfaches Content Management System zur Erstellung und Verwaltung Ihrer öffentlichen Inhalte.';

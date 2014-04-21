@@ -1,5 +1,10 @@
-﻿/*
- * tagService.js
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Provides a global service to get or create Tags.
  */
 define([
     'require',
@@ -10,6 +15,7 @@ define([
     'authentication'
 ],
 function (require, app, ko, Q, datacontext, authentication) {
+    'use strict';
 
     var tags = ko.observableArray([]);
 
@@ -18,7 +24,8 @@ function (require, app, ko, Q, datacontext, authentication) {
     });
 
     app.on('caps:tag:deleted', function (tag) {
-        tags.remove(tag);
+        var t = findTagById(tag.Id());
+        if (t) tags.remove(t);
     });
 
 

@@ -1,5 +1,10 @@
-﻿/*
- * moduleFactory.js
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Provides a factory for creating cms modules.
  */
 define([
     'ko',
@@ -7,7 +12,23 @@ define([
     'durandal/events'
 ],
 function (ko, dialog, Events) {
+    'use strict';
 
+    /**
+     * Creates a cms module with the given route configuration.
+     */
+    function createModule(routeConfig) {
+        routeConfig.hasUnsavedChanges = routeConfig.hasUnsavedChanges || ko.observable(false);
+        var m = new CapsModule(routeConfig);
+        Events.includeIn(m);
+        routeConfig.hasLongRunningTasks = ko.computed({ read: function () { return m.hasLongRunningTasks(); }, deferEvaluation: true });
+        routeConfig.taskInfo = ko.computed({ read: function () { return m.taskInfo(); }, deferEvaluation: true });
+        return m;
+    }
+
+    /**
+     * CapsModule class
+     */
     function CapsModule (routeConfig) {
         this.routeConfig = routeConfig;
         this.dialogContext = undefined;
@@ -21,8 +42,7 @@ function (ko, dialog, Events) {
         this.trigger('module:deactivate', this);
     };
 
-    CapsModule.prototype.initializeRouter = function () {
-    };
+    CapsModule.prototype.initializeRouter = function () { };
 
     CapsModule.prototype.getDialogContextName = function () {
         return this.moduleName + '_DialogContext';
@@ -68,12 +88,16 @@ function (ko, dialog, Events) {
         return dialog.show(vm, activationData, this.getDialogContextName());
     };
 
-    function createModule(routeConfig) {
-        routeConfig.hasUnsavedChanges = routeConfig.hasUnsavedChanges || ko.observable(false);
-        var m = new CapsModule(routeConfig);
-        Events.includeIn(m);
-        return m;
-    }
+    CapsModule.prototype.hasLongRunningTasks = function () {
+        return false;
+    };
+
+    CapsModule.prototype.taskInfo = function () {
+        return {
+            count: 0,
+            progress: 0
+        };
+    };
 
     return {
         createModule: createModule,

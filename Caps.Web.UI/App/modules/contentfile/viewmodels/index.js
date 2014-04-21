@@ -1,30 +1,34 @@
-﻿define([
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * The viewmodel for the index view of the contentfile module.
+ */
+define([
     'ko',
     'durandal/system',
     'durandal/app',
     '../module',
     '../datacontext',
     'infrastructure/virtualListModel',
-    'infrastructure/filterModel',
-    'infrastructure/listSortModel',
-    'jquery',
     'toastr',
     'Q',
     'doubleTap',
-    'infrastructure/tagService',
     './fileListItem',
     './uploadManager',
     './fileSearchControl',
-    'infrastructure/serverUtil',
-    './fileUploadDialog'
+    'infrastructure/serverUtil'
 ],
-function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, SortModel, $, toastr, Q, doubleTap, tagService, FileListItem, UploadManager, FileSearchControl, server, FileUploadDialog) {
+function (ko, system, app, module, datacontext, VirtualListModel, toastr, Q, doubleTap, FileListItem, UploadManager, FileSearchControl, server) {
+    'use strict';
         
     var vm,
         initialized = false,
         list = new VirtualListModel.VirtualList(35, null, FileListItem),
         isLoading = ko.observable(false),
-        uploadManager = createUploadManager(),
+        uploadManager = app.uploadManager,
         isInteractive = ko.observable(false),
         scrollTop = ko.observable(0),
         searchControl = new FileSearchControl();
@@ -47,6 +51,28 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
             if (list.selectedItem() === li) list.resetSelection();
             list.removeItem(li);
         }
+    });
+
+    app.on('uploadManager:uploadStarted', function (file, index, storageOptions) {
+        var replace = storageOptions && storageOptions.storageAction && (storageOptions.storageAction === 'replace');
+        if (!replace) {
+            var listItem = list.insertItem(undefined, index);
+            listItem.isUploading(true);
+            listItem.tempData = file;
+        }
+    });
+
+    app.on('uploadManager:uploadDone', function (file, result) {
+        var listItem = list.findItem(function (f) { return f.tempData === file || (f.data() && f.data().Id() === result.id); });
+        datacontext.fetchFile(result.id).then(function () {
+            if (listItem) {
+                listItem.data(datacontext.localGetFile(result.id));
+                listItem.isUploading(false);
+            }
+        })
+        .fail(function (err) {
+            toastr.error('Die Datei ' + r.FileName + ' konnte nicht geladen werden.');
+        });
     });
 
     searchControl.refreshResults = function () {
@@ -96,8 +122,13 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
                 .then(function (result) {
                     if (result === btnOk) {
                         list.suspendEvents = true;
-                        var promises = ko.utils.arrayMap(sel, function (f) { return deleteFile(f); });
-                        Q.all(promises).then(function () {
+                        var promises2 = Q.when({});
+                        sel.forEach(function (f) {
+                            promises2 = promises2.then(function () {
+                                return deleteFile(f);
+                            });
+                        });
+                        Q.when(promises2).then(function () {
                             list.suspendEvents = false;
                             list.raiseItemsChanged();
                         });
@@ -155,11 +186,13 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
     };
 
     function loadPage(pageNumber) {
-        var sc = searchControl;
-        console.log('loadPage called. pageNumber=' + pageNumber + ', Filter=' + sc.currentFilter);
+        var sc = searchControl,
+            filter = sc.hasFilterOptions() ? sc.currentFilter : '',
+            orderBy = sc.sortOptions.getOrderBy();
+        console.log('loadPage called. pageNumber=' + pageNumber + ', Filter=' + filter);
         return system.defer(function (dfd) {
             isLoading(true);
-            datacontext.searchFiles(sc.searchWords(), pageNumber, list.itemsPerPage(), sc.sortOptions.getOrderBy(), sc.currentFilter)
+            datacontext.searchFiles(sc.searchWords(), pageNumber, list.itemsPerPage(), orderBy, filter)
                 .then(function (data) {
                     list.addPage(data, pageNumber);
                     dfd.resolve();
@@ -180,45 +213,6 @@ function (ko, system, app, module, datacontext, VirtualListModel, FilterModel, S
         function deleteFailed(err) {
             app.showMessage('Die Datei konnte nicht gelöscht werden.', 'Nicht erfolgreich');
         }
-    }
-
-    function createUploadManager() {
-        return new UploadManager({
-            beforeUpload: function(files, data, callback) {
-                var fileNames = ko.utils.arrayMap(files, function (f) { return f.name; });
-                datacontext.getFileInfo(fileNames).then(function (result) {
-                    var existingFiles = ko.utils.arrayFilter(result, function (r) { return r.count > 0; });
-                    if (existingFiles.length > 0) {
-                        var dlgVm = new FileUploadDialog(result);
-                        app.showDialog(dlgVm).then(function (dialogResult) {
-                            if (dialogResult) 
-                                callback(dialogResult);
-                        });
-                    }
-                    else
-                        callback();
-                });
-            },
-            uploadStarted: function (file, batchIndex, storageOptions) {
-                var replace = storageOptions && storageOptions.storageAction === 'replace';
-                if (!replace) {
-                    file.listItem = list.insertItem(undefined, batchIndex);
-                    file.listItem.isUploading(true);
-                }
-            },
-            uploadDone: function (result, file) {
-                var listItem = file.listItem || list.findItem(function (f) { return f.data() && f.data().Id() === result.id; });
-                datacontext.fetchFile(result.id).then(function () {
-                    if (listItem) {
-                        listItem.data(datacontext.localGetFile(result.id));
-                        listItem.isUploading(false);
-                    }
-                })
-                .fail(function (err) {
-                    toastr.error('Die Datei ' + r.FileName + ' konnte nicht geladen werden.');
-                });
-            }
-        });
     }
                 
     return vm;

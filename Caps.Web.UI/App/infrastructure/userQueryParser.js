@@ -1,4 +1,45 @@
-﻿define(['breeze', './searchGrammer'], function (breeze, grammer) {
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Parses user search input and returns a breeze predicate
+ * representing that search input.
+ */
+define([
+    'breeze',
+    './searchGrammer'
+],
+function (breeze, grammer) {
+    'use strict';
+
+    /**
+     * UserQueryParser
+     */
+    function UserQueryParser() {
+
+    }
+
+    UserQueryParser.prototype.translateColumnName = function (columnName) {
+        // Inherited classes can override this function to
+        // convert human readable column names like 'Author' to 
+        // actual column names like 'Created.By'.
+        return columnName;
+    };
+
+    UserQueryParser.prototype.getBreezePredicate = function (searchWords) {
+        if (searchWords && searchWords.length) {
+            var q = parseUserQuery(searchWords);
+            if (q) return createBreezePredicate(q, this);
+        }
+        return null;
+    };
+
+    UserQueryParser.prototype.validate = function (searchWords) {
+        return parseUserQuery(searchWords) !== null;
+    };
+
 
     grammer.yy = {
         AndExpression: AndExpression,
@@ -28,7 +69,6 @@
         this.type = 'SearchTerm';
         this.col = col;
     }
-
 
     function parseUserQuery(searchWords) {
         try {
@@ -64,34 +104,7 @@
             }
             return null;
         }
-    }
-
-    /*
-     * UserQueryParser
-     */
-    function UserQueryParser() {
-
-    }
-
-    UserQueryParser.prototype.translateColumnName = function (columnName) {
-        // Inherited classes can override this function to
-        // convert human readable column names like 'Author' to 
-        // actual column names like 'Created.By'.
-        return columnName;
-    };
-
-    UserQueryParser.prototype.getBreezePredicate = function (searchWords) {
-        if (searchWords && searchWords.length) {
-            var q = parseUserQuery(searchWords);
-            if (q) return createBreezePredicate(q, this);
-        }
-        return null;
-    };
-
-    UserQueryParser.prototype.validate = function (searchWords) {
-        return parseUserQuery(searchWords) !== null;
-    };
-    
+    }    
 
     return UserQueryParser;
 });

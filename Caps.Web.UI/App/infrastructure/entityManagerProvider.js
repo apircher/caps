@@ -1,14 +1,20 @@
-﻿/*
- * entityManagerProvider.js
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Returns properly configured breeze entity manager instances.
  */
 define([
     'breeze',
     'infrastructure/moduleRegistry'
 ],
 function (breeze, moduleRegistry) {
+    'use strict';
 
-    var serviceName = '~/breeze/capsdata';
-    var masterManager = new breeze.EntityManager(serviceName);
+    var serviceName = '~/breeze/capsdata',
+        masterManager = new breeze.EntityManager(serviceName);
 
     //TODO: configure the metadataStore with entity type extensions.
 
@@ -28,7 +34,9 @@ function (breeze, moduleRegistry) {
     }
 
     function initialize() {
+
         //TODO: load masterManager with lookup entities and any other startup data. Returns a promise.
+
         var modules = moduleRegistry.modules();
         for (var i = 0; i < modules.length; i++) {
             var func = modules[i].extendModel;
@@ -39,6 +47,8 @@ function (breeze, moduleRegistry) {
     }
 
     function refresh() {
+
         //TODO: refresh cached entities. Typically a subset of the initialize function.
+
     }
 });

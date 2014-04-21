@@ -1,11 +1,20 @@
-﻿define([
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Defines the model-entities for the contentfile module.
+ */
+define([
     'require',
     'knockout',
     'infrastructure/utils'
 ],
 function (require, ko, utils) {
+    'use strict';
 
-    /*
+    /**
      * DbFile Entity
      */
     function DbFile() {
@@ -50,7 +59,7 @@ function (require, ko, utils) {
         };
     }
 
-    /*
+    /**
      * DbFileVersion Entity
      */
     function DbFileVersion() {

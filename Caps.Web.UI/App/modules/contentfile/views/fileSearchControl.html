@@ -1,5 +1,6 @@
 ﻿<div class="input-group">
     <!-- Filter Dropdown -->
+    <!-- ko if: hasFilterOptions -->
     <div class="input-group-btn" data-bind="event: { 'show.bs.dropdown': beginSetFilter }">
         <a id="A1" role="button" data-toggle="dropdown" data-target="#" href="#" class="btn btn-default dropdown-toggle">
             <span><i class="fa fa-filter"></i></span>
@@ -31,6 +32,18 @@
                     </ul>
                 </div>
             </li>
+            <li data-bind="if: filterOptions()">
+                <div class="dropdown menu-section">
+                    <ul class="checkbox-list" role="menu">
+                        <li>
+                            <a role="menuitem" tabindex="-1" href="#" class="checkable-item" data-bind="click: filterOptions().toggleShowOthers, clickBubble: false">
+                                <span class="icon"><i class="fa fa-fw" data-bind="css: { 'fa-square-o': !filterOptions().showOthers(), 'fa-check-square-o': filterOptions().showOthers() }"></i></span>
+                                <span class="mnu-label">Keine Markierungen</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
             <li>
                 <div class="dropdown-buttons">
                     <button class="btn btn-default btn-sm" data-bind="click: endSetFilter">Ok</button>
@@ -39,6 +52,7 @@
             </li>
         </ul>
     </div>
+    <!-- /ko -->
     <!-- Searchwords -->
     <input type="text" data-bind="delayedSearch: { searchObservable: searchWords, searchHandler: search }" class="form-control hide-ms-clear" placeholder="Suche" />
     <!-- Sort Button/Dropdown -->

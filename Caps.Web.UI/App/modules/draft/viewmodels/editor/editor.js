@@ -57,7 +57,7 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
         });
 
         self.activate = function (draftIdOrTemplateName, queryString) {
-            app.on('caps:contentfile:uploadDone', fileUploadDone);
+            app.on('caps:contentfile:replaced', fileUploadDone);
             return system.defer(function (dfd) {
                 if (draftIdOrTemplateName && /^[0-9]+$/.test(draftIdOrTemplateName)) {
                     loadEntity(draftIdOrTemplateName)
@@ -99,7 +99,7 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
 
         self.deactivate = function () {
             module.routeConfig.hasUnsavedChanges(false);
-            app.off('caps:contentfile:uploadDone', fileUploadDone);
+            app.off('caps:contentfile:replaced', fileUploadDone);
             if (draftFilesVM) draftFilesVM.deactivate();
         };
 

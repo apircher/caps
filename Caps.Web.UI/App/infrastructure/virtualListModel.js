@@ -1,5 +1,10 @@
-﻿/*
- * virtualListModel.js
+﻿/**
+ * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
+ * Available via the MIT license.
+ */
+
+/**
+ * Provides a model for representing lazy lists.
  */
 define([
     'require',
@@ -7,6 +12,7 @@ define([
     'jquery'
 ],
 function (require, ko, $) {
+    'use strict';
 
     /**
      * VirtualListItem Class
@@ -100,7 +106,7 @@ function (require, ko, $) {
             page = self.findItemPage(item),
             indexInPage = page.items.indexOf(item);
 
-        page.items.splice(0, indexInPage, vm);
+        page.items.splice(indexInPage, 0, vm);
         page.count++;
         self.count(self.count() + 1);
         self.raiseItemsChanged();

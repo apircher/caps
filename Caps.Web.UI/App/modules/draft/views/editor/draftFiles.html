@@ -1,8 +1,8 @@
 ﻿
 <div class="row">
     <div class="col-md-2 left-fixed-sidebar draftfiles-sidebar">
-        <div data-bind="if: tree(), forceViewportHeight: { spacers: '.draftfiles-sidebar-nav', minWidth: 992 }" class="panel-scroll-vh">
-            <!-- ko template: { name: 'draftfile-node-template', data: tree().rootNodes() } --><!-- /ko -->
+        <div data-bind="if: tree(), forceViewportHeight: { spacers: '.draftfiles-sidebar > .draftfiles-sidebar-nav', minWidth: 992 }" class="panel-scroll-vh">
+            <!-- ko template: { name: 'draftfile-node-template', data: tree().rootNodes } --><!-- /ko -->
         </div>
         <div class="draftfiles-sidebar-nav">
             <ul class="list-inline">
@@ -18,9 +18,16 @@
         <!-- ko if: tree().selectedNode() -->
         <!-- ko template: { name: contentTemplateName, data: tree().selectedNode() } --><!-- /ko -->
         <!-- /ko -->
-        <div data-bind="if: !tree().selectedNode()">
-            <a href="#" data-bind="click: selectFiles"><span><i class="fa fa-plus"></i> Anhänge hinzufügen</span></a>
+        <!-- ko if: !tree().selectedNode() || contentTemplateName() === 'draftfiles-group-template' -->
+        <div class="bottom-fixed-navbar-l2">
+            <ul class="list-inline">
+                <li><a href="#" data-bind="click: selectFiles"><span><i class="fa fa-plus"></i> Anhänge hinzufügen</span></a></li>
+                <!-- ko if: contentTemplateName() === 'draftfiles-group-template' -->
+                <li><a href="#" data-bind="click: deleteGroup"><span><i class="fa fa-times"></i> Gruppe löschen</span></a></li>
+                <!-- /ko -->
+            </ul>
         </div>
+        <!-- /ko -->
     </div>
 </div>
 
@@ -76,14 +83,8 @@
         <input type="text" data-bind="value: groupName" class="form-control input-lg" placeholder="Name der Gruppe" />
     </div>
 
-    <div class="block-content-subnav">
-        <p>
-            <a href="#" data-bind="click: $parent.selectFiles"><span><i class="fa fa-plus"></i> Anhänge hinzufügen</span></a>
-        </p>
-    </div>
-
     <div class="row draftfile-thumbnails" data-bind="foreach: childNodes">
-        <div class="col-xs-4 col-md-3 col-lg-2 thumbnails-fixed-size">
+        <div class="col-xs-4 col-md-3 col-lg-2 thumbnails-fixed-size bottom-fixed-navbar-container-l2">
             <div class="thumbnail-container">
                 <a class="thumbnail" data-bind="if: resource.FileVersion(), click: selectNode">
                     <!-- ko template: { name: 'draftFiles-dbfile-icon' } --><!-- /ko -->
