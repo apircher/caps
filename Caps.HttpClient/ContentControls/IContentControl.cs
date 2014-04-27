@@ -10,7 +10,7 @@ namespace Caps.Consumer.ContentControls
 {
     public interface IContentControl
     {
-        XmlNode TransformNode(XmlNode node, String controlId, String language, DbSiteMapNode siteMapNode, ContentScriptManager scriptManager, IUrlHelper urlHelper);
+        XmlNode TransformNode(ControlContext context);
     }
 
     public interface IUrlHelper
@@ -19,5 +19,24 @@ namespace Caps.Consumer.ContentControls
         String RouteUrl(String routeName, object routeData);
         String Publication(int permanentId);
         String Content(String contentPath);
+    }
+    
+    public class ControlContext
+    {
+        public XmlNode Node { get; set; }
+        public XmlDocument Document
+        {
+            get
+            {
+                if (Node == null) return null;
+                return Node.OwnerDocument;
+            }
+        }
+
+        public String ControlId { get; set; }
+        public String Language { get; set; }
+        public DbSiteMapNode SiteMapNode { get; set; }
+        public ContentScriptManager ScriptManager { get; set; }
+        public IUrlHelper UrlHelper { get; set; }
     }
 }

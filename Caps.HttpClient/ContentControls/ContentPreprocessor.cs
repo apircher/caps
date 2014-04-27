@@ -64,7 +64,18 @@ namespace Caps.Consumer.ContentControls
         {
             var capsControl = controlsRegistry.FindControl(node.LocalName);
             if (capsControl != null)
-                return capsControl.TransformNode(node, controlId, language, siteMapNode, scriptManager, urlHelper);
+            {
+                var context = new ControlContext
+                {
+                    Node = node,
+                    ControlId = controlId,
+                    Language = language,
+                    SiteMapNode = siteMapNode,
+                    ScriptManager = scriptManager,
+                    UrlHelper = urlHelper
+                };
+                return capsControl.TransformNode(context);
+            }
             return null;
         }
         String WrapContent(String content)

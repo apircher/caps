@@ -10,14 +10,14 @@ namespace Caps.Consumer.ContentControls
 {
     public class ContentControl : IContentControl
     {
-        public XmlNode TransformNode(XmlNode node, String controlId, String language, DbSiteMapNode siteMapNode, ContentScriptManager scriptManager, IUrlHelper urlHelper)
+        public XmlNode TransformNode(ControlContext context)
         {
-            return OnTransformNode(node, controlId, language, siteMapNode, scriptManager, urlHelper);
+            return OnTransformNode(context);
         }
 
-        protected virtual XmlNode OnTransformNode(XmlNode node, String controlId, String language, DbSiteMapNode siteMapNode, ContentScriptManager scriptManager, IUrlHelper urlHelper)
+        protected virtual XmlNode OnTransformNode(ControlContext context)
         {
-            return node.OwnerDocument.CreateDiv(controlId, "caps-control");
+            return context.Node.OwnerDocument.CreateDiv(context.ControlId, "caps-control");
         }
     }
 }
