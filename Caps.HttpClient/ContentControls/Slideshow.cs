@@ -18,7 +18,6 @@ namespace Caps.Consumer.ContentControls
             var controlId = context.ControlId;
             var language = context.Language;
             var urlHelper = context.UrlHelper;
-
             var document = node.OwnerDocument;
 
             String fileGroupSelector = node.GetAttributeValueOrDefault("filegroup");
@@ -29,25 +28,21 @@ namespace Caps.Consumer.ContentControls
             if (String.IsNullOrWhiteSpace(size))
                 size = "300x300";
             
-
             var content = siteMapNode.Content;
             if (content == null)
                 return document.CreateComment(String.Format("Caps Slideshow: No content available."));
 
             var files = SelectFiles(content, fileGroupSelector).ToList();
 
-            if (files.Count == 0)
-                return document.CreateComment(String.Format("Caps Slideshow: No slides found for '{0}'.", fileGroupSelector));
-
-            if (files.Count == 1)
+            switch (files.Count)
             {
-                var file = files.First();
-                var container = document.CreateDiv(controlId, "caps-slideshow");
-                container.AppendChild(document.CreateSlideImage(file, language, GetSlideImageSrc(context, file, size), "caps-slide1"));
-                return container;
+                case 0:
+                    return document.CreateComment(String.Format("Caps Slideshow: No slides found for '{0}'.", fileGroupSelector));
+                case 1:
+                    return CreateSingleImageContent(context, files.First(), size);
+                default:
+                    return CreateImageList(context, files, size);
             }
-
-            return CreateImageList(context, files, size);
         }
 
         protected virtual IEnumerable<PublicationFile> SelectFiles(Publication publication, XmlNode node) 
@@ -64,6 +59,13 @@ namespace Caps.Consumer.ContentControls
             return publication.GetContentFiles("Picture")
                 .Where(p => groupNames.Any(gn => String.Equals(p.Group, gn, StringComparison.OrdinalIgnoreCase)))
                 .OrderBy(p => p.Ranking);
+        }
+
+        protected virtual XmlNode CreateSingleImageContent(ControlContext context, PublicationFile file, String size)
+        {
+            var container = context.Document.CreateDiv(context.ControlId, "caps-slideshow");
+            container.AppendChild(CreateSlideImage(context, file, size, GetSlideImageSrc(context, file, size), "caps-slide1"));
+            return container;
         }
 
         protected virtual XmlNode CreateImageList(ControlContext context, IEnumerable<PublicationFile> files, String imageSize) 
@@ -84,9 +86,9 @@ namespace Caps.Consumer.ContentControls
             return container;
         }
 
-        protected virtual XmlNode CreateSlideImage(ControlContext context, PublicationFile file, String size, String src) 
+        protected virtual XmlNode CreateSlideImage(ControlContext context, PublicationFile file, String size, String src, String cssClass = "caps-slide") 
         {
-            return context.Document.CreateSlideImage(file, context.Language, GetSlideImageSrc(context, file, size), "caps-slide");
+            return context.Document.CreateSlideImage(file, context.Language, src, cssClass);
         }
 
         protected virtual String GetSlideImageSrc(ControlContext context, PublicationFile file, String size) 
