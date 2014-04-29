@@ -51,7 +51,7 @@ namespace Caps.Web.UI.Controllers
 
             var user = userManager.FindByName(User.Identity.GetUserName());
             return new AuthenticatedUserModel(
-                loginProvider, providerKey, userName, user, externalLogin != null
+                loginProvider, providerKey, userName, userManager.GetRoles(user.Id).ToArray(), user, externalLogin != null
             );
         }
 

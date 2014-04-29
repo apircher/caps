@@ -34,7 +34,7 @@ namespace Caps.Web.UI.Controllers
         public IList<UserModel> GetAll()
         {
             var authors = db.Users.ToList();
-            return authors.Select(u => new UserModel(u)).ToList();
+            return authors.Select(u => new UserModel(u, userManager.GetRoles(u.Id))).ToList();
         }
 
         [Authorize(Roles = "Administrator")]
@@ -44,7 +44,7 @@ namespace Caps.Web.UI.Controllers
             var author = db.GetAuthorByUserName(userName);
             if (author == null)
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
-            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(author));
+            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(author, userManager.GetRoles(author.Id)));
         }
 
         [Authorize(Roles = "Administrator")]
@@ -91,7 +91,7 @@ namespace Caps.Web.UI.Controllers
             model.UpdateAuthor(user, userManager);
 
             db.SaveChanges();
-            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(user));
+            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(user, userManager.GetRoles(user.Id)));
         }
 
         [Authorize(Roles = "Administrator")]
@@ -115,7 +115,7 @@ namespace Caps.Web.UI.Controllers
             }
 
             db.SaveChanges();
-            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(author));
+            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(author, userManager.GetRoles(author.Id)));
         }
 
         [Authorize(Roles = "Administrator")]
@@ -136,8 +136,7 @@ namespace Caps.Web.UI.Controllers
                 if (author == null)
                     return Request.CreateResponse(HttpStatusCode.NotFound);
 
-                author.DeleteAuthorAndAccount(db);
-                db.SaveChanges();
+                userManager.Delete(author);
 
                 return Request.CreateResponse(HttpStatusCode.OK);
             }

@@ -20,13 +20,13 @@ namespace Caps.Web.UI.Models
         public AuthenticatedUserModel()
         {
         }
-        public AuthenticatedUserModel(String loginProvider, String providerKey, String userName, Author author, bool hasRegistered)
+        public AuthenticatedUserModel(String loginProvider, String providerKey, String userName, String[] roles, Author author, bool hasRegistered)
         {
             if (author != null)
             {
                 IsAuthenticated = true;
-                UserName = author.UserName;
-                Roles = author.GetRoles();
+                UserName = userName;
+                Roles = roles;
                 CreationDate = author.CreationDate;
                 LastPasswordChangedDate = author.LastPasswordChangedDate.GetValueOrDefault(author.CreationDate);
 

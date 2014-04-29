@@ -11,7 +11,7 @@ namespace Caps.Data
 {
     public class CapsDbContext : IdentityDbContext<Author>
     {
-        public CapsDbContext() : base("CapsDbContext")
+        public CapsDbContext() : base("CapsDbContext", throwIfV1Schema: false)
         {
             //Configuration.ProxyCreationEnabled = false;
             //Configuration.LazyLoadingEnabled = false;

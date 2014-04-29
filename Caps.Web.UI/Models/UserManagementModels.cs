@@ -16,19 +16,20 @@ namespace Caps.Web.UI.Models
         public UserModel()
         {
         }
-        public UserModel(Author author)
+        public UserModel(Author author, IEnumerable<String> roles)
         {
             UserName = author.UserName;
             Comment = author.Comment;
             CreationDate = author.CreationDate;
             Email = author.Email;
-            Phone = author.Phone;
+            Phone = author.PhoneNumber;
             IsLockedOut = author.IsLockedOut();
             LastActivityDate = new DateTime(author.LastActivityDate.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
             LastLockoutDate = new DateTime(author.LastLockoutDate.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
             LastLoginDate = new DateTime(author.LastLoginDate.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
             LastPasswordChangedDate = new DateTime(author.LastPasswordChangedDate.GetValueOrDefault(author.CreationDate).Ticks, DateTimeKind.Utc);
-            Roles = author.GetRoles();
+
+            Roles = roles.ToArray();
 
             FirstName = author.FirstName;
             LastName = author.LastName;
@@ -61,7 +62,7 @@ namespace Caps.Web.UI.Models
         {
             author.Comment = Comment;
             author.Email = Email;
-            author.Phone = Phone;
+            author.PhoneNumber = Phone;
 
             author.FirstName = FirstName;
             author.LastName = LastName;
@@ -71,7 +72,7 @@ namespace Caps.Web.UI.Models
 
         void UpdateRoles(Author author, UserManager<Author> userManager)
         {
-            var currentRoles = author.Roles.Select(r => r.Role.Name).ToArray();
+            var currentRoles = userManager.GetRoles(author.Id).ToArray();
 
             var rolesToAdd = new String[0];
             if (Roles != null)

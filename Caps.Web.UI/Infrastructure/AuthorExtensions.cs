@@ -22,7 +22,7 @@ namespace Caps.Web.UI.Infrastructure
 
         public static String[] GetRoles(this Author author)
         {
-            return author.Roles.Select(r => r.Role.Name).ToArray();
+            return Roles.GetRolesForUser(author.UserName);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Caps.Web.UI.Infrastructure
             var store = new UserStore<Author>(db);
             var userManager = new UserManager<Author>(store);
             // Remove all Roles.
-            Array.ForEach(author.GetRoles(), r => userManager.RemoveFromRole(author.Id, r));
+            Array.ForEach(userManager.GetRoles(author.Id).ToArray(), r => userManager.RemoveFromRole(author.Id, r));
             // Delete the Author
             db.Users.Remove(author);
         }

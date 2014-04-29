@@ -18,11 +18,6 @@ namespace Caps.Data.Model
         [MaxLength(50), Required]
         public String LastName { get; set; }
 
-        [MaxLength(50), Required]
-        public String Email { get; set; }
-        [MaxLength(50)]
-        public String Phone { get; set; }
-
         [DateTimeKind(DateTimeKind.Utc)]
         public DateTime CreationDate { get; set; }
         public DateTime? LastLoginDate { get; set; }
