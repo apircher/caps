@@ -9,7 +9,7 @@ namespace Caps.Data.Migrations
         {
             RenameColumn(table: "dbo.AspNetUserClaims", name: "User_Id", newName: "UserId");
             RenameIndex(table: "dbo.AspNetUserClaims", name: "IX_User_Id", newName: "IX_UserId");
-            DropPrimaryKey("dbo.AspNetUserLogins");
+            //DropPrimaryKey("dbo.AspNetUserLogins");
             AddColumn("dbo.AspNetUsers", "EmailConfirmed", c => c.Boolean(nullable: false));
             AddColumn("dbo.AspNetUsers", "PhoneNumber", c => c.String());
             AddColumn("dbo.AspNetUsers", "PhoneNumberConfirmed", c => c.Boolean(nullable: false));
@@ -24,7 +24,7 @@ namespace Caps.Data.Migrations
             AlterColumn("dbo.AspNetUsers", "Email", c => c.String(maxLength: 256));
             AlterColumn("dbo.AspNetUsers", "CreationDate", c => c.DateTime(nullable: false));
             AlterColumn("dbo.AspNetUsers", "PasswordFailuresSinceLastSuccess", c => c.Int(nullable: false));
-            AddPrimaryKey("dbo.AspNetUserLogins", new[] { "LoginProvider", "ProviderKey", "UserId" });
+            //AddPrimaryKey("dbo.AspNetUserLogins", new[] { "LoginProvider", "ProviderKey", "UserId" });
             CreateIndex("dbo.AspNetRoles", "Name", unique: true, name: "RoleNameIndex");
             CreateIndex("dbo.AspNetUsers", "UserName", unique: true, name: "UserNameIndex");
             DropColumn("dbo.AspNetUsers", "Phone");
