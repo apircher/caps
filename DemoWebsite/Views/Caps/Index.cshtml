@@ -1,0 +1,63 @@
+@using Caps.Consumer.Model
+@using Caps.Consumer.Mvc.SiteMap
+@using Caps.Consumer.Mvc
+
+@{
+    ViewBag.Title = SiteMap.CurrentNode != null ? String.Format("{0} - Your Website Title", SiteMap.CurrentNode.Title) : "Your Website Title";
+    var content = ViewBag.Content as ContentModel;
+    var breadCrumbs = SiteMap.CurrentNode.GetBreadCrumbs();
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <ul class="breadcrumb">
+            @foreach (var breadCrumb in breadCrumbs)
+            {
+                <li><a href="@breadCrumb.Url">@breadCrumb.Title</a></li>
+            }
+            <li>@SiteMap.CurrentNode.Title</li>
+        </ul>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-9">
+        @if (!content.HasLocalizedContent)
+        {
+            <div class="alert-info">Sorry, currently this content is only available in German.</div>
+        }
+
+        @foreach (var part in content.ContentParts)
+        {
+            @Html.RenderContentPart(content, part.Usage);
+        }
+    </div>
+    <div class="col-md-3">
+        @{
+            var nodes = SiteMap.RootNode.ChildNodes;
+            if (breadCrumbs.Any())
+            {
+                nodes = breadCrumbs.Count() == 1 ?
+                    SiteMap.CurrentNode.ChildNodes : breadCrumbs.Skip(1).First().ChildNodes;
+            }
+        }
+        <br />
+        <div>
+            @foreach (var node in nodes.Cast<CapsSiteMapNode>().Where(n => n.IsNodeTypeIn("Page", "Draft", "Action")))
+            {
+                <div>
+                    <h4><a href="@node.Url">@node.Title</a></h4>
+                    @if (node.ChildNodes.Count > 0)
+                    {
+                        <ul class="clear-list">
+                            @foreach (var childNode in node.ChildNodes.Cast<SiteMapNode>())
+                            {
+                                <li><a href="@childNode.Url">@childNode.Title</a></li>
+                            }
+                        </ul>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+@using Caps.Consumer.Model
+@using Caps.Consumer.Mvc
+
+@{
+    ViewBag.Title = "Startseite";
+    var content = ViewBag.Content as Caps.Consumer.Model.ContentModel;
+}
+
+@if (!content.HasLocalizedContent)
+{
+    <div class="alert-info">Sorry, currently this content is only available in German.</div>
+}
+
+@foreach (var part in content.ContentParts)
+{
+    @Html.RenderContentPart(content, part.Usage);
+}

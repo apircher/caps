@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Caps.Consumer</id>
+    <version>1.0.0.0</version>
+    <authors>Andreas Pircher</authors>
+    <owners>Pircher Software</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Adds the Caps.Consumer Library to the project. This library may be used to consume Caps Content via Http.</description>
+    <tags>Caps CMS</tags>
+    <dependencies>
+      <dependency id="CacheCow.Client" version="0.5.1" />
+      <dependency id="Microsoft.AspNet.WebApi.Client" version="5.1.2" />
+    </dependencies>
+  </metadata>
+</package>

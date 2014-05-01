@@ -1,0 +1,25 @@
+<configuration>
+  <appSettings>
+    <add key="caps:Url" value="URL_OF_YOUR_CAPS_CMS" />
+    <add key="caps:AppKey" value="YOUR_CMS_APP_USER" />
+    <add key="caps:AppSecret" value="YOUR_CMS_APP_PASSWORD" />
+  </appSettings>
+
+  <system.web>
+    <!-- Add the Caps SiteMap Provider -->
+    <siteMap defaultProvider="CapsSiteMapProvider" enabled="true">
+      <providers>
+        <clear />
+        <add name="CapsSiteMapProvider" type="Caps.Consumer.Mvc.Providers.CapsSiteMapProvider" securityTrimmingEnabled="true" />
+      </providers>
+    </siteMap>
+  </system.web>
+
+  <system.webServer>
+    <handlers>
+      <add name="CapsInlineFileExtension" path="file/*/*/*.*" verb="GET" type="System.Web.Handlers.TransferRequestHandler" preCondition="integratedMode,runtimeVersionv4.0" />
+      <add name="CapsDownloadExtension" path="download/*/*/*.*" verb="GET" type="System.Web.Handlers.TransferRequestHandler" preCondition="integratedMode,runtimeVersionv4.0" />
+      <add name="CapsThumbnailExtension" path="thmb/*/*/*.*" verb="GET" type="System.Web.Handlers.TransferRequestHandler" preCondition="integratedMode,runtimeVersionv4.0" />
+    </handlers>
+  </system.webServer>
+</configuration>
