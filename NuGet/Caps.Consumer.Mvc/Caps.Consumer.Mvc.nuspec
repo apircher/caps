@@ -10,7 +10,7 @@
     <copyright>Copyright 2014</copyright>
     <tags>Caps CMS Asp.net MVC</tags>
     <dependencies>
-      <dependency id="Caps.Consumer" version="1.0.0.0" />
+      <dependency id="Caps.Consumer" version="1.0.0.2" />
       <dependency id="Microsoft.AspNet.WebApi.Client" version="5.1.2" />
       <dependency id="bootstrap" version="3.1.1" />
       <dependency id="jQuery" version="2.1.0" />

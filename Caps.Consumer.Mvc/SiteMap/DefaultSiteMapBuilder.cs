@@ -60,7 +60,7 @@ namespace Caps.Consumer.Mvc.SiteMap
             website = websites.First();
             currentSiteMap = await client.GetCurrentSiteMap(website.Id);
             nodeList = currentSiteMap != null && currentSiteMap.SiteMapNodes != null ?
-                currentSiteMap.SiteMapNodes.ToList() : new List<DbSiteMapNode>();
+                currentSiteMap.SelectAllSiteMapNodes().ToList() : new List<DbSiteMapNode>();
 
             var rootNodeEntity = nodeList.Where(n => !n.ParentNodeId.HasValue && String.Equals(n.NodeType, "ROOT"))
                 .FirstOrDefault();
@@ -187,6 +187,17 @@ namespace Caps.Consumer.Mvc.SiteMap
             //return siteMapExpiration;
 
             return DateTime.Now.Add(TimeSpan.FromMinutes(10));
+        }
+
+        /// <summary>
+        /// Returns the DbSiteMapNode-Instance with the given 
+        /// DbSiteMapNode.Id-Property from the node list last fetched from the server.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        protected DbSiteMapNode FindNodeById(int id)
+        {
+            return nodeList.FirstOrDefault(n => n.Id == id);
         }
 
         void Index(DbSiteMapNode entity, SiteMapNode node)

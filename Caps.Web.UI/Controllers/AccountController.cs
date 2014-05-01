@@ -50,8 +50,9 @@ namespace Caps.Web.UI.Controllers
             String userName = externalLogin != null ? externalLogin.UserName : User.Identity.GetUserName();
 
             var user = userManager.FindByName(User.Identity.GetUserName());
+            var roles = user != null ? userManager.GetRoles(user.Id).ToArray() : new String[0];
             return new AuthenticatedUserModel(
-                loginProvider, providerKey, userName, userManager.GetRoles(user.Id).ToArray(), user, externalLogin != null
+                loginProvider, providerKey, userName, roles, user, externalLogin != null
             );
         }
 
