@@ -95,6 +95,31 @@ namespace Caps.Web.UI.Controllers
             return Ok(Dto.Create(content));
         }
 
+        // GET api/websites/{websiteId}/content/{permanentId}/thumbnail/{nameOrSize}
+
+        [Route("{websiteId}/content/{permanentId}/thumbnail/{nameOrSize}")]
+        [CacheOutput(ServerTimeSpan = 3600, ClientTimeSpan = 0, MustRevalidate = true)]
+        public IHttpActionResult GetContentThumbnail(int websiteId, int permanentId, String nameOrSize, String fitMode = "Default")
+        {
+            var currentSiteMap = db.GetCurrentSiteMap(websiteId);
+            if (currentSiteMap == null)
+                return null;
+
+            var node = db.SiteMapNodes
+                .Include("Content.Files.Resources.FileVersion.File")
+                .FirstOrDefault(n => n.SiteMap.Id == currentSiteMap.Id && n.PermanentId == permanentId);
+
+            var firstImage = node.Content.GetContentFiles("Picture").OrderBy(f => f.Ranking).ThenBy(f => f.Id).FirstOrDefault();
+            if (firstImage == null)
+                return null;
+            
+            var fileVersion = firstImage.FileVersionForLanguage("de", "en");
+            if (fileVersion == null)
+                return null;
+
+            return GetThumbnail(websiteId, fileVersion.Id, nameOrSize, fitMode);
+        }
+
         // GET api/websites/{websiteId}/teasers
 
         [Route("{websiteId}/teasers")]

@@ -75,6 +75,18 @@ namespace Caps.Consumer
         }
 
         /// <summary>
+        /// Returns a DbFileThumbnail-Instance representing a thumbnail for the first picture of the content with the given id.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<DbThumbnail> GetContentThumbnail(int websiteId, int permanentId, String nameOrSize, String fitMode = "Default")
+        {
+            var response = await client.GetAsync("api/websites/" + websiteId.ToString() + "/content/" + permanentId.ToString() + "/thumbnail/" + nameOrSize + "?fitMode=" + fitMode);
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadAsAsync<DbThumbnail>();
+            return null;
+        }
+
+        /// <summary>
         /// Returns a IEnumerable&lt;TeaserModel&gt;-Instance that contains all 
         /// teasers placed on the start page.
         /// </summary>
