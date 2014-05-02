@@ -10,6 +10,13 @@ namespace Caps.Web.Imaging
 {
     public class DefaultThumbnailGenerator : ThumbnailGenerator
     {
+        const String generatorName = "Default";
+        
+        public override string Name
+        {
+            get { return generatorName; }
+        }
+
         public override ThumbnailGeneratorResult GenerateThumbnail(byte[] sourceImage, ThumbnailSettings settings)
         {
             return CreateImageResizerThumbnail(sourceImage, CreateResizeSettings(settings));

@@ -9,6 +9,8 @@ namespace Caps.Web.Imaging
 {
     public abstract class ThumbnailGenerator : IThumbnailGenerator
     {
+        public abstract String Name { get; }
+
         /// <summary>
         /// Generates a thumbnail for the given source image.
         /// </summary>

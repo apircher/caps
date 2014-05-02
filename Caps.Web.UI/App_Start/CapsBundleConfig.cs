@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Optimization;
 
-namespace Caps.Web.UI.App_Start
+namespace Caps.Web.UI
 {
     public class CapsBundleConfig
     {
