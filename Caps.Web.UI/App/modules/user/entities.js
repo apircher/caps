@@ -44,7 +44,7 @@
             return moment(self.lastLoginDate()).fromNow();
         });
         this.lastActivityDateFormatted = ko.computed(function () {
-            if (!self.hasEverLoggedIn()) return 'noch nie';
+            if (self.lastActivityDate() < self.creationDate()) return 'noch nie';
             return moment(self.lastActivityDate()).subtract('seconds', 20).fromNow();
         });
 

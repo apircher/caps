@@ -25,6 +25,9 @@ namespace Caps.Web.UI
                 basePath = HttpContext.Current.Server.MapPath(basePath);
 
             var thumbnailGeneratorsPath = Path.Combine(basePath, "ThumbnailGenerators\\");
+            if (!Directory.Exists(thumbnailGeneratorsPath))
+                return;
+
             var catalog = new DirectoryCatalog(thumbnailGeneratorsPath);
             var container = new CompositionContainer(catalog);
 

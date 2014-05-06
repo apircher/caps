@@ -21,6 +21,7 @@ namespace Caps.Data.Model
         [DateTimeKind(DateTimeKind.Utc)]
         public DateTime CreationDate { get; set; }
         public DateTime? LastLoginDate { get; set; }
+        [DateTimeKind(DateTimeKind.Utc)]
         public DateTime? LastActivityDate { get; set; }
         public DateTime? LastPasswordChangedDate { get; set; }
         public DateTime? LastLockoutDate { get; set; }
