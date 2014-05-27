@@ -306,6 +306,8 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\themes\base\images\animated-overlay.gif" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
@@ -371,6 +373,7 @@
     <Content Include="Content\toastr.css" />
     <Content Include="Content\toastr.min.css" />
     <Content Include="Content\typeahead.css" />
+    <Content Include="Fonts\fontawesome-webfont.svg" />
     <Content Include="Fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Fonts\glyphicons-halflings-regular.ttf" />
@@ -381,6 +384,10 @@
     <Content Include="Content\app-theme.css.map">
       <DependentUpon>app-theme.css</DependentUpon>
     </Content>
+    <Content Include="Fonts\fontawesome-webfont.woff" />
+    <Content Include="Fonts\fontawesome-webfont.ttf" />
+    <Content Include="Fonts\fontawesome-webfont.eot" />
+    <Content Include="Fonts\FontAwesome.otf" />
     <Content Include="Content\toastr.scss" />
     <Content Include="Content\toastr.less" />
     <None Include="Properties\PublishProfiles\caps-pirchersoftware - FTP.pubxml" />
@@ -533,8 +540,6 @@
     <Content Include="App\viewmodels\welcome.js" />
     <Content Include="App\main.js" />
     <Content Include="Content\durandal.css" />
-    <Content Include="Content\font-awesome.css" />
-    <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\ie10mobile.css" />
     <Content Include="Content\images\apple-touch-startup-image-1024x748.png" />
     <Content Include="Content\images\apple-touch-startup-image-1536x2008.png" />
@@ -548,7 +553,6 @@
     <Content Include="Content\images\icon-1.png" />
     <Content Include="Content\images\ios-startup-image-landscape-1.png" />
     <Content Include="Content\images\ios-startup-image-portrait-1.png" />
-    <Content Include="Fonts\fontawesome-webfont.svg" />
     <Content Include="Global.asax" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
@@ -573,10 +577,6 @@
     <Content Include="Scripts\toastr.min.js" />
     <Content Include="weyland-config.js" />
     <None Include="App\infrastructure\searchGrammer.jison" />
-    <Content Include="Fonts\fontawesome-webfont.woff" />
-    <Content Include="Fonts\fontawesome-webfont.ttf" />
-    <Content Include="Fonts\fontawesome-webfont.eot" />
-    <Content Include="Fonts\FontAwesome.otf" />
     <None Include="Properties\PublishProfiles\caps-dev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\caps-dev - Web Deploy.pubxml" />
     <Content Include="Scripts\almond-custom.js" />
@@ -625,8 +625,8 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\_splash.cshtml" />
     <Content Include="App\infrastructure\validation.js" />
-    <Content Include="Scripts\toastr.min.js.map" />
     <Content Include="Scripts\jquery-2.1.1.min.map" />
+    <Content Include="Scripts\toastr.min.js.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
