@@ -3,42 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity.Migrations;
 
 namespace Caps.Data.Model
 {
     public static class StockDraftTemplates
     {
-        public static void Seed(Caps.Data.CapsDbContext context)
+        public static void Seed(Caps.Data.CapsDbContext context, Website defaultWebsite)
         {
-            if (!context.DraftTemplates.Any())
+            if (!context.DraftTemplates.Any() && defaultWebsite != null)
             {
-                var website = context.Websites.FirstOrDefault();
-                if (website != null)
+                context.DraftTemplates.AddOrUpdate(new DraftTemplate
                 {
-                    context.DraftTemplates.Add(new DraftTemplate
-                    {
-                        Name = "Template 1",
-                        TemplateContent = stockTemplate1,
-                        Description = "Eine Vorlage mit Kopfbereich, Hauptteil, Zusatzinformationen und Fußleiste.",
-                        WebsiteId = website.Id
-                    });
+                    Name = "Template 1",
+                    TemplateContent = stockTemplate1,
+                    Description = "Eine Vorlage mit Kopfbereich, Hauptteil, Zusatzinformationen und Fußleiste.",
+                    WebsiteId = defaultWebsite.Id
+                });
 
-                    context.DraftTemplates.Add(new DraftTemplate
-                    {
-                        Name = "Template 2",
-                        TemplateContent = stockTemplate2,
-                        Description = "Eine Vorlage mit Kopfbereich, Hauptteil und Zusatzinformationen.",
-                        WebsiteId = website.Id
-                    });
+                context.DraftTemplates.AddOrUpdate(new DraftTemplate
+                {
+                    Name = "Template 2",
+                    TemplateContent = stockTemplate2,
+                    Description = "Eine Vorlage mit Kopfbereich, Hauptteil und Zusatzinformationen.",
+                    WebsiteId = defaultWebsite.Id
+                });
 
-                    context.DraftTemplates.Add(new DraftTemplate
-                    {
-                        Name = "Template 3",
-                        TemplateContent = stockTemplate3,
-                        Description = "Eine Vorlage mit Kopfbereich und Hauptteil.",
-                        WebsiteId = website.Id
-                    });
-                }
+                context.DraftTemplates.AddOrUpdate(new DraftTemplate
+                {
+                    Name = "Template 3",
+                    TemplateContent = stockTemplate3,
+                    Description = "Eine Vorlage mit Kopfbereich und Hauptteil.",
+                    WebsiteId = defaultWebsite.Id
+                });
             }
         }
 

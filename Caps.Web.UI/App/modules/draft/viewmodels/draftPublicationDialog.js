@@ -50,7 +50,7 @@ function (system, dialog, ko, SiteMapTree, datacontext, PublicationViewModel, co
         }
     };
 
-    DraftPublicationDialog.prototype.selectOk = function () {
+    DraftPublicationDialog.prototype.selectCreateNew = function () {
         var self = this;
 
         // Create Publication
@@ -75,6 +75,28 @@ function (system, dialog, ko, SiteMapTree, datacontext, PublicationViewModel, co
         dialog.close(this, {
             dialogResult: false
         });
+    };
+
+    DraftPublicationDialog.prototype.selectLink = function () {
+        var self = this;
+
+        // Create Publication
+        try {
+            var cnt = contentGenerator.createPublicationContent(self.draft());
+
+            publicationService.setNodeContent(self.siteMapTree.selectedNode().Id(), cnt)
+                .then(function () {
+                    dialog.close(self, {
+                        dialogResult: true
+                    });
+                })
+                .fail(function (error) {
+                    alert(error.message);
+                });
+        }
+        catch (error) {
+            alert(error.message);
+        }
     };
 
     return DraftPublicationDialog;

@@ -3,10 +3,12 @@
     <div class="panel-padding-h subnav-fixed-top-container">
         <div class="row subnav-fixed-top sitemap-index-header">
             <div class="col-md-12">
-                <ul class="list-inline pull-left">
+                <ul class="list-inline pull-right">
                     <li>
-                        <a href="#" data-bind="click: editWebsite"><i class="fa fa-cog"></i> Website</a>
+                        <a href="#" data-bind="click: editWebsite" title="Website-Einstellungen"><i class="fa fa-cog"></i></a>
                     </li>
+                </ul>
+                <ul class="list-inline pull-left">
                     <li>
                         <!-- ko if: siteMapVersions() -->
                         <select data-bind="options: siteMapVersions, optionsCaption: 'Version wählen', optionsText: 'title', value: selectedSiteMap"></select>
@@ -95,7 +97,7 @@
                     </li>
                     <!-- /ko -->
                     <li>
-                        <a href="#" data-bind="click: selectContent"><i class="fa fa-arrow-right fa-fw"></i> Inhalt festlegen...</a>
+                        <a href="#" data-bind="click: selectContent"><i class="fa fa-arrow-right fa-fw"></i> Inhalt verknüpfen...</a>
                     </li>
                 </ul>
                 <!-- /ko -->

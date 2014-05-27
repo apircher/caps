@@ -58,7 +58,7 @@ namespace Caps.Web.UI.Models
 
         public String[] Roles { get; set; }
 
-        public void UpdateAuthor(Author author, UserManager<Author> userManager)
+        public void UpdateAuthor(Author author, ApplicationUserManager userManager, ApplicationRoleManager roleManager)
         {
             author.Comment = Comment;
             author.Email = Email;
@@ -67,10 +67,10 @@ namespace Caps.Web.UI.Models
             author.FirstName = FirstName;
             author.LastName = LastName;
 
-            UpdateRoles(author, userManager);
+            UpdateRoles(author, userManager, roleManager);
         }
 
-        void UpdateRoles(Author author, UserManager<Author> userManager)
+        void UpdateRoles(Author author, ApplicationUserManager userManager, ApplicationRoleManager roleManager)
         {
             var currentRoles = userManager.GetRoles(author.Id).ToArray();
 
@@ -79,7 +79,7 @@ namespace Caps.Web.UI.Models
                 rolesToAdd = Roles.Where(r => !currentRoles.Contains(r, StringComparer.OrdinalIgnoreCase)).ToArray();
             var rolesToRemove = Roles != null ? currentRoles.Where(r => !Roles.Contains(r, StringComparer.OrdinalIgnoreCase)).ToArray() : currentRoles;
 
-            if (rolesToRemove.Contains("Administrator", StringComparer.OrdinalIgnoreCase) && author.IsLastUserInRole("Administrator"))
+            if (rolesToRemove.Contains("Administrator", StringComparer.OrdinalIgnoreCase) && userManager.IsLastUserInRole(author.UserName, "Administrator"))
                 throw new InvalidOperationException("Der letzte Administrator kann nicht entfernt werden.");
 
             Array.ForEach(rolesToAdd, r => userManager.AddToRole(author.Id, r));

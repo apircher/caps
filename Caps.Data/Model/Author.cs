@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Caps.Data.Utils;
+using System.Security.Claims;
+using Microsoft.AspNet.Identity;
 
 namespace Caps.Data.Model
 {
@@ -28,5 +30,13 @@ namespace Caps.Data.Model
         public DateTime? LastPasswordFailureDate { get; set; }
         public int PasswordFailuresSinceLastSuccess { get; set; }
         public String Comment { get; set; }
+
+        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<Author> manager)
+        {
+            // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
+            var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+            // Add custom user claims here
+            return userIdentity;
+        }
     }
 }

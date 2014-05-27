@@ -3,6 +3,7 @@ using Caps.Web.UI.Infrastructure;
 using Caps.Web.UI.Infrastructure.WebApi;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
@@ -19,22 +20,12 @@ namespace Caps.Web.UI
     {
         static Startup()
         {
-            PublicClientId = "self";
-
-            UserManagerFactory = () =>
-            {
-                return DependencyResolver.Current.GetService<UserManager<Author>>();
-            };
-
-            DbFactory = () =>
-            {
-                return DependencyResolver.Current.GetService<Caps.Data.CapsDbContext>();
-            };
+            PublicClientId = "caps_cms";
 
             OAuthOptions = new OAuthAuthorizationServerOptions
             {
                 TokenEndpointPath = new PathString("/Token"),
-                Provider = new ApplicationOAuthProvider(PublicClientId, UserManagerFactory, DbFactory),
+                Provider = new ApplicationOAuthProvider(PublicClientId),
                 AuthorizeEndpointPath = new PathString("/api/account/externallogin"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
                 AllowInsecureHttp = true
@@ -43,20 +34,33 @@ namespace Caps.Web.UI
 
         public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
 
-        public static Func<UserManager<Author>> UserManagerFactory { get; set; }
-
-        public static Func<Caps.Data.CapsDbContext> DbFactory { get; set; }
-
         public static string PublicClientId { get; private set; }
 
         // Weitere Informationen zum Konfigurieren der Authentifizierung finden Sie unter "http://go.microsoft.com/fwlink/?LinkId=301864".
         public void ConfigureAuth(IAppBuilder app)
         {
+            app.CreatePerOwinContext<Caps.Data.CapsDbContext>(() => new Caps.Data.CapsDbContext());
+            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
+            app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
+
             // Enable the application to use a cookie to store information for the signed in user
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider
-            app.UseCookieAuthentication(new CookieAuthenticationOptions());
-            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+            // Configure the sign in cookie
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                LoginPath = new PathString("/"),
+                Provider = new CookieAuthenticationProvider
+                {
+                    // Enables the application to validate the security stamp when the user logs in.
+                    // This is a security feature which is used when you change a password or add an external login to your account.  
+                    OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, Author>(
+                        validateInterval: TimeSpan.FromMinutes(30),
+                        regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
+                }
+            });
 
+            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+            
             // Anwendung für die Verwendung eines Trägertokens zum Authentifizieren von Benutzern aktivieren
             app.UseOAuthBearerTokens(OAuthOptions);
 

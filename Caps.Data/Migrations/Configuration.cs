@@ -20,14 +20,14 @@ namespace Caps.Data.Migrations
         {
             //  This method will be called after migrating to the latest version.
 
-            if (!context.Websites.Any())
+            var defaultWebsite = context.Websites.FirstOrDefault();
+            if (defaultWebsite == null)
             {
-                context.Websites.AddOrUpdate(
-                    new Caps.Data.Model.Website { Name = "Caps Website", Url = "http://caps.luxbox.net" }
-                );
+                defaultWebsite = new Caps.Data.Model.Website { Name = "Caps Website", Url = "http://caps.luxbox.net" };
+                context.Websites.AddOrUpdate(defaultWebsite);
             }
 
-            Caps.Data.Model.StockDraftTemplates.Seed(context);
+            Caps.Data.Model.StockDraftTemplates.Seed(context, defaultWebsite);
 
             foreach (var draft in context.Drafts)
             {

@@ -10,6 +10,9 @@ namespace Caps.Web.UI.App_Start
 
     using Ninject;
     using Ninject.Web.Common;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using Caps.Data;
 
     public static class NinjectWebCommon 
     {
@@ -53,10 +56,14 @@ namespace Caps.Web.UI.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            kernel.Bind<Caps.Data.CapsDbContext>().ToSelf().InRequestScope();
+            kernel.Bind<CapsDbContext>().ToSelf().InRequestScope();
 
-            kernel.Bind<Microsoft.AspNet.Identity.IUserStore<Caps.Data.Model.Author>>()
-                .ToConstructor(u => new Microsoft.AspNet.Identity.EntityFramework.UserStore<Caps.Data.Model.Author>(kernel.Get<Caps.Data.CapsDbContext>()))
+            kernel.Bind<IUserStore<Caps.Data.Model.Author>>()
+                .ToConstructor(u => new UserStore<Caps.Data.Model.Author>(kernel.Get<CapsDbContext>()))
+                .InRequestScope();
+
+            kernel.Bind<IRoleStore<IdentityRole, string>>()
+                .ToConstructor(u => new RoleStore<IdentityRole>(kernel.Get<CapsDbContext>()))
                 .InRequestScope();
 
             kernel.Bind<Caps.Web.UI.Controllers.IAntiForgeryTokenProvider>().To<Caps.Web.UI.Controllers.DefaultAntiForgeryTokenProvider>();

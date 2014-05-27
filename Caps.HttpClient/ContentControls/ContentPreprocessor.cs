@@ -158,7 +158,14 @@ namespace Caps.Consumer.ContentControls
                 MatchCollection sizeMatches = sizeRegex.Matches(query);
                 if (sizeMatches.Count > 0)
                     size = sizeMatches[0].Groups["size"].Value;
-                return GetThumbnailSrc(fileName, language, size);
+
+                var fitModeRegex = new Regex(@"(\?|&amp;|&)fitMode=(?'fitMode'[^&]+)", RegexOptions.IgnoreCase);
+                var fitMode = "Default";
+                MatchCollection fitModeMatches = fitModeRegex.Matches(query);
+                if (fitModeMatches.Count > 0)
+                    fitMode = fitModeMatches[0].Groups["fitMode"].Value;
+
+                return GetThumbnailSrc(fileName, language, size, fitMode);
             }
             return GetFileSrc(fileName, language, true);
         }
@@ -192,7 +199,7 @@ namespace Caps.Consumer.ContentControls
             });
         }
 
-        String GetThumbnailSrc(String key, String language, String size)
+        String GetThumbnailSrc(String key, String language, String size, String fitMode)
         {
             var content = siteMapNode.Content;
             if (content == null)
@@ -212,6 +219,7 @@ namespace Caps.Consumer.ContentControls
                 id = sqlFile.Id,
                 name = sqlFile.File.FileName,
                 size = size,
+                fitMode = fitMode,
                 v = Convert.ToBase64String(sqlFile.Hash)
             });
         }

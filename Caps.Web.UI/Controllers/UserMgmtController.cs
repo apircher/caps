@@ -20,12 +20,14 @@ namespace Caps.Web.UI.Controllers
     [RoutePrefix("api/usermgmt")]
     public class UserMgmtController : ApiController
     {
-        UserManager<Author> userManager;
+        ApplicationUserManager userManager;
+        ApplicationRoleManager roleManager;
         CapsDbContext db;
 
-        public UserMgmtController(UserManager<Author> userManager, CapsDbContext db)
+        public UserMgmtController(ApplicationUserManager userManager, ApplicationRoleManager roleManager, CapsDbContext db)
         {
             this.userManager = userManager;
+            this.roleManager = roleManager;
             this.db = db;
         }
 
@@ -88,7 +90,7 @@ namespace Caps.Web.UI.Controllers
             if (user == null)
                 return Request.CreateResponse(HttpStatusCode.InternalServerError);
 
-            model.UpdateAuthor(user, userManager);
+            model.UpdateAuthor(user, userManager, roleManager);
 
             db.SaveChanges();
             return Request.CreateResponse(HttpStatusCode.OK, new UserModel(user, userManager.GetRoles(user.Id)));
@@ -107,7 +109,7 @@ namespace Caps.Web.UI.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             try
             {
-                model.UpdateAuthor(author, userManager);
+                model.UpdateAuthor(author, userManager, roleManager);
             }
             catch (InvalidOperationException ex)
             {

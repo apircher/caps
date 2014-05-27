@@ -1,6 +1,7 @@
 ﻿using Caps.Data;
 using Caps.Data.Model;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
@@ -16,73 +17,62 @@ namespace Caps.Web.UI.Infrastructure
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
-        private readonly Func<UserManager<Author>> _userManagerFactory;
-        private readonly Func<CapsDbContext> _dbFactory;
 
-        public ApplicationOAuthProvider(string publicClientId, Func<UserManager<Author>> userManagerFactory, Func<CapsDbContext> dbFactory)
+        public ApplicationOAuthProvider(string publicClientId)
         {
             if (publicClientId == null)
             {
                 throw new ArgumentNullException("publicClientId");
             }
 
-            if (userManagerFactory == null)
-            {
-                throw new ArgumentNullException("userManagerFactory");
-            }
-
             _publicClientId = publicClientId;
-            _userManagerFactory = userManagerFactory;
-            _dbFactory = dbFactory;
         }
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
-            var db = _dbFactory();
-            using (UserManager<Author> userManager = _userManagerFactory())
+            var db = context.OwinContext.Get<CapsDbContext>();
+            var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
+
+            Author user = await userManager.FindByNameAsync(context.UserName);
+            if (user == null)
             {
-                Author user = await userManager.FindByNameAsync(context.UserName);
-                if (user == null)
+                context.SetError("invalid_grant", "Der Benutzername oder das Kennwort ist falsch.");
+                return;
+            }
+            else
+            {
+                if (LockoutHelper.IsUserLockedOut(userManager, user))
                 {
-                    context.SetError("invalid_grant", "Der Benutzername oder das Kennwort ist falsch.");
+                    context.SetError("invalid_grant", "Das Konto wurde aufgrund zu vieler ungültiger Anmeldeversuche vorübergehend gesperrt. Die Sperre wird nach " 
+                        + Settings.LockoutPeriod.ToString() + " Minuten automatisch aufgehoben");
                     return;
                 }
-                else
+
+                var r = userManager.PasswordHasher.VerifyHashedPassword(user.PasswordHash, context.Password);
+                if (r == PasswordVerificationResult.Failed)
                 {
-                    if (LockoutHelper.IsUserLockedOut(userManager, user))
-                    {
-                        context.SetError("invalid_grant", "Das Konto wurde aufgrund zu vieler ungültiger Anmeldeversuche vorübergehend gesperrt. Die Sperre wird nach " 
-                            + Settings.LockoutPeriod.ToString() + " Minuten automatisch aufgehoben");
-                        return;
-                    }
-
-                    var r = userManager.PasswordHasher.VerifyHashedPassword(user.PasswordHash, context.Password);
-                    if (r == PasswordVerificationResult.Failed)
-                    {
-                        context.SetError("invalid_grant", "Der Benutzername oder das Kennwort ist falsch.");
-                        user.LastPasswordFailureDate = DateTime.UtcNow;
-                        user.PasswordFailuresSinceLastSuccess++;
-                        db.SaveChanges();
-                        return;
-                    }
-
-                    user.LastPasswordFailureDate = null;
-                    user.PasswordFailuresSinceLastSuccess = 0;
-                    user.RegisterLogin();
+                    context.SetError("invalid_grant", "Der Benutzername oder das Kennwort ist falsch.");
+                    user.LastPasswordFailureDate = DateTime.UtcNow;
+                    user.PasswordFailuresSinceLastSuccess++;
                     db.SaveChanges();
+                    return;
                 }
 
-                ClaimsIdentity oAuthIdentity = await userManager.CreateIdentityAsync(user,
-                    context.Options.AuthenticationType);
-                ClaimsIdentity cookiesIdentity = await userManager.CreateIdentityAsync(user,
-                    CookieAuthenticationDefaults.AuthenticationType);
-                AuthenticationProperties properties = CreateProperties(user.UserName);
-                AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
-                context.Validated(ticket);
-
-                bool isPersistent = ShouldCreatePersistentCookie(context.Request);
-                context.Request.Context.Authentication.SignIn(new AuthenticationProperties { IsPersistent = isPersistent }, cookiesIdentity);
+                user.LastPasswordFailureDate = null;
+                user.PasswordFailuresSinceLastSuccess = 0;
+                user.RegisterLogin();
+                db.SaveChanges();
             }
+
+            ClaimsIdentity oAuthIdentity = await userManager.CreateIdentityAsync(user, context.Options.AuthenticationType);
+            ClaimsIdentity cookiesIdentity = await userManager.CreateIdentityAsync(user, CookieAuthenticationDefaults.AuthenticationType);
+
+            AuthenticationProperties properties = CreateProperties(user.UserName);
+            AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
+            context.Validated(ticket);
+
+            bool isPersistent = ShouldCreatePersistentCookie(context.Request);
+            context.Request.Context.Authentication.SignIn(new AuthenticationProperties { IsPersistent = isPersistent }, cookiesIdentity);
         }
 
         bool ShouldCreatePersistentCookie(Microsoft.Owin.IOwinRequest request)
