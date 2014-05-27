@@ -188,7 +188,7 @@ namespace Caps.Web.UI.Controllers
 
         [Route("{websiteId}/fileversions/{fileVersionId}/thumbnails/{nameOrSize}")]
         [CacheOutput(ServerTimeSpan = 3600, ClientTimeSpan = 0, MustRevalidate = true)]
-        public IHttpActionResult GetThumbnail(int websiteId, int fileVersionId, String nameOrSize, String fitMode = "Default")
+        public IHttpActionResult GetThumbnail(int websiteId, int fileVersionId, String nameOrSize, String fitMode = "Default", String scaleMode = "Default")
         {
             var latestVersion = db.FileVersions
                 .Include("Content")
@@ -203,7 +203,7 @@ namespace Caps.Web.UI.Controllers
             if (!file.IsImage) // TODO: Return default document thumbnail...
                 return BadRequest("Thumbnails can only be created for images.");
 
-            var thumbnail = latestVersion.GetOrCreateThumbnail(nameOrSize, ConvertToFitMode(fitMode));
+            var thumbnail = latestVersion.GetOrCreateThumbnail(nameOrSize, ConvertToFitMode(fitMode), ConvertToScaleMode(scaleMode));
             if (thumbnail == null)
                 return BadRequest("An error occured while creating the thumbnail.");
 
@@ -219,6 +219,13 @@ namespace Caps.Web.UI.Controllers
             if (Enum.TryParse<Caps.Web.Imaging.ThumbnailFitMode>(s, out mode))
                 return mode;
             return Caps.Web.Imaging.ThumbnailFitMode.Default;
+        }
+        static Caps.Web.Imaging.ThumbnailScaleMode ConvertToScaleMode(String s)
+        {
+            Caps.Web.Imaging.ThumbnailScaleMode mode = Caps.Web.Imaging.ThumbnailScaleMode.Default;
+            if (Enum.TryParse<Caps.Web.Imaging.ThumbnailScaleMode>(s, out mode))
+                return mode;
+            return Caps.Web.Imaging.ThumbnailScaleMode.Default;
         }
     }
 }

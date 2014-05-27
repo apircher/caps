@@ -13,10 +13,20 @@ namespace Caps.Web.Imaging
         Crop
     }
 
+    public enum ThumbnailScaleMode
+    {
+        Default = 0,
+        Both,
+        DownscaleOnly,
+        UpscaleOnly,
+        UpscaleCanvas
+    }
+
     public class ThumbnailSettings
     {
         public int Width { get; set; }
         public int Height { get; set; }
         public ThumbnailFitMode FitMode { get; set; }
+        public ThumbnailScaleMode ScaleMode { get; set; }
     }
 }

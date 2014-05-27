@@ -47,7 +47,7 @@ namespace Caps.Web.Imaging
         ImageResizer.ResizeSettings CreateResizeSettings(ThumbnailSettings settings)
         {
             var rs = new ImageResizer.ResizeSettings(settings.Width, settings.Height, ConvertToFitMode(settings.FitMode), null);
-            rs.Scale = ScaleMode.UpscaleCanvas;
+            rs.Scale = ConvertToScaleMode(settings.ScaleMode);
             return rs;
         }
 
@@ -59,6 +59,21 @@ namespace Caps.Web.Imaging
                     return FitMode.Max;
                 default:
                     return FitMode.Crop;
+            }
+        }
+
+        ImageResizer.ScaleMode ConvertToScaleMode(ThumbnailScaleMode mode)
+        {
+            switch (mode)
+            {
+                case ThumbnailScaleMode.UpscaleCanvas:
+                    return ScaleMode.UpscaleCanvas;
+                case ThumbnailScaleMode.UpscaleOnly:
+                    return ScaleMode.UpscaleOnly;
+                case ThumbnailScaleMode.Both:
+                    return ScaleMode.Both;
+                default:
+                    return ScaleMode.DownscaleOnly;
             }
         }
     }

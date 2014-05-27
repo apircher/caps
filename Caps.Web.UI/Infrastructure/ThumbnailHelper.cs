@@ -13,14 +13,14 @@ namespace Caps.Web.UI.Infrastructure
 {
     public static class ThumbnailHelpers
     {
-        public static DbThumbnail CreateThumbnail(this DbFileVersion fileVersion, int maxWidth, int maxHeight, ThumbnailFitMode fitMode = ThumbnailFitMode.Default)
+        public static DbThumbnail CreateThumbnail(this DbFileVersion fileVersion, int maxWidth, int maxHeight, ThumbnailFitMode fitMode = ThumbnailFitMode.Default, ThumbnailScaleMode scaleMode = ThumbnailScaleMode.Default)
         {
             String name = String.Format("{0}x{1}", maxWidth, maxHeight);
-            return fileVersion.CreateThumbnail(name, maxWidth, maxHeight, fitMode);
+            return fileVersion.CreateThumbnail(name, maxWidth, maxHeight, fitMode, scaleMode);
         }
-        public static DbThumbnail CreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, int? maxWidth, int? maxHeight, ThumbnailFitMode fitMode)
+        public static DbThumbnail CreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, int? maxWidth, int? maxHeight, ThumbnailFitMode fitMode, ThumbnailScaleMode scaleMode)
         {
-            var t = GetThumbnail(fileVersion.Content.Data, maxWidth, maxHeight, fitMode, thumbnailName);
+            var t = GetThumbnail(fileVersion.Content.Data, maxWidth, maxHeight, fitMode, scaleMode, thumbnailName);
             var thumbnail = new DbThumbnail();
             thumbnail.ContentType = fileVersion.File.ContentType;
             thumbnail.Data = t.Data;
@@ -32,7 +32,7 @@ namespace Caps.Web.UI.Infrastructure
             return thumbnail;
         }
 
-        public static DbThumbnail GetOrCreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, ThumbnailFitMode fitMode)
+        public static DbThumbnail GetOrCreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, ThumbnailFitMode fitMode, ThumbnailScaleMode scaleMode)
         {
             int maxWidth, maxHeight;
             if (!TryParseDimensions(thumbnailName, out maxWidth, out maxHeight))
@@ -41,11 +41,11 @@ namespace Caps.Web.UI.Infrastructure
                 maxHeight = 160;
             }
             else
-                thumbnailName += "_" + fitMode.ToString();
+                thumbnailName += "_" + fitMode.ToString() + "_" + scaleMode.ToString();
             
-            return fileVersion.GetOrCreateThumbnail(thumbnailName, maxWidth, maxHeight, fitMode);
+            return fileVersion.GetOrCreateThumbnail(thumbnailName, maxWidth, maxHeight, fitMode, scaleMode);
         }
-        public static DbThumbnail GetOrCreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, int? maxWidth, int? maxHeight, ThumbnailFitMode fitMode)
+        public static DbThumbnail GetOrCreateThumbnail(this DbFileVersion fileVersion, String thumbnailName, int? maxWidth, int? maxHeight, ThumbnailFitMode fitMode, ThumbnailScaleMode scaleMode)
         {
             var thumbnail = fileVersion.Thumbnails.FirstOrDefault(t => String.Equals(t.Name, thumbnailName, StringComparison.OrdinalIgnoreCase));
             if (thumbnail == null || !thumbnail.OriginalFileHash.SequenceEqual(fileVersion.Hash))
@@ -53,18 +53,12 @@ namespace Caps.Web.UI.Infrastructure
                 if (thumbnail != null)
                     fileVersion.Thumbnails.Remove(thumbnail);
 
-                var newThumbnail = fileVersion.CreateThumbnail(thumbnailName, maxWidth, maxHeight, fitMode);
+                var newThumbnail = fileVersion.CreateThumbnail(thumbnailName, maxWidth, maxHeight, fitMode, scaleMode);
                 fileVersion.Thumbnails.Add(newThumbnail);
 
                 thumbnail = newThumbnail;
             }
             return thumbnail;
-        }
-
-        public static ActionResult Thumbnail(byte[] imageBytes, int? maxWidth, int? maxHeight, String contentType)
-        {
-            var thumbnail = GetThumbnail(imageBytes, maxWidth, maxHeight);
-            return new FileContentResult(thumbnail.Data, contentType);
         }
 
         public static Size GetImageSize(this DbFileVersion fileVersion)
@@ -97,14 +91,15 @@ namespace Caps.Web.UI.Infrastructure
             }
             return false;
         }
-        static ThumbnailGeneratorResult GetThumbnail(byte[] imageBytes, int? maxWidth, int? maxHeight, ThumbnailFitMode fitMode = ThumbnailFitMode.Default, String generatorName = null)
+        static ThumbnailGeneratorResult GetThumbnail(byte[] imageBytes, int? maxWidth, int? maxHeight, ThumbnailFitMode fitMode = ThumbnailFitMode.Default, ThumbnailScaleMode scaleMode = ThumbnailScaleMode.Default, String generatorName = null)
         {
             var generator = ThumbnailGenerator.GetNamedGenerator(generatorName);
             var settings = new ThumbnailSettings
             {
                 Width = maxWidth.GetValueOrDefault(220),
                 Height = maxHeight.GetValueOrDefault(160),
-                FitMode = fitMode
+                FitMode = fitMode,
+                ScaleMode = scaleMode
             };
             return generator.GenerateThumbnail(imageBytes, settings);
         }

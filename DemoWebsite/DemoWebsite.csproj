@@ -49,11 +49,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\CacheCow.Common.0.5.2\lib\net40\CacheCow.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Caps.Consumer">
-      <HintPath>..\packages\Caps.Consumer.1.0.0.1\lib\net451\Caps.Consumer.dll</HintPath>
+    <Reference Include="Caps.Consumer, Version=1.0.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Caps.Consumer.1.0.0.10\lib\net451\Caps.Consumer.dll</HintPath>
     </Reference>
-    <Reference Include="Caps.Consumer.Mvc">
-      <HintPath>..\packages\Caps.Consumer.Mvc.1.0.0.1\lib\net451\Caps.Consumer.Mvc.dll</HintPath>
+    <Reference Include="Caps.Consumer.Mvc, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Caps.Consumer.Mvc.1.0.0.3\lib\net451\Caps.Consumer.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -129,11 +131,6 @@
     <Content Include="Scripts\modernizr-2.7.2.js" />
     <Content Include="Web.config" />
     <Content Include="Scripts\jquery-2.1.0.min.map" />
-    <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Caps\Index.cshtml" />
-    <Content Include="Views\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -154,6 +151,11 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Caps\Index.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -66,9 +66,9 @@ namespace Caps.Consumer
         /// </summary>
         /// <param name="fileVersionId"></param>
         /// <returns></returns>
-        public async Task<DbThumbnail> GetThumbnail(int websiteId, int fileVersionId, String nameOrSize, String fitMode = "Default")
+        public async Task<DbThumbnail> GetThumbnail(int websiteId, int fileVersionId, String nameOrSize, String fitMode = "Default", String scaleMode = "Default")
         {
-            var response = await client.GetAsync("api/websites/" + websiteId.ToString() + "/fileversions/" + fileVersionId.ToString() + "/thumbnails/" + nameOrSize + "?fitMode=" + fitMode);
+            var response = await client.GetAsync("api/websites/" + websiteId.ToString() + "/fileversions/" + fileVersionId.ToString() + "/thumbnails/" + nameOrSize + "?fitMode=" + fitMode + "&scaleMode=" + scaleMode);
             if (response.IsSuccessStatusCode)
                 return await response.Content.ReadAsAsync<DbThumbnail>();
             return null;
@@ -78,9 +78,9 @@ namespace Caps.Consumer
         /// Returns a DbFileThumbnail-Instance representing a thumbnail for the first picture of the content with the given id.
         /// </summary>
         /// <returns></returns>
-        public async Task<DbThumbnail> GetContentThumbnail(int websiteId, int permanentId, String nameOrSize, String fitMode = "Default")
+        public async Task<DbThumbnail> GetContentThumbnail(int websiteId, int permanentId, String nameOrSize, String fitMode = "Default", String scaleMode = "Default")
         {
-            var response = await client.GetAsync("api/websites/" + websiteId.ToString() + "/content/" + permanentId.ToString() + "/thumbnail/" + nameOrSize + "?fitMode=" + fitMode);
+            var response = await client.GetAsync("api/websites/" + websiteId.ToString() + "/content/" + permanentId.ToString() + "/thumbnail/" + nameOrSize + "?fitMode=" + fitMode + "&scaleMode=" + scaleMode);
             if (response.IsSuccessStatusCode)
                 return await response.Content.ReadAsAsync<DbThumbnail>();
             return null;
