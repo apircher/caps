@@ -44,11 +44,26 @@ namespace Caps.Data.Model
             if (Properties == null)
                 Properties = new List<DbFileProperty>();
 
-            var prop = Properties.FirstOrDefault(p => String.Equals(p.PropertyName, propertyName, StringComparison.OrdinalIgnoreCase));
+            var prop = FindPropertyByName(propertyName);
             if (prop != null)
                 throw new InvalidOperationException("A property with the name " + propertyName + " has already been added.");
 
             Properties.Add(new DbFileProperty { FileVersion = this, PropertyName = propertyName, PropertyValue = value.ToString() });
+        }
+        public void AddOrSetProperty(String propertyName, object value)
+        {
+            var prop = FindPropertyByName(propertyName);
+            if (prop != null)
+                prop.PropertyValue = value.ToString();
+            else
+                AddProperty(propertyName, value);
+        }
+
+        DbFileProperty FindPropertyByName(String propertyName)
+        {
+            if (Properties == null)
+                return null;
+            return Properties.FirstOrDefault(p => String.Equals(p.PropertyName, propertyName, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

@@ -53,7 +53,7 @@ namespace Caps.Web.UI.Controllers
                         {
                             var intVersionId = int.Parse(versionId);
                             var fileVersion = db.FileVersions
-                                .Include("File").Include("Content").Include("Thumbnails")
+                                .Include("File").Include("Content").Include("Thumbnails").Include("Properties")
                                 .Include("PublicationFileResources.PublicationFile")
                                 .FirstOrDefault(v => v.Id == intVersionId);
                             var file = files[0];
@@ -119,6 +119,9 @@ namespace Caps.Web.UI.Controllers
 
             Array.ForEach(fileVersion.Thumbnails.ToArray(), t => db.Thumbnails.Remove(t));
 
+            if (fileVersion.File.IsImage)
+                HandleNewImageFile(fileVersion);
+
             if (fileVersion.PublicationFileResources.Any())
                 InvalidateCache();
         }
@@ -130,6 +133,7 @@ namespace Caps.Web.UI.Controllers
                 .Include("Versions.Content")
                 .Include("Versions.Thumbnails")
                 .Include("Versions.PublicationFileResources.PublicationFile")
+                .Include("Versions.Properties")
                 .FirstOrDefault(f => f.FileName.ToLower() == key);
 
             if (dbFile != null)
@@ -168,8 +172,8 @@ namespace Caps.Web.UI.Controllers
 
             // Add Properties
             var size = version.GetImageSize();
-            version.AddProperty(DbFileProperties.ImageWidth, size.Width);
-            version.AddProperty(DbFileProperties.ImageHeight, size.Height);
+            version.AddOrSetProperty(DbFileProperties.ImageWidth, size.Width);
+            version.AddOrSetProperty(DbFileProperties.ImageHeight, size.Height);
         }
 
         StorageAction GetStorageAction(NameValueCollection formData)
