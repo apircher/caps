@@ -68,7 +68,7 @@
                         <span><i class="fa fa-plus"></i> Dateien hochladen</span>
                         <!-- ko with: uploadManager -->
                         <input type="file" name="files" data-url="~/api/DbFileUpload"
-                               data-bind="fileupload: { change: filesSelected, add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, drop: filesDropped, dropZone: $('#fileSelectionDialog-drop-zone') }" multiple>
+                               data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, drop: filesDropped, dropZone: $('#fileSelectionDialog-drop-zone') }" multiple>
                         <!-- /ko -->
                     </a>
                 </li>

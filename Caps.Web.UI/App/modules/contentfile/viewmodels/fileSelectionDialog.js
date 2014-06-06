@@ -75,8 +75,8 @@ function (dialog, ko, FileListItem, system, app, datacontext, VirtualListModel, 
             }
         };
 
-        function uploadManager_uploadStarted(file, batchIndex, storageOptions) {
-            var replace = storageOptions && storageOptions.storageAction && (storageOptions.storageAction === 'replace');
+        function uploadManager_uploadStarted(file, batchIndex, storageOption) {
+            var replace = storageOption === 'replace';
             if (!replace) {
                 var listItem = self.list.insertItem(undefined, batchIndex);
                 listItem.isUploading(true);

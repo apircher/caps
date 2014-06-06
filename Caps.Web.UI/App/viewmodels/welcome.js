@@ -14,7 +14,7 @@ function (ko, datacontext, system, authentication) {
 
     var welcome = function () {
         this.displayName = 'Willkommen bei CAPS';
-        this.description = 'Caps ist ein einfaches Content Management System zur Erstellung und Verwaltung Deiner Inhalte.';
+        this.description = 'Caps ist ein einfaches Content Management System zur Erstellung und Verwaltung Deiner Website-Inhalte.';
         this.websites = ko.observableArray();
         this.user = authentication.user;
 

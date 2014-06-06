@@ -116,7 +116,7 @@
                         <span><i class="fa fa-repeat"></i> Datei ersetzen</span>
                         <!-- ko with: uploadManager -->
                         <input type="file" name="files" data-url="~/api/DbFileUpload"
-                               data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: null, formData: { storageAction: 'replace', versionId: $parent.fileVersion().entity.Id() } }"
+                               data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: null }, attr: { 'data-replace-id': $parent.fileVersion().entity.Id() }"
                                data-storage-option="replace">
                         <!-- /ko -->
                     </a>

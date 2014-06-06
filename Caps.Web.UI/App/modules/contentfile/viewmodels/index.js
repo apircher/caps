@@ -53,8 +53,8 @@ function (ko, system, app, module, datacontext, VirtualListModel, toastr, Q, dou
         }
     });
 
-    app.on('uploadManager:uploadStarted', function (file, index, storageOptions) {
-        var replace = storageOptions && storageOptions.storageAction && (storageOptions.storageAction === 'replace');
+    app.on('uploadManager:uploadStarted', function (file, index, storageOption) {
+        var replace = storageOption === 'replace';
         if (!replace) {
             var listItem = list.insertItem(undefined, index);
             listItem.isUploading(true);

@@ -6,73 +6,57 @@
 define([
     'ko',
     'durandal/system',
-    'durandal/app'
+    'durandal/app',
+    './../datacontext',
+    './fileUploadDialog'
 ],
-function (ko, system, app) {
+function (ko, system, app, datacontext, FileUploadDialog) {
     'use strict';
     
     /**
      * UploadManager Class
      */
-    function UploadManager(options) {
-        var self = this;
-
-        options = $.extend({}, options);
+    function UploadManager() {
+        var self = this,
+            batches = new UploadBatchCollection();
 
         self.isUploading = ko.observable(false);
         self.progress = ko.observable(0);
-
-        self.lastSelection = ko.observableArray();
-        self.pendingUploads = [];
-        self.beforeUploadCalled = false;
-        self.batchIndex = 0;
-
         self.currentUploads = ko.observableArray();
 
-        self.filesSelected = function (e, data) {
-            self.lastSelection(data.files);
-            self.pendingUploads = [];
-            self.beforeUploadCalled = false;
-            self.batchIndex = 0;
+        self.addFiles = function (e, data) {
+            var batch = batches.findOrAddBatch(data);
+            if (batch) {
+                batch.addFiles(data);
+                if (batch.files.length === data.originalFiles.length) {
+                    if (batch.storageOption === 'replace')
+                        batch.submit();
+                    else
+                    {
+                        // if storage option is not 'replace' get file metadata.
+                        prepareUpload(batch.originalFiles, function (newStorageOption, filesExistingOnServer) {
+                            if (newStorageOption) batch.storageOption = newStorageOption;
+                            if (filesExistingOnServer) batch.filesExistingOnServer = filesExistingOnServer;
+                            batch.submit();
+                        });
+                    }
+                }
+            }
         };
 
-        self.addFiles = function (e, data) {
-            var storageOption = data.fileInput ? data.fileInput.data('storage-option') : '';
-            if (storageOption !== 'replace' && system.isFunction(options.beforeUpload)) {
-                self.pendingUploads.push(data);
-                triggerBeforeUploadCalled(self.lastSelection(), beginUpload);
-            }
-            else
-                beginUpload();
-
-            function beginUpload(storageOptions, existingFiles) {
-                self.isUploading(true);
-
-                if (self.pendingUploads.length)
-                    self.pendingUploads.forEach(function (d) {
-                        submitFiles(d, storageOptions, existingFiles);
-                    });
-                else
-                    submitFiles(data, storageOptions, existingFiles);
-            }
-
-            function submitFiles(data, storageOptions, existingFiles) {
-                ko.utils.arrayForEach(data.files, function (f) {
-                    var hasExistingFile = false;
-                    if (existingFiles) {
-                        hasExistingFile = !!ko.utils.arrayFirst(existingFiles, function (ef) { return f.name === ef.fileName; });
-                    }
-                    triggerUploadStarted(f, self.batchIndex++, hasExistingFile ? storageOptions : undefined);
-                });
-                if (storageOptions) data.formData = storageOptions;
-                data.submit();
-            }
+        self.filesDropped = function (e, data) {
+            var evt;
+            if (e && e.delegatedEvent) evt = e.delegatedEvent;
+            else evt = e;
+            if (evt && evt.dataTransfer && evt.dataTransfer.dropEffect === 'copy')
+                return false;
         };
 
         self.uploadDone = function (e, data) {
             ko.utils.arrayForEach(data.result, function (r) {
                 var file = ko.utils.arrayFirst(data.files, function (f) { return f.name === r.fileName; });
-                triggerUploadDone(r, file);
+                self.currentUploads.remove(file);
+                app.trigger('uploadManager:uploadDone', file, r);
             });
             self.isUploading(false);
         };
@@ -89,43 +73,98 @@ function (ko, system, app) {
             self.progress(p);
         };
 
-        self.filesDropped = function (e, data) {
-            var evt;
-            if (e && e.delegatedEvent) evt = e.delegatedEvent;
-            else evt = e;
+        function prepareUpload(files, callback) {
+            var fileNames = ko.utils.arrayMap(files, function (f) { return f.name; });
+            datacontext.getFileInfo(fileNames).then(function (result) {
+                var existingFiles = ko.utils.arrayFilter(result, function (r) { return r.count > 0; });
+                if (existingFiles.length > 0) {
+                    var dlgVm = new FileUploadDialog(result);
+                    app.showDialog(dlgVm).then(function (dialogResult) {
+                        if (dialogResult)
+                            callback(dialogResult.storageOption, existingFiles);
+                    });
+                }
+                else
+                    callback();
+            });
+        }
+    }
 
-            if (evt && evt.dataTransfer && evt.dataTransfer.dropEffect === 'copy')
-                return false;
+    /**
+     * Class UploadBatch
+     */
+    function UploadBatch(originalFiles) {
+        var self = this;
+        self.originalFiles = originalFiles;
+        self.files = [];
+        self.storageOption = 'add';
+        self.filesExistingOnServer = [];
 
-            self.filesSelected(e, data);
+        self.addFiles = function (data) {
+            self.files.push(data);
         };
 
-        function triggerBeforeUploadCalled(files, callback) {
-            if (!self.beforeUploadCalled) {
-                self.beforeUploadCalled = true;
-                options.beforeUpload.call(this, files, callback);
+        self.submit = function () {
+            var index = 0;
+            ko.utils.arrayForEach(self.files, function (data) {
+                var file = data.files[0];
+                var so = self.storageOption;
+                if (self.filesExistingOnServer && self.filesExistingOnServer.length > 0 && !fileNameExistsOnServer(file.name))
+                    so = undefined;
+                app.trigger('uploadManager:uploadStarted', file, index++, so);
+                app.uploadManager.currentUploads.push(file);
+                data.formData = collectFormData(data);
+                data.formData.storageAction = so;
+
+                data.submit();
+            });
+        };
+
+        function fileNameExistsOnServer(fileName) {
+            return !!ko.utils.arrayFirst(self.filesExistingOnServer, function (f) { return f.fileName === fileName; });
+        }
+
+        function collectFormData(data) {
+            var formData = {};
+            if (data.fileInput) {
+                var vid = data.fileInput.data('replace-id');
+                if (vid) formData.versionId = vid;
             }
-
-            app.trigger('uploadManager:beforeUpload', files, callback);
+            return formData;
         }
+    }
 
-        function triggerUploadStarted(file, index, storageOptions) {
-            if (system.isFunction(options.uploadStarted))
-                options.uploadStarted(file, index, storageOptions);
+    /**
+     * Class UploadBatchCollection
+     */
+    function UploadBatchCollection() {
+        var self = this,
+            batches = [];
 
-            app.trigger('uploadManager:uploadStarted', file, index, storageOptions);
+        self.findOrAddBatch = function (data) {
+            var batch = self.findBatch(data.originalFiles);
+            if (!batch) {
+                batch = new UploadBatch(data.originalFiles);
+                if (data.fileInput) {
+                    var storageOption = data.fileInput.data('storage-option');
+                    if (storageOption) batch.storageOption = storageOption;
+                }
+                batches.push(batch);
+            }
+            return batch;
+        };
 
-            self.currentUploads.push(file);
-        }
+        self.findBatch = function (originalFiles) {
+            return ko.utils.arrayFirst(batches, function (b) { return b.originalFiles === originalFiles; });
+        };
 
-        function triggerUploadDone(data, file) {
-            if (system.isFunction(options.uploadDone))
-                options.uploadDone(data, file);
-
-            app.trigger('uploadManager:uploadDone', file, data);
-
-            self.currentUploads.remove(file);
-        }
+        self.removeBatch = function (originalFiles) {
+            var batch = self.findBatch(originalFiles);
+            if (batch) {
+                var index = batches.indexOf(batch);
+                batches.splice(index, 1);
+            }
+        };
     }
 
     return UploadManager;

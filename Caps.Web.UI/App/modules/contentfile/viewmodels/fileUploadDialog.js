@@ -15,12 +15,12 @@ define(['plugins/dialog'], function (dialog) {
     }
 
     FileUploadDialog.prototype.addFiles = function () {
-        dialog.close(this, { 'storageAction': 'add' });
+        dialog.close(this, { 'storageOption': 'add' });
 
     };
 
     FileUploadDialog.prototype.replaceFiles = function () {
-        dialog.close(this, { 'storageAction': 'replace' });
+        dialog.close(this, { 'storageOption': 'replace' });
 
     };
 

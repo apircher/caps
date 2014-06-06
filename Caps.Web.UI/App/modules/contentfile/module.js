@@ -11,11 +11,9 @@ define([
     'infrastructure/moduleRouter',
     './entities',
     'durandal/app',
-    './viewmodels/uploadManager',
-    './datacontext',
-    './viewmodels/fileUploadDialog'
+    './viewmodels/uploadManager'
 ],
-function (moduleFactory, routerFactory, model, app, UploadManager, datacontext, FileUploadDialog) {
+function (moduleFactory, routerFactory, model, app, UploadManager) {
     'use strict';
 
     var module = moduleFactory.createModule({
@@ -60,23 +58,7 @@ function (moduleFactory, routerFactory, model, app, UploadManager, datacontext, 
         }
     });
 
-    app.uploadManager = new UploadManager({
-        beforeUpload: function (files, callback) {
-            var fileNames = ko.utils.arrayMap(files, function (f) { return f.name; });
-            datacontext.getFileInfo(fileNames).then(function (result) {
-                var existingFiles = ko.utils.arrayFilter(result, function (r) { return r.count > 0; });
-                if (existingFiles.length > 0) {
-                    var dlgVm = new FileUploadDialog(result);
-                    app.showDialog(dlgVm).then(function (dialogResult) {
-                        if (dialogResult)
-                            callback(dialogResult, existingFiles);
-                    });
-                }
-                else
-                    callback();
-            });
-        }
-    });
+    app.uploadManager = new UploadManager();
                 
     return module;
 });
