@@ -3,8 +3,7 @@
 
         <div class="row">
             <div class="col-md-9">
-                <div class="content-editor" data-bind="forceViewportHeight: { minWidth: 992 }">
-                    <textarea data-bind="value: template().TemplateContent" class="form-control" rows="20"></textarea>
+                <div class="content-editor" data-bind="forceViewportHeight: { minWidth: 992 }, codeMirror: { value: template().TemplateContent }">
                 </div>
             </div>
             <div class="col-md-3" data-bind="with: template()">

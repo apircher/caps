@@ -10,7 +10,8 @@ namespace Caps.Web.Imaging
     {
         Default = 0,
         Max,
-        Crop
+        Crop,
+        Pad
     }
 
     public enum ThumbnailScaleMode

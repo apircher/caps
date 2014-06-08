@@ -56,7 +56,10 @@ namespace Caps.Web.UI.Controllers
         [CacheOutput(ServerTimeSpan = 3600, ClientTimeSpan = 0, MustRevalidate = true)]
         public IHttpActionResult GetCurrentSiteMap(int websiteId)
         {
-            var siteMap = db.SiteMaps.Include("SiteMapNodes").Include("SiteMapNodes.Resources").Include("SiteMapNodes.Content")
+            var siteMap = db.SiteMaps
+                .Include("SiteMapNodes")
+                .Include("SiteMapNodes.Resources")
+                .Include("SiteMapNodes.Content.Files.Resources.FileVersion.File")
                 .Where(m => m.WebsiteId == websiteId && m.PublishedFrom.HasValue && m.PublishedFrom.Value <= DateTime.UtcNow)
                 .OrderByDescending(m => m.Version)
                 .ThenByDescending(m => m.PublishedFrom)

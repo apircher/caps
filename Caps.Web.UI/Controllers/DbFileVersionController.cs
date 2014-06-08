@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using WebApi.OutputCache.V2;
 
 namespace Caps.Web.UI.Controllers
 {
@@ -54,6 +55,8 @@ namespace Caps.Web.UI.Controllers
             try
             {
                 db.SaveChanges();
+
+                InvalidateCache();
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (System.Data.Common.DbException ex)
@@ -97,6 +100,12 @@ namespace Caps.Web.UI.Controllers
             }
 
             return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        void InvalidateCache()
+        {
+            var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
+            cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCachekey((WebsiteController t) => t.GetThumbnail(0, 0, null, null, null)));
         }
     }
 }

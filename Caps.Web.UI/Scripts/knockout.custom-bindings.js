@@ -5,6 +5,40 @@
         $html = $('html'),
         $body = $('body');
 
+    ko.bindingHandlers.codeMirror = {
+        init: function (elem, valueAccessor, allBindingsAccessor) {
+            var options = valueAccessor();
+            var valueBinding = options.value || allBindingsAccessor().value;
+            var isTextArea = elem.tagName == 'textarea';
+
+            if (!CodeMirror) {
+                alert('failed to load code mirror.');
+                return;
+            }
+
+            var options = {
+                value: valueBinding ? valueBinding() : '',
+                lineNumbers: true,
+                mode: 'javascript'
+            };
+
+            var cm;
+            if (isTextArea)
+                cm = CodeMirror.fromTextArea(elem, options);
+            else
+                cm = CodeMirror(elem, options);
+
+            cm.on('change', function () {
+                if (valueBinding) valueBinding(cm.getValue());
+                if (isTextArea) isTextAreacm.save();
+            });
+
+            $window.on('forceViewportHeight:refresh', function () {
+                cm.refresh();
+            });
+        }
+    };
+
     //
     // Bootstrap Popover Binding.
     //

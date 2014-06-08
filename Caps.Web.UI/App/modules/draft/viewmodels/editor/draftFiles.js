@@ -103,6 +103,16 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
             }
         };
 
+        self.ensureGroupsExist = function (groupNames) {
+            groupNames.forEach(function (name) {
+                if (!groupNameExists(name)) {
+                    fileGroups.push(createFileGroup(name));
+                }
+                self.tree().refresh();
+                self.tree().selectRootNode();
+            });
+        };
+
         self.moveSelectedNodeUp = function () {
             var n = self.tree().selectedNode();
             if (n.moveUp) n.moveUp();
@@ -188,6 +198,14 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
             function hasGroup(groupName) {
                 return ko.utils.arrayFirst(fileGroups(), function (g) { return g.name().toLowerCase() === groupName.toLowerCase(); }) ? true : false;
             }
+        }
+
+        function groupNameExists(groupName) {
+            var existingItems = ko.utils.arrayFilter(self.groupNames(), function (gn) {
+                var rx = new RegExp('^(' + groupName + ')(\\s+\\(\\d+\\))?.*$', 'gi');
+                return rx.test(gn);
+            });
+            return existingItems.length > 0;
         }
 
         function initializeTree() {

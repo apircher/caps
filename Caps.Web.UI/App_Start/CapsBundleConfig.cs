@@ -21,6 +21,7 @@ namespace Caps.Web.UI
                 .Include("~/Content/ie10mobile.css")
                 .Include("~/Content/toastr.css")
                 .Include("~/Content/typeahead.css")
+                .Include("~/Scripts/codemirror/lib/codemirror.css")
               );
 
             bundles.Add(
@@ -39,6 +40,8 @@ namespace Caps.Web.UI
                 .Include("~/Scripts/typeahead.js")
                 .Include("~/Scripts/knockout.custom-bindings.js")
                 .Include("~/Scripts/string-extensions.js")
+                .Include("~/Scripts/codemirror/lib/codemirror.js")
+                .Include("~/Scripts/codemirror/mode/javascript/javascript.js")
             );
         }
 

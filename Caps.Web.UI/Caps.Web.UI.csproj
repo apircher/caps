@@ -306,6 +306,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Scripts\codemirror\lib\codemirror.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\themes\base\images\animated-overlay.gif" />
@@ -397,6 +398,8 @@
     <None Include="Scripts\breeze.intellisense.js" />
     <Content Include="Scripts\breeze.debug.js" />
     <Content Include="Scripts\breeze.min.js" />
+    <Content Include="Scripts\codemirror\lib\codemirror.js" />
+    <Content Include="Scripts\codemirror\mode\javascript\javascript.js" />
     <Content Include="Scripts\durandal\plugins\contentSelection.js" />
     <Content Include="App\infrastructure\datacontext.js" />
     <Content Include="App\infrastructure\interaction.js" />

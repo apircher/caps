@@ -57,6 +57,8 @@ namespace Caps.Web.Imaging
             {
                 case ThumbnailFitMode.Max:
                     return FitMode.Max;
+                case ThumbnailFitMode.Pad:
+                    return FitMode.Pad;
                 default:
                     return FitMode.Crop;
             }

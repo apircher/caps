@@ -28,6 +28,10 @@ function (module, ko, entityManagerProvider, breeze, app, localization) {
                 name: 'TEASER'
             },
             {
+                title: 'Container',
+                name: 'CONTAINER'
+            },
+            {
                 title: 'Benutzerdefiniert',
                 isCustomType: true,
                 name: ''

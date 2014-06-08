@@ -970,4 +970,11 @@ span.large-icon {
 .sitemap-index-sidebar {
   top: 100px;
 }
+/**
+ * CodeMirror
+ */
+.content-editor > .CodeMirror {
+  height: 100%;
+  border: 1px solid #eee;
+}
 /*# sourceMappingURL=app-theme.css.map */
