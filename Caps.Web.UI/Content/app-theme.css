@@ -7,6 +7,10 @@ body,
 .navbar {
   min-width: 320px;
 }
+h1,
+h2 {
+  /*font-size:28px;*/
+}
 /** 
  *  Splash Screen
  */
@@ -285,7 +289,10 @@ body,
 }
 .modal-body {
   padding: 25px 15px 0;
-  overflow: hidden;
+  /*overflow:hidden;*/
+}
+.modal-body form {
+  padding-bottom: 10px;
 }
 .modal-footer {
   padding: 15px;

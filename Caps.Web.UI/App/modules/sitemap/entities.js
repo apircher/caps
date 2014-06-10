@@ -376,8 +376,8 @@ define(['ko', 'authentication'], function (ko, authentication) {
     };
 
     Publication.prototype.setDeleted = function () {
-        ko.utils.arrayForEach(this.ContentParts(), function (cp) { cp.setDeleted(); });
-        ko.utils.arrayForEach(this.Files(), function (cf) { cf.setDeleted(); });
+        ko.utils.arrayForEach(this.ContentParts().slice(0), function (cp) { cp.setDeleted(); });
+        ko.utils.arrayForEach(this.Files().slice(0), function (cf) { cf.setDeleted(); });
         this.entityAspect.setDeleted();
     };
 

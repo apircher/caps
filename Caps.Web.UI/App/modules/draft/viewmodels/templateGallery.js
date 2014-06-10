@@ -16,13 +16,14 @@ function (ko, datacontext, module, breeze, entityManagerProvider, system, server
 
     var draftName = ko.observable();
 
-    function GalleryListItem(title, name, template, icon) {
+    function GalleryListItem(title, name, description, template, icon) {
         var self = this;
 
         self.title = title;
         self.name = name;
         self.template = template;
         self.icon = icon;
+        self.description = description;
 
         self.isSelected = ko.computed(function () {
             return selectedItem() === self;
@@ -34,7 +35,7 @@ function (ko, datacontext, module, breeze, entityManagerProvider, system, server
             fetchDraftTemplates().then(function (coll) {
                 var draftTemplateListItems = ko.utils.arrayMap(coll, function (t) {
                     var templateObj = parseTemplate(t.TemplateContent());
-                    return new GalleryListItem(t.Name(), t.Name(), templateObj, server.mapPath('~/App/modules/draft/images/Template 3.png'));
+                    return new GalleryListItem(t.Name(), t.Name(), t.Description(), templateObj, server.mapPath('~/App/modules/draft/images/Template 3.png'));
                 });
 
                 var result = draftTemplateListItems;
@@ -42,7 +43,8 @@ function (ko, datacontext, module, breeze, entityManagerProvider, system, server
                 dfd.resolve();
             })
             .fail(dfd.reject);
-        });
+        })
+        .promise();
     }
 
     function fetchDraftTemplates() {
@@ -67,15 +69,18 @@ function (ko, datacontext, module, breeze, entityManagerProvider, system, server
         activate: function () {
             draftName('');
             selectedItem(null);
-            refreshListItems();
+            refreshListItems().then(function() {
+                if (listItems && listItems().length)
+                    selectedItem(listItems()[0]);
+            });
         },
 
         listItems: listItems,
         selectedItem: selectedItem,
         draftName: draftName,
 
-        selectTemplate: function(template) {
-            selectedItem(template);
+        selectTemplate: function(item) {
+            selectedItem(item);
         },
 
         createDraft: function () {

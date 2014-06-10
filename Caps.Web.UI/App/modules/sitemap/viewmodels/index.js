@@ -13,9 +13,10 @@
     'durandal/composition',
     'moment',
     'infrastructure/keyboardHandler',
-    'infrastructure/scrollState'
+    'infrastructure/scrollState',
+    './addPageDialog'
 ],
-function (module, ko, router, system, app, localization, SiteMapViewModel, PublicationViewModel, publicationService, authentication, datacontext, composition, moment, KeyboardHandler, ScrollState) {
+function (module, ko, router, system, app, localization, SiteMapViewModel, PublicationViewModel, publicationService, authentication, datacontext, composition, moment, KeyboardHandler, ScrollState, AddPageDialog) {
     
     var website = ko.observable(),
         selectedSiteMap = ko.observable(),
@@ -113,11 +114,20 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
 
         createSiteMapNode: function () {
             if (!selectedSiteMap() || !selectedNode()) return;
-            datacontext.createSiteMapNode(selectedSiteMap().entity(), selectedNode()).then(function (node) {
-                selectedSiteMap().refreshTree();
-                selectedSiteMap().selectNodeByKey(node.Id());
-            })
-            .fail(handleError);
+
+            AddPageDialog.show().then(function (dialogResult) {
+                if (dialogResult) {
+                    addPageCommited(dialogResult.title);
+                }
+            });
+
+            function addPageCommited(title) {
+                datacontext.createSiteMapNode(selectedSiteMap().entity(), selectedNode(), title, title).then(function (node) {
+                    selectedSiteMap().refreshTree();
+                    selectedSiteMap().selectNodeByKey(node.Id());
+                })
+                .fail(handleError);
+            }
         },
 
         deleteSiteMapNode: function () {
@@ -255,6 +265,9 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
     }
 
     keyboardHandler.keydown = function (e) {
+        var curElement = document.activeElement;
+        if (curElement && (curElement.tagName == 'INPUT' || curElement.tagName == 'TEXTAREA'))
+            return;
         if (selectedSiteMap() && selectedSiteMap().tree())
             selectedSiteMap().tree().handleKeyDown(e);
     };
@@ -345,7 +358,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         };
 
         self.hasOptions = ko.computed(function () {
-            return self.entity.isTeaser() || self.canCreateTeaser();
+            return self.entity.isTeaser(); // || self.canCreateTeaser();
         });
 
         self.hasContent = ko.computed(function () {
@@ -387,6 +400,22 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         self.editContent = function () {
             if (entity.ContentId() && entity.Content())
                 app.editContent(entity.Content().EntityType(), entity.Content().EntityKey());
+        };
+        
+        self.deletePublication = function () {
+            var btnOk = 'Entfernen';
+            var btnCancel = 'Abbrechen';
+            app.showMessage('Soll der Inhalt dieser Seite wirklich entfernt werden?', 'Inhalt entfernen?', [btnOk, btnCancel])
+                .then(function (dialogResult) {
+                    if (dialogResult === btnOk)
+                        deletePublicationConfirmed();
+                })
+
+            function deletePublicationConfirmed() {
+                if (entity.ContentId() && entity.Content()) {
+                    datacontext.deletePublication(entity);
+                }
+            }
         };
     }
     

@@ -3,11 +3,13 @@
     <div class="panel-padding-h subnav-fixed-top-container">
         <div class="row subnav-fixed-top sitemap-index-header">
             <div class="col-md-12">
+
                 <ul class="list-inline pull-right">
                     <li>
                         <a href="#" data-bind="click: editWebsite" title="Website-Einstellungen"><i class="fa fa-cog"></i></a>
                     </li>
                 </ul>
+
                 <ul class="list-inline pull-left">
                     <li>
                         <!-- ko if: siteMapVersions() -->
@@ -32,8 +34,10 @@
                     </span>
                     <!-- /ko -->
                 </div>
+
             </div>
         </div>
+
         <div class="row">
             <div class="col-md-3 col-lg-2 fixed-sidebar left-fixed-sidebar sitemap-index-sidebar">
                 <div data-bind="forceViewportHeight: { minWidth: 992 }, scrollTop: { observable: listScrollState.scrollTop, enabled: listScrollState.isEnabled }" class="panel-scroll-vh">
@@ -89,19 +93,23 @@
             <div class="col-md-3 col-lg-2 fixed-sidebar right-fixed-sidebar sitemap-index-sidebar" data-bind="if: properties()">
                 <h5 data-bind="text: properties().entity.localeTitle('de')"></h5>
                 <!-- ko with: properties() -->
-                <!-- ko if: entity.canHaveContent() -->
                 <ul class="list-unstyled">
+                    <!-- ko if: entity.canHaveContent() -->
+                    <li>
+                        <a href="#" data-bind="click: selectContent"><i class="fa fa-arrow-right fa-fw"></i> Inhalt wählen...</a>
+                    </li>
                     <!-- ko if: hasContent -->
                     <li>
-                        <a href="#" data-bind="click: editContent"><i class="fa fa-edit fa-fw"></i> <span data-bind="attr: { title: contentSummary() + ' ' + authorSummary() }">Inhalt bearbeiten</span></a>
+                        <a href="#" data-bind="click: deletePublication"><i class="fa fa-arrow-right fa-fw"></i> Inhalt entfernen</a>
                     </li>
                     <!-- /ko -->
+                    <!-- /ko -->
                     <li>
-                        <a href="#" data-bind="click: selectContent"><i class="fa fa-arrow-right fa-fw"></i> Inhalt verknüpfen...</a>
+                        <a href="#" data-bind="click: edit"><i class="fa fa-edit fa-fw"></i> Eigenschaften</a>
                     </li>
                 </ul>
                 <!-- /ko -->
-                <!-- /ko -->
+
                 <!-- ko if: selectedPublication() && selectedNode() && selectedNode().canLinkTo() -->
                 <div>
                     <h5>Adresse</h5>
@@ -110,11 +118,7 @@
                     </p>
                 </div>
                 <!-- /ko -->
-                <ul class="list-unstyled">
-                    <li>
-                        <a href="#" data-bind="click: properties().edit"><i class="fa fa-edit fa-fw"></i> Eigenschaften</a>
-                    </li>
-                </ul>
+
                 <!-- ko with: properties() -->
                 <!-- ko if: hasOptions -->
                 <h5>Optionen</h5>
@@ -150,6 +154,9 @@
                 </li>
                 <li data-bind="if: selectedNode()">
                     <a href="#" data-bind="click: moveSelectedNodeDown" title="Nach unten"><span><i class="fa fa-arrow-down fa-fw"></i></span></a>
+                </li>
+                <li data-bind="if: selectedNode() && properties() && properties().hasContent">
+                    <a href="#" data-bind="click: properties().editContent"><span><i class="fa fa-edit fa-fw"></i> Inhalt bearbeiten</span></a>
                 </li>
                 <li data-bind="if: selectedNode()">
                     <a href="#" data-bind="click: deleteSiteMapNode"><span><i class="fa fa-trash-o fa-fw"></i> Seite löschen</span></a>

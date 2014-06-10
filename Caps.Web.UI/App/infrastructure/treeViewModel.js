@@ -301,6 +301,7 @@ function (ko, interaction, KeyCodes, Events) {
 
     TreeNodeViewModel.prototype.selectNode = function () {
         this.tree.selectedNode(this);
+        this.isExpanded(true);
         this.ensureVisible();
     };
 

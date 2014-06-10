@@ -48,24 +48,36 @@ function (entityManagerProvider, breeze, system) {
         .promise();
     }
 
+    function deletePublication(siteMapNode) {
+        return system.defer(function (dfd) {
+            fetchPublication(siteMapNode.ContentId()).then(function (p) {
+                p.setDeleted();
+                siteMapNode.ContentId(null);
+                manager.saveChanges().then(dfd.resolve).fail(dfd.reject);
+            })
+            .fail(dfd.reject);
+        })
+        .promise();
+    }
+
     function publishSiteMap(siteMapVersion, userName) {
         siteMapVersion.PublishedFrom(new Date());
         siteMapVersion.PublishedBy(userName);
         return manager.saveChanges();
     }
 
-    function createSiteMapNode(siteMap, parentNode) {
+    function createSiteMapNode(siteMap, parentNode, name, title) {
         return system.defer(function (dfd) {
             if (!siteMap) dfd.reject(new Error('No siteMap provided'));
             if (!parentNode) dfd.reject(new Error('No parentNode provided'));
 
-            var node = manager.createEntity('DbSiteMapNode', { NodeType: 'PAGE' });
+            var node = manager.createEntity('DbSiteMapNode', { NodeType: 'PAGE', Name: name });
             manager.addEntity(node);
             node.ParentNodeId(parentNode.Id());
             node.SiteMapId(siteMap.Id());
 
             var nodeResource = node.getOrCreateResource('de', manager);
-            nodeResource.Title('Seite ' + (new Date()).toLocaleTimeString());
+            nodeResource.Title(title);
 
             manager.saveChanges().then(function () {
                 dfd.resolve(node);
@@ -116,6 +128,7 @@ function (entityManagerProvider, breeze, system) {
         createInitialSiteMap: createInitialSiteMap,
         createNewSiteMapVersion: createNewSiteMapVersion,
         deleteSiteMapVersion: deleteSiteMapVersion,
+        deletePublication: deletePublication,
         publishSiteMap: publishSiteMap,
         createSiteMapNode: createSiteMapNode,
         deleteSiteMapNode: deleteSiteMapNode,

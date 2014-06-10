@@ -1,11 +1,11 @@
 ﻿<div class="app-page bottom-fixed-navbar-container">
     <div class="panel-padding-h">
-        <h1>Wähle eine Vorlage</h1>
+        <h2>Wähle eine Vorlage</h2>
 
         <div class="row">
             <div class="col-md-8">
-                <div class="row" data-bind="foreach: listItems">
-                    <div class="col-xs-4 col-md-3 col-lg-2" data-bind="css: { 'item-selected': isSelected }">
+                <div class="row" data-bind="foreach: listItems" style="padding:15px 0;">
+                    <div class="col-xs-6 col-sm-4 col-md-4 col-lg-3" data-bind="css: { 'item-selected': isSelected }">
                         <div class="thumbnail">
                             <img data-bind="attr: { alt: name, src: icon }, click: $parent.selectTemplate" class="clickable" />
                             <div class="caption">
@@ -17,10 +17,17 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-4 col-lg-3">
                 <div class="form-group">
                     <label class="control-label">Name</label>
                     <input type="text" class="form-control" data-bind="value: draftName" />
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Vorlage: <span data-bind="text: selectedItem() ? selectedItem().title : 'Keine'"></span></label>
+                    <!-- ko if: selectedItem() && selectedItem().description -->
+                    <p class="help-block" data-bind="text: selectedItem().description"></p>
+                    <!-- /ko -->
                 </div>
 
                 <!-- ko if: selectedItem() && selectedItem().template.parameters -->
@@ -33,7 +40,7 @@
                 <!-- /ko -->
 
                 <p>
-                    <button class="btn btn-primary btn-lg" data-bind="click: createDraft">Erstellen</button>
+                    <button class="btn btn-primary btn-lg" data-bind="click: createDraft">Weiter</button>
                 </p>
             </div>
         </div>

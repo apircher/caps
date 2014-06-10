@@ -1,15 +1,18 @@
 ﻿define([
-    'plugins/dialog'
+    'plugins/dialog',
+    'ko'
 ],
-function (dialog) {
+function (dialog, ko) {
 
     function InsertLinkDialog() {
         var self = this;
 
+        self.url = ko.observable('http://www.google.com').extend({ required: true });
+
         self.ok = function () {
             dialog.close(self, {
                 result: true,
-                url: 'http://www.xyz.de'
+                url: self.url()
             });
         };
 
@@ -18,6 +21,8 @@ function (dialog) {
                 result: false
             });
         };
+
+        ko.validation.group(self);
     }
 
     return InsertLinkDialog;
