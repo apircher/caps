@@ -122,6 +122,10 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
 
         self.showFiles = function () {
             draftFilesVM = draftFilesVM || new DraftFiles(self);
+            var template = self.template();
+            if (template && template.fileGroups && system.isArray(template.fileGroups)) {
+                draftFilesVM.ensureGroupsExist(template.fileGroups);
+            }
             self.currentContent(draftFilesVM);
         };
 
@@ -281,11 +285,6 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
                         contentPart.getResource('de').Content(content);
                     }
                 });
-
-                if (template.fileGroups && system.isArray(template.fileGroups)) {
-                    draftFilesVM = draftFilesVM || new DraftFiles(self);
-                    draftFilesVM.ensureGroupsExist(template.fileGroups);
-                }
             })
         }
 

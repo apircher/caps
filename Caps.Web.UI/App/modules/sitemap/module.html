@@ -1,3 +1,15 @@
 ﻿<div id="sitemapModule">
     <!--ko router: { transition:'entrance', cacheViews:true }--><!--/ko-->
 </div>
+
+<script type="text/html" id="sitemap-contentfile-icon">
+    <!-- ko with: getResource('de').FileVersion() -->
+    <!-- ko if: File().isImage && File().isImage() -->
+    <img data-bind="attr: { 'src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=110x80&h=' + Hash(), title: File().FileName, alt: File().FileName }" />
+    <!-- /ko -->
+    <!-- ko if: File().isImage && !File().isImage() -->
+    <span data-bind="attr: { title: File().FileName }"><i class="fa fa-file fa-4x"></i></span>
+    <!-- /ko -->
+    <span class="thmb2-label" data-bind="text: File().FileName, attr: { title: File().FileName }"></span>
+    <!-- /ko -->
+</script>

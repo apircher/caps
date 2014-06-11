@@ -1,20 +1,12 @@
 ﻿
-@colorBgDark: #111;
-@colorFgDark: #999;
-@colorFgDark2: lighten(@colorFgDark, 33.5%);
-@colorTextShadowDark: rgba(0, 0, 0, 0.3); 
-@colorFgLight:#333;
-@colorSelectionBackground: #0088cc;
-@colorSelectionForeground: #fff;
+@import 'app-colors.less';
 
-@colorBackgroundDropZone: #fafafa;
-@colorForegroundDropZoneHint: #999;
+@appMinWidth:320px;
+@gridPadding:15px;
 
-@colorBackgroundThumbnail: #fff;
-
-@appMinWidth: 320px;
-
-@gridPadding: 15px;
+@navbar-top-height:50px;
+@navbar-bottom-height:50px;
+@subnav-top-height:50px;
 
 /**
  * General Stuff
@@ -25,97 +17,50 @@ html, body, .navbar {
     min-width:@appMinWidth;
 }
 
-h1, h2 {
-    /*font-size:28px;*/
-}
-
-/** 
- *  Splash Screen
- */
-
-.splash-host {
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom:0;
-    overflow:hidden;
-    background-color:@colorBgDark;
-    color:@colorFgDark2;
-}
-
-.splash {
-    position:fixed;
-    top:50%;
-    left:50%;
-    margin-right:-50%;
-    margin-bottom:-50%;
-    height:316.27px;
-}
-
-.splash-content {
-    position:relative;
-    top:-50%;
-    left:-50%;
-    text-align: center;
-    font-size:150%;
-}
-
-.splash-message {
-    font-size: 2.75em;
-    line-height: 1.5em;
-    font-weight:bold;
-    -webkit-text-shadow: @colorTextShadowDark 0 0 10px;
-    text-shadow: @colorTextShadowDark 0 0 10px;
-    max-width:none;
-}
-
-.splash-spinner {
-    text-align: center;
-    display: block;
-    color:@colorFgDark2;
-    margin:40px 0 40px;
-}
-
-.splash-footer {
-    font-size:1em;
-    line-height: 1.5em;
-    -webkit-text-shadow: @colorTextShadowDark 0 0 5px;
-    text-shadow: @colorTextShadowDark 0 0 5px;
-    max-width:none;
-}
-
 /** 
  *  Shell
  */
 
 .app-page-host {
-    position: relative;
-    top: 50px;
+    position:relative;
+    top:@navbar-top-height;
 }
 
 .app-page {
-    position:relative;    
-    margin:@gridPadding 0;
+    position:relative;   
+    overflow:hidden; 
     min-width:100%;
-    overflow:hidden;
+    margin:@gridPadding 0;
+}
+
+.app-page-nav-bottom {
+    padding-bottom:0;
+}
+@media (min-width:767px) {
+    .app-page-nav-bottom {
+        padding-bottom:@navbar-bottom-height;
+    }
 }
 
 /** 
  *  Panels
  */
 
+/* Panel with vertical scrollbar. */
 .panel-scroll-v {
     overflow-x:hidden;
     overflow-y:scroll;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling:touch;
 }
+
+/* Panel with vertical and horizontal scrollbar. */
 .panel-scroll-vh {
     overflow-x:auto;
     overflow-y:scroll;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling:touch;
 }
 
+/* Style Scrollbars in Apple Browsers. */
 .panel-scroll-v::-webkit-scrollbar,
 .panel-scroll-vh::-webkit-scrollbar {
     width:12px;
@@ -128,39 +73,39 @@ h1, h2 {
 .panel-scroll-v::-webkit-scrollbar-thumb,
 .panel-scroll-vh::-webkit-scrollbar-thumb {
     background:#ccc;
-    border-radius:10px;
     border:1px solid #ccc;
+    border-radius:10px;
 }
 
-.panel-padding-v {
-    padding:@gridPadding 0;
-}
+/* Panel with horizontal padding. */
 .panel-padding-h {    
     padding:0 @gridPadding;
 }
 
+/* Panel with fixed positioning. */
+@media (min-width:992px) {
+    .panel-fixed {
+        position:fixed;
+    }
+}
+
+/* Panel in a NavBar. */
 .navbar-panel {
-    margin: 0 @gridPadding / 2 0 @gridPadding;
+    margin:0 (@gridPadding / 2) 0 @gridPadding;
 }
     .navbar-panel.pull-right {
-        margin-left: @gridPadding / 2;
-        margin-right: @gridPadding;
+        margin-left:@gridPadding / 2;
+        margin-right:@gridPadding;
     }
 
-@media (max-width: 767px) {
+@media (max-width:767px) {
     .navbar-panel.pull-right > .navbar-text,
     .navbar-panel.pull-right > .nav.navbar-nav {
-        float: left;
-        margin-left: 0;
+        float:left;
+        margin-left:0;
     }
     .navbar-panel.pull-right > .nav.navbar-nav {
-        margin-left: @gridPadding;
-    }
-}
-
-@media (min-width:992px) {
-    .fixed-container {
-        position:fixed;
+        margin-left:@gridPadding;
     }
 }
 
@@ -168,93 +113,93 @@ h1, h2 {
  *  Navbars
  */
 
-.navbar-inverse .navbar-panel.navbar-text a,
-.navbar-inverse .navbar-panel.navbar-text a:active,
-.navbar-inverse .navbar-panel.navbar-text a:visited {
-    color: @colorFgDark;
-    text-decoration: none;
+/* Hide outline on brand name and navbar links. */
+a.navbar-brand,
+.nav.navbar-nav > li > a {
+    outline:none;
 }
-    .navbar-inverse .navbar-panel.navbar-text a:hover {
-        color: @colorFgDark2;
+
+/* Set Link-Style for inverted navbars. */
+.navbar-inverse a,
+.navbar-inverse a:active,
+.navbar-inverse a:visited {
+    color:@colorFgDark;
+    text-decoration:none;
+}
+    .navbar-inverse a:hover {
+        color:@colorFgDark2;
     }
 
 /* Navbar Loader */
 .navbar-loader {
-    margin: 12px 10px 4px 10px;
-    visibility: hidden;
+    visibility:hidden;
+    margin:12px 10px 4px 10px;
     color:@colorFgDark;
 }
+
 .navbar-loader.active {
     visibility: visible;
 }
 
 @media (max-width: 767px) {
     .navbar-loader {
-        margin-left: 0;
-        margin-right: 0;
+        margin-left:0;
+        margin-right:0;
     }
 }
 
 /* Authenticated User */
 #nav-user {
-    margin-left: @gridPadding;
-    border-left:1px solid darken(@colorFgDark, 30%);
+    margin-left:0;
+    border-left:1px solid darken(@colorFgDark, 35%);
 }
+
 #nav-user li {
     float:left;
 }
+
+    /* Limit the size of the user name. */
     #nav-user li a {
-        max-width: 120px;
+        max-width:80px;
         overflow:hidden;
-        -ms-text-overflow: ellipsis;
-        -o-text-overflow: ellipsis;
+        -ms-text-overflow:ellipsis;
+        -o-text-overflow:ellipsis;
         text-overflow: ellipsis;
     }
 
-@media (max-width: 320px) {
+@media (min-width: 360px) {
     #nav-user li a {
-        max-width: 80px;
+        max-width:120px;
     }
 }
 
-@media (max-width: 767px) {
+@media (min-width: 767px) {
     #nav-user {
-      margin-left: 0;
+      margin-left:@gridPadding;
     }
-}
-
-.nav.navbar-nav > li > a {
-    outline:none;
 }
 
 /* Bottom Navbar */
-.bottom-fixed-navbar-container {
-    padding-bottom:50px;
-}
-@media (max-width: 767px) {
-    .bottom-fixed-navbar-container {
-        padding-bottom: 0;
-    }                  
+@media (max-width: 767px) {                
     .navbar.navbar-fixed-bottom {
         position:relative;
         margin-top:@gridPadding;
     }
 }
 
+/* Bottom Navbar Level 2.*/
 .bottom-fixed-navbar-l2 {
     background:#fff;
     padding:5px 0;
 }
 
-.bottom-fixed-navbar-container-l2 {
-}
-
 @media (min-width:992px) {
     .bottom-fixed-navbar-l2 {
         position:fixed;
-        bottom:50px;
+        bottom:@navbar-bottom-height;
         width:100%;
     }    
+
     .bottom-fixed-navbar-container-l2 {
         padding-bottom:50px;
     }
@@ -265,7 +210,6 @@ h1, h2 {
  */
 
 /* Split Button */
-
 .nav-tabs > li > .btn-group {
     margin-right:2px;
 }
@@ -306,36 +250,32 @@ h1, h2 {
 /**
  * Sub Nav
  */
+  
+.subnav-fixed-top-container {
+    padding-top:0;
+}
 
 .subnav-fixed-top {
-    position:fixed;
-    left:0;
-    right:0;
-    top:50px;
-    height:50px;
-    padding:@gridPadding @gridPadding 0;
-    z-index: 100;
+    position:static;
+    top:auto;
+    display:block;
+    height:auto;
     background:#fff;
-}
+    padding:@gridPadding @gridPadding 0;
+    height:@subnav-top-height;
+    z-index: 100;
+}  
 
-.subnav-fixed-top-container {
-    padding-top:35px;
-}
-
-.subnav-extrapadding {
-    padding-top:55px;
-}
-
-@media (max-width: 992px) {
-    .subnav-fixed-top {
-        position:static;
-        top:auto;
-        display:block;
-        height:auto;
-    }    
-    .subnav-extrapadding,
+@media (min-width: 992px) {
     .subnav-fixed-top-container {
-        padding-top:0;
+        padding-top:@subnav-top-height + 5;
+    }
+
+    .subnav-fixed-top {
+        position:fixed;
+        left:0;
+        right:0;
+        top:@navbar-top-height;
     }
 }
 
@@ -352,7 +292,6 @@ h1, h2 {
 
 .modal-body {
     padding:@gridPadding + 10px @gridPadding 0;
-    /*overflow:hidden;*/
 }
 
 .modal-body form {
@@ -659,6 +598,9 @@ ul.tree-branch a:hover {
     background-color:@colorBackgroundThumbnail;
     margin-bottom:0;
 }
+.thumbnail.no-label {
+    margin-bottom:30px;
+}
 
 .item-selected > .thumbnail {
     border-color: @colorSelectionBackground;
@@ -777,6 +719,35 @@ ul.tree-branch a:hover {
 }
 .thumbnail-list .separator:last-of-type {
     display:none;
+}
+
+/**
+ * Thumbnails 2
+ */
+
+.thumbnail.thmb2-thumbnail {
+    margin-bottom:29px;
+    position:relative;
+    height:90px;
+    line-height:78px;
+    text-align:center;
+}
+.thumbnail.thmb2-thumbnail > img {
+    display:inline-block;
+    vertical-align:middle;
+}
+.thmb2-label {
+    position:absolute;
+    left:0;
+    bottom:-25px;
+    height:21px;
+    width:100%;
+    overflow:hidden;
+    -ms-text-overflow:ellipsis;
+    -o-text-overflow:ellipsis;
+    text-overflow:ellipsis;
+    line-height:21px;
+    text-align:left;
 }
 
 /**
@@ -1138,6 +1109,29 @@ span.large-icon {
 
 .sitemap-index-sidebar {
     top: 100px;
+}
+
+/**
+ * Translator
+ */
+
+.trnsl-btns-abs-centered {
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin-left:-15px;
+    width:30px;
+    height:30px;
+    margin-top:-15px;
+    z-index:10000;
+}
+
+.trnsl-btns-abs-centered > a {
+    display:block;
+    width:30px;
+    height:30px;
+    text-align:center;
+    line-height:30px;
 }
 
 

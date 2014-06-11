@@ -1,4 +1,4 @@
-﻿<div id="drafts-index" class="app-page bottom-fixed-navbar-container">
+﻿<div id="drafts-index" class="app-page app-page-nav-bottom">
 
     <div class="panel-padding-h">
         <div class="row">
@@ -31,7 +31,7 @@
         </div>
     </div>
 
-    <div class="navbar navbar-default navbar-fixed-bottom">
+    <div class="navbar navbar-inverse navbar-fixed-bottom">
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
                 <li>
@@ -117,9 +117,13 @@
     <div class="row draft-preview-panel" data-bind="with: entity()">
         <div class="col-md-12">
             <h6>Anhänge (<!-- ko text: Files().length --><!-- /ko -->)</h6>
-            <ul data-bind="foreach: Files()" class="list-inline">
-                <li><i class="fa fa-file"></i> <span data-bind="text: Name" /></li>
-            </ul>
+            <div class="row" data-bind="foreach: Files()">
+                <div class="col-xs-4 col-sm-3 col-lg-2">
+                    <span class="thumbnail thmb2-thumbnail" data-bind="if: getResource('de') && getResource('de').FileVersion() && getResource('de').FileVersion().File()">
+                        <!-- ko template: { name: 'draft-draftfile-icon' } --><!-- /ko -->
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
     <!-- /ko -->

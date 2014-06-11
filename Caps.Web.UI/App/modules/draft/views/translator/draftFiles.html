@@ -1,9 +1,9 @@
 ﻿<div class="row editor-header">
     <div class="col-md-6">
-        <span>Original (Deutsch)</span>
+        <label>Original (Deutsch)</label>
     </div>
     <div class="col-md-6">
-        <span data-bind="text:editor.language().localeName('de')"></span>
+        <label data-bind="text: 'Übersetzung (' + editor.language().localeName('de') + ')'"></label>
     </div>
 </div>
 
@@ -28,14 +28,7 @@
                 <div class="form-group">
                     <label class="col-md-2">Beschreibung</label>
                     <div class="col-md-10">
-                        <textarea data-bind="value: original.Description" class="form-control" disabled="disabled" />
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-2">Akkreditierung</label>
-                    <div class="col-md-10">
-                        <input type="text" class="form-control" data-bind="value: original.Credits" disabled="disabled" />
+                        <textarea data-bind="value: original.Description" class="form-control" disabled="disabled" rows="4" />
                     </div>
                 </div>
             </form>
@@ -67,14 +60,7 @@
                 <div class="form-group">
                     <label class="col-md-2">Beschreibung</label>
                     <div class="col-md-10">
-                        <textarea data-bind="value: translation.Description, attr: { lang: $parent.editor.language().culture }" class="form-control" />
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-md-2">Akkreditierung</label>
-                    <div class="col-md-10">
-                        <input type="text" class="form-control" data-bind="value: translation.Credits, attr: { lang: $parent.editor.language().culture }" />
+                        <textarea data-bind="value: translation.Description, attr: { lang: $parent.editor.language().culture }" class="form-control" rows="4" />
                     </div>
                 </div>
             </form>

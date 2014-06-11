@@ -165,6 +165,8 @@
 
 .draft-preview-content.sitemap-index {
     border-top:0;
+    border-bottom:1px solid #eee;
+    margin-bottom:20px;
 }
 
 .draft-preview-panel {

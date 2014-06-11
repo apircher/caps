@@ -1,4 +1,4 @@
-﻿/**
+/**
  * General Stuff
  */
 /* Set the minimum width for the app. */
@@ -6,59 +6,6 @@ html,
 body,
 .navbar {
   min-width: 320px;
-}
-h1,
-h2 {
-  /*font-size:28px;*/
-}
-/** 
- *  Splash Screen
- */
-.splash-host {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  background-color: #111111;
-  color: #eeeeee;
-}
-.splash {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  margin-right: -50%;
-  margin-bottom: -50%;
-  height: 316.27px;
-}
-.splash-content {
-  position: relative;
-  top: -50%;
-  left: -50%;
-  text-align: center;
-  font-size: 150%;
-}
-.splash-message {
-  font-size: 2.75em;
-  line-height: 1.5em;
-  font-weight: bold;
-  -webkit-text-shadow: rgba(0, 0, 0, 0.3) 0 0 10px;
-  text-shadow: rgba(0, 0, 0, 0.3) 0 0 10px;
-  max-width: none;
-}
-.splash-spinner {
-  text-align: center;
-  display: block;
-  color: #eeeeee;
-  margin: 40px 0 40px;
-}
-.splash-footer {
-  font-size: 1em;
-  line-height: 1.5em;
-  -webkit-text-shadow: rgba(0, 0, 0, 0.3) 0 0 5px;
-  text-shadow: rgba(0, 0, 0, 0.3) 0 0 5px;
-  max-width: none;
 }
 /** 
  *  Shell
@@ -69,23 +16,34 @@ h2 {
 }
 .app-page {
   position: relative;
-  margin: 15px 0;
-  min-width: 100%;
   overflow: hidden;
+  min-width: 100%;
+  margin: 15px 0;
+}
+.app-page-nav-bottom {
+  padding-bottom: 0;
+}
+@media (min-width: 767px) {
+  .app-page-nav-bottom {
+    padding-bottom: 50px;
+  }
 }
 /** 
  *  Panels
  */
+/* Panel with vertical scrollbar. */
 .panel-scroll-v {
   overflow-x: hidden;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
 }
+/* Panel with vertical and horizontal scrollbar. */
 .panel-scroll-vh {
   overflow-x: auto;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
 }
+/* Style Scrollbars in Apple Browsers. */
 .panel-scroll-v::-webkit-scrollbar,
 .panel-scroll-vh::-webkit-scrollbar {
   width: 12px;
@@ -98,15 +56,20 @@ h2 {
 .panel-scroll-v::-webkit-scrollbar-thumb,
 .panel-scroll-vh::-webkit-scrollbar-thumb {
   background: #ccc;
-  border-radius: 10px;
   border: 1px solid #ccc;
+  border-radius: 10px;
 }
-.panel-padding-v {
-  padding: 15px 0;
-}
+/* Panel with horizontal padding. */
 .panel-padding-h {
   padding: 0 15px;
 }
+/* Panel with fixed positioning. */
+@media (min-width: 992px) {
+  .panel-fixed {
+    position: fixed;
+  }
+}
+/* Panel in a NavBar. */
 .navbar-panel {
   margin: 0 7.5px 0 15px;
 }
@@ -124,27 +87,28 @@ h2 {
     margin-left: 15px;
   }
 }
-@media (min-width: 992px) {
-  .fixed-container {
-    position: fixed;
-  }
-}
 /** 
  *  Navbars
  */
-.navbar-inverse .navbar-panel.navbar-text a,
-.navbar-inverse .navbar-panel.navbar-text a:active,
-.navbar-inverse .navbar-panel.navbar-text a:visited {
+/* Hide outline on brand name and navbar links. */
+a.navbar-brand,
+.nav.navbar-nav > li > a {
+  outline: none;
+}
+/* Set Link-Style for inverted navbars. */
+.navbar-inverse a,
+.navbar-inverse a:active,
+.navbar-inverse a:visited {
   color: #999999;
   text-decoration: none;
 }
-.navbar-inverse .navbar-panel.navbar-text a:hover {
+.navbar-inverse a:hover {
   color: #eeeeee;
 }
 /* Navbar Loader */
 .navbar-loader {
-  margin: 12px 10px 4px 10px;
   visibility: hidden;
+  margin: 12px 10px 4px 10px;
   color: #999999;
 }
 .navbar-loader.active {
@@ -158,45 +122,38 @@ h2 {
 }
 /* Authenticated User */
 #nav-user {
-  margin-left: 15px;
-  border-left: 1px solid #4d4d4d;
+  margin-left: 0;
+  border-left: 1px solid #404040;
 }
 #nav-user li {
   float: left;
 }
+/* Limit the size of the user name. */
 #nav-user li a {
-  max-width: 120px;
+  max-width: 80px;
   overflow: hidden;
   -ms-text-overflow: ellipsis;
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
 }
-@media (max-width: 320px) {
+@media (min-width: 360px) {
   #nav-user li a {
-    max-width: 80px;
+    max-width: 120px;
   }
 }
-@media (max-width: 767px) {
+@media (min-width: 767px) {
   #nav-user {
-    margin-left: 0;
+    margin-left: 15px;
   }
-}
-.nav.navbar-nav > li > a {
-  outline: none;
 }
 /* Bottom Navbar */
-.bottom-fixed-navbar-container {
-  padding-bottom: 50px;
-}
 @media (max-width: 767px) {
-  .bottom-fixed-navbar-container {
-    padding-bottom: 0;
-  }
   .navbar.navbar-fixed-bottom {
     position: relative;
     margin-top: 15px;
   }
 }
+/* Bottom Navbar Level 2.*/
 .bottom-fixed-navbar-l2 {
   background: #fff;
   padding: 5px 0;
@@ -250,32 +207,28 @@ h2 {
 /**
  * Sub Nav
  */
-.subnav-fixed-top {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 50px;
-  height: 50px;
-  padding: 15px 15px 0;
-  z-index: 100;
-  background: #fff;
-}
 .subnav-fixed-top-container {
-  padding-top: 35px;
+  padding-top: 0;
 }
-.subnav-extrapadding {
-  padding-top: 55px;
+.subnav-fixed-top {
+  position: static;
+  top: auto;
+  display: block;
+  height: auto;
+  background: #fff;
+  padding: 15px 15px 0;
+  height: 50px;
+  z-index: 100;
 }
-@media (max-width: 992px) {
-  .subnav-fixed-top {
-    position: static;
-    top: auto;
-    display: block;
-    height: auto;
-  }
-  .subnav-extrapadding,
+@media (min-width: 992px) {
   .subnav-fixed-top-container {
-    padding-top: 0;
+    padding-top: 55px;
+  }
+  .subnav-fixed-top {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 50px;
   }
 }
 /** 
@@ -289,7 +242,6 @@ h2 {
 }
 .modal-body {
   padding: 25px 15px 0;
-  /*overflow:hidden;*/
 }
 .modal-body form {
   padding-bottom: 10px;
@@ -564,6 +516,9 @@ ul.tree-branch a:hover {
   background-color: #ffffff;
   margin-bottom: 0;
 }
+.thumbnail.no-label {
+  margin-bottom: 30px;
+}
 .item-selected > .thumbnail {
   border-color: #0088cc;
   box-shadow: 0 1px 4px rgba(0, 136, 204, 0.25);
@@ -668,6 +623,33 @@ ul.tree-branch a:hover {
 }
 .thumbnail-list .separator:last-of-type {
   display: none;
+}
+/**
+ * Thumbnails 2
+ */
+.thumbnail.thmb2-thumbnail {
+  margin-bottom: 29px;
+  position: relative;
+  height: 90px;
+  line-height: 78px;
+  text-align: center;
+}
+.thumbnail.thmb2-thumbnail > img {
+  display: inline-block;
+  vertical-align: middle;
+}
+.thmb2-label {
+  position: absolute;
+  left: 0;
+  bottom: -25px;
+  height: 21px;
+  width: 100%;
+  overflow: hidden;
+  -ms-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  line-height: 21px;
+  text-align: left;
 }
 /**
  * File Drop Zone
@@ -976,6 +958,26 @@ span.large-icon {
 }
 .sitemap-index-sidebar {
   top: 100px;
+}
+/**
+ * Translator
+ */
+.trnsl-btns-abs-centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -15px;
+  width: 30px;
+  height: 30px;
+  margin-top: -15px;
+  z-index: 10000;
+}
+.trnsl-btns-abs-centered > a {
+  display: block;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
 }
 /**
  * CodeMirror

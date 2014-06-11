@@ -1,0 +1,48 @@
+﻿/** 
+ *  Splash Screen
+ */
+.splash-host {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background-color: #111111;
+  color: #eeeeee;
+}
+.splash {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  margin-bottom: -50%;
+  height: 316.27px;
+}
+.splash-content {
+  position: relative;
+  top: -50%;
+  left: -50%;
+  text-align: center;
+  font-size: 150%;
+}
+.splash-message {
+  font-size: 2.75em;
+  line-height: 1.5em;
+  font-weight: bold;
+  text-shadow: rgba(0, 0, 0, 0.3) 0 0 10px;
+  max-width: none;
+}
+.splash-spinner {
+  text-align: center;
+  display: block;
+  color: #eeeeee;
+  margin: 40px 0 40px;
+}
+.splash-footer {
+  font-size: 1em;
+  line-height: 1.5em;
+  text-shadow: rgba(0, 0, 0, 0.3) 0 0 5px;
+  max-width: none;
+}
+/*# sourceMappingURL=app-splash.css.map */

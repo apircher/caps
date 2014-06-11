@@ -1,4 +1,4 @@
-﻿<div id="sitemap-index" class="app-page bottom-fixed-navbar-container">
+﻿<div id="sitemap-index" class="app-page app-page-nav-bottom">
 
     <div class="panel-padding-h subnav-fixed-top-container">
         <div class="row subnav-fixed-top sitemap-index-header">
@@ -81,11 +81,13 @@
                 <!-- ko if: selectedPublication() && selectedPublication().files().length -->
                 <div data-bind="with: selectedPublication()">
                     <h5>Dateien (<!-- ko text: files().length --><!-- /ko -->)</h5>
-                    <ul class="list-inline" data-bind="foreach: files()">
-                        <li data-bind="if: getResource('de') && getResource('de').FileVersion() && getResource('de').FileVersion().File()">
-                            <i class="fa fa-file"></i> <!-- ko text: getResource('de').FileVersion().File().FileName --><!-- /ko -->
-                        </li>
-                    </ul>
+                    <div class="row" data-bind="foreach: files" style="margin-bottom:30px;">
+                        <div class="col-xs-4 col-sm-3 col-lg-2" data-bind="if: getResource('de') && getResource('de').FileVersion() && getResource('de').FileVersion().File()">
+                            <span class="thumbnail thmb2-thumbnail" data-bind="if: getResource('de') && getResource('de').FileVersion() && getResource('de').FileVersion().File()">
+                                <!-- ko template: { name: 'sitemap-contentfile-icon' } --><!-- /ko -->
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <!-- /ko -->
             </div>
@@ -109,7 +111,6 @@
                     </li>
                 </ul>
                 <!-- /ko -->
-
                 <!-- ko if: selectedPublication() && selectedNode() && selectedNode().canLinkTo() -->
                 <div>
                     <h5>Adresse</h5>
@@ -118,7 +119,6 @@
                     </p>
                 </div>
                 <!-- /ko -->
-
                 <!-- ko with: properties() -->
                 <!-- ko if: hasOptions -->
                 <h5>Optionen</h5>
@@ -140,7 +140,7 @@
         </div>
     </div>
 
-    <div class="navbar navbar-default navbar-fixed-bottom">
+    <div class="navbar navbar-inverse navbar-fixed-bottom">
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
                 <li data-bind="if: selectedNode()">

@@ -1,5 +1,5 @@
 ﻿
-<div id="user-editor" class="app-page bottom-fixed-navbar-container">
+<div id="user-editor" class="app-page app-page-nav-bottom">
     <div class="container">
         <!-- ko if: isNewUser() -->
         <h2>Neuer Benutzer</h2>
@@ -46,7 +46,7 @@
         </div>
     </form>
 
-    <div class="navbar navbar-default navbar-fixed-bottom">
+    <div class="navbar navbar-inverse navbar-fixed-bottom">
         <div class="pull-right">
             <!-- ko if: !user().isValid() -->
             <!-- ko validationSummary: { entity: user() } --><!-- /ko -->

@@ -18,7 +18,7 @@ function (ko, system, app, datacontext, FileUploadDialog) {
      */
     function UploadManager() {
         var self = this,
-            batches = new UploadBatchCollection();
+            batches = new UploadBatchCollection(self);
 
         self.isUploading = ko.observable(false);
         self.progress = ko.observable(0);
@@ -93,12 +93,13 @@ function (ko, system, app, datacontext, FileUploadDialog) {
     /**
      * Class UploadBatch
      */
-    function UploadBatch(originalFiles) {
+    function UploadBatch(originalFiles, manager) {
         var self = this;
         self.originalFiles = originalFiles;
         self.files = [];
         self.storageOption = 'add';
         self.filesExistingOnServer = [];
+        self.manager = manager;
 
         self.addFiles = function (data) {
             self.files.push(data);
@@ -117,6 +118,7 @@ function (ko, system, app, datacontext, FileUploadDialog) {
                 data.formData.storageAction = so;
 
                 data.submit();
+                manager.isUploading(true);
             });
         };
 
@@ -137,14 +139,14 @@ function (ko, system, app, datacontext, FileUploadDialog) {
     /**
      * Class UploadBatchCollection
      */
-    function UploadBatchCollection() {
+    function UploadBatchCollection(manager) {
         var self = this,
             batches = [];
 
         self.findOrAddBatch = function (data) {
             var batch = self.findBatch(data.originalFiles);
             if (!batch) {
-                batch = new UploadBatch(data.originalFiles);
+                batch = new UploadBatch(data.originalFiles, manager);
                 if (data.fileInput) {
                     var storageOption = data.fileInput.data('storage-option');
                     if (storageOption) batch.storageOption = storageOption;

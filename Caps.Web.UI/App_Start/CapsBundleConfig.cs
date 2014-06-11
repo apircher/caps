@@ -12,16 +12,22 @@ namespace Caps.Web.UI
         {
             bundles.IgnoreList.Clear();
             AddDefaultIgnorePatterns(bundles.IgnoreList);
-            
+
             bundles.Add(
-              new StyleBundle("~/Content/css")
-                .Include("~/Content/durandal.css")
-                .Include("~/Content/app-theme.css")
-                .Include("~/Content/app-drafts-editor.css")
-                .Include("~/Content/ie10mobile.css")
+              new StyleBundle("~/Content/vendor-styles")
+                .Include("~/Content/bootstrap.css")
+                .Include("~/Content/font-awesome.css")
                 .Include("~/Content/toastr.css")
                 .Include("~/Content/typeahead.css")
                 .Include("~/Scripts/codemirror/lib/codemirror.css")
+                .Include("~/Content/durandal.css")
+              );
+
+            bundles.Add(
+              new StyleBundle("~/Content/app-styles")
+                .Include("~/Content/app-theme.css")
+                .Include("~/Content/app-drafts-editor.css")
+                .Include("~/Content/app-splash.css")
               );
 
             bundles.Add(

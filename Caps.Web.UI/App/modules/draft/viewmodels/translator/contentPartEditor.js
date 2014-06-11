@@ -8,6 +8,10 @@
         this.title = contentPart.Name();
 
         this.originalContent = htmlEscape(contentPart.getResource('de').Content()).replace(/\n/g, '<br />');
+
+        this.copyOriginal = function () {
+            this.resource.Content(contentPart.getResource('de').Content());
+        };
     }
 
     function htmlEscape(str) {

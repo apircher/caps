@@ -25,22 +25,9 @@
         <link rel="apple-touch-startup-image" sizes="2048x1496" href="~/Content/images/apple-touch-startup-image-2048x1496.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:landscape) and (-webkit-min-device-pixel-ratio: 2)" />
 
         <link rel="apple-touch-icon" href="~/Content/images/icon-1.png"/>
-
-        <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
-        <link rel="stylesheet" href="~/Content/font-awesome.min.css" />
-        <link rel="stylesheet" href="~/Scripts/codemirror/lib/codemirror.css" />
-        
-        @Styles.Render("~/Content/css")
                 
-        <script type="text/javascript">
-            if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
-                var msViewportStyle = document.createElement("style");
-                var mq = "@@-ms-viewport{width:auto!important}";
-                msViewportStyle.appendChild(document.createTextNode(mq));
-                document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
-            }
-        </script>
-
+        @Styles.Render("~/Content/vendor-styles", "~/Content/app-styles")
+                
         <script type="text/javascript" src="~/Scripts/modernizr-2.7.2.js"></script>
     </head>
     <body>
@@ -53,7 +40,6 @@
             var require = {
                 urlArgs: "v=@Html.CapsVersion()"
             };
-
             var capsConfig = {
                 applicationPath: "@HttpContext.Current.Request.ApplicationPath"
             };

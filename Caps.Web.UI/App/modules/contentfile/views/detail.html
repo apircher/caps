@@ -1,7 +1,7 @@
-﻿<div class="app-page bottom-fixed-navbar-container">
+﻿<div class="app-page app-page-nav-bottom">
 
     <!-- ko if: file() -->
-    <div class="col-md-8 col-lg-9 fixed-container" data-bind="forceViewportHeight: { minWidth: 992 }">
+    <div class="col-md-8 col-lg-9 panel-fixed" data-bind="forceViewportHeight: { minWidth: 992 }">
         <!-- ko template: { name: previewTemplate, data: fileVersion().entity } -->
         <!-- /ko -->
     </div>
@@ -10,7 +10,7 @@
         <h4 class="break-h"><span data-bind="text: file().FileName"></span> <small>Details</small></h4>
         <div>
             <p>
-            Hochgeladen <span data-bind="text: uploadedFromNowBy, attr: { title: uploadedAt }"></span>
+                Hochgeladen <span data-bind="text: uploadedFromNowBy, attr: { title: uploadedAt }"></span>
             </p>
             <!-- ko with: fileVersion() -->
             <!-- ko if: isInUse() -->
@@ -20,7 +20,7 @@
                 <li data-bind="if: DraftFile()">
                     <a href="#" data-bind="click: $parent.navigateToResourceOwner"><i class="fa fa-file-text"></i> Inhalt <!-- ko text: DraftFile().DraftId --><!-- /ko --></a>
                 </li>
-                <!-- /ko -->                
+                <!-- /ko -->
                 <!-- ko foreach: entity.PublicationFileResources() -->
                 <li>
                     <a href="#" data-bind="click: $parent.navigateToResourceOwner"><i class="fa fa-file-text"></i> Veröffentlichung <!-- ko text: PublicationFile().PublicationId --><!-- /ko --></a>
@@ -39,11 +39,10 @@
             </div>
             <!-- ko if: moment(file().Created().At()).diff(moment(file().Modified().At()), 'seconds') > 0 -->
             <div data-bind="with: file().Modified">
-                Letzte Änderung <span data-bind="text: moment(At()).fromNow(), attr: { title: moment(At()).format('LLLL') }"></span> 
+                Letzte Änderung <span data-bind="text: moment(At()).fromNow(), attr: { title: moment(At()).format('LLLL') }"></span>
                 von <span data-bind="text: By"></span>
             </div>
             <!-- /ko -->
-
             <!-- ko if: file().isImage -->
             <div data-bind="with: file().latestVersion">
                 Bildgröße: <span data-bind="text: imageWidth"></span> x <span data-bind="text: imageHeight"></span> px
@@ -56,7 +55,7 @@
             <!-- ko if: !addTagUIVisible() -->
             <small><a data-bind="click: addTag" href="#">Hinzufügen</a></small>
             <!-- /ko -->
-        </h4>        
+        </h4>
         <!-- ko if: addTagUIVisible -->
         <form role="form">
             <div class="input-group">
@@ -68,7 +67,7 @@
             <p class="form-control-buttons"><a data-bind="click: cancelAddTag" href="#">Abbrechen</a></p>
         </form>
         <br />
-        <!-- /ko -->        
+        <!-- /ko -->
         <ul data-bind="foreach: file().Tags" class="list-group">
             <li data-bind="if: Tag()" class="list-group-item">
                 <div class="pull-right">
@@ -84,7 +83,7 @@
                 <span data-bind="text:name"></span> <a href="#" data-bind="click: deleteThumbnail">Löschen</a>
             </li>
         </ul>
-        
+
         <!-- ko if: versions().length > 1 -->
         <h4>Weitere Versionen <small>(<!-- ko text: versions().length - 1 --><!-- /ko -->)</small></h4>
         <ul data-bind="foreach: versions" class="list-unstyled">
@@ -102,14 +101,15 @@
         <!-- /ko -->
     </div>
     <!-- /ko -->
-        
-    <div class="navbar navbar-default navbar-fixed-bottom">
-        
-        <div class="navbar-panel pull-left">                        
+
+    <div class="navbar navbar-inverse navbar-fixed-bottom">
+
+        <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
                 <li>
                     <a href="#" data-bind="click: navigateBack">
-                        <i class="fa fa-arrow-left"></i> Alle Dateien</a>
+                        <i class="fa fa-arrow-left"></i> Alle Dateien
+                    </a>
                 </li>
                 <li>
                     <a class="btn-fileinput">
@@ -134,7 +134,7 @@
                     <a href="#" title="Aktualisieren" data-bind="click: refresh"><i class="fa fa-refresh fa-fw" data-bind="css: { 'fa-spin': isLoading }"></i></a>
                 </li>
             </ul>
-        </div> 
+        </div>
     </div>
 
     <script type="text/html" id="file-preview-image">

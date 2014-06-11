@@ -300,7 +300,13 @@
     <Content Include="App\modules\sitemap\views\siteMapTree.html" />
     <Content Include="App\viewmodels\setPasswordDialog.js" />
     <Content Include="App\views\setPasswordDialog.html" />
+    <Content Include="Content\app-colors.css">
+      <DependentUpon>app-colors.less</DependentUpon>
+    </Content>
     <Content Include="Content\app-drafts-editor.css" />
+    <Content Include="Content\app-splash.css">
+      <DependentUpon>app-splash.less</DependentUpon>
+    </Content>
     <Content Include="Content\app-theme.css">
       <DependentUpon>app-theme.less</DependentUpon>
     </Content>
@@ -393,6 +399,11 @@
     <Content Include="Fonts\FontAwesome.otf" />
     <Content Include="Content\toastr.scss" />
     <Content Include="Content\toastr.less" />
+    <Content Include="Content\app-colors.less" />
+    <Content Include="Content\app-splash.less" />
+    <Content Include="Content\app-splash.css.map">
+      <DependentUpon>app-splash.css</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\caps-pirchersoftware - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\caps-pirchersoftware - Web Deploy.pubxml" />
     <Content Include="Scripts\bootstrap.js" />
