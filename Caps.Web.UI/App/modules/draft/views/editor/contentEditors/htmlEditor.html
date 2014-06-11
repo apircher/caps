@@ -1,9 +1,9 @@
 ﻿
-<div class="content-editor container-toolbar-top">
+<div class="content-editor container-toolbar-top" data-bind="codeMirror: { value: content, mode: 'htmlmixed' }">
     <div class="content-toolbar">
         <div class="btn-group">
-            <a class="btn btn-default" href="#"><i class="fa fa-bold"></i></a>
+            <a class="btn btn-default" href="#" data-bind="click: function() { alert('Nicht implementiert'); }"><i class="fa fa-bold"></i></a>
         </div>
     </div>
-    <textarea class="form-control" data-bind="value: content"></textarea>
+    <!--<textarea class="form-control" data-bind="value: content"></textarea>-->
 </div>

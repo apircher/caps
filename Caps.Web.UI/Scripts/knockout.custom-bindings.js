@@ -19,7 +19,7 @@
             var options = {
                 value: valueBinding ? valueBinding() : '',
                 lineNumbers: true,
-                mode: 'javascript'
+                mode: options.mode || 'javascript'
             };
 
             var cm;

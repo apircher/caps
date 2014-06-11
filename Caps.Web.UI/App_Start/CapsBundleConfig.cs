@@ -48,6 +48,9 @@ namespace Caps.Web.UI
                 .Include("~/Scripts/string-extensions.js")
                 .Include("~/Scripts/codemirror/lib/codemirror.js")
                 .Include("~/Scripts/codemirror/mode/javascript/javascript.js")
+                .Include("~/Scripts/codemirror/mode/xml/xml.js")
+                .Include("~/Scripts/codemirror/mode/css/css.js")
+                .Include("~/Scripts/codemirror/mode/htmlmixed/htmlmixed.js")
             );
         }
 
