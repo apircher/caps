@@ -54,7 +54,7 @@
                 <ul class="nav navbar-nav">
                     <li>
                         <a class="btn btn-fileinput">
-                            <span><i class="fa fa-plus"></i> Dateien hinzufügen</span>
+                            <span><i class="fa fa-plus fa-fw"></i> Dateien hochladen</span>
                             <!-- ko with: uploadManager -->
                             <input type="file" name="files" data-url="~/api/DbFileUpload"
                                    data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, drop: filesDropped, dropZone: $('#drop-zone') }" multiple>

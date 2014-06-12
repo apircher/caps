@@ -1,4 +1,6 @@
-﻿/**
+﻿/*global define*/
+
+/**
  * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
  * Available via the MIT license.
  */
@@ -8,7 +10,6 @@ define(function (require) {
 
     var authentication = require('authentication'),
         app = require('durandal/app'),
-        system = require('durandal/system'),
         router = require('plugins/router'),
         ko = require('knockout'),
         $ = require('jquery');
@@ -23,8 +24,8 @@ define(function (require) {
 
     function logon() {
         isLoggingOn(true);
-        var returnRoute = authentication.logon(userName(), password(), rememberMe())
-        .then(function (result) {            
+        authentication.logon(userName(), password(), rememberMe())
+        .then(function () {            
             router.redirectFromLogonView();
         })
         .fail(function (err) {
@@ -73,7 +74,7 @@ define(function (require) {
             loadExternalLoginProviders();
             setFocus();
         },
-        compositionComplete: function (view) {
+        compositionComplete: function () {
             setFocus();
         },
         isLoadingExternalLoginProviders: isLoadingExternalLoginProviders,
@@ -92,15 +93,15 @@ define(function (require) {
 
         // Operations
         self.login = function () {
-            sessionStorage["state"] = data.state;
-            sessionStorage["loginUrl"] = data.url;
+            sessionStorage.state = data.state;
+            sessionStorage.loginUrl = data.url;
             // IE doesn't reliably persist sessionStorage when navigating to another URL. Move sessionStorage temporarily
             // to localStorage to work around this problem.
             app.archiveSessionStorageToLocalStorage();
 
             // Store loginSuccessRoute
             if (router.logonSuccessRoute)
-                localStorage["logonSuccessRoute"] = router.logonSuccessRoute.config.hash;
+                localStorage.logonSuccessRoute = router.logonSuccessRoute.config.hash;
 
             window.location = data.url;
         };

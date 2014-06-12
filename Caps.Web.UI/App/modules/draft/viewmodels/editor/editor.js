@@ -22,9 +22,7 @@ define([
     'authentication'
 ],
 function (app, system, module, datacontext, DraftsModel, entityManagerProvider, breeze, ko, Q, Navigation, DraftTemplate, DraftProperties, DraftFiles, ContentPartEditor, TemplateEditor, DraftNotesEditor, EditorModel, authentication) {
-
-    var $window = $(window);
-
+    
     // Editor Model
     function DraftEditor() {
         var self = this,
@@ -248,7 +246,7 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
                     var res = ko.utils.arrayFirst(f.Resources(), function (r) {
                         return r.FileVersion() && r.FileVersion().FileId() === fileId;
                     });
-                    return res != null;
+                    return res !== null;
                 });
 
             if (draftFiles.length) {
@@ -278,14 +276,14 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
                     contentPart.Ranking(ranking);
                     if (cell.content) {
                         var regexPlaceHolders = /<%\s*([A-Za-z0-9_\.]+)\s*%>/gi;
-                        var content = cell.content.replace(regexPlaceHolders, function (hit, p1, offset, s) {
+                        var content = cell.content.replace(regexPlaceHolders, function (hit, p1) {
                             if (queryString && queryString[p1]) return queryString[p1];
                             return findTemplateParameterValue(p1) || 'Nicht gefunden';
                         });
                         contentPart.getResource('de').Content(content);
                     }
                 });
-            })
+            });
         }
 
         function findTemplateParameterValue(key) {

@@ -6,7 +6,7 @@
 
                 <ul class="list-inline pull-right">
                     <li>
-                        <a href="#" data-bind="click: editWebsite" title="Website-Einstellungen"><i class="fa fa-cog"></i></a>
+                        <a href="#" data-bind="click: editWebsite" title="Website-Einstellungen"><i class="fa fa-cogs"></i></a>
                     </li>
                 </ul>
 
@@ -143,23 +143,26 @@
     <div class="navbar navbar-inverse navbar-fixed-bottom">
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
-                <li data-bind="if: selectedNode()">
-                    <a href="#" data-bind="click: createSiteMapNode"><span><i class="fa fa-plus fa-fw"></i> Neue Seite</span></a>
+                <li data-bind="if: canAddPage()" class="nav-separator-right">
+                    <a href="#" data-bind="click: addPage"><span><i class="fa fa-plus fa-fw"></i> Neue Seite</span></a>
                 </li>
-                <li data-bind="if: selectedNode()">
-                    <a href="#" data-bind="click: moveSelectedNode"><span><i class="fa fa-arrows fa-fw"></i> Seite verschieben</span></a>
+                <li data-bind="if: canEditContent()">
+                    <a href="#" data-bind="click: editContent"><span><i class="fa fa-edit fa-fw"></i> Inhalt bearbeiten</span></a>
                 </li>
-                <li data-bind="if: selectedNode()">
+                <li data-bind="if: canSelectContent() && !canEditContent()">
+                    <a href="#" data-bind="click: selectContent"><span><i class="fa fa-arrow-right fa-fw"></i> Inhalt wählen</span></a>
+                </li>
+                <li data-bind="if: canMoveUp()">
                     <a href="#" data-bind="click: moveSelectedNodeUp" title="Nach oben"><span><i class="fa fa-arrow-up fa-fw"></i></span></a>
                 </li>
-                <li data-bind="if: selectedNode()">
+                <li data-bind="if: canMoveDown()">
                     <a href="#" data-bind="click: moveSelectedNodeDown" title="Nach unten"><span><i class="fa fa-arrow-down fa-fw"></i></span></a>
                 </li>
-                <li data-bind="if: selectedNode() && properties() && properties().hasContent">
-                    <a href="#" data-bind="click: properties().editContent"><span><i class="fa fa-edit fa-fw"></i> Inhalt bearbeiten</span></a>
+                <li data-bind="if: canMoveToNode()">
+                    <a href="#" data-bind="click: moveToNode"><span><i class="fa fa-arrows fa-fw"></i> Seite verschieben</span></a>
                 </li>
-                <li data-bind="if: selectedNode()">
-                    <a href="#" data-bind="click: deleteSiteMapNode"><span><i class="fa fa-trash-o fa-fw"></i> Seite löschen</span></a>
+                <li data-bind="if: canDeleteNode()">
+                    <a href="#" data-bind="click: deleteNode"><span><i class="fa fa-trash-o fa-fw"></i> Seite löschen</span></a>
                 </li>
             </ul>
         </div>

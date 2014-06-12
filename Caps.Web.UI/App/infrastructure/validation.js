@@ -11,7 +11,7 @@ define([
 function (ko, validation, $) {
     'use strict';
 
-	ko.validation.rules['isUserNameUnique'] = {
+	ko.validation.rules.isUserNameUnique = {
 		validator: function (val, param) {
 			var isValid = true;
 

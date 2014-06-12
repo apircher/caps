@@ -246,7 +246,7 @@ function (ko, interaction, KeyCodes, Events) {
         self.detachFromParentNode = function () {
             if (self.isSelected()) {
                 var nextSelection = self.nextSibling() || self.previousSibling() || self.parentNode();
-                if (nextSelection && !(nextSelection === self.tree.root))
+                if (nextSelection && nextSelection !== self.tree.root)
                     nextSelection.selectNode();
                 else
                     self.tree.selectedNode(null);
@@ -337,28 +337,28 @@ function (ko, interaction, KeyCodes, Events) {
 
     TreeNodeViewModel.prototype.moveUp = function () {
         var self = this;
-        moveTreeNode.call(self, -1);
+        moveTreeNode.call(self, self, -1);
     };
 
     TreeNodeViewModel.prototype.moveDown = function () {
         var self = this;
-        moveTreeNode.call(self, 1);
+        moveTreeNode.call(self, self, 1);
     };
 
-    function moveTreeNode(direction) {
-        var self = this,
-            siblings = self.siblings().slice(0),
-            index = siblings.indexOf(self),
+    function moveTreeNode(node, direction) {
+        var that = node,
+            siblings = that.siblings().slice(0),
+            index = siblings.indexOf(that),
             newIndex = index + (direction >= 0 ? 1 : -1);
 
         if (newIndex >= 0 && newIndex < siblings.length) {
             siblings.splice(index, 1);
-            siblings.splice(newIndex, 0, self);
+            siblings.splice(newIndex, 0, that);
 
-            var parent = self.parentNode() || (self.tree ? self.tree.root() : undefined);
+            var parent = that.parentNode() || (that.tree ? that.tree.root() : undefined);
             if (parent) {
                 parent.childNodes(siblings);
-                if (self.tree) self.tree.trigger('tree:nodeMoved', self);
+                if (that.tree) that.tree.trigger('tree:nodeMoved', that);
             }
         }
     }

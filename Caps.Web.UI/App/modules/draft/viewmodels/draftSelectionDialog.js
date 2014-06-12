@@ -19,7 +19,7 @@ function (dialog, ko, datacontext, DraftSearchControl, moment, contentGenerator)
         self.listItems = ko.observableArray();
         self.selectedItem = ko.observable();
 
-        self.okTitle = ko.observable('Inhalt festlegen');
+        self.okTitle = ko.observable('OK');
 
         self.refresh();
     }
@@ -83,7 +83,7 @@ function (dialog, ko, datacontext, DraftSearchControl, moment, contentGenerator)
 
         self.selectItem = function () {
             selection(self);
-        }
+        };
     }
 
     return DraftSelectionDialog;

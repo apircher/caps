@@ -1,5 +1,6 @@
 ﻿define([
     'durandal/system',
+    'durandal/app',
     'plugins/dialog',
     'ko',
     'modules/sitemap/viewmodels/siteMapTree',
@@ -8,7 +9,7 @@
     '../contentGenerator',
     'infrastructure/publicationService'
 ],
-function (system, dialog, ko, SiteMapTree, datacontext, PublicationViewModel, contentGenerator, publicationService) {
+function (system, app, dialog, ko, SiteMapTree, datacontext, PublicationViewModel, contentGenerator, publicationService) {
 
 
     function DraftPublicationDialog(draft) {
@@ -78,24 +79,32 @@ function (system, dialog, ko, SiteMapTree, datacontext, PublicationViewModel, co
     };
 
     DraftPublicationDialog.prototype.selectLink = function () {
-        var self = this;
+        var self = this,
+            btnOk = 'Inhalt ersetzen',
+            btnCancel = 'Abbrechen';
 
-        // Create Publication
-        try {
-            var cnt = contentGenerator.createPublicationContent(self.draft());
+        app.showMessage('Soll der Inhalt der Seite wirklich ersetzt werden?', 'Inhalt ersetzen?', [btnOk, btnCancel]).then(function (dialogResult) {
+            if (dialogResult === btnOk) setContentConfirmed();
+        });
 
-            publicationService.setNodeContent(self.siteMapTree.selectedNode().Id(), cnt)
-                .then(function () {
-                    dialog.close(self, {
-                        dialogResult: true
+        function setContentConfirmed() {
+            // Create Publication
+            try {
+                var cnt = contentGenerator.createPublicationContent(self.draft());
+
+                publicationService.setNodeContent(self.siteMapTree.selectedNode().Id(), cnt)
+                    .then(function () {
+                        dialog.close(self, {
+                            dialogResult: true
+                        });
+                    })
+                    .fail(function (error) {
+                        alert(error.message);
                     });
-                })
-                .fail(function (error) {
-                    alert(error.message);
-                });
-        }
-        catch (error) {
-            alert(error.message);
+            }
+            catch (error) {
+                alert(error.message);
+            }
         }
     };
 

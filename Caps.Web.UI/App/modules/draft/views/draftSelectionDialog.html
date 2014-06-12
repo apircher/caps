@@ -24,7 +24,7 @@
                         </thead>
                         <tbody data-bind="foreach: listItems">
                             <tr data-bind="css: { 'selected': isSelected }, click: selectItem">
-                                <td><i class="fa fa-file-text"></i> <strong data-bind="text: entity.Name"></strong></td>
+                                <td><i class="fa fa-file-text fa-fw"></i> <strong data-bind="text: entity.Name"></strong></td>
                                 <td><span data-bind="text: modifiedAt() + ' von ' + entity.Modified().By() + ' (v.' + entity.Version() + ')'"></span></td>
                                 <td><span data-bind="text: createdAt"></span></td>
                                 <td><span data-bind="text: entity.Created().By"></span></td>
@@ -36,14 +36,14 @@
         </div>
     </div>
 
-    <div class="navbar navbar-default navbar-fixed-bottom">
+    <div class="navbar navbar-inverse navbar-fixed-bottom">
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
                 <li>
                     <a href="#" data-bind="click: selectCancel"><span><i class="fa fa-arrow-left fa-fw"></i> Abbrechen</span></a>
                 </li>
                 <li>
-                    <a href="#" data-bind="click: selectOk"><span><i class="fa fa-save fa-fw"></i> <!-- ko text: okTitle --><!-- /ko --></span></a>
+                    <a href="#" data-bind="click: selectOk"><span><i class="fa fa-check fa-fw"></i> <!-- ko text: okTitle --><!-- /ko --></span></a>
                 </li>
             </ul>
         </div>

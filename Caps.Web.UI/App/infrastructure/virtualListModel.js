@@ -1,4 +1,6 @@
-﻿/**
+﻿/*global define*/
+
+/**
  * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
  * Available via the MIT license.
  */
@@ -8,10 +10,9 @@
  */
 define([
     'require',
-    'ko',
-    'jquery'
+    'ko'
 ],
-function (require, ko, $) {
+function (require, ko) {
     'use strict';
 
     /**
@@ -125,7 +126,7 @@ function (require, ko, $) {
     };
 
     VirtualList.prototype.addPage = function (data, pageNumber) {
-        if (data.inlineCount && data.inlineCount != this.count()) {
+        if (data.inlineCount && data.inlineCount !== this.count()) {
             this.count(data.inlineCount);
             this._buildPages(data.inlineCount, this.itemsPerPage());
         }
@@ -212,7 +213,7 @@ function (require, ko, $) {
             numPages = Math.ceil(self.count() / self.itemsPerPage()),
             arr = [];
         for (var pageIndex = 0; pageIndex < numPages; pageIndex++) {
-            var isLastPage = pageIndex == numPages - 1,
+            var isLastPage = pageIndex === numPages - 1,
                 length = isLastPage ? numItems - (pageIndex * itemsPerPage) : itemsPerPage,
                 page = new VirtualListPage(pageIndex, buildDummyItems.call(self, length), false);
             arr.push(page);
@@ -222,7 +223,7 @@ function (require, ko, $) {
         function buildDummyItems(count) {
             var dummies = [];
             for (var i = 0; i < count; i++)
-                dummies.push(new self.ListItemType(undefined, this));
+                dummies.push(new self.ListItemType(undefined, self));
             return dummies;
         }
     };

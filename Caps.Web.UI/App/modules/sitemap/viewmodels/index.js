@@ -17,7 +17,9 @@
     './addPageDialog'
 ],
 function (module, ko, router, system, app, localization, SiteMapViewModel, PublicationViewModel, publicationService, authentication, datacontext, composition, moment, KeyboardHandler, ScrollState, AddPageDialog) {
-    
+    'use strict';
+
+    var $window = $(window);
     var website = ko.observable(),
         selectedSiteMap = ko.observable(),
         selectedNode = ko.observable(),
@@ -37,7 +39,6 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
     app.on('caps:publication:created', refreshNodeIfSelected);
     app.on('caps:publication:refreshed', refreshNodeIfSelected);
 
-    var $window = $(window);
     module.on('module:compositionComplete', function (m, instance) {
         if (instance === vm) {
             $window.trigger('forceViewportHeight:refresh');
@@ -80,7 +81,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             keyboardHandler.activate();
         },
 
-        shouldActivate: function(router, oldActivationData, newActivationData) {
+        shouldActivate: function() {
             return true;
         },
 
@@ -112,33 +113,6 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             datacontext.publishSiteMap(selectedSiteMap().entity(), authentication.user().userName());
         },
 
-        createSiteMapNode: function () {
-            if (!selectedSiteMap() || !selectedNode()) return;
-
-            AddPageDialog.show().then(function (dialogResult) {
-                if (dialogResult) {
-                    addPageCommited(dialogResult.title);
-                }
-            });
-
-            function addPageCommited(title) {
-                datacontext.createSiteMapNode(selectedSiteMap().entity(), selectedNode(), title, title).then(function (node) {
-                    selectedSiteMap().refreshTree();
-                    selectedSiteMap().selectNodeByKey(node.Id());
-                })
-                .fail(handleError);
-            }
-        },
-
-        deleteSiteMapNode: function () {
-            var btnOk = 'Seite löschen';
-            var btnCancel = 'Abbrechen';
-            app.showMessage('Soll die Seite "' + selectedNode().localeTitle('de') + '" wirklich gelöscht werden?', 'Seite löschen', [btnOk, btnCancel])
-                .then(function (result) {
-                    if (result === btnOk) deleteNode(selectedNode());
-                });
-        },
-
         editWebsite: function () {
             router.navigate('#website');
         },
@@ -161,7 +135,57 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             }
         },
 
-        moveSelectedNode: function () {
+        canAddPage: function () {
+            return selectedNode() ? true : false;
+        },
+
+        addPage: function () {
+            if (!selectedSiteMap() || !selectedNode()) return;
+
+            AddPageDialog.show().then(function (dialogResult) {
+                if (dialogResult) {
+                    addPageCommited(dialogResult.title);
+                }
+            });
+
+            function addPageCommited(title) {
+                datacontext.createSiteMapNode(selectedSiteMap().entity(), selectedNode(), title, title).then(function (node) {
+                    selectedSiteMap().refreshTree();
+                    selectedSiteMap().selectNodeByKey(node.Id());
+                })
+                .fail(handleError);
+            }
+        },
+
+        canEditContent: function () {
+            return selectedNode() && properties() && properties().hasContent() ? true : false;
+        },
+
+        editContent: function () {
+            if (properties()) properties().editContent();
+        },
+
+        canSelectContent: function() {
+            return selectedNode() ? true : false;
+        },
+
+        selectContent: function() {
+            if (properties()) properties().selectContent();
+        },
+
+        canMoveUp: function () {
+            return selectedNode() && selectedNode().NodeType() !== 'ROOT' ? true : false;
+        },
+
+        canMoveDown: function () {
+            return selectedNode() && selectedNode().NodeType() !== 'ROOT' ? true : false;
+        },
+
+        canMoveToNode: function () {
+            return selectedNode() && selectedNode().NodeType() !== 'ROOT' ? true : false;
+        },
+
+        moveToNode: function () {
             if (selectedSiteMap()) {
                 var siteMap = selectedSiteMap(),
                     node = selectedNode();
@@ -179,6 +203,19 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             function filterSelection(item) {
                 return !item.isTeaser() && item.Id() !== selectedNode().Id();
             }
+        },
+
+        canDeleteNode: function () {
+            return selectedNode() && selectedNode().NodeType() !== 'ROOT' ? true : false;
+        },
+
+        deleteNode: function () {
+            var btnOk = 'Seite löschen';
+            var btnCancel = 'Abbrechen';
+            app.showMessage('Soll die Seite "' + selectedNode().localeTitle('de') + '" wirklich gelöscht werden?', 'Seite löschen', [btnOk, btnCancel])
+                .then(function (result) {
+                    if (result === btnOk) deleteNode(selectedNode());
+                });
         }
     };
 
@@ -214,7 +251,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
     function refreshPreview() {
         selectedPublication(null);
         if (selectedNode() && selectedNode().ContentId()) {
-            datacontext.fetchPublication(selectedNode().ContentId()).then(function (p) {
+            datacontext.fetchPublication(selectedNode().ContentId()).then(function () {
                 var cp = new PublicationViewModel(selectedNode());
                 selectedPublication(cp);
             })
@@ -266,7 +303,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
 
     keyboardHandler.keydown = function (e) {
         var curElement = document.activeElement;
-        if (curElement && (curElement.tagName == 'INPUT' || curElement.tagName == 'TEXTAREA'))
+        if (curElement && (curElement.tagName === 'INPUT' || curElement.tagName === 'TEXTAREA'))
             return;
         if (selectedSiteMap() && selectedSiteMap().tree())
             selectedSiteMap().tree().handleKeyDown(e);
@@ -311,7 +348,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
         self.selectTeaser = function () {
             selectedTeaser(self);
             showProperties(self.entity);
-        }
+        };
     }
 
     /*
@@ -341,7 +378,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
 
         self.canCreateTeaser = function () {
             if (entity) {
-                if (entity.NodeType() == 'ROOT' || entity.hasTeasers()) return false;
+                if (entity.NodeType() === 'ROOT' || entity.hasTeasers()) return false;
                 if (entity.isTeaser()) return false;
                 return true;
             }
@@ -369,7 +406,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             if (!entity.ContentId()) return 'Kein Inhalt festgelegt';
             var pub = entity.Content();
             if (pub) {
-                return pub.EntityType() + ' #' + pub.EntityKey() + ' (v.' + pub.ContentVersion() + ')'
+                return pub.EntityType() + ' #' + pub.EntityKey() + ' (v.' + pub.ContentVersion() + ')';
             }
             return '';
         });
@@ -380,6 +417,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             return pub.AuthorName() + ' ' + moment(pub.ContentDate()).fromNow();
         });
 
+        var isActive;
         self.selectContent = function () {
             isActive = false;
             app.selectContent({
@@ -409,7 +447,7 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
                 .then(function (dialogResult) {
                     if (dialogResult === btnOk)
                         deletePublicationConfirmed();
-                })
+                });
 
             function deletePublicationConfirmed() {
                 if (entity.ContentId() && entity.Content()) {

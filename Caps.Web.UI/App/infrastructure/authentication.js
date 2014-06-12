@@ -39,7 +39,7 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
         var fragment = utils.getFragment();
         return getMetadata().then(function () {
             return system.defer(function (dfd) {
-                if (sessionStorage["associatingExternalLogin"])
+                if (sessionStorage.associatingExternalLogin)
                     completeAddExternalLogin(dfd, fragment);
                 else if (typeof (fragment.error) !== "undefined") 
                     handleExternalLoginError(dfd, fragment);
@@ -84,7 +84,7 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
                 })
                 .fail(function (error) {
                     system.log('getCurrentUser failed: ' + error.responseJSON.message);
-                    if (error.status == 401) {
+                    if (error.status === 401) {
                         user(new UserModel(false));
                         dfd.resolve(user());
                     }
@@ -228,7 +228,7 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
     }
 
     // Handles ajax events globally and adds authentication tokens.
-    $(document).ajaxSend(function (event, request, settings) {
+    $(document).ajaxSend(function (event, request) {
         var accessToken = getAccessToken();
         if (accessToken) {
             request.setRequestHeader('Authorization', "Bearer " + accessToken);
@@ -286,11 +286,11 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
 
     function setAccessToken(token, rememberMe) {
         var storage = rememberMe ? localStorage : sessionStorage;
-        storage["accessToken"] = token;
+        storage.accessToken = token;
     }
 
     function getAccessToken() {
-        return sessionStorage["accessToken"] || localStorage["accessToken"];
+        return sessionStorage.accessToken || localStorage.accessToken;
     }
 
     function clearAccessToken() {
@@ -299,7 +299,7 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
     }
 
     function restoreLogonSuccessRoute() {
-        var lsr = localStorage['logonSuccessRoute'];
+        var lsr = localStorage.logonSuccessRoute;
         if (lsr) {
             localStorage.removeItem('logonSuccessRoute');
             window.location.hash = lsr;
@@ -319,15 +319,15 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
         if (response) {
             var err = response.Error;
             if (err) {
-                if (err == 'ERROR_LOCKED') {
+                if (err === 'ERROR_LOCKED') {
                     var message = 'Dein Konto wurde aufgrund zu vieler ungültiger Anmelde-Versuche gesperrt. Die Sperrung wird nach {0} Minuten automatisch aufgehoben.';
                     return message.replace(/\{0\}/gi, metadata.lockoutPeriod);
                 }
-                if (err == 'ERROR_NOTAPPROVED')
+                if (err === 'ERROR_NOTAPPROVED')
                     return 'Dein Konto wurde noch nicht bestätigt.';
-                if (err == 'ERROR_USER_OR_PASSWORD_INVALID')
+                if (err === 'ERROR_USER_OR_PASSWORD_INVALID')
                     return 'Der Benutzername oder das Passwort sind ungültig.';
-                if (err == 'Bad request')
+                if (err === 'Bad request')
                     return defaultMessage;
             }
         }
@@ -433,7 +433,7 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
 
         self.isInRole = function (roleName) {
             for (var i = 0; i < this.roles().length; i++) {
-                if (self.roles()[i] == roleName) return true;
+                if (self.roles()[i] === roleName) return true;
             }
             return false;
         };

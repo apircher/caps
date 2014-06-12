@@ -290,7 +290,6 @@
     <Content Include="App\infrastructure\scrollState.js" />
     <Content Include="App\modules\contentfile\viewmodels\fileUploadDialog.js" />
     <Content Include="App\modules\contentfile\views\fileUploadDialog.html" />
-    <Content Include="App\modules\draft\stockTemplates.js" />
     <Content Include="App\modules\draft\viewmodels\draftPublicationDialog.js" />
     <Content Include="App\modules\draft\viewmodels\draftPublicationViewModel.js" />
     <Content Include="App\modules\draft\views\draftPublicationDialog.html" />

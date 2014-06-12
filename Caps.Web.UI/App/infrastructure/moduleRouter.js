@@ -60,7 +60,7 @@ function (rootRouter, system, moduleRegistry, ko, utils, composition) {
     function extendRouter(router, module) {
 
         router.activeItem.settings.areSameItem = function (currentItem, newItem, currentActivationData, newActivationData) {
-            if (currentItem == newItem || system.getModuleId(currentItem) == system.getModuleId(newItem)) {
+            if (currentItem === newItem || system.getModuleId(currentItem) === system.getModuleId(newItem)) {
                 if (currentItem && system.isFunction(currentItem.shouldActivate))
                     return !currentItem.shouldActivate(router, currentActivationData, newActivationData);
                 return utils.compareArrays(currentActivationData, newActivationData);
@@ -70,7 +70,7 @@ function (rootRouter, system, moduleRegistry, ko, utils, composition) {
 
         router.navigateToModule = function () {
             var ai = router.activeInstruction();
-            if (ai == null) {
+            if (ai === null) {
                 router.navigate(module.routeConfig.hash);
             }
             else {

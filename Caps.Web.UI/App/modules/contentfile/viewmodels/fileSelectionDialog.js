@@ -64,11 +64,11 @@ function (dialog, ko, FileListItem, system, app, datacontext, VirtualListModel, 
                 }
             }
             function checkPage(pageNumber) {
-                var page = this.list.findPage(pageNumber);
+                var page = self.list.findPage(pageNumber);
                 if (!page.isLoaded && !page.isLoading) {
-                    this.list.markPageLoading(pageNumber);
-                    this.loadPage(pageNumber).then(function () {
-                        this.list.markPageLoaded(pageNumber);
+                    self.list.markPageLoading(pageNumber);
+                    self.loadPage(pageNumber).then(function () {
+                        self.list.markPageLoaded(pageNumber);
                         e.pageLoaded(pageNumber);
                     });
                 }
@@ -91,7 +91,7 @@ function (dialog, ko, FileListItem, system, app, datacontext, VirtualListModel, 
                 listItem.isUploading(false);
                 listItem.isSelected(true);
             })
-            .fail(function (err) {
+            .fail(function () {
                 toastr.error('Die Datei ' + result.fileName + ' konnte nicht geladen werden.');
             });
         }

@@ -1,22 +1,24 @@
 ﻿<div class="app-page app-page-nav-bottom">
     <div class="panel-padding-h">
+
         <div class="row">
-            <div class="col-md-12">
-                <h3>Inhalt <em data-bind="text: draft().Name"></em> <em>(<!-- ko text: 'v.' + draft().Version() --><!-- /ko -->)</em> veröffentlichen</h3>
+            <div class="col-md-12 panel-heading">
+                <h3>Inhalt <strong data-bind="text: draft().Name"></strong> <span class="light-text">(<!-- ko text: 'v.' + draft().Version() --><!-- /ko -->)</span> veröffentlichen</h3>
+                <!--<p class="text-padding-right">Wähle die Ziel-Seite und klicke auf <em>&quot;Neue Seite erstellen&quot;</em>, um eine neue Seite unterhalb der Ziel-Seite zu platzieren oder <em>&quot;Inhalt ersetzen&quot;</em>, um den Inhalt der Ziel-Seite durch <em>&quot;<span data-bind="text: draft().Name() + ' (v.' + draft().Version() + ')'"></span>&quot;</em> zu ersetzen.</p>-->
             </div>
         </div>
 
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-sm-6 col-md-5 panel-border-right">
                 <div>
-                    <h4>Neue Veröffentlichung</h4>
+                    <h4>Ziel-Seite wählen</h4>
                     <!-- ko compose: siteMapTree --><!-- /ko -->
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-sm-6 col-md-7">
                 <div>
                     <!-- ko if: publications().length > 0 -->
-                    <h4>Vorhandene Veröffentlichungen (<!-- ko text: publications().length --><!-- /ko -->)</h4>
+                    <h4>Vorhandene Seiten aktualisieren</h4>
                     <div class="space-tb">
                         <ul data-bind="foreach: publications()" class="list-unstyled">
                             <li>
@@ -39,17 +41,17 @@
         </div>
     </div>
 
-    <div class="navbar navbar-default navbar-fixed-bottom">
+    <div class="navbar navbar-inverse navbar-fixed-bottom">
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
-                <li>
-                    <a href="#" data-bind="click: selectCancel"><span><i class="fa fa-arrow-left fa-fw"></i> Zurück</span></a>
+                <li class="nav-separator-right">
+                    <a href="#" data-bind="click: selectCancel"><span><i class="fa fa-arrow-left fa-fw"></i> Abbrechen</span></a>
                 </li>
                 <li>
-                    <a href="#" data-bind="click: selectCreateNew"><span><i class="fa fa-save fa-fw"></i> Neue Veröffentlichung erstellen</span></a>
+                    <a href="#" data-bind="click: selectCreateNew"><span><i class="fa fa-plus fa-fw"></i> Neue Seite erstellen</span></a>
                 </li>
                 <li>
-                    <a href="#" data-bind="click: selectLink"><span><i class="fa fa-arrow-right fa-fw"></i> Inhalt verknüpfen</span></a>
+                    <a href="#" data-bind="click: selectLink"><span><i class="fa fa-recycle fa-fw"></i> Inhalt ersetzen</span></a>
                 </li>
             </ul>
         </div>

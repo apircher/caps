@@ -1,4 +1,6 @@
-﻿define([
+﻿/*global define*/
+
+define([
     'ko',
     'infrastructure/contentReferences',
     'infrastructure/urlHelper',
@@ -7,14 +9,14 @@
 function (ko, ContentReferenceManager, urlHelper, ContentControls) {
     
     var crmgr = new ContentReferenceManager({
-        replaceFileReference: function (reference, language, context) {
+        replaceFileReference: function (reference, language) {
             var publication = reference.context,
                 publicationFile = publication.findFile(reference.fileName),
                 resource = publicationFile ? publicationFile.getResource(language) : undefined,
                 fileVersion = resource ? resource.FileVersion() : undefined;
             return urlHelper.getFileUrl(reference.fileName, fileVersion, reference.query);
         },
-        replacePublicationReference: function (reference, language, context) {
+        replacePublicationReference: function (reference, language) {
             return urlHelper.getPublicationUrl(reference.id, language, reference.query);
         }
     });
@@ -24,7 +26,7 @@ function (ko, ContentReferenceManager, urlHelper, ContentControls) {
      */
     function PublicationViewModel(siteMapNode) {
         var self = this,
-            publication = siteMapNode != null ? siteMapNode.Content() : null;
+            publication = siteMapNode !== null ? siteMapNode.Content() : null;
 
         self.publication = publication;
         self.template = ko.observable(publication ? publication.template() : null);

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * General Stuff
  */
 /* Set the minimum width for the app. */
@@ -69,6 +69,14 @@ body,
     position: fixed;
   }
 }
+.panel-heading {
+  border-radius: 0;
+  border-bottom: 1px solid #eee;
+  padding: 0 15px 10px;
+}
+.panel-border-right {
+  border-right: 1px solid #eee;
+}
 /* Panel in a NavBar. */
 .navbar-panel {
   margin: 0 7.5px 0 15px;
@@ -86,6 +94,9 @@ body,
   .navbar-panel.pull-right > .nav.navbar-nav {
     margin-left: 15px;
   }
+}
+.navbar-fixed-bottom > .navbar-panel {
+  margin-left: 0;
 }
 /** 
  *  Navbars
@@ -108,7 +119,7 @@ a.navbar-brand,
 /* Navbar Loader */
 .navbar-loader {
   visibility: hidden;
-  margin: 12px 10px 4px 10px;
+  margin: 15px 15px 15px 10px;
   color: #999999;
 }
 .navbar-loader.active {
@@ -168,6 +179,10 @@ a.navbar-brand,
     padding-bottom: 50px;
   }
 }
+/* Navbar Separator */
+.nav-separator-right {
+  border-right: 1px solid #404040;
+}
 /**
  * Nav Tabs.
  */
@@ -214,10 +229,9 @@ a.navbar-brand,
   position: static;
   top: auto;
   display: block;
-  height: auto;
+  height: 50px;
   background: #fff;
   padding: 15px 15px 0;
-  height: 50px;
   z-index: 100;
 }
 @media (min-width: 992px) {
@@ -687,9 +701,6 @@ ul.tree-branch a:hover {
   background: #ddd;
   background-position: center center;
   background-repeat: no-repeat;
-  -moz-background-size: contain;
-  -o-background-size: contain;
-  -webkit-background-size: contain;
   background-size: contain;
 }
 .image-preview {
@@ -916,6 +927,9 @@ span.large-icon {
 }
 .light-text {
   color: #999;
+}
+p.text-padding-right {
+  padding-right: 20%;
 }
 .module-tile-progress {
   position: absolute;

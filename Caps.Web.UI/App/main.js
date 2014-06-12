@@ -149,21 +149,19 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
                     backup[sessionStorage.key(i)] = sessionStorage[sessionStorage.key(i)];
                 }
 
-                localStorage["sessionStorageBackup"] = JSON.stringify(backup);
+                localStorage.sessionStorageBackup = JSON.stringify(backup);
                 sessionStorage.clear();
             };
 
             app.restoreSessionStorageFromLocalStorage = function () {
-                var backupText = localStorage["sessionStorageBackup"],
+                var backupText = localStorage.sessionStorageBackup,
                     backup;
 
                 if (backupText) {
                     backup = JSON.parse(backupText);
-
                     for (var key in backup) {
                         sessionStorage[key] = backup[key];
                     }
-
                     localStorage.removeItem("sessionStorageBackup");
                 }
             };

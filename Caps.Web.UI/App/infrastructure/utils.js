@@ -9,10 +9,10 @@ define(function () {
     function compareArrays(first, second) {
         if (!first || !second)
             return false;
-        if (first.length != second.length)
+        if (first.length !== second.length)
             return false;
         for (var i = 0, len = first.length; i < len; i++) {
-            if (first[i] != second[i])
+            if (first[i] !== second[i])
                 return false;
         }
         return true;
@@ -38,7 +38,7 @@ define(function () {
         if (value.length > s.length)
             return false;
         return s.substring(0, value.length) === value;
-    };
+    }
 
 
 
@@ -85,7 +85,7 @@ define(function () {
         var state;
 
         if (typeof (fragment.access_token) !== "undefined") {
-            state = sessionStorage["state"];
+            state = sessionStorage.state;
             sessionStorage.removeItem("state");
 
             if (state === null || fragment.state !== state) {

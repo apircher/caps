@@ -1,4 +1,6 @@
-﻿/**
+﻿/*global define, escape*/
+
+/**
  * Caps 1.0 Copyright (c) Pircher Software. All Rights Reserved.
  * Available via the MIT license.
  */
@@ -63,7 +65,7 @@ function (app, authentication, router, dialog, ChangePasswordDialog, moment, ko,
                                 positionClass: screen.isPhone() ? 'toast-bottom-full-width' : 'toast-bottom-right'
                             });
                         })
-                        .fail(function (err) {
+                        .fail(function () {
                             dialog.showMessage('Das Passwort konnte nicht geändert werden. Versuche es in einigen Minuten nochmal. Melde das Problem, wenn es weiterhin auftritt', 'Nicht erfolgreich');
                         });
                 }
@@ -94,7 +96,7 @@ function (app, authentication, router, dialog, ChangePasswordDialog, moment, ko,
         hasLocalPassword: ko.computed(function () {
             var lp = ko.utils.arrayFirst(logins(), function (l) {
                 return l.loginProvider() === localLoginProvider();
-            })
+            });
             return !!lp;
         }),
 
@@ -110,8 +112,8 @@ function (app, authentication, router, dialog, ChangePasswordDialog, moment, ko,
 
         // Operations
         self.login = function () {
-            sessionStorage["state"] = data.state;
-            sessionStorage["associatingExternalLogin"] = true;
+            sessionStorage.state = data.state;
+            sessionStorage.associatingExternalLogin = true;
             // IE doesn't reliably persist sessionStorage when navigating to another URL. Move sessionStorage temporarily
             // to localStorage to work around this problem.
             app.archiveSessionStorageToLocalStorage();
@@ -139,7 +141,7 @@ function (app, authentication, router, dialog, ChangePasswordDialog, moment, ko,
         self.remove = function () {
             self.removing(true);
             authentication.removeLogin(self.loginProvider(), providerKey())
-            .then(function (data) {
+            .then(function () {
                 parent.logins.remove(self);
                 //TODO: Toast "Die Anmeldung wurde entfernt."
             });

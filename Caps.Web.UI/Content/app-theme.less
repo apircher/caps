@@ -89,6 +89,16 @@ html, body, .navbar {
     }
 }
 
+.panel-heading {
+    border-radius:0;
+    border-bottom:1px solid #eee;
+    padding:0 15px 10px;
+}
+
+.panel-border-right {
+    border-right:1px solid #eee;
+}
+
 /* Panel in a NavBar. */
 .navbar-panel {
     margin:0 (@gridPadding / 2) 0 @gridPadding;
@@ -107,6 +117,10 @@ html, body, .navbar {
     .navbar-panel.pull-right > .nav.navbar-nav {
         margin-left:@gridPadding;
     }
+}
+
+.navbar-fixed-bottom > .navbar-panel {
+    margin-left:0;
 }
 
 /** 
@@ -133,7 +147,7 @@ a.navbar-brand,
 /* Navbar Loader */
 .navbar-loader {
     visibility:hidden;
-    margin:12px 10px 4px 10px;
+    margin:15px 15px 15px 10px;
     color:@colorFgDark;
 }
 
@@ -151,7 +165,7 @@ a.navbar-brand,
 /* Authenticated User */
 #nav-user {
     margin-left:0;
-    border-left:1px solid darken(@colorFgDark, 35%);
+    border-left:1px solid @colorSeparator;
 }
 
 #nav-user li {
@@ -203,6 +217,12 @@ a.navbar-brand,
     .bottom-fixed-navbar-container-l2 {
         padding-bottom:50px;
     }
+}
+
+/* Navbar Separator */
+.nav-separator-right
+{
+    border-right:1px solid @colorSeparator;
 }
 
 /**
@@ -259,10 +279,9 @@ a.navbar-brand,
     position:static;
     top:auto;
     display:block;
-    height:auto;
+    height:@subnav-top-height;
     background:#fff;
     padding:@gridPadding @gridPadding 0;
-    height:@subnav-top-height;
     z-index: 100;
 }  
 
@@ -793,9 +812,6 @@ ul.tree-branch a:hover {
     background:#ddd;
     background-position:center center;
     background-repeat: no-repeat;
-    -moz-background-size:contain;
-    -o-background-size:contain;
-    -webkit-background-size:contain;
     background-size:contain;
 }
 
@@ -1059,6 +1075,10 @@ span.large-icon {
 
 .light-text {
     color:#999;
+}
+
+p.text-padding-right {
+    padding-right:20%;
 }
 
 .module-tile-progress {

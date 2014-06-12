@@ -1,4 +1,6 @@
-﻿define([
+﻿/*global define, Markdown*/
+
+define([
     'durandal/app',
     'ko',
     'jquery',
@@ -110,7 +112,7 @@ function (app, ko, $, InsertLinkDialog, InsertImageDialog, module, Q) {
                 $textArea = $(textArea),
                 $toolBar = $(toolBar),
                 $preview = $(preview),
-                idSuffix = '-' + new String(contentEditor.contentPart.Id()).replace('-', 'neg'),
+                idSuffix = '-' + String(contentEditor.contentPart.Id()).replace('-', 'neg'),
                 converter = new Markdown.Converter();
 
             $textArea.attr('id', 'wmd-input' + idSuffix);
