@@ -3,7 +3,7 @@
     var module = moduleFactory.createModule({
         route: 'sitemap*details',
         moduleId: 'modules/sitemap/module',
-        title: 'Website',
+        title: 'Seiten',
         nav: 10,
         hash: '#sitemap'
     });

@@ -132,6 +132,11 @@ function (system, app, entityManagerProvider, breeze, ko) {
             nodeResource.Title(res.title);
             nodeResource.Description(res.description);
             nodeResource.Keywords(res.keywords);
+            var firstPicture = findFirstPicture(contentData, res);
+            if (firstPicture) {
+                var pr = findFileResource(firstPicture, res.language);
+                if (pr) nodeResource.PictureFileVersionId(pr.dbFileVersionId);
+            }
         });
     };
 
@@ -217,7 +222,24 @@ function (system, app, entityManagerProvider, breeze, ko) {
         })
         .promise();
     }
+
+    function findFirstPicture(contentData, res) {
+        var files = contentData.files;
+        if (files && files.length) {
+            var sortedFiles = files.slice(0);
+            sortedFiles.sort(function (a, b) { return a.ranking < b.ranking; });
+            return ko.utils.arrayFirst(files, function (f) {
+                return f.determination == 'Picture';
+            });
+        }
+        return null;
+    }
     
+    function findFileResource(file, language) {
+        if (!file || !file.resources || !file.resources.length) return null;
+        var r = ko.utils.arrayFirst(file.resources, function (r) { return r.language === language; });
+        return r || file.resources[0];
+    }
 
     return {
         publish: function (contentData, parentNode) {

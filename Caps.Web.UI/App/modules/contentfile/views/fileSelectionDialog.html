@@ -49,11 +49,24 @@
         </div>
     </div>
 
-    <div class="navbar navbar-default navbar-fixed-bottom">
+    <div class="navbar navbar-inverse navbar-fixed-bottom">
         <div class="navbar-panel pull-right">
-            <div class="navbar-text" data-bind="visible: uploadManager.isUploading">
-                Upload: <span data-bind="text: uploadManager.progress"></span> %
-            </div>
+            <ul class="nav navbar-nav">
+                <li>
+                    <div class="navbar-text" data-bind="visible: uploadManager.isUploading">
+                        Upload: <span data-bind="text: uploadManager.progress"></span> %
+                    </div>
+                </li>
+                <li>
+                    <a class="btn-fileinput">
+                        <span><i class="fa fa-upload"></i> Dateien hochladen</span>
+                        <!-- ko with: uploadManager -->
+                        <input type="file" name="files" data-url="~/api/DbFileUpload"
+                               data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, drop: filesDropped, dropZone: $('#fileSelectionDialog-drop-zone') }" multiple>
+                        <!-- /ko -->
+                    </a>
+                </li>
+            </ul>
         </div>
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
@@ -61,16 +74,7 @@
                     <a href="#" data-bind="click: selectCancel"><span><i class="fa fa-arrow-left fa-fw"></i> Abbrechen</span></a>
                 </li>
                 <li>
-                    <a href="#" data-bind="click: selectOk"><span><i class="fa fa-save fa-fw"></i> Hinzufügen</span></a>
-                </li>
-                <li>
-                    <a class="btn-fileinput">
-                        <span><i class="fa fa-plus"></i> Dateien hochladen</span>
-                        <!-- ko with: uploadManager -->
-                        <input type="file" name="files" data-url="~/api/DbFileUpload"
-                               data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, drop: filesDropped, dropZone: $('#fileSelectionDialog-drop-zone') }" multiple>
-                        <!-- /ko -->
-                    </a>
+                    <a href="#" data-bind="click: selectOk"><span><i class="fa fa-check fa-fw"></i> OK</span></a>
                 </li>
             </ul>
         </div>

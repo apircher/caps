@@ -58,8 +58,8 @@ namespace Caps.Web.UI.Controllers
         {
             var siteMap = db.SiteMaps
                 .Include("SiteMapNodes")
-                .Include("SiteMapNodes.Resources")
-                .Include("SiteMapNodes.Content.Files.Resources.FileVersion.File")
+                .Include("SiteMapNodes.Resources.PictureFileVersion.File")
+                .Include("SiteMapNodes.Content")
                 .Where(m => m.WebsiteId == websiteId && m.PublishedFrom.HasValue && m.PublishedFrom.Value <= DateTime.UtcNow)
                 .OrderByDescending(m => m.Version)
                 .ThenByDescending(m => m.PublishedFrom)

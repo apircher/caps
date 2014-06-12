@@ -154,7 +154,9 @@ namespace Caps.Web.UI.Infrastructure
                 Language = model.Language,
                 Title = model.Title,
                 Keywords = model.Keywords,
-                Description = model.Description
+                Description = model.Description,
+                PictureFileVersionId = model.PictureFileVersionId,
+                PictureFileVersion = Create(model.PictureFileVersion)
             };
         }
         public static ICollection<DbSiteMapNodeResource> CreateCollection(ICollection<Caps.Data.Model.DbSiteMapNodeResource> models)

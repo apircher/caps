@@ -191,6 +191,10 @@
     <Compile Include="Migrations\201404291236235_AspNetIdentity20.Designer.cs">
       <DependentUpon>201404291236235_AspNetIdentity20.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201406121128238_AddDbSiteMapNodePictureFileVersion.cs" />
+    <Compile Include="Migrations\201406121128238_AddDbSiteMapNodePictureFileVersion.Designer.cs">
+      <DependentUpon>201406121128238_AddDbSiteMapNodePictureFileVersion.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
@@ -313,6 +317,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201404291236235_AspNetIdentity20.resx">
       <DependentUpon>201404291236235_AspNetIdentity20.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406121128238_AddDbSiteMapNodePictureFileVersion.resx">
+      <DependentUpon>201406121128238_AddDbSiteMapNodePictureFileVersion.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

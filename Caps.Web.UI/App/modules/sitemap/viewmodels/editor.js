@@ -77,6 +77,19 @@ function (module, ko, entityManagerProvider, breeze, app, localization) {
             if (self.entity()) module.router.navigate('#sitemap/translate/' + self.entity().Id() + '/' + language.culture);
         };
 
+        self.choosePicture = function () {
+            app.selectFiles({
+                module: module,
+                title: 'Abbildung wählen'
+            }).then(function (result) {
+                if (result.dialogResult) {
+                    var file = result.selectedFiles[0];
+                    var version = file.latestVersion();
+                    self.entity().getResource('de').PictureFileVersionId(version.Id());
+                }
+            });
+        };
+
         function fetchNode(id) {
             var query = new EntityQuery().from('SiteMapNodes').where('Id', '==', id).expand('Resources');
             return manager.executeQuery(query);

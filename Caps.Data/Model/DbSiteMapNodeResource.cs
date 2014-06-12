@@ -27,6 +27,11 @@ namespace Caps.Data.Model
         [MaxLength(500)]
         public String Description { get; set; }
 
+        public int? PictureFileVersionId { get; set; }
+
+        [InverseProperty("SiteMapNodeResources"), ForeignKey("PictureFileVersionId")]
+        public DbFileVersion PictureFileVersion { get; set; }
+
         [InverseProperty("Resources"), ForeignKey("SiteMapNodeId")]
         public DbSiteMapNode SiteMapNode { get; set; }
     }

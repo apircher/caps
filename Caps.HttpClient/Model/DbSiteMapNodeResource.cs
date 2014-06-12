@@ -14,5 +14,7 @@ namespace Caps.Consumer.Model
         public String Title { get; set; }
         public String Keywords { get; set; }
         public String Description { get; set; }
+        public int? PictureFileVersionId { get; set; }
+        public DbFileVersion PictureFileVersion { get; set; }
     }
 }
