@@ -71,12 +71,14 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             if (!isInitialized) {
                 isInitialized = true;
 
-                if (!params || !params.p) 
+                if (!params || (!params.p && !params.n)) 
                     showLatestSiteMap();
             }
 
-            if (params && params.p)
-                showPublication(params.p);
+            if (params) {
+                if (params.p) showPublication(params.p);
+                if (params.n) showNode(params.n);
+            }
 
             keyboardHandler.activate();
         },
@@ -319,19 +321,30 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
 
     function showPublication(publicationId) {
         datacontext.fetchSiteMapNodeByContentId(publicationId).then(function (data) {
-            if (!data.results.length) {
+            if (!data.results.length) 
                 showLatestSiteMap();
-                return;
-            }
-
-            var node = data.results[0],
-                siteMap = node.SiteMap();
-
-            website(siteMap.Website());
-            selectSiteMapVersion(siteMap);
-            selectedNode(node);
+            else
+                selectNode(data.results[0]);
         })
         .fail(handleError);
+    }
+
+    function showNode(nodeId) {
+        datacontext.fetchSiteMapNode(nodeId).then(function (data) {
+            if (!data.results.length) 
+                showLatestSiteMap();
+            else
+                selectNode(data.results[0]);
+        })
+        fail(handleError);
+    }
+
+    function selectNode(node) {
+        var siteMap = node.SiteMap();
+
+        website(siteMap.Website());
+        selectSiteMapVersion(siteMap);
+        selectedNode(node);
     }
 
     /*

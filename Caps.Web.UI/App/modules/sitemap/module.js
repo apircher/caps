@@ -30,6 +30,9 @@
         if (resource.PublicationFile) {
             module.router.navigate('#sitemap?p=' + resource.PublicationFile().PublicationId());
         }
+        else if (resource.SiteMapNodeId) {
+            module.router.navigate('#sitemap?n=' + resource.SiteMapNodeId());
+        }
     });
 
     return module;

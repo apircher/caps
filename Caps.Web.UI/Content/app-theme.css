@@ -1,4 +1,4 @@
-﻿/**
+/**
  * General Stuff
  */
 /* Set the minimum width for the app. */
@@ -260,6 +260,12 @@ a.navbar-brand,
 .modal-body form {
   padding-bottom: 10px;
 }
+.modal-body.modal-body-fill {
+  padding-top: 0;
+}
+.modal-body.modal-body-fill form {
+  padding-bottom: 0;
+}
 .modal-footer {
   padding: 15px;
 }
@@ -282,6 +288,13 @@ a.navbar-brand,
 }
 .modal-section {
   overflow: hidden;
+}
+.modal-body .panel-control {
+  height: 250px;
+  margin: 0 -15px 15px;
+  border: 1px solid #eee;
+  border-width: 1px 0;
+  padding: 0 0 0 15px;
 }
 /** 
  *  MessageBox
@@ -918,6 +931,12 @@ ul.data-list li.active {
 }
 .space-tb {
   padding: 15px 0;
+}
+.modal-body .space-tb {
+  padding: 7.5px 0 0;
+}
+.modal-body .space-tb:last-of-type {
+  padding-bottom: 7.5px;
 }
 span.large-icon {
   padding: 5px 15px;

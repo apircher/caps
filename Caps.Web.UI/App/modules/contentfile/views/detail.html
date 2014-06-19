@@ -23,7 +23,12 @@
                 <!-- /ko -->
                 <!-- ko foreach: entity.PublicationFileResources() -->
                 <li>
-                    <a href="#" data-bind="click: $parent.navigateToResourceOwner"><i class="fa fa-file-text"></i> Veröffentlichung <!-- ko text: PublicationFile().PublicationId --><!-- /ko --></a>
+                    <a href="#" data-bind="click: $parent.navigateToResourceOwner"><i class="fa fa-file-text"></i> Seite <!-- ko text: PublicationFile().PublicationId --><!-- /ko --></a>
+                </li>
+                <!-- /ko -->
+                <!-- ko foreach: entity.SiteMapNodeResources() -->
+                <li>
+                    <a href="#" data-bind="click: $parent.navigateToResourceOwner"><i class="fa fa-file-text"></i> Seite* <!-- ko text: SiteMapNodeId --><!-- /ko --></a>
                 </li>
                 <!-- /ko -->
             </ul>
@@ -106,14 +111,14 @@
 
         <div class="navbar-panel pull-left">
             <ul class="nav navbar-nav">
-                <li>
+                <li class="nav-separator-right">
                     <a href="#" data-bind="click: navigateBack">
-                        <i class="fa fa-arrow-left"></i> Alle Dateien
+                        <i class="fa fa-arrow-left fa-fw"></i> Alle Dateien
                     </a>
                 </li>
                 <li>
-                    <a class="btn-fileinput">
-                        <span><i class="fa fa-repeat"></i> Datei ersetzen</span>
+                    <a class="btn btn-fileinput">
+                        <span><i class="fa fa-upload fa-fw"></i> Datei ersetzen</span>
                         <!-- ko with: uploadManager -->
                         <input type="file" name="files" data-url="~/api/DbFileUpload"
                                data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, dropZone: null }, attr: { 'data-replace-id': $parent.fileVersion().entity.Id() }"
@@ -123,7 +128,7 @@
                 </li>
                 <li>
                     <a href="#" data-bind="click: deleteFile">
-                        <i class="fa fa-trash-o"></i> Datei löschen
+                        <i class="fa fa-trash-o fa-fw"></i> Datei löschen
                     </a>
                 </li>
             </ul>

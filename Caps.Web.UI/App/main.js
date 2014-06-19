@@ -82,6 +82,8 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
 
         // Register binding handlers for deferred execution
         composition.addBindingHandler('forceViewportHeight');
+        composition.addBindingHandler('fixedPosition');
+        composition.addBindingHandler('stretchLineHeight');
         composition.addBindingHandler('codeMirror');
 
         // Initialize application

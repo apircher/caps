@@ -218,7 +218,7 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
             });
 
             self.isInUse = ko.computed(function () {
-                return self.entity.DraftFileResources().length > 0 || self.entity.PublicationFileResources().length > 0;
+                return self.entity.DraftFileResources().length > 0 || self.entity.PublicationFileResources().length > 0 || self.entity.SiteMapNodeResources().length > 0;
             });
 
             self.remove = function () {

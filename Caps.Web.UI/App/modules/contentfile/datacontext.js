@@ -58,7 +58,7 @@ function (system, app, breeze, entityManagerProvider, $, UserQueryParser) {
     // Fetch a single DbFile-Entity.
     function fetchFile(id) {
         var query = EntityQuery.from('Files').where('Id', '==', id)
-            .expand('Tags.Tag, Versions.Properties, Versions.DraftFileResources.DraftFile, Versions.PublicationFileResources.PublicationFile');
+            .expand('Tags.Tag, Versions.Properties, Versions.DraftFileResources.DraftFile, Versions.PublicationFileResources.PublicationFile, Versions.SiteMapNodeResources');
         return manager.executeQuery(query);
     }
 

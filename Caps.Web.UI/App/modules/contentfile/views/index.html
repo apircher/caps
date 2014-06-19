@@ -54,7 +54,7 @@
                 <ul class="nav navbar-nav">
                     <li>
                         <a class="btn btn-fileinput">
-                            <span><i class="fa fa-plus fa-fw"></i> Dateien hochladen</span>
+                            <span><i class="fa fa-upload fa-fw"></i> Dateien hochladen</span>
                             <!-- ko with: uploadManager -->
                             <input type="file" name="files" data-url="~/api/DbFileUpload"
                                    data-bind="fileupload: { add: addFiles, done: uploadDone, fail: uploadFailed, progressall: uploadProgress, drop: filesDropped, dropZone: $('#drop-zone') }" multiple>
@@ -63,12 +63,12 @@
                     </li>
                     <li>
                         <a href="#" data-bind="click: showSelectedFile, visible: selectedFile()">
-                            <i class="fa fa-arrow-right"></i> Details
+                            <i class="fa fa-arrow-right fa-fw"></i> Details
                         </a>
                     </li>
                     <li data-bind="visible: selectedFiles().length > 0">
                         <a href="#" data-bind="click: deleteSelection">
-                            <i class="fa fa-times"></i> Auswahl löschen
+                            <i class="fa fa-times fa-fw"></i> Auswahl löschen
                         </a>
                     </li>
                 </ul>

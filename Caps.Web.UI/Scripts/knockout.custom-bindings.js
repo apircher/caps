@@ -16,7 +16,7 @@
                 return;
             }
 
-            var options = {
+            var cmOptions = {
                 value: valueBinding ? valueBinding() : '',
                 lineNumbers: true,
                 mode: options.mode || 'javascript'
@@ -24,13 +24,13 @@
 
             var cm;
             if (isTextArea)
-                cm = CodeMirror.fromTextArea(elem, options);
+                cm = CodeMirror.fromTextArea(elem, cmOptions);
             else
-                cm = CodeMirror(elem, options);
+                cm = CodeMirror(elem, cmOptions);
 
             cm.on('change', function () {
                 if (valueBinding) valueBinding(cm.getValue());
-                if (isTextArea) isTextAreacm.save();
+                if (isTextArea) cm.save();
             });
 
             $window.on('forceViewportHeight:refresh', function () {

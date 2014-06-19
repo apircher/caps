@@ -2,13 +2,17 @@
     <div class="modal-header">
         <h4>Link einfügen</h4>
     </div>
-    <div class="modal-body">
+    <div class="modal-body modal-body-fill">
+        <h6>Ziel-Seite wählen</h6>
+        <div class="panel-scroll-vh panel-control">
+            <!-- ko compose: siteMapTree --><!-- /ko -->
+        </div>
         <form data-bind="submit: ok">
             <!-- ko composeEditor: { field: url, title: 'Adresse', valueUpdate: 'afterkeydown', css: 'form-control' } --><!-- /ko -->
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" data-bind="click: ok">Ok</button>
+        <button class="btn btn-primary" data-bind="click: ok"><i class="fa fa-check fa-fw"></i> OK</button>
         <button class="btn btn-default" data-bind="click: cancel">Abbrechen</button>
     </div>
 </div>
