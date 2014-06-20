@@ -83,10 +83,6 @@ function (module, ko, router, system, app, localization, SiteMapViewModel, Publi
             keyboardHandler.activate();
         },
 
-        shouldActivate: function() {
-            return true;
-        },
-
         deactivate: function () {
             keyboardHandler.deactivate();
             listScrollState.deactivate();

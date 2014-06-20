@@ -85,6 +85,7 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
         composition.addBindingHandler('fixedPosition');
         composition.addBindingHandler('stretchLineHeight');
         composition.addBindingHandler('codeMirror');
+        composition.addBindingHandler('codeMirrorCommand');
 
         // Initialize application
         Q.fcall(antiForgeryToken.initToken)
@@ -128,7 +129,7 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'Q', 'authent
         function setDefaultMessageBoxTemplate() {
             require(['plugins/dialog'], function (dialog) {
                 dialog.MessageBox.defaultViewMarkup = [
-                    '<div data-view="plugins/messageBox" class="messageBox">',
+                    '<div data-view="plugins/messageBox" class="modal-content messageBox">',
                         '<div class="modal-header">',
                             '<h4 data-bind="text: title"></h4>',
                         '</div>',

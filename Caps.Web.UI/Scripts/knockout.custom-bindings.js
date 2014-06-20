@@ -28,13 +28,33 @@
             else
                 cm = CodeMirror(elem, cmOptions);
 
+            cm.instanceCommands = options.commands;
+
             cm.on('change', function () {
                 if (valueBinding) valueBinding(cm.getValue());
                 if (isTextArea) cm.save();
             });
 
+            $(elem).data('codemirror-instance', cm);
+
             $window.on('forceViewportHeight:refresh', function () {
                 cm.refresh();
+            });
+        }
+    };
+
+    ko.bindingHandlers.codeMirrorCommand = {
+        init: function (element, valueAccessor) {
+            var $element = $(element),
+                options = valueAccessor();
+            $element.click(function (e) {
+                e.preventDefault();
+                var cm = $element.parents('.content-editor').data('codemirror-instance')
+                if (cm) {
+                    if (cm.instanceCommands.hasOwnProperty(options.commandName))
+                        cm.instanceCommands[options.commandName](cm, function () { cm.focus(); });
+                    cm.focus();
+                }
             });
         }
     };

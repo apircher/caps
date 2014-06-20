@@ -2,8 +2,7 @@
 <div class="content-editor container-toolbar-top" data-bind="codeMirror: { value: content, mode: 'htmlmixed', commands: { insertLink: insertLink } }">
     <div class="content-toolbar">
         <div class="btn-group">
-            <a class="btn btn-default" href="#" data-bind="click: function() { alert('Nicht implementiert'); }"><i class="fa fa-bold"></i></a>
+            <a class="btn btn-default" href="#" data-bind="codeMirrorCommand: { commandName: 'insertLink' }"><i class="fa fa-link"></i></a>
         </div>
     </div>
-    <!--<textarea class="form-control" data-bind="value: content"></textarea>-->
 </div>

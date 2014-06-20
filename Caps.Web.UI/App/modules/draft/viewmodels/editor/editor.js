@@ -74,7 +74,12 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
             .promise();
         };
 
+        self.canReuseForRoute = function (draftIdOrTemplateName, queryString) {
+            return self.isNewDraft() || (self.entity() && self.entity().Id() === Number(draftIdOrTemplateName));
+        };
+
         self.canDeactivate = function () {
+            if (!module.router.isNavigating()) return true;
             if (!manager.hasChanges()) return true;
             return system.defer(function (dfd) {
                 var btnYes = 'Speichern', btnNo = 'Verwerfen', btnCancel = 'Abbrechen';
@@ -99,10 +104,6 @@ function (app, system, module, datacontext, DraftsModel, entityManagerProvider, 
             module.routeConfig.hasUnsavedChanges(false);
             app.off('caps:contentfile:replaced', fileUploadDone);
             if (draftFilesVM) draftFilesVM.deactivate();
-        };
-
-        self.shouldActivate = function (router, currentData, newData) {
-            return currentData[0] !== newData[0];
         };
 
         self.showEditorMain = function () {

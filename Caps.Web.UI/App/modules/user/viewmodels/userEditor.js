@@ -27,24 +27,24 @@
             }
         },
 
-        canDeactivate: function (value) {
+        canDeactivate: function () {
             system.log('canDeactivate editor');
 
             if (!vm.user.isDirty())
-                return value;
+                return true;
 
             return app.showMessage('Sollen die Änderungen gespeichert werden', 'Änderungen speichern?', ['Speichern', 'Verwerfen', 'Abbrechen'])
                 .then(function (result) {
                     if (result === 'Speichern') {
                         return saveChanges()
-                            .then(function () { return value; })
+                            .then(function () { return true; })
                             .fail(function () { return false; });
                     }
                     else if (result === 'Abbrechen') {
                         return false;
                     }
                     else
-                        return value;
+                        return true;
                 });
         },
 

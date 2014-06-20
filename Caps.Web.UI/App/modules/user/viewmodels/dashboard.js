@@ -70,10 +70,6 @@ function (utils, app, system, ko, moment, authentication, datacontext, module, d
                 initialized = true;
                 refreshUsers();
             }
-        },
-
-        shouldActivate: function (router, currentActivationData, newActivationData) {
-            return initialized ? utils.compareArrays(currentActivationData, newActivationData) : true;
         }
     };
 

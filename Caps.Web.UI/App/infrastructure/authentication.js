@@ -234,6 +234,12 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
             request.setRequestHeader('Authorization', "Bearer " + accessToken);
         }
     });
+    $(document).ajaxError(function (event, response, settings, error) {
+        if (response.status === 401 || (settings.type === 'POST' && response.status === 403)) {
+            router.navigate(router.logon(router.activeInstruction()));
+        }
+        console.log('AJAX ERROR: ' + error);
+    });
 
     // Called during initialization depending on a value in sessionStorage 
     // that is set before associating an external login. (e.g. in the profile module)
@@ -339,7 +345,7 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
      * Redirects to the logon view.
      */
     router.logon = function (routeInfo) {
-        if (routeInfo.config.moduleId === logonModuleId)
+        if (routeInfo && routeInfo.config.moduleId === logonModuleId)
             throw new Error('The logon-Function may not be called with the logon-route.');
         router.logonSuccessRoute = routeInfo;
         return logonRoute;
@@ -353,7 +359,7 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
         if (router.logonSuccessRoute) {
             var r = router.logonSuccessRoute;
             delete router.logonSuccessRoute;
-            returnUrl = r.config.hash;
+            returnUrl = r.fragment;
         }
         router.navigate(returnUrl, { trigger: true, replace: true });
     };

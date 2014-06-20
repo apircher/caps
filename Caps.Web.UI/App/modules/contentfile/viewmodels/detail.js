@@ -69,6 +69,10 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
             app.off('uploadManager:uploadDone', uploadManager_uploadDone);
         };
 
+        self.canReuseForRoute = function (fileId) {
+            return currentFileId() === fileId;
+        };
+
         self.uploadedFromNowBy = ko.computed(function () {
             if (!currentVersion() || !currentVersion().entity) return '';
             return moment(currentVersion().entity.Modified().At()).fromNow() + ' von ' + currentVersion().entity.Modified().By();
