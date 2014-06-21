@@ -179,6 +179,11 @@ namespace Caps.Web.UI.Tests.Controllers
             var userStore = new Mock<UserStore<Author>>(mockDbContext.Object);
             userStore.Setup(m => m.FindByNameAsync("foo"))
                 .Returns(Task.FromResult(mockDbContext.Object.Users.FirstOrDefault(u => String.Equals(u.UserName, "foo"))));
+            userStore.Setup(m => m.FindByIdAsync("94960981-B627-45F2-B418-49399FFC570F"))
+                .Returns(Task.FromResult(mockDbContext.Object.Users.FirstOrDefault(u => String.Equals(u.UserName, "foo"))));
+            userStore.As<IUserRoleStore<Author>>().Setup(m => m.GetRolesAsync(It.IsAny<Author>()))
+                .Returns<Author>((Author a) => Task.FromResult((IList<String>)mockDbContext.Object.Roles.Where(r => r.Users.Any(u => u.UserId == a.Id)).Select(r => r.Name).ToList()));
+
             return new UserManager<Author>(userStore.Object);
         }
 

@@ -11,8 +11,8 @@ The outcome shall be a CMS-System that I and some of my customers use to manage 
 So if you see me doing something terribly wrong. Please give me a hint.
 
 ##Prerequisites
-- Visual Studio 2012
-- ASP.NET MVC 4
+- Visual Studio 2013
+- ASP.NET MVC 4.5.1
 - SQL Server Express 2008 or LocalDB
 
 ##License

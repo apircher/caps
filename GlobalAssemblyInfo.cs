@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
 [assembly: AssemblyCompany("Pircher Software")]
-[assembly: AssemblyProduct("Caps")]
+[assembly: AssemblyProduct("CAPS")]
 [assembly: AssemblyCopyright("Copyright ©  2014, Pircher Software")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
