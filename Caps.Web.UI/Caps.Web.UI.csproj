@@ -240,7 +240,6 @@
     <Compile Include="Controllers\AntiForgeryTokenController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\CapsDataController.cs" />
-    <Compile Include="Controllers\DbFileContentController.cs" />
     <Compile Include="Controllers\DbFileController.cs" />
     <Compile Include="Controllers\DbFileUploadController.cs" />
     <Compile Include="Controllers\DbFileVersionController.cs" />
@@ -250,6 +249,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\ApplicationOAuthBearerAuthenticationProvider.cs" />
     <Compile Include="Infrastructure\ApplicationOAuthProvider.cs" />
     <Compile Include="Infrastructure\ApplicationRoleManager.cs" />
     <Compile Include="Infrastructure\ApplicationUserManager.cs" />

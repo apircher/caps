@@ -5,7 +5,7 @@
 <script type="text/html" id="sitemap-contentfile-icon">
     <!-- ko with: getResource('de').FileVersion() -->
     <!-- ko if: File().isImage && File().isImage() -->
-    <img data-bind="attr: { 'src': '/DbFileContent/Thumbnail/' + Id() + '?thumbnailName=110x80&h=' + Hash(), title: File().FileName, alt: File().FileName }" />
+    <img data-bind="attr: { 'src': $caps.url.fileThumbnail($data, '110x80'), title: File().FileName, alt: File().FileName }" />
     <!-- /ko -->
     <!-- ko if: File().isImage && !File().isImage() -->
     <span data-bind="attr: { title: File().FileName }"><i class="fa fa-file fa-4x"></i></span>

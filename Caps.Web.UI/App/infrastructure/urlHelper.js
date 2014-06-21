@@ -4,9 +4,10 @@
  */
 
 define([
-    'infrastructure/serverUtil'
+    'infrastructure/serverUtil',
+    'authentication'
 ],
-function (server) {
+function (server, authentication) {
     'use strict';
 
     /*
@@ -18,18 +19,13 @@ function (server) {
     UrlHelper.prototype.getFileUrl = function (fileName, fileVersion, querystring) {
         if (fileVersion) {
             if (/(\?|&amp;|&)download=1/i.test(querystring) || !fileVersion.File().isImage())
-                return server.mapPath('~/DbFileContent/Download/' + fileVersion.Id());
+                return this.fileDownload(fileVersion);
             else if (fileVersion.File().isImage()) {
                 if (/(\?|&amp;|&)size=([0-9]+x[0-9]+)/i.test(querystring)) {
-                    var size = '220x160';
-                    var sizeMatches = querystring.match(/(\?|&amp;|&)size=([0-9]+x[0-9]+)/);
-                    if (sizeMatches && sizeMatches.length == 3) {
-                        size = sizeMatches[2];
-                    }
-                    return server.mapPath('~/DbFileContent/Thumbnail/' + fileVersion.Id() + '?thumbnailName=' + size);
+                    return this.fileThumbnail(fileVersion, thumbnailSizeFromQueryString(querystring, '220x160'));
                 }
                 else
-                    return server.mapPath('~/DbFileContent/Inline/' + fileVersion.Id());
+                    return this.fileInline(fileVersion);
             }
         }
         return '';
@@ -39,5 +35,32 @@ function (server) {
         return '#sitemap?p=' + externalId;
     };
 
-    return new UrlHelper(); // Returns a singleton.
+    UrlHelper.prototype.fileInline = function (fileVersion) {
+        return server.mapPath('~/api/dbfile/' + fileVersion.Id() + '/inline/' + encodeURIComponent(fileVersion.File().FileName())
+            + '?access_token=' + authentication.getAccessToken() + '&h=' + fileVersion.Hash());
+    };
+
+    UrlHelper.prototype.fileDownload = function (fileVersion) {
+        return server.mapPath('~/api/dbfile/' + fileVersion.Id() + '/download/' + encodeURIComponent(fileVersion.File().FileName())
+            + '?access_token=' + authentication.getAccessToken() + '&h=' + fileVersion.Hash());
+    };
+
+    UrlHelper.prototype.fileThumbnail = function (fileVersion, size) {
+        size = size || '220x160';
+        return server.mapPath('~/api/dbfile/' + fileVersion.Id() + '/thumbnail/' + encodeURIComponent(fileVersion.File().FileName())
+            + '?access_token=' + authentication.getAccessToken() + '&h=' + fileVersion.Hash() + '&nameOrSize=' + encodeURIComponent(size));
+    };
+
+    function thumbnailSizeFromQueryString(querystring, defaultSize) {
+        var size = defaultSize || '220x160';
+        var sizeMatches = querystring.match(/(\?|&amp;|&)size=([0-9]+x[0-9]+)/);
+        if (sizeMatches && sizeMatches.length == 3) {
+            size = sizeMatches[2];
+        }
+        return size;
+    }
+
+    window.$caps = window.$caps || {};
+    window.$caps.url = new UrlHelper();
+    return window.$caps.url; // Returns a singleton.
 });

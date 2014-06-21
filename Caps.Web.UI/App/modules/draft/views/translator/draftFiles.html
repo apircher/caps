@@ -71,7 +71,7 @@
 
 <script type="text/html" id="dbfile-icon">
     <!-- ko if: File().isImage() -->
-    <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': 'DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160', title: File().FileName, alt: File().FileName }, lazyImage: true" />
+    <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': $caps.url.fileThumbnail($data, '220x160'), title: File().FileName, alt: File().FileName }, lazyImage: true" />
     <!-- /ko -->
     <!-- ko if: !File().isImage() -->
     <span data-bind="attr: { title: File().FileName }"><i class="fa fa-file fa-4x"></i></span>

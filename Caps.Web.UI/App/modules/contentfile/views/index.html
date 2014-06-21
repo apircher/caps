@@ -103,7 +103,7 @@
 
 <script type="text/html" id="dbfile-icon">
     <!-- ko if: isImage() && latestVersion() -->
-    <img data-bind="attr: { src: $root.server.mapPath('~/content/images/blank.gif'), 'data-src': $root.server.mapPath('~/DbFileContent/Thumbnail/' + latestVersion().Id() + '?thumbnailName=220x160&h=' + latestVersion().Hash()), alt: FileName }, lazyImage: true" />
+    <img data-bind="attr: { src: $root.server.mapPath('~/content/images/blank.gif'), 'data-src': $root.urlHelper.fileThumbnail(latestVersion()), alt: FileName }, lazyImage: true" />
     <!-- /ko -->
     <!-- ko if: !isImage() -->
     <span><i class="fa fa-file fa-4x"></i></span>

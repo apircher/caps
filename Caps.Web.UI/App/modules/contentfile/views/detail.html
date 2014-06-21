@@ -144,7 +144,7 @@
 
     <script type="text/html" id="file-preview-image">
         <div class="file-preview image-preview" data-bind="stretchLineHeight: true">
-            <img data-bind="attr: { src: $root.server.mapPath('~/DbFileContent/Inline/' + Id() + '?h=' + Hash()) }" />
+            <img data-bind="attr: { src: $root.urlHelper.fileInline($data) }" />
         </div>
     </script>
 

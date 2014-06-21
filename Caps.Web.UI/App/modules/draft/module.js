@@ -6,9 +6,10 @@ define([
     'infrastructure/moduleRouter',
     './entities',
     'durandal/app',
-    'durandal/composition'
+    'durandal/composition',
+    'infrastructure/urlHelper'
 ],
-function (moduleFactory, routerFactory, model, app, composition) {
+function (moduleFactory, routerFactory, model, app, composition, urlHelper) {
 
     var module = moduleFactory.createModule({
         route: 'drafts*details',
@@ -19,6 +20,7 @@ function (moduleFactory, routerFactory, model, app, composition) {
     });
 
     module.extendModel = model.extendModel;
+    module.urlHelper = urlHelper;
 
     module.initializeRouter = function () {
         module.router = routerFactory.createModuleRouter(module, 'modules/draft', 'drafts')

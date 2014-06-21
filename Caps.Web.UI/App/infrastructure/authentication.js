@@ -481,6 +481,7 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
         changePassword: changePassword,
         setPassword: setPassword,
         isAuthenticated: isAuthenticated,
+        getAccessToken: getAccessToken,
 
         UserModel: UserModel,
         getAccountManagementInfo: getAccountManagementInfo,

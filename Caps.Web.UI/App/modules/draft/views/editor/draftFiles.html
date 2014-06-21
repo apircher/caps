@@ -35,7 +35,7 @@
     <!-- ko with: resource.FileVersion() -->
     
     <!-- ko if: File().isImage && File().isImage() -->
-    <img data-bind="attr: { 'src': 'DbFileContent/Thumbnail/' + Id() + '?thumbnailName=220x160&h=' + Hash(), alt: File().FileName }" />
+    <img data-bind="attr: { 'src': $caps.url.fileThumbnail($data, '220x160'), alt: File().FileName }" />
     <!-- /ko -->
     <!-- ko if: File().isImage && !File().isImage() -->
     <span data-bind="attr: { title: File().FileName }"><i class="fa fa-file fa-4x"></i></span>
@@ -143,10 +143,10 @@
                 </ul>
                 <ul class="list-unstyled">
                     <li>
-                        <a href="#" data-bind="attr: { href: 'DbFileContent/Inline/' + resource.FileVersion().Id() }" target="_blank"><i class="fa fa-external-link fa-fw"></i> Anhang öffnen</a>
+                        <a href="#" data-bind="attr: { href: $root.urlHelper.fileInline(resource.FileVersion()) }" target="_blank"><i class="fa fa-external-link fa-fw"></i> Anhang öffnen</a>
                     </li>
                     <li>
-                        <a href="#" data-bind="attr: { href: 'DbFileContent/Download/' + resource.FileVersion().Id() }"><i class="fa fa-download fa-fw"></i> Anhang herunterladen</a>
+                        <a href="#" data-bind="attr: { href: $root.urlHelper.fileDownload(resource.FileVersion()) }"><i class="fa fa-download fa-fw"></i> Anhang herunterladen</a>
                     </li>
                     <li>
                         <a href="#" data-bind="click: $parent.navigateToFile"><i class="fa fa-arrow-right fa-fw"></i> Zu Datei wechseln</a>
@@ -166,7 +166,7 @@
     <!-- ko with: resource.FileVersion() -->
     <!-- ko if: File().isImage && File().isImage() -->
     <div class="file-preview image-preview" data-bind="stretchLineHeight: true">
-        <img data-bind="attr: { src: $root.server.mapPath('~/DbFileContent/Inline/' + Id() + '?h=' + Hash()) }" />
+        <img data-bind="attr: { src: $root.urlHelper.fileInline($data) }" />
     </div>
     <!-- /ko -->
     <!-- ko if: File().isImage && !File().isImage() -->

@@ -12,9 +12,10 @@ define([
     'moment',
     'infrastructure/utils',
     'infrastructure/tagService',
-    'infrastructure/serverUtil'
+    'infrastructure/serverUtil',
+    'infrastructure/urlHelper'
 ],
-function (system, app, ko, module, datacontext, moment, utils, tagService, server) {
+function (system, app, ko, module, datacontext, moment, utils, tagService, server, urlHelper) {
     'use strict';
     
     /**
@@ -44,6 +45,7 @@ function (system, app, ko, module, datacontext, moment, utils, tagService, serve
         self.moment = moment;
         self.utils = utils;
         self.server = server;
+        self.urlHelper = urlHelper;
 
         self.activate = function (fileId) {
             currentFile(null);

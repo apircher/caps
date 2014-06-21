@@ -1,4 +1,6 @@
 ﻿using Caps.Data;
+using Caps.Data.Model;
+using Caps.Web.UI.Infrastructure;
 using Caps.Web.UI.Infrastructure.WebApi;
 using Caps.Web.UI.Models;
 using System;
@@ -88,6 +90,63 @@ namespace Caps.Web.UI.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, result.ToArray());
         }
 
+        [HttpGet]
+        [Route("{id:int}/inline/{fileName:regex(^([a-zA-Z\\-_%\\+0-9\\s]+)\\.([a-zA-Z0-9]+)$)}")]
+        public HttpResponseMessage GetContentInline(int id, String fileName)
+        {
+            var latestVersion = GetFileVersion(id);
+            if (latestVersion == null)
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+
+            var result = Request.CreateResponse(HttpStatusCode.OK);
+            var stream = new System.IO.MemoryStream(latestVersion.Content.Data);
+            result.Content = new StreamContent(stream);
+            result.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(latestVersion.File.ContentType);
+            return result;
+        }
+
+        [HttpGet]
+        [Route("{id:int}/download/{fileName:regex(^([a-zA-Z\\-_%\\+0-9\\s]+)\\.([a-zA-Z0-9]+)$)}")]
+        public HttpResponseMessage GetContentDownload(int id, String fileName)
+        {
+            var latestVersion = GetFileVersion(id);
+            if (latestVersion == null)
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+
+            var result = Request.CreateResponse(HttpStatusCode.OK);
+            var stream = new System.IO.MemoryStream(latestVersion.Content.Data);
+            result.Content = new StreamContent(stream);
+            result.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(latestVersion.File.ContentType);
+            result.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment") { FileName = fileName };
+            return result;
+        }
+
+        [HttpGet]
+        [Route("{id:int}/thumbnail/{fileName:regex(^([a-zA-Z\\-_%\\+0-9\\s]+)\\.([a-zA-Z0-9]+)$)}")]
+        public HttpResponseMessage GetContentThumbnail(int id, String fileName, String nameOrSize = "220x160")
+        {
+            var latestVersion = GetFileVersion(id);
+            if (latestVersion == null)
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+
+            var file = latestVersion.File;
+            if (!file.IsImage) // TODO: Return default document thumbnail...
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "Can provide Thumbnails only for images.");
+
+            var thumbnail = latestVersion.GetOrCreateThumbnail(nameOrSize, Imaging.ThumbnailFitMode.Max, Imaging.ThumbnailScaleMode.DownscaleOnly);
+            if (thumbnail == null)
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occured while creating the thumbnail.");
+
+            // Save new Thumbnails
+            db.SaveChanges();
+
+            var result = Request.CreateResponse(HttpStatusCode.OK);
+            var stream = new System.IO.MemoryStream(thumbnail.Data);
+            result.Content = new StreamContent(stream);
+            result.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(thumbnail.ContentType);
+            return result;
+        }
+
         [HttpDelete]
         [Route("{id:int}")]
         public HttpResponseMessage DeleteFile(int id)
@@ -118,6 +177,16 @@ namespace Caps.Web.UI.Controllers
             }
 
             return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+
+        DbFileVersion GetFileVersion(int fileVersionId)
+        {
+            return db.FileVersions
+                .Include("Content")
+                .Include("Thumbnails")
+                .Include("File")
+                .FirstOrDefault(v => v.Id == fileVersionId);
         }
     }
 }

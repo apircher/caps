@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
+using Microsoft.Owin.Security;
 using Owin;
 using System;
 using System.Collections.Generic;
@@ -61,9 +62,31 @@ namespace Caps.Web.UI
             });
 
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
-            
-            // Anwendung für die Verwendung eines Trägertokens zum Authentifizieren von Benutzern aktivieren
-            app.UseOAuthBearerTokens(OAuthOptions);
+
+            // Enable bearer token authentication. Use a custom provider to 
+            // get the token from querystring for Browser-File-Requests. (image, download,...)
+            app.UseOAuthAuthorizationServer(OAuthOptions);
+            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
+            {
+                AccessTokenFormat = OAuthOptions.AccessTokenFormat,
+                AccessTokenProvider = OAuthOptions.AccessTokenProvider,
+                AuthenticationMode = OAuthOptions.AuthenticationMode,
+                AuthenticationType = OAuthOptions.AuthenticationType,
+                Description = OAuthOptions.Description,
+                Provider = new ApplicationOAuthBearerAuthenticationProvider(),
+                SystemClock = OAuthOptions.SystemClock
+            });
+
+            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
+            {
+                AccessTokenFormat = OAuthOptions.AccessTokenFormat,
+                AccessTokenProvider = OAuthOptions.AccessTokenProvider,
+                AuthenticationMode = AuthenticationMode.Passive,
+                AuthenticationType = DefaultAuthenticationTypes.ExternalBearer,
+                Description = OAuthOptions.Description,
+                Provider = new ExternalOAuthBearerProvider(),
+                SystemClock = OAuthOptions.SystemClock
+            });
 
             // Auskommentierung der folgenden Zeilen aufheben, um die Anmeldung mit Anmeldeanbietern von Drittanbietern zu ermöglichen
             //app.UseMicrosoftAccountAuthentication(

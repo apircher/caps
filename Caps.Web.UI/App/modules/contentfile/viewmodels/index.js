@@ -19,9 +19,10 @@ define([
     './fileListItem',
     './uploadManager',
     './fileSearchControl',
-    'infrastructure/serverUtil'
+    'infrastructure/serverUtil',
+    'infrastructure/urlHelper'
 ],
-function (ko, system, app, module, datacontext, VirtualListModel, toastr, Q, doubleTap, FileListItem, UploadManager, FileSearchControl, server) {
+function (ko, system, app, module, datacontext, VirtualListModel, toastr, Q, doubleTap, FileListItem, UploadManager, FileSearchControl, server, urlHelper) {
     'use strict';
         
     var vm,
@@ -89,6 +90,7 @@ function (ko, system, app, module, datacontext, VirtualListModel, toastr, Q, dou
         isInteractive: isInteractive,
         searchControl: searchControl,
         server: server,
+        urlHelper: urlHelper,
 
         activate: function () {
             if (!initialized) {

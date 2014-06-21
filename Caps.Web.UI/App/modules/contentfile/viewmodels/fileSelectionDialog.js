@@ -13,8 +13,9 @@ define([
     'infrastructure/virtualListModel',
     './fileSearchControl',
     'toastr',
+    'infrastructure/urlHelper'
 ],
-function (dialog, ko, FileListItem, system, app, datacontext, VirtualListModel, FileSearchControl, toastr) {
+function (dialog, ko, FileListItem, system, app, datacontext, VirtualListModel, FileSearchControl, toastr, urlHelper) {
     'use strict';
 
     /**
@@ -32,6 +33,7 @@ function (dialog, ko, FileListItem, system, app, datacontext, VirtualListModel, 
         self.initialized = false;
         self.searchControl = new FileSearchControl();
         self.uploadManager = app.uploadManager;
+        self.urlHelper = urlHelper;
 
         self.searchControl.refreshResults = function () {
             self.list.resetSelection();

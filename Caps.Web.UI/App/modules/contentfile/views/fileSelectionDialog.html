@@ -18,7 +18,7 @@
                             <!-- ko if: data() -->
                             <!-- ko with: data() -->
                             <!-- ko if: isImage -->
-                            <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': 'DbFileContent/Thumbnail/' + latestVersion().Id() + '?thumbnailName=220x160&h=' + latestVersion().Hash(), title: FileName, alt: FileName }, lazyImage: true" />
+                            <img src="/content/images/blank.gif" data-bind="attr: { 'data-src': $root.urlHelper.fileThumbnail(latestVersion()), title: FileName, alt: FileName }, lazyImage: true" />
                             <!-- /ko -->
                             <!-- ko if: !isImage() -->
                             <span data-bind="attr: { title: FileName }"><i class="fa fa-file fa-4x"></i></span>

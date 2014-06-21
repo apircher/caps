@@ -5,9 +5,10 @@
     './editorModel',
     'infrastructure/treeViewModel',
     'infrastructure/serverUtil',
-    'infrastructure/keyboardHandler'
+    'infrastructure/keyboardHandler',
+    'infrastructure/urlHelper'
 ],
-function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
+function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler, urlHelper) {
 
     var fileDeterminations = [
         {
@@ -34,6 +35,7 @@ function (app, module, ko, EditorModel, TreeModel, server, KeyboardHandler) {
         self.server = server;
         self.determinations = ko.observableArray(fileDeterminations);
         self.tree = ko.observable();
+        self.urlHelper = urlHelper;
 
         self.deactivate = function () {
             keyboardHandler.deactivate();
