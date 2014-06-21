@@ -34,13 +34,13 @@ namespace Caps.Web.UI
             var nfo = new ThumbnailGeneratorExtensionInfo();
             container.ComposeParts(nfo);
             foreach (var thumbnailGenerator in nfo.ThumbnailGenerators)
-                Caps.Web.Imaging.ThumbnailGenerator.RegisterNamedGenerator(thumbnailGenerator.Name, thumbnailGenerator);
+                Caps.ImageProcessing.ThumbnailGenerator.RegisterNamedGenerator(thumbnailGenerator.Name, thumbnailGenerator);
         }
 
         public class ThumbnailGeneratorExtensionInfo
         {
-            [ImportMany(typeof(Caps.Web.Imaging.IThumbnailGenerator))]
-            public Caps.Web.Imaging.IThumbnailGenerator[] ThumbnailGenerators;
+            [ImportMany(typeof(Caps.ImageProcessing.IThumbnailGenerator))]
+            public Caps.ImageProcessing.IThumbnailGenerator[] ThumbnailGenerators;
         }
     }
 }

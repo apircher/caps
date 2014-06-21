@@ -7,8 +7,8 @@
     <ProjectGuid>{49AAE045-CE05-42E1-8F50-C8EA8A3F8F59}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Caps.Web.Imaging</RootNamespace>
-    <AssemblyName>Caps.Web.Imaging</AssemblyName>
+    <RootNamespace>Caps.ImageProcessing</RootNamespace>
+    <AssemblyName>Caps.ImageProcessing</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

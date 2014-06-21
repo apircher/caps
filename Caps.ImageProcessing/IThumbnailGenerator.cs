@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Caps.Web.Imaging
+namespace Caps.ImageProcessing
 {
     public interface IThumbnailGenerator
     {

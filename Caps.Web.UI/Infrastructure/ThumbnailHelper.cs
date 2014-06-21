@@ -1,5 +1,5 @@
 ﻿using Caps.Data.Model;
-using Caps.Web.Imaging;
+using Caps.ImageProcessing;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

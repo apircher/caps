@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
-[assembly: AssemblyTitle("Caps.Web.Imaging")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Caps.ImageProcessing")]
+[assembly: AssemblyDescription("Provides image processing functionality for the Caps CMS.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Caps.Web.Imaging")]
+[assembly: AssemblyCompany("Pircher Software")]
+[assembly: AssemblyProduct("CAPS")]
 [assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

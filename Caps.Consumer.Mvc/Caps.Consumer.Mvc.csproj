@@ -71,7 +71,7 @@
     <Compile Include="Utils\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Caps.HttpClient\Caps.Consumer.csproj">
+    <ProjectReference Include="..\Caps.Consumer\Caps.Consumer.csproj">
       <Project>{17692b66-b8b9-49ac-9fb6-9fa6d499528f}</Project>
       <Name>Caps.Consumer</Name>
     </ProjectReference>
@@ -93,7 +93,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-
   <Target Name="AfterBuild" Condition="'$(Configuration)' == 'Release'">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="AssemblyVersion" />

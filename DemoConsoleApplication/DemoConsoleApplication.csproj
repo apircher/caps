@@ -59,7 +59,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Caps.HttpClient\Caps.Consumer.csproj">
+    <ProjectReference Include="..\Caps.Consumer\Caps.Consumer.csproj">
       <Project>{17692b66-b8b9-49ac-9fb6-9fa6d499528f}</Project>
       <Name>Caps.Consumer</Name>
     </ProjectReference>

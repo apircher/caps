@@ -133,7 +133,7 @@ namespace Caps.Web.UI.Controllers
             if (!file.IsImage) // TODO: Return default document thumbnail...
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "Can provide Thumbnails only for images.");
 
-            var thumbnail = latestVersion.GetOrCreateThumbnail(nameOrSize, Imaging.ThumbnailFitMode.Max, Imaging.ThumbnailScaleMode.DownscaleOnly);
+            var thumbnail = latestVersion.GetOrCreateThumbnail(nameOrSize, ImageProcessing.ThumbnailFitMode.Max, ImageProcessing.ThumbnailScaleMode.DownscaleOnly);
             if (thumbnail == null)
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occured while creating the thumbnail.");
 

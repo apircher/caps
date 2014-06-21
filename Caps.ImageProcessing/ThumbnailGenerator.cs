@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Caps.Web.Imaging
+namespace Caps.ImageProcessing
 {
     public abstract class ThumbnailGenerator : IThumbnailGenerator
     {

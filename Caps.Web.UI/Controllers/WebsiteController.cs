@@ -1,5 +1,6 @@
 ﻿using Caps.Consumer.Model;
 using Caps.Data;
+using Caps.ImageProcessing;
 using Caps.Web.UI.Infrastructure;
 using Caps.Web.UI.Infrastructure.WebApi;
 using System;
@@ -216,19 +217,19 @@ namespace Caps.Web.UI.Controllers
             return Ok(Dto.Create(thumbnail));
         }
 
-        static Caps.Web.Imaging.ThumbnailFitMode ConvertToFitMode(String s)
+        static ThumbnailFitMode ConvertToFitMode(String s)
         {
-            Caps.Web.Imaging.ThumbnailFitMode mode = Caps.Web.Imaging.ThumbnailFitMode.Default;
-            if (Enum.TryParse<Caps.Web.Imaging.ThumbnailFitMode>(s, out mode))
+            ThumbnailFitMode mode = ThumbnailFitMode.Default;
+            if (Enum.TryParse<ThumbnailFitMode>(s, out mode))
                 return mode;
-            return Caps.Web.Imaging.ThumbnailFitMode.Default;
+            return ThumbnailFitMode.Default;
         }
-        static Caps.Web.Imaging.ThumbnailScaleMode ConvertToScaleMode(String s)
+        static ThumbnailScaleMode ConvertToScaleMode(String s)
         {
-            Caps.Web.Imaging.ThumbnailScaleMode mode = Caps.Web.Imaging.ThumbnailScaleMode.Default;
-            if (Enum.TryParse<Caps.Web.Imaging.ThumbnailScaleMode>(s, out mode))
+            ThumbnailScaleMode mode = ThumbnailScaleMode.Default;
+            if (Enum.TryParse<ThumbnailScaleMode>(s, out mode))
                 return mode;
-            return Caps.Web.Imaging.ThumbnailScaleMode.Default;
+            return ThumbnailScaleMode.Default;
         }
     }
 }

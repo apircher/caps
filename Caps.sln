@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caps.Data", "Caps.Data\Caps.Data.csproj", "{156683F3-9173-47BC-928F-1D31B7FCD45F}"
 EndProject
@@ -14,11 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caps.Consumer", "Caps.HttpClient\Caps.Consumer.csproj", "{17692B66-B8B9-49AC-9FB6-9FA6D499528F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caps.Consumer", "Caps.Consumer\Caps.Consumer.csproj", "{17692B66-B8B9-49AC-9FB6-9FA6D499528F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoConsoleApplication", "DemoConsoleApplication\DemoConsoleApplication.csproj", "{D4C2D40C-98F1-441B-8483-3B1E6274875F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caps.Web.Imaging", "Caps.Web.Imaging\Caps.Web.Imaging.csproj", "{49AAE045-CE05-42E1-8F50-C8EA8A3F8F59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caps.ImageProcessing", "Caps.ImageProcessing\Caps.ImageProcessing.csproj", "{49AAE045-CE05-42E1-8F50-C8EA8A3F8F59}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Caps.Consumer.Mvc", "Caps.Consumer.Mvc\Caps.Consumer.Mvc.csproj", "{66935581-FDD0-4A45-9357-24E8E93A9B91}"
 EndProject
@@ -72,8 +72,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{17692B66-B8B9-49AC-9FB6-9FA6D499528F} = {FD7784E8-A236-4A29-A538-3F0C7C7CC6B7}
-		{66935581-FDD0-4A45-9357-24E8E93A9B91} = {FD7784E8-A236-4A29-A538-3F0C7C7CC6B7}
 		{D4C2D40C-98F1-441B-8483-3B1E6274875F} = {FD7784E8-A236-4A29-A538-3F0C7C7CC6B7}
+		{66935581-FDD0-4A45-9357-24E8E93A9B91} = {FD7784E8-A236-4A29-A538-3F0C7C7CC6B7}
 		{9989DFE7-ABEB-4B8D-88A0-B4A611D44054} = {FD7784E8-A236-4A29-A538-3F0C7C7CC6B7}
 	EndGlobalSection
 EndGlobal
