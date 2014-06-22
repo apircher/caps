@@ -195,6 +195,10 @@
     <Compile Include="Migrations\201406121128238_AddDbSiteMapNodePictureFileVersion.Designer.cs">
       <DependentUpon>201406121128238_AddDbSiteMapNodePictureFileVersion.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201406212341086_RemoveSelfMadeAuthorAccountLockout.cs" />
+    <Compile Include="Migrations\201406212341086_RemoveSelfMadeAuthorAccountLockout.Designer.cs">
+      <DependentUpon>201406212341086_RemoveSelfMadeAuthorAccountLockout.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\Author.cs" />
     <Compile Include="Model\ChangeInfo.cs" />
@@ -320,6 +324,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201406121128238_AddDbSiteMapNodePictureFileVersion.resx">
       <DependentUpon>201406121128238_AddDbSiteMapNodePictureFileVersion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201406212341086_RemoveSelfMadeAuthorAccountLockout.resx">
+      <DependentUpon>201406212341086_RemoveSelfMadeAuthorAccountLockout.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

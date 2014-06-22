@@ -119,8 +119,10 @@ html, body, .navbar {
     }
 }
 
-.navbar-fixed-bottom > .navbar-panel {
-    margin-left:0;
+@media (min-width:768px) {
+    .navbar-fixed-bottom > .navbar-panel {
+        margin-left:0;
+    }
 }
 
 /** 
@@ -1133,6 +1135,16 @@ p.text-padding-right {
 
 .form-control-buttons {
     margin:7.5px 0 0;
+}
+
+@media (max-width:992px) {
+    .list-item-content {
+        padding-left:23px;
+    }
+
+    .separate-top-sm {
+        margin-top:15px;
+    }
 }
 
 /**

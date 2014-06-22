@@ -257,7 +257,6 @@
     <Compile Include="Infrastructure\DtoExtensions.cs" />
     <Compile Include="Infrastructure\Mvc\Helpers\VersionHelpers.cs" />
     <Compile Include="Infrastructure\AuthorExtensions.cs" />
-    <Compile Include="Infrastructure\LockoutHelper.cs" />
     <Compile Include="Infrastructure\MultipartStreamProviderExtensions.cs" />
     <Compile Include="Infrastructure\PredicateBuilder.cs" />
     <Compile Include="Infrastructure\RandomOAuthStateGenerator.cs" />
@@ -308,6 +307,9 @@
     </Content>
     <Content Include="Content\app-theme.css">
       <DependentUpon>app-theme.less</DependentUpon>
+    </Content>
+    <Content Include="Content\app-theme.min.css">
+      <DependentUpon>app-theme.css</DependentUpon>
     </Content>
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />

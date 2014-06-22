@@ -25,22 +25,6 @@ namespace Caps.Web.UI.Infrastructure
             return Roles.GetRolesForUser(author.UserName);
         }
 
-        /// <summary>
-        /// Returns true if the Author is currently locked out and false otherwhise.
-        /// </summary>
-        /// <param name="author">The Author in question.</param>
-        /// <returns></returns>
-        public static bool IsLockedOut(this Author author)
-        {
-            if (author.PasswordFailuresSinceLastSuccess < Settings.MaxInvalidLoginAttempts)
-                return false;
-
-            var lockedUntil = author.LastPasswordFailureDate.GetValueOrDefault(DateTime.MinValue)
-                .AddMinutes(Settings.LockoutPeriod);
-
-            return lockedUntil >= DateTime.UtcNow;
-        }
-
         public static void RegisterActivity(this Author author)
         {
             author.LastActivityDate = DateTime.UtcNow;

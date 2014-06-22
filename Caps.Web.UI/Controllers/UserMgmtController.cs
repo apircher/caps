@@ -72,7 +72,8 @@ namespace Caps.Web.UI.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     CreationDate = DateTime.UtcNow,
-                    LastPasswordChangedDate = DateTime.UtcNow
+                    LastPasswordChangedDate = DateTime.UtcNow,
+                    LockoutEnabled = true
                 };
                 var result = userManager.Create(user, model.Password);
                 if (!result.Succeeded)

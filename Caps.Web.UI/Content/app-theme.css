@@ -1,4 +1,4 @@
-/**
+﻿/**
  * General Stuff
  */
 /* Set the minimum width for the app. */
@@ -95,8 +95,10 @@ body,
     margin-left: 15px;
   }
 }
-.navbar-fixed-bottom > .navbar-panel {
-  margin-left: 0;
+@media (min-width: 768px) {
+  .navbar-fixed-bottom > .navbar-panel {
+    margin-left: 0;
+  }
 }
 /** 
  *  Navbars
@@ -975,6 +977,14 @@ p.text-padding-right {
 }
 .form-control-buttons {
   margin: 7.5px 0 0;
+}
+@media (max-width: 992px) {
+  .list-item-content {
+    padding-left: 23px;
+  }
+  .separate-top-sm {
+    margin-top: 15px;
+  }
 }
 /**
   * Login View

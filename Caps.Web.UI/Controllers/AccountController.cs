@@ -56,6 +56,16 @@ namespace Caps.Web.UI.Controllers
             );
         }
 
+        [Route("profile")]
+        [ValidateJsonAntiForgeryToken]
+        public HttpResponseMessage GetUserEntity()
+        {
+            var author = db.GetAuthorByUserName(User.Identity.Name);
+            if (author == null)
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            return Request.CreateResponse(HttpStatusCode.OK, new UserModel(author, userManager.GetRoles(author.Id)));
+        }
+
         // GET api/account/authmetadata
 
         [Route("authmetadata")]
@@ -108,8 +118,16 @@ namespace Caps.Web.UI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await userManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
-            return GetErrorResult(result) ?? Ok();
+            var user = userManager.FindById(User.Identity.GetUserId());
+            var result = await userManager.AddPasswordAsync(user.Id, model.NewPassword);
+            var errorResult = GetErrorResult(result);
+            if (errorResult != null)
+                return errorResult;
+
+            user.LastPasswordChangedDate = DateTime.UtcNow;
+            await userManager.UpdateAsync(user);
+
+            return Ok();
         }
 
         // POST api/account/addexternallogin

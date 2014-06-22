@@ -1,38 +1,41 @@
 ﻿<div id="user-profile" class="app-page app-page-nav-bottom">
 
     <div class="container">
-        <h2><!-- ko text: user().fullName --><!-- /ko --> <small>Mein Profil</small></h2>
-        <div class="well">
-            <p>
-                <!-- ko if: hasLocalPassword -->
-                Letzte Passwort-Änderung: <span data-bind="text: lastPasswordChangedDateFormatted, attr: { title: moment(user().lastPasswordChangedDate()).format('LLLL') }"></span><br />
-                <a href="#" data-bind="click: changePassword">Passwort ändern</a>
-                <!-- /ko -->
-                <!-- ko if: !hasLocalPassword() -->
-                <a href="#" data-bind="click: addLocalPassword">Lokales Passwort erstellen</a>
-                <!-- /ko -->
-            </p>
+        <h2><!-- ko text: userEntity().fullName --><!-- /ko --> <small>Profildaten</small></h2>
+        <div class="well" data-bind="with: userEntity()">
+            <div class="row">
+                <div class="col-md-6">
+                    <em>Benutzername:</em> <span data-bind="text: userName"></span>
+                    <br /><em>Email:</em> <span data-bind="text: email"></span>
+                    <!-- ko if: hasPhone -->
+                    <br /><em>Telefon:</em> <span data-bind="text: phone"></span>
+                    <!-- /ko -->
+                </div>
+                <div class="col-md-6 separate-top-sm">
+                    <em>Erstellt:</em> <span data-bind="text: creationDateFormatted"></span><br />
+                    <em>Letztes Login:</em> <span data-bind="text: lastLoginDateFormatted"></span>
+                </div>
+            </div>
         </div>
 
-        <h3>Registrierte Logins</h3>
-        <ul data-bind="foreach: logins">
-            <li>
-                <span data-bind="text: loginProvider"></span>
-                <!-- ko if: !removing() && canRemove() -->
-                <a href="#" data-bind="click: remove">Entfernen</a>
-                <!-- /ko -->
-                <!-- ko if: removing -->
-                <em>Wird entfernt...</em>
-                <!-- /ko -->
-            </li>
+        <h3>Meine Login-Optionen</h3>
+        <p>Du kannst Dein Caps-Passwort sowie externe Login-Anbieter wie z.B. Google hinzufügen oder entfernen.</p>
+        <ul data-bind="foreach: logins" class="list-group">
+            <li class="list-group-item" data-bind="template: { name: isLocalLoginProvider() ? 'profileLocalLoginOptionTemplate' : 'profileExternalLoginOptionTemplate' }"></li>
         </ul>
 
-        <h3>Externe Anmeldung hinzufügen</h3>
-        <ul data-bind="foreach: externalLoginProviders()">
-            <li>
+        <h3>Login-Optionen hinzufügen</h3>
+        <!-- ko if: loginOptions().length -->
+        <div data-bind="foreach: loginOptions()" class="list-group">
+            <div class="list-group-item">
+                <i data-bind="attr: { class: isLocalLoginProvider ? 'fa fa-lock fa-fw' : 'fa fa-openid fa-fw' }"></i>
                 <span data-bind="text: name"></span> <a href="#" data-bind="click: login">Hinzufügen</a>
-            </li>
-        </ul>
+            </div>
+        </div>
+        <!-- /ko -->
+        <!-- ko if: !loginOptions().length -->
+        <p>Du hast alle unterstützten Login-Optionen hinzugefügt.</p>
+        <!-- /ko -->
     </div>
 
     <div class="navbar navbar-inverse navbar-fixed-bottom">
@@ -47,3 +50,37 @@
         </div>
     </div>
 </div>
+
+<script type="text/html" id="profileExternalLoginOptionTemplate">
+    <i class="fa fa-openid fa-fw"></i>
+    <span data-bind="text: title"></span> 
+    <!-- ko if: !removing() && canRemove() -->
+    <a href="#" data-bind="click: remove">Entfernen</a>
+    <!-- /ko -->
+    <!-- ko if: removing -->
+    <em>Wird entfernt...</em>
+    <!-- /ko -->
+</script>
+
+<script type="text/html" id="profileLocalLoginOptionTemplate">
+    <div class="row">
+        <div class="col-md-6">
+            <i class="fa fa-lock fa-fw"></i>
+            <span data-bind="text: title"></span> 
+            <!-- ko if: !removing() && canRemove() -->
+            <a href="#" data-bind="click: remove">Entfernen</a>
+            <!-- /ko -->
+            <!-- ko if: removing -->
+            <em>Wird entfernt...</em>
+            <!-- /ko -->
+        </div>
+        <div class="col-md-6">
+            <div class="list-item-content">
+                <!-- ko if: !removing() -->
+                <em>Zuletzt geändert:</em> <span data-bind="text: lastPasswordChangedDateFormatted, attr: { title: lastPasswordChangedDate }"></span>
+                <br class="visible-xs" /><a href="#" data-bind="click: changePassword">Jetzt ändern</a>
+                <!-- /ko -->
+            </div>
+        </div>
+    </div>
+</script>

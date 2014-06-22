@@ -26,9 +26,6 @@ namespace Caps.Data.Model
         [DateTimeKind(DateTimeKind.Utc)]
         public DateTime? LastActivityDate { get; set; }
         public DateTime? LastPasswordChangedDate { get; set; }
-        public DateTime? LastLockoutDate { get; set; }
-        public DateTime? LastPasswordFailureDate { get; set; }
-        public int PasswordFailuresSinceLastSuccess { get; set; }
         public String Comment { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<Author> manager)

@@ -95,6 +95,17 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
         .promise();
     }
 
+    function getUserEntity() {
+        return system.defer(function (dfd) {
+            $.ajax('~/api/account/profile', { method: 'get' })
+                .then(function (data) {
+                    dfd.resolve(data);
+                })
+                .fail(dfd.reject);
+        })
+        .promise();
+    }
+
     /**
      * Gets account management data. The data contains things like the login
      * providers available and wether the current user uses those providers or not.
@@ -154,6 +165,7 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
     function setPassword(data) {
         return system.defer(function (dfd) {
             $.ajax('~/api/account/setpassword', { method: 'post', data: data })
+                .then(getUser)
                 .then(dfd.resolve)
                 .fail(dfd.reject);
         })
@@ -482,6 +494,7 @@ function (Q, system, app, router, ko, antiForgeryToken, moment, utils) {
         setPassword: setPassword,
         isAuthenticated: isAuthenticated,
         getAccessToken: getAccessToken,
+        getUserEntity: getUserEntity,
 
         UserModel: UserModel,
         getAccountManagementInfo: getAccountManagementInfo,

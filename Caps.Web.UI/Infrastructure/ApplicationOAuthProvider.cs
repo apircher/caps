@@ -41,10 +41,10 @@ namespace Caps.Web.UI.Infrastructure
             }
             else
             {
-                if (LockoutHelper.IsUserLockedOut(userManager, user))
+                if (userManager.IsLockedOut(user.Id))
                 {
                     context.SetError("invalid_grant", "Das Konto wurde aufgrund zu vieler ungültiger Anmeldeversuche vorübergehend gesperrt. Die Sperre wird nach " 
-                        + Settings.LockoutPeriod.ToString() + " Minuten automatisch aufgehoben");
+                        + userManager.DefaultAccountLockoutTimeSpan.TotalMinutes.ToString() + " Minuten automatisch aufgehoben");
                     return;
                 }
 
@@ -52,14 +52,12 @@ namespace Caps.Web.UI.Infrastructure
                 if (r == PasswordVerificationResult.Failed)
                 {
                     context.SetError("invalid_grant", "Der Benutzername oder das Kennwort ist falsch.");
-                    user.LastPasswordFailureDate = DateTime.UtcNow;
-                    user.PasswordFailuresSinceLastSuccess++;
-                    db.SaveChanges();
+                    userManager.AccessFailed(user.Id);
+                    //db.SaveChanges();
                     return;
                 }
 
-                user.LastPasswordFailureDate = null;
-                user.PasswordFailuresSinceLastSuccess = 0;
+                userManager.ResetAccessFailedCount(user.Id);
                 user.RegisterLogin();
                 db.SaveChanges();
             }

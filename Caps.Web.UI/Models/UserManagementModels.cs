@@ -23,9 +23,9 @@ namespace Caps.Web.UI.Models
             CreationDate = author.CreationDate;
             Email = author.Email;
             Phone = author.PhoneNumber;
-            IsLockedOut = author.IsLockedOut();
+            IsLockedOut = author.LockoutEndDateUtc >= DateTime.UtcNow;
             LastActivityDate = new DateTime(author.LastActivityDate.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
-            LastLockoutDate = new DateTime(author.LastLockoutDate.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
+            LastLockoutDate = new DateTime(author.LockoutEndDateUtc.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
             LastLoginDate = new DateTime(author.LastLoginDate.GetValueOrDefault(DateTime.MinValue).Ticks, DateTimeKind.Utc);
             LastPasswordChangedDate = new DateTime(author.LastPasswordChangedDate.GetValueOrDefault(author.CreationDate).Ticks, DateTimeKind.Utc);
 

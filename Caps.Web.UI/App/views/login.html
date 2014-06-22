@@ -4,7 +4,7 @@
 
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
-                <h3>Anmelden</h3>
+                <h3>Login mit Caps-Passwort</h3>
             </div>
         </div>
 
@@ -23,12 +23,6 @@
 
             <div class="row">
                 <div class="col-md-6 col-md-offset-3">
-                    <!-- ko composeEditor: { field: rememberMe, title: 'Angemeldet bleiben', type: 'checkbox' } --><!-- /ko -->
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 col-md-offset-3">
                     <div class="pull-right">
                         <!-- ko if: !isValid() -->
                         <!-- ko validationSummary: { entity: $data } --><!-- /ko -->
@@ -38,22 +32,27 @@
                             <p>Wird geprüft... <i class="fa fa-circle-o-notch fa-spin"></i></p>
                         </div>
                     </div>
-                    <button class="btn btn-primary btn-medium" data-bind="click: logon, enable: isValid() && !isBusy()"><i class="fa fa-check fa-fw"></i> Und los</button>
+                    <button class="btn btn-primary btn-medium" data-bind="click: logon, enable: isValid() && !isBusy()"><i class="fa fa-unlock fa-fw"></i> WEITER</button>
+                    <!-- ko composeEditor: { field: rememberMe, title: 'Angemeldet bleiben', type: 'checkbox' } --><!-- /ko -->
                 </div>
             </div>
         </form>
 
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
-                <h3>oder mit einem der folgenden:</h3>
+                <h3>Weitere Login-Optionen</h3>
                 <!-- ko if: isLoadingExternalLoginProviders -->
                 <em>Wird geladen...</em>
                 <!-- /ko -->
                 <!-- ko if: !isLoadingExternalLoginProviders() -->
                 <ul data-bind="foreach: externalLoginProviders" class="list-unstyled">
-                    <li><a class="btn btn-default" href="#" data-bind="click: login, text: name"></a></li>
+                    <li><a class="btn btn-default" href="#" data-bind="click: login"><i class="fa fa-openid fa-fw"></i> <!-- ko text: name --><!-- /ko --></a></li>
                 </ul>
                 <!-- /ko -->
+
+                <p>
+                    <i class="fa fa-info-circle"></i> Um eine dieser Optionen zu nutzen, musst Du Dich vorher mit Deinem Caps-Passwort anmelden und die Option in Deinem Profil aktivieren.
+                </p>
             </div>
         </div>
     </div>
